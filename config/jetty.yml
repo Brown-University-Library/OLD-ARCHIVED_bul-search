@@ -1,6 +1,6 @@
 development:
-  startup_wait: 15
-  jetty_port: 8983
+  startup_wait: 5
+  jetty_port: 8081
 test:
   startup_wait: 60
   jetty_port: <%= ENV['TEST_JETTY_PORT'] || 8888 %>
