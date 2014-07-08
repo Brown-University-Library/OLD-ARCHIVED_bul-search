@@ -6,14 +6,14 @@ Read the [Blacklight Quickstart](https://github.com/projectblacklight/blacklight
 
 To install the Brown Blacklight code locally:
 
- * verify that you have the dependencies listed in the Quickstart
- * check out the code
- * cd into the code and run `bundle install`
- * rake db:migrate
+ * verify that you have the dependencies listed in the Quickstart.
+ * check out the code.
+ * cd into the code and run `bundle install`.
+ * `rake db:migrate` to configure the db.
  * `rake jetty:start` to start Jetty and Solr.  Note the Solr port.  This needs to match the solr port in `config/jetty.yml`.
  * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc` to index sample Brown records.
  * `rails server` to start rails in development mode
- * If all goes correctly: Visit the catalog at http://localhost:3000/catalog.
+ * If all goes correctly: visit the catalog at http://localhost:3000/catalog.
  * A sample search of `atom` will return results from the sample set of MARC records.
 
 
