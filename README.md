@@ -30,3 +30,9 @@ These records can be indexed with:
  * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc`
 
 A sample search of `atomic` will return results.
+
+
+##Search
+Work towards a Bento Box search:
+HTML: `http://localhost:3000/easy/home?source=bdr&q=rdf%20python`
+JSON: `http://localhost:3000/easy/search?source=bdr&q=rdf%20python`
