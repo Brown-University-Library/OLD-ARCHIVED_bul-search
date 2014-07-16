@@ -42,7 +42,7 @@ end
 # gem 'capistrano', group: :development
 
 # Use debugger
-#gem 'debugger', group: [:development, :test]
+gem 'debugger', group: [:development, :test]
 
 
 gem 'blacklight', ">= 5.3.0"
@@ -51,3 +51,6 @@ gem "jettywrapper", "~> 1.7"
 gem "devise"
 gem "devise-guests", "~> 0.3"
 gem "blacklight-marc", "~> 5.0"
+
+#Local
+gem "summon", "~> 2.0.5"

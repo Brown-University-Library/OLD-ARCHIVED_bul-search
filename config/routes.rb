@@ -1,8 +1,12 @@
 BulSearch::Application.routes.draw do
+  get "easy/search"
   root :to => "catalog#index"
   blacklight_for :catalog
   Blacklight::Marc.add_routes(self)
   devise_for :users
+
+  get 'easy/home'
+  get 'easy/search'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

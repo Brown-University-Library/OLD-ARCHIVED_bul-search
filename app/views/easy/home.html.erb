@@ -1,0 +1,49 @@
+<h1>easyFind</h1>
+<div id="bentos">
+    <div id="summon-search">
+        <h3>Articles</h3>
+        <ul></ul>
+        <div class="more"></div>
+    </div>
+
+    <div id="summon-search">
+        <h3>Summon</h3>
+    </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var query = getParameterByName('q');
+    if (query == "") {
+        console.debug('no query');
+        $('#bentos').html('<h3>No query provided.</h3>')
+    } else {
+        //do_bento_madness
+        bento(query);
+    };
+});
+
+function bento(query) {
+    $.ajax('/easy/search?source=bdr&q=' + query, {
+      success: function(response) {
+        //$("#bdr-search").html(response);
+        $.each(response, function(i, obj) {
+            var title = obj['title'];
+            $('#summon-search ul').append('<li><a href="' + obj['link'] + '">' + title + '</a></li>');
+        });
+        var more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q="
+        $('#summon-search .more').append('<a href="' + more + query + '">More results</a>');
+      }
+    });
+    $("#riamco-search").text("Updated Riamco Text");
+};
+
+
+///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+</script>
