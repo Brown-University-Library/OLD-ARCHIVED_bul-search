@@ -42,7 +42,7 @@ end
 # gem 'capistrano', group: :development
 
 # Use debugger
-gem 'debugger', group: [:development, :test]
+#gem 'debugger', group: [:development, :test]
 
 
 gem 'blacklight', ">= 5.3.0"
@@ -54,3 +54,5 @@ gem "blacklight-marc", "~> 5.0"
 
 #Local
 gem "summon", "~> 2.0.5"
+
+gem 'dotenv-rails', :groups => [:development, :test]
