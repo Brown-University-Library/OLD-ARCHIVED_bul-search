@@ -1,21 +1,38 @@
-<div id="easy-find">
-    <div id="facets" class="col-md-3">
-        <h3>Filter</h3>
-        <p>Filter facets here</p>
-    </div>
-    <div id="bentos">
-        <div id="summon-search" class="col-md-4">
-            <h3>Articles</h3>
-            <ul></ul>
-            <div class="more"></div>
-        </div>
-        <div id="books" class="col-md-4">
-            <h3>Books</h3>
-            <ul></ul>
-            <div class="more"></div>
+<% if @has_query != true %>
+    <div class="col-md-6 col-md-offset-3">
+         <!--<form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="easyFind" name="q">
+            </div>
+            <button type="submit" class="btn btn-primary search-btn" id="search">
+                <span class="submit-search-text">Search</span>
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </form>-->
+        <div class="well well-lg">
+            Lorem ipsum dolor sit amet, luptatum vivendum quo ex, pri cu veri commune definiebas, id homero omnesque postulant est. Minimum recteque sed ne, usu no case officiis intellegebat, ius an esse fabellas. Ne cum tation labores officiis. No doming reprehendunt his, mei id natum salutandi deterruisset. Eos quem integre et, dictas argumentum definitiones vel ad.
         </div>
     </div>
-</div>
+<% else %>
+    <div id="easy-find">
+        <div id="facets" class="col-md-3">
+            <h3>Filter</h3>
+            <p>Filter facets here</p>
+        </div>
+        <div id="bentos">
+            <div id="summon-search" class="col-md-4">
+                <h3>Articles</h3>
+                <ul></ul>
+                <div class="more"></div>
+            </div>
+            <div id="books" class="col-md-4">
+                <h3>Books</h3>
+                <ul></ul>
+                <div class="more"></div>
+            </div>
+        </div>
+    </div>
+<% end %>
 
 
 <%# Link to JSON data rout %>
@@ -26,7 +43,7 @@
     var query = getParameterByName('q');
     if (query == "") {
         console.debug('no query');
-        $('#bentos').html('<h3>No query provided.</h3>')
+        //$('#bentos').html('<h3>No query provided.</h3>')
     } else {
         //do_bento_madness
         bento(query);
