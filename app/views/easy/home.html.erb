@@ -17,6 +17,10 @@
     </div>
 </div>
 
+
+<%# Link to JSON data rout %>
+<span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
+
 <script type="text/javascript">
   $(document).ready(function() {
     var query = getParameterByName('q');
@@ -30,7 +34,8 @@
 });
 
 function bento(query) {
-    $.ajax('/easy/search?source=bdr&q=' + query, {
+    var dataUrl = $('#path').text();
+    $.ajax(dataUrl, {
       success: function(response) {
         //$("#bdr-search").html(response);
         $.each(response, function(i, obj) {
