@@ -44,3 +44,12 @@ Two shell scripts are included in data/ to assist with managing a local Solr ind
 Work towards a Bento Box search is at: http://dblightcit.services.brown.edu/find/easy/
 
 Locally the Bento Box is available at: `http://localhost:3000/easy/?q=rdf%20python`
+
+#Dev server
+The dev server for this project is `dblightcit.services.brown.edu`.  Contact Joe Mancino to get a Unix account on that box. 
+
+The `bul-search` source code is checkout out to `/opt/local/bul-search-src`.  The Rails app is running at `http://dblightcit.services.brown.edu/find/`.  To update the source to the master branch:
+
+ * `cd /opt/local/bul-search-src`
+ * `git pull`
+ * `touch tmp/restart.txt`
