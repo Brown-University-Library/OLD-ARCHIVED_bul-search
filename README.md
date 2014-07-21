@@ -19,10 +19,11 @@ To install the Brown Blacklight code locally:
 #Environment setup
 For development the [dotenv](https://github.com/bkeepers/dotenv) gem has been added.  Local settings can be set in the a `.env` file.  `sample-env` is included. Copy it to `.env` and adjust the values.
 
-An additional rails environment has been created called `devbox`.  I created this because I want to run Rails on `dblightcit` in development mode for now.  I also have had trouble installing the `debugger` gem on the server.  So creating another environment for local gemsets seems to be a route to take.  You can follow this pattern as well or just the development Rails environment locally.
+An additional rails environment has been created called `devbox`.  I created this because I want to run Rails on `dblightcit` in development mode for now.  I also have had trouble installing the `debugger` gem on the server.  So creating another environment for local gemsets seems to be a route to take.  You can follow this pattern as well or just use the development Rails environment locally.
 
 #Indexing data
 
+##Adding documents
 We have customized `config/SolrMarc/index.properties` to use a record id of `id = 907a[1-8], first`.  This is because Brown's library system stores the unique bibliographic record number in the 907 field.
 
 This means that the sample MARC records distributed with Blacklight won't load with the default schema.
@@ -34,6 +35,9 @@ These records can be indexed with:
  * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc`
 
 A sample search of `atomic` will return results.
+
+##Solr management
+Two shell scripts are included in data/ to assist with managing a local Solr index.  `./data/clean_index.sh` will clear your current Solr index.  It uses the environment variables in `.env` for the Solr url.  `./data/solr_commit.sh` will call commit on your index to ensure that any posted documents are added to the index.  Use with caution if you are working with a real Solr index.
 
 
 #Bento Box
