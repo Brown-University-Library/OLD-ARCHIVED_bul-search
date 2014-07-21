@@ -10,7 +10,7 @@ To install the Brown Blacklight code locally:
  * check out the code.
  * cd into the code and run `bundle install`.
  * `rake db:migrate` to configure the db.
- * `rake jetty:start` to start Jetty and Solr.  Note the Solr port.  This needs to match the solr port in `config/jetty.yml`.
+ * `rake jetty:start` to start Jetty and Solr.  Note the Solr port.  This needs to match the solr port in `config/jetty.yml`. Also see below about setting up your environment using a `.env` file.  The SOLR_URL can be set there.
  * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc` to index sample Brown records.
  * `rails server` to start rails in development mode
  * If all goes correctly: visit the catalog at http://localhost:3000/catalog.
