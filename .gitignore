@@ -5,6 +5,7 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 .env
+search_summon.rb
 
 
 # Ignore bundler config.

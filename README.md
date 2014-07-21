@@ -16,6 +16,10 @@ To install the Brown Blacklight code locally:
  * If all goes correctly: visit the catalog at http://localhost:3000/catalog.
  * A sample search of `atom` will return results from the sample set of MARC records.
 
+#Environment setup
+For development the [dotenv](https://github.com/bkeepers/dotenv) gem has been added.  Local settings can be set in the a `.env` file.  `sample-env` is included. Copy it to `.env` and adjust the values.
+
+An additional rails environment has been created called `devbox`.  I created this because I want to run Rails on `dblightcit` in development mode for now.  I also have had trouble installing the `debugger` gem on the server.  So creating another environment for local gemsets seems to be a route to take.  You can follow this pattern as well or just the development Rails environment locally.
 
 #Indexing data
 
@@ -35,7 +39,4 @@ A sample search of `atomic` will return results.
 #Bento Box
 Work towards a Bento Box search is at: http://dblightcit.services.brown.edu/find/easy/
 
-Locally
-
- * HTML: `http://localhost:3000/easy/?q=rdf%20python`
- * JSON: `http://localhost:3000/easy/?q=rdf%20python`
+Locally the Bento Box is available at: `http://localhost:3000/easy/?q=rdf%20python`

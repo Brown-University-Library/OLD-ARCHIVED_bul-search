@@ -43,7 +43,7 @@ end
 
 # Use debugger
 #gem 'debugger', group: [:development, :test]
-
+gem 'debugger', group: [:devbox]
 
 gem 'blacklight', ">= 5.3.0"
 
