@@ -17,7 +17,7 @@ To install the Brown Blacklight code locally:
  * A sample search of `atom` will return results from the sample set of MARC records.
 
 ##Without running a local Solr index.
-If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://dblightcit.services.brown.edu:8081/solr`.  This will allow you to search the remote index.
+If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://dblightcit.services.brown.edu:8081/solr`.  This will allow you to search the remote index.  You will need to be on the Brown network (in the SciLi?) or connected via VPN to connect to this index.
 
 #Environment setup
 For development the [dotenv](https://github.com/bkeepers/dotenv) gem has been added.  Local settings can be set in the a `.env` file.  `sample-env` is included. Copy it to `.env` and adjust the values.
