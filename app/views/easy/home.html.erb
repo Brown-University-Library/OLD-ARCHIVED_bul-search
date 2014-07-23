@@ -18,18 +18,22 @@
         <div id="facets" class="col-md-3">
             <h3>Filter</h3>
             <hr/>
-            <h4>Format</h3>
-            <ul id="format-list"></ul>
+            <div id="format-filter">
+                <h4>Format</h3>
+                <ul id="format-list"></ul>
+            </div>
         </div>
         <div id="bentos" class="col-md-9">
             <div class="row">
                 <div id="books" class="col-md-4">
                     <h3>Books</h3>
+                    <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more"></div>
                 </div>
                 <div id="summon-search" class="col-md-5">
                     <h3>Articles</h3>
+                    <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more"></div>
                 </div>
@@ -51,12 +55,11 @@
 
 <%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
-<span id="catalog-path" class="hidden"><%= app_url =%></span>
+<span id="catalog-path" class="hidden"><%= catalog_record_url =%></span>
 
 <script type="text/javascript">
   $(document).ready(function() {
     var query = getParameterByName('q');
-    var catalogPath = $('#catalog-path').text();
     if (query == "") {
         console.debug('no query');
         //$('#bentos').html('<h3>No query provided.</h3>')
@@ -71,6 +74,7 @@ function bento(query) {
     var dataUrl = $('#path').text();
     $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
+        $('#summon-search i').hide();
         //$("#bdr-search").html(response);
         $.each(response, function(i, obj) {
             var title = obj['title'];
@@ -87,18 +91,25 @@ function catalogBentos(query) {
     var dataUrl = $('#path').text();
     $.ajax(dataUrl, {
       success: function(response) {
+        $('#books i').hide();
         //$("#bdr-search").html(response);
         var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
-        //add books to the book box.
-        addBooks(books[0]['docs'])
-        //add other formats
-         var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
-        //only two other boxes.
-        _.sortBy(other, function(obj){ return obj['numFound']})
-        addOther(other.slice(0, 2));
+        if (books.length > 0) {
+            //add books to the book box.
+            addBooks(books[0]['docs'])
+            //add other formats
+             var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
+            //only two other boxes.
+            _.sortBy(other, function(obj){ return obj['numFound']})
+            addOther(other.slice(0, 2));
 
-        formats = response['formats'];
-        addFormats(formats);
+            formats = response['formats'];
+            addFormats(formats);
+        } else {
+            //no results from catalog.
+            $('#books').append('<h5>no results</h5>');
+            $('#format-filter').hide();
+        };
       }
     });
     //$("#riamco-search").text("Updated Riamco Text");
@@ -120,8 +131,10 @@ function addBooks(books) {
 
 
 function catalogLi(item, div) {
+    //this should be initialized once.
+    var catalogPath = $('#catalog-path').text();
     var title = item['title'];
-    var link = '/catalog/' + item['id'];
+    var link = catalogPath + item['id'];
     $('#' + div + ' ul').append('<li><a href="' + link + '">' + title + '</a></li>');
 }
 
