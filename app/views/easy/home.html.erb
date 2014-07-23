@@ -92,17 +92,16 @@ function catalogBentos(query) {
     $.ajax(dataUrl, {
       success: function(response) {
         $('#books i').hide();
-        //$("#bdr-search").html(response);
         var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
         if (books.length > 0) {
             //add books to the book box.
             addBooks(books[0]['docs'])
             //add other formats
              var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
-            //only two other boxes.
-            _.sortBy(other, function(obj){ return obj['numFound']})
-            addOther(other.slice(0, 2));
-
+            var preppedOther = sortByTopFormat(other);
+            //add these to the screen.
+            addOther(preppedOther);
+            //do the format facet/filter.
             formats = response['formats'];
             addFormats(formats);
         } else {
@@ -114,6 +113,15 @@ function catalogBentos(query) {
     });
     //$("#riamco-search").text("Updated Riamco Text");
 };
+
+function sortByTopFormat(results) {
+    //sort the array by numFound, take top two, and reverse.
+    //only two other boxes.
+    //taking top two for now.
+    var size = -2;
+    var sortedOther = _.sortBy(results, function(obj){ return +obj.numFound});
+    return sortedOther.slice(size).reverse();
+}
 
 function addFormats(formats) {
     _.each(formats, function(item) {
