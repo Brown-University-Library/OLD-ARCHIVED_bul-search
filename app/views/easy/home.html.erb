@@ -14,28 +14,42 @@
         </div>
     </div>
 <% else %>
-    <div id="easy-find">
+    <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
             <h3>Filter</h3>
-            <p>Filter facets here</p>
+            <hr/>
+            <h4>Format</h3>
+            <ul id="format-list"></ul>
         </div>
-        <div id="bentos">
-            <div id="summon-search" class="col-md-4">
-                <h3>Articles</h3>
-                <ul></ul>
-                <div class="more"></div>
+        <div id="bentos" class="col-md-9">
+            <div class="row">
+                <div id="summon-search" class="col-md-5">
+                    <h3>Articles</h3>
+                    <ul></ul>
+                    <div class="more"></div>
+                </div>
+                <div id="books" class="col-md-4">
+                    <h3>Books</h3>
+                    <ul></ul>
+                    <div class="more"></div>
+                </div>
             </div>
-            <div id="books" class="col-md-4">
-                <h3>Books</h3>
-                <ul></ul>
-                <div class="more"></div>
+            <div class="row">
+                <div class="col-md-5" id="bento3">
+                    <h3 class="bento-header"></h3>
+                    <ul></ul>
+                </div>
+                <div class="col-md-4" id="bento4">
+                    <h3 class="bento-header"></h3>
+                    <ul></ul>
+                </div>
             </div>
         </div>
     </div>
 <% end %>
 
 
-<%# Link to JSON data rout %>
+<%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
 
 <script type="text/javascript">
@@ -46,7 +60,8 @@
         //$('#bentos').html('<h3>No query provided.</h3>')
     } else {
         //do_bento_madness
-        bento(query);
+        //bento(query);
+        catalogBentos(query);
     };
 });
 
@@ -65,6 +80,69 @@ function bento(query) {
     });
     //$("#riamco-search").text("Updated Riamco Text");
 };
+
+function catalogBentos(query) {
+    var dataUrl = $('#path').text();
+    $.ajax(dataUrl, {
+      success: function(response) {
+        //$("#bdr-search").html(response);
+        var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
+        //add books to the book box.
+        addBooks(books[0]['docs'])
+        //add other formats
+         var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
+        //only two other boxes.
+        _.sortBy(other, function(obj){ return obj['numFound']})
+        addOther(other.slice(0, 2));
+
+        formats = response['formats'];
+        addFormats(formats);
+      }
+    });
+    //$("#riamco-search").text("Updated Riamco Text");
+};
+
+function addFormats(formats) {
+    _.each(formats, function(item) {
+        var format = item['format'];
+        //var link = '/catalog/' + item['id'];
+        $('#format-list').append('<li>' + format + ' (' + item['count'] + ')</li>');
+    });
+}
+
+function addBooks(books) {
+    _.each(books, function(item) {
+        catalogLi(item, 'books')
+    });
+}
+
+
+function catalogLi(item, div) {
+    var title = item['title'];
+    var link = '/catalog/' + item['id'];
+    $('#' + div + ' ul').append('<li><a href="' + link + '">' + title + '</a></li>');
+}
+
+function addOther(other) {
+    var box3 = other[0];
+    if (box3 != undefined) {
+        var formatBox3 = box3['format'];
+        $('#bento3 .bento-header').text(formatBox3);
+        _.each(box3['docs'], function(item) {
+            catalogLi(item, 'bento3')
+        });
+    };
+
+    var box4 = other[1]
+    //check if it exists.
+    if (box4 != undefined) {
+        var formatBox4 = box4['format'];
+        $('#bento4 .bento-header').text(formatBox4);
+        _.each(box4['docs'], function(item) {
+        catalogLi(item, 'bento4')
+        });
+    }
+}
 
 
 ///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
