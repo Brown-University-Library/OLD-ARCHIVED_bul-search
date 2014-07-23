@@ -96,7 +96,8 @@ def get_summon query
     "s.q" => "#{query}",
     "s.fvf" => "ContentType,Journal Article",
     "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
-    "s.ho" => "t"
+    "s.ho" => "t",
+    "s.ps" => 5
   )
 
   results = Hash.new
