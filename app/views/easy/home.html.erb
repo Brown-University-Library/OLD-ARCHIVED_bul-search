@@ -16,8 +16,11 @@
 <% else %>
     <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
-            <h3>Filter</h3>
-            <hr/>
+            <h4>All results</h3>
+                <ul>
+                    <li><a href="<%= summon_search(params[:q]) =%>">Articles</a></li>
+                    <li><a href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search">Worldcat</a></li>
+                </ul>
             <div id="format-filter">
                 <h4>Format</h3>
                 <ul id="format-list"></ul>
@@ -56,6 +59,7 @@
 <%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
 <span id="catalog-path" class="hidden"><%= catalog_record_url =%></span>
+<span id="summon-more" class="hidden"><%= summon_search(params[:q]) =%></span>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -80,7 +84,7 @@ function bento(query) {
             var title = obj['title'];
             $('#summon-search ul').append('<li><a href="' + obj['link'] + '">' + title + '</a></li>');
         });
-        var more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q="
+        var more = $('#summon-more').text();
         $('#summon-search .more').append('<a href="' + more + query + '">More results</a>');
       }
     });
@@ -106,7 +110,9 @@ function catalogBentos(query) {
             addFormats(formats);
         } else {
             //no results from catalog.
-            $('#books').append('<h5>no results</h5>');
+            var wcUrl = $('#worldcat-search').attr('href');
+            var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
+            $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
             $('#format-filter').hide();
         };
       }
