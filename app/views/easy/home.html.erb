@@ -23,13 +23,13 @@
         </div>
         <div id="bentos" class="col-md-9">
             <div class="row">
-                <div id="summon-search" class="col-md-5">
-                    <h3>Articles</h3>
+                <div id="books" class="col-md-4">
+                    <h3>Books</h3>
                     <ul></ul>
                     <div class="more"></div>
                 </div>
-                <div id="books" class="col-md-4">
-                    <h3>Books</h3>
+                <div id="summon-search" class="col-md-5">
+                    <h3>Articles</h3>
                     <ul></ul>
                     <div class="more"></div>
                 </div>
@@ -60,14 +60,14 @@
         //$('#bentos').html('<h3>No query provided.</h3>')
     } else {
         //do_bento_madness
-        //bento(query);
+        bento(query);
         catalogBentos(query);
     };
 });
 
 function bento(query) {
     var dataUrl = $('#path').text();
-    $.ajax(dataUrl, {
+    $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
         //$("#bdr-search").html(response);
         $.each(response, function(i, obj) {

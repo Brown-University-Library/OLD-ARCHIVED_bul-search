@@ -17,33 +17,13 @@ require 'rsolr'
 
 
 class Easy
-    def initialize query
-        aid = ENV['SUMMON_ID']
-        akey = ENV['SUMMON_KEY']
-
-        # @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
-        # search = @service.search(
-        #   "s.q" => "#{query}",
-        #   "s.fvf" => "ContentType,Journal Article",
-        #   "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
-        #   "s.ho" => "t"
-        # )
-
-        # results = Hash.new
-        # results_docs = Array.new
-
-        # search.documents.each do |doc|
-        #   d = Hash.new
-        #   d['id'] = doc.id
-        #   d['title'] = doc.title
-        #   d['link'] = doc.link
-        #   d['year'] = doc.publication_date.year
-        #   results_docs << d
-        # end
-
-        # results['response'] = Hash.new
-        # results['response']['docs'] = results_docs
-        @results =  get_cat query
+    def initialize source, query
+        if source == 'summon'
+          summon_rsp = get_summon query
+          @results = summon_rsp['response']['docs']
+        else
+          @results = get_cat query
+        end
     end
 
     def to_json
@@ -105,4 +85,33 @@ def get_cat query
   out_data['formats'] = formats
 
   return out_data
+end
+
+def get_summon query
+  aid = ENV['SUMMON_ID']
+  akey = ENV['SUMMON_KEY']
+
+  @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
+  search = @service.search(
+    "s.q" => "#{query}",
+    "s.fvf" => "ContentType,Journal Article",
+    "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
+    "s.ho" => "t"
+  )
+
+  results = Hash.new
+  results_docs = Array.new
+
+  search.documents.each do |doc|
+    d = Hash.new
+    d['id'] = doc.id
+    d['title'] = doc.title
+    d['link'] = doc.link
+    d['year'] = doc.publication_date.year
+    results_docs << d
+  end
+
+  results['response'] = Hash.new
+  results['response']['docs'] = results_docs
+  return results
 end
