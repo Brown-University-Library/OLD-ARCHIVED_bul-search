@@ -51,10 +51,12 @@
 
 <%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
+<span id="catalog-path" class="hidden"><%= app_url =%></span>
 
 <script type="text/javascript">
   $(document).ready(function() {
     var query = getParameterByName('q');
+    var catalogPath = $('#catalog-path').text();
     if (query == "") {
         console.debug('no query');
         //$('#bentos').html('<h3>No query provided.</h3>')
