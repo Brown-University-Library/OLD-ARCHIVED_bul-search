@@ -56,3 +56,5 @@ gem "blacklight-marc", "~> 5.0"
 gem "summon", "~> 2.0.5"
 
 gem 'dotenv-rails', :groups => [:development, :test]
+gem "font-awesome-rails"
+
