@@ -41,10 +41,6 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-# Use debugger
-#gem 'debugger', group: [:development, :test]
-gem 'debugger', group: [:devbox]
-
 gem 'blacklight', ">= 5.3.0"
 
 gem "jettywrapper", "~> 1.7"
