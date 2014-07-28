@@ -41,7 +41,7 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-gem 'blacklight', ">= 5.3.0"
+gem 'blacklight', ">= 5.5.0"
 
 gem "jettywrapper", "~> 1.7"
 gem "devise"
