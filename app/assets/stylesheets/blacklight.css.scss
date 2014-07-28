@@ -1,3 +1,26 @@
-@import 'bootstrap';
+$navbar-inverse-bg: #3a1e1a;
+$navbar-inverse-link-color: #fff;
+$brand-primary: #c00404;
 
+$logo_image: 'bul/brown_logo.png';
+
+@import 'bootstrap';
 @import 'blacklight/blacklight';
+
+
+#header-navbar {
+  border-top: #7f2320 thick solid;
+
+  .navbar-brand {  /* The main logo image for the Blacklight instance */
+    width: 150px;
+    height: 50px;
+    background:transparent image_url($logo_image) no-repeat left center;
+    display: inline-block;
+    text-indent: 20%;
+    white-space: nowrap;
+    overflow: visible;
+    padding-right:0;
+    margin-right:20px;
+    padding-left: 0;
+  }
+}
