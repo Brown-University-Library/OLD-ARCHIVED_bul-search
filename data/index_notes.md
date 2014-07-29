@@ -23,3 +23,5 @@ author_vern_display
 pub_date_sort
 
 
+#Solr result grouping
+group.ngroups=true&q="art"&group.limit=5&group.field=format&group=true&&defType=edismax

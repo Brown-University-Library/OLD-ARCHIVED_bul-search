@@ -16,6 +16,9 @@ To install the Brown Blacklight code locally:
  * If all goes correctly: visit the catalog at http://localhost:3000/catalog.
  * A sample search of `atom` will return results from the sample set of MARC records.
 
+##Without running a local Solr index.
+If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://dblightcit.services.brown.edu:8081/solr`.  This will allow you to search the remote index.  You will need to be on the Brown network (in the SciLi?) or connected via VPN to connect to this index.
+
 #Environment setup
 For development the [dotenv](https://github.com/bkeepers/dotenv) gem has been added.  Local settings can be set in the a `.env` file.  `sample-env` is included. Copy it to `.env` and adjust the values.
 
@@ -41,12 +44,16 @@ Two shell scripts are included in data/ to assist with managing a local Solr ind
 
 
 #Bento Box
-Work towards a Bento Box search is at: http://dblightcit.services.brown.edu/find/easy/
+Work towards a Bento Box search is at: `http://dblightcit.services.brown.edu/find/easy/`.  The working name for this app/project is `easySearch`.
 
-Locally the Bento Box is available at: `http://localhost:3000/easy/?q=rdf%20python`
+Locally the Bento Box is available at: `http://localhost:3000/easy/`
+
+At present, the Bento Box queries Summon and the local Solr index for data.
+
+The model code is in `app/models/easy.rb` and the JavaScript for now is in `app/views/easy/home.html.erb`.
 
 #Dev server
-The dev server for this project is `dblightcit.services.brown.edu`.  Contact Joe Mancino to get a Unix account on that box. 
+The dev server for this project is `dblightcit.services.brown.edu`.  Contact Joe Mancino to get a Unix account on that box.
 
 The `bul-search` source code is checkout out to `/opt/local/bul-search-src`.  The Rails app is running at `http://dblightcit.services.brown.edu/find/`.  To update the source to the master branch:
 

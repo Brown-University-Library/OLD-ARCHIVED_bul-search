@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.4'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
@@ -41,11 +41,7 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-# Use debugger
-#gem 'debugger', group: [:development, :test]
-gem 'debugger', group: [:devbox]
-
-gem 'blacklight', ">= 5.3.0"
+gem 'blacklight', ">= 5.5.0"
 
 gem "jettywrapper", "~> 1.7"
 gem "devise"
@@ -56,3 +52,5 @@ gem "blacklight-marc", "~> 5.0"
 gem "summon", "~> 2.0.5"
 
 gem 'dotenv-rails', :groups => [:development, :test]
+gem "font-awesome-rails"
+
