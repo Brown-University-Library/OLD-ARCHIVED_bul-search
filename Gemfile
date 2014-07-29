@@ -49,9 +49,9 @@ gem "devise"
 gem "devise-guests", "~> 0.3"
 gem "blacklight-marc", "~> 5.0"
 
-#Local
 gem "summon", "~> 2.0.5"
 
 gem 'dotenv-rails', :groups => [:development, :test]
 gem "font-awesome-rails"
 
+gem 'byebug', :groups => [:development, :test]
