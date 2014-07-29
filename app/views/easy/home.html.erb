@@ -1,14 +1,5 @@
 <% if @has_query != true %>
     <div class="col-md-6 col-md-offset-3">
-         <!--<form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="easyFind" name="q">
-            </div>
-            <button type="submit" class="btn btn-primary search-btn" id="search">
-                <span class="submit-search-text">Search</span>
-                <span class="glyphicon glyphicon-search"></span>
-            </button>
-        </form>-->
         <div class="well well-lg">
             Lorem ipsum dolor sit amet, luptatum vivendum quo ex, pri cu veri commune definiebas, id homero omnesque postulant est. Minimum recteque sed ne, usu no case officiis intellegebat, ius an esse fabellas. Ne cum tation labores officiis. No doming reprehendunt his, mei id natum salutandi deterruisset. Eos quem integre et, dictas argumentum definitiones vel ad.
         </div>
@@ -28,13 +19,13 @@
         </div>
         <div id="bentos" class="col-md-9">
             <div class="row">
-                <div id="books" class="col-md-4">
+                <div id="books" class="col-md-6">
                     <h3>Books</h3>
                     <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more"></div>
                 </div>
-                <div id="summon-search" class="col-md-5">
+                <div id="summon-search" class="col-md-6">
                     <h3>Articles</h3>
                     <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
@@ -42,14 +33,6 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4" id="bento3">
-                    <h3 class="bento-header"></h3>
-                    <ul></ul>
-                </div>
-                <div class="col-md-5" id="bento4">
-                    <h3 class="bento-header"></h3>
-                    <ul></ul>
-                </div>
             </div>
         </div>
     </div>
@@ -98,22 +81,23 @@ function catalogBentos(query) {
         $('#books i').hide();
         var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
         if (books.length > 0) {
-            //add books to the book box.
-            addBooks(books[0]['docs'])
-            //add other formats
-             var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
-            var preppedOther = sortByTopFormat(other);
-            //add these to the screen.
-            addOther(preppedOther);
-            //do the format facet/filter.
-            formats = response['formats'];
-            addFormats(formats);
+          //add books to the book box.
+          addBooks(books[0]['docs'])
+
+          //add other formats
+          var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
+          var preppedOther = sortByTopFormat(other);
+          addOthers(preppedOther, 4);
+
+          //do the format facet/filter.
+          formats = response['formats'];
+          addFormats(formats);
         } else {
-            //no results from catalog.
-            var wcUrl = $('#worldcat-search').attr('href');
-            var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
-            $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
-            $('#format-filter').hide();
+          //no results from catalog.
+          var wcUrl = $('#worldcat-search').attr('href');
+          var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
+          $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
+          $('#format-filter').hide();
         };
       }
     });
@@ -121,19 +105,15 @@ function catalogBentos(query) {
 };
 
 function sortByTopFormat(results) {
-    //sort the array by numFound, take top two, and reverse.
-    //only two other boxes.
-    //taking top two for now.
-    var size = -2;
     var sortedOther = _.sortBy(results, function(obj){ return +obj.numFound});
-    return sortedOther.slice(size).reverse();
+    return sortedOther.reverse();
 }
 
 function addFormats(formats) {
     _.each(formats, function(item) {
-        var format = item['format'];
+        <%#var format = item['format'];%>
         //var link = '/catalog/' + item['id'];
-        $('#format-list').append('<li>' + format + ' (' + item['count'] + ')</li>');
+        $('#format-list').append('<li>' + item.format + ' (' + item.count + ')</li>');
     });
 }
 
@@ -147,31 +127,52 @@ function addBooks(books) {
 function catalogLi(item, div) {
     //this should be initialized once.
     var catalogPath = $('#catalog-path').text();
-    var title = item['title'];
-    var link = catalogPath + item['id'];
+    var title = item.title;
+    var link = catalogPath + item.id;
     $('#' + div + ' ul').append('<li><a href="' + link + '">' + title + '</a></li>');
 }
 
-function addOther(other) {
-    var box3 = other[0];
-    if (box3 != undefined) {
-        var formatBox3 = box3['format'];
-        $('#bento3 .bento-header').text(formatBox3);
-        _.each(box3['docs'], function(item) {
-            catalogLi(item, 'bento3')
+function addBox( boxID ){
+  var bentos = $('#bentos > div.row').last();
+  console.log(bentos);
+  bentos.append('<div id="'+boxID+'" class="col-md-6"><h3 class="bento-header"></h3><ul></ul></div>');
+}
+
+function addOthers(others, num_others) {
+  _.each(others, function(other, index) {
+    var box = other;
+    var boxID= "bento"+index;
+    if (index < num_others) {
+        addBox(boxID);
+        var formatBox = box['format'];
+        $('#'+boxID+' .bento-header').text(formatBox);
+        _.each(box['docs'], function(item) {
+            catalogLi(item, boxID)
         });
     };
-
-    var box4 = other[1]
-    //check if it exists.
-    if (box4 != undefined) {
-        var formatBox4 = box4['format'];
-        $('#bento4 .bento-header').text(formatBox4);
-        _.each(box4['docs'], function(item) {
-        catalogLi(item, 'bento4')
-        });
-    }
+    });
 }
+
+<%#function addOther(other) {%>
+    <%#var box3 = other[0];%>
+    <%#if (box3 != undefined) {%>
+        <%#var formatBox3 = box3['format'];%>
+        <%#$('#bento3 .bento-header').text(formatBox3);%>
+        <%#_.each(box3['docs'], function(item) {%>
+            <%#catalogLi(item, 'bento3')%>
+        <%#});%>
+    <%#};%>
+
+    <%#var box4 = other[1]%>
+    <%#//check if it exists.%>
+    <%#if (box4 != undefined) {%>
+        <%#var formatBox4 = box4['format'];%>
+        <%#$('#bento4 .bento-header').text(formatBox4);%>
+        <%#_.each(box4['docs'], function(item) {%>
+        <%#catalogLi(item, 'bento4')%>
+        <%#});%>
+    <%#}%>
+<%#}%>
 
 
 ///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
