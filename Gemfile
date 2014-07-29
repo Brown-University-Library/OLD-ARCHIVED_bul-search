@@ -54,4 +54,4 @@ gem "summon", "~> 2.0.5"
 gem 'dotenv-rails', :groups => [:development, :test]
 gem "font-awesome-rails"
 
-gem 'byebug', :groups => [:development, :test]
+gem 'byebug', :groups => [:devbox]
