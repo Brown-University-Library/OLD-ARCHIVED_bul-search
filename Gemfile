@@ -42,6 +42,7 @@ end
 # gem 'capistrano', group: :development
 
 gem 'blacklight', ">= 5.5.0"
+gem 'blacklight_advanced_search', '~> 5.0'
 
 gem "jettywrapper", "~> 1.7"
 gem "devise"
