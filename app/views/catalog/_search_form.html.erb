@@ -24,5 +24,7 @@
         <span class="start-over"><%= link_to "Start over", @easy %></span>
       <% end %>
 
-      <%= link_to 'More options', advanced_search_path(params), :class=>'advanced_search'%>
+      <% if @easy_search != true %>
+        <%= link_to 'More options', advanced_search_path(params), :class=>'advanced_search'%>
+      <% end %>
   <% end %>
