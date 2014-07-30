@@ -42,16 +42,16 @@ end
 # gem 'capistrano', group: :development
 
 gem 'blacklight', ">= 5.5.0"
+gem 'blacklight_advanced_search', '~> 5.0'
 
 gem "jettywrapper", "~> 1.7"
 gem "devise"
 gem "devise-guests", "~> 0.3"
 gem "blacklight-marc", "~> 5.0"
 
-#Local
 gem "summon", "~> 2.0.5"
 
 gem 'dotenv-rails', :groups => [:development, :test]
 gem "font-awesome-rails"
 
-gem 'byebug', :groups => [:development, :test]
+gem 'byebug', :groups => [:devbox]
