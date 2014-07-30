@@ -23,4 +23,8 @@
       <% if @easy_search == true && @has_query == true %>
         <span class="start-over"><%= link_to "Start over", @easy %></span>
       <% end %>
+
+      <% if @easy_search != true %>
+        <%= link_to 'More options', advanced_search_path(params), :class=>'advanced_search'%>
+      <% end %>
   <% end %>
