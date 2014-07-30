@@ -10,6 +10,61 @@
 
   <script type="text/javascript">
 
+    $(document).ready(
+      function(){
+        var bib_id = getBibId();
+        alert( bib_id );
+        var api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
+        $.getJSON( api_url, addStatus );
+      }
+    );
+
+    function getBibId() {
+      /* Pulls bib_id from DOM.
+       * Called on doc.ready */
+      bib_id_div_name = $( "div[id^='doc_']" )[0].id;
+      bib_id_start = bib_id_div_name.search( '_' ) + 1;
+      bib_id = bib_id_div_name.substring( bib_id_start );
+      return bib_id;
+    }
+
+    function addStatus( json_output ) {
+      /* Hits availability API & updates DOM.
+       * Called on doc.ready */
+      // alert( "in addStatus" );
+      // alert( JSON.stringify(json_output) );
+      // var availability = checkAvailability( json_output );
+      // alert( "and availability is: `" + availability + "`" );
+      // $("#availability").append( availability );
+      $("#availability").append( '<pre>' + JSON.stringify(json_output) + '</pre>' )
+    }
+
+    function checkAvailability( json_output ) {
+      /* Parses api info.
+       * Called by addStatus() */
+      // alert( "in checkAvailability" );
+      var items = json_output.items;
+      if ( items.length == 0 ) {
+        item_status = "UKNOWN";
+      } else {
+        items.forEach( setAvailability );
+      }
+      return "<p>::: availability - " + item_status + " :::</p>";
+    }
+
+    function setAvailability( item ) {
+      /* Examines individual item.
+       * Called by checkAvailability() iteration. */
+      if ( item.availability == "AVAILABLE" ) {
+        item_status = "AVAILABLE";
+      }
+    }
+
+  </script>
+
+  <!--
+  <script type="text/javascript">
+
     var item_status = "UNAVAILABLE";
 
     $(document).ready(
@@ -59,6 +114,7 @@
     }
 
   </script>
+  -->
 
   <div id="doc_<%= @document.id.to_s.parameterize %>">
 
