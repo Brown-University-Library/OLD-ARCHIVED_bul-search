@@ -31,32 +31,37 @@
     }
 
     function addStatus( json_output ) {
-      /* Parses api data & updates DOM.
+      /* Calls html builders & updates DOM.
        * Called on doc.ready */
-      // jstring = JSON.stringify(json_output, null, 2);
-      // $("#availability").append( '<pre>' + jstring + '</pre>' );
-      prepareHtml( json_output.items );
+      header_html = buildHeaderHtml();
+      josiah_link_html = buildJosiahLinkHtml();
+      json_output.items.forEach( makeItemHtml );
+      html = header_html + josiah_link_html + all_items_html + '</div>';
+      // alert( html );
+      $("#availability").append( html )
     }
 
-    function prepareHtml( items ) {
-      opening_div = '<div id="availability_manual">' + '\n';
-      rule = '<hr/>' + '\n';
-      title = '<h5 itemprop="copies">Copy Information</h5>' + '\n';
-      josiah_dl = [
+    function buildHeaderHtml() {
+      /* Builds ....
+       * Called on doc.ready */
+      header_html = [
+        '<div id="availability_manual">',
+          '<hr/>',
+          '<h5 itemprop="copies">Copy Information</h5>'
+      ].join('\n');
+      return header_html;
+    }
+
+    function buildJosiahLinkHtml() {
+      josiah_link_html = [
         '<dl class="dl-horizontal  dl-invert">',
           '<dt class="blacklight-josiah_link]">Josiah link:</dt>',
           '<dd class="blacklight-josiah_link">',
-            '<a hef="https://josiah.brown.edu/record=' + bib_id + '">',
-            'https://josiah.brown.edu/record=' + bib_id,
-            '</a>',
+            '<a hef="https://josiah.brown.edu/record=' + bib_id + '">', 'https://josiah.brown.edu/record=' + bib_id, '</a>',
           '</dd>',
         '</dl>'
         ].join('\n');
-        items.forEach( makeItemHtml );
-
-      html = opening_div + rule + title + josiah_dl + all_items_html + '</div>';
-      // alert( html );
-      $("#availability").append( html )
+      return josiah_link_html;
     }
 
     function makeItemHtml( item ) {
