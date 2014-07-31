@@ -35,8 +35,8 @@ set the BDR_SEARCH_URL to a SOLR compatible endpoint
 For development you can use the dev public search api endpoint
 http://daxdev.services.brown.edu/api/search/
 
-For Repository links You will need to set BDR_ITEM_URL
-//daxdev.services.brown.edu/studio/item/
+For Repository links You will need to set BDR_ITEM_URL.  No trailing slash.
+//daxdev.services.brown.edu/studio/item
 
 
 #Indexing data
