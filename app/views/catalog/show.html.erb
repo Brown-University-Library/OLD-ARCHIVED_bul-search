@@ -8,7 +8,7 @@
 
 <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
 
-  <script type="text/javascript">
+  <script id="availability_magic" type="text/javascript">
 
     var bib_id = null;
     var all_items_html = '';
@@ -42,8 +42,8 @@
     }
 
     function buildHeaderHtml() {
-      /* Builds ....
-       * Called on doc.ready */
+      /* Builds initial copy info div html.
+       * Called by addStatus() */
       header_html = [
         '<div id="availability_manual">',
           '<hr/>',
@@ -53,6 +53,8 @@
     }
 
     function buildJosiahLinkHtml() {
+      /* Builds josiah link html.
+       * Called by addStatus() */
       josiah_link_html = [
         '<dl class="dl-horizontal  dl-invert">',
           '<dt class="blacklight-josiah_link]">Josiah link:</dt>',
@@ -65,6 +67,8 @@
     }
 
     function makeItemHtml( item ) {
+      /* Builds single item html.
+       * Called by addStatus() iteration */
       item_html = [
         '<dl class="dl-horizontal  dl-invert">',
           '<dt class="blacklight-callnumber_display">Call Number:</dt>',
@@ -78,10 +82,7 @@
       all_items_html = all_items_html + item_html;
     }
 
-  </script>
-
-
-  <div id="template-container"></div>
+  </script> <!-- end of `availability_magic` script -->
 
   <div id="doc_<%= @document.id.to_s.parameterize %>">
 
@@ -90,42 +91,9 @@
 
   </div>
 
-  <div id="availability"></div>
-
-  <!--
-  <div id="availability_manual">
-    <hr/>
-    <h5 itemprop="copies">Copy information</h5>
-    <dl class="dl-horizontal  dl-invert">
-          <dt class="blacklight-josiah_link">Josiah link:</dt>
-          <dd class="blacklight-josiah_link"><a hef="https://josiah.brown.edu/record=b1234549">https://josiah.brown.edu/record=b1234549</a></dd>
-    </dl>
-    <dl class="dl-horizontal  dl-invert">
-          <dt class="blacklight-callnumber_display">Call Number:</dt>
-          <dd class="blacklight-callnumber_display">PS3557.I3415 S54 2013</dd>
-
-          <dt class="blacklight-location_display">Location:</dt>
-          <dd class="blacklight-location_display">ROCK</dd>
-
-          <dt class="blacklight-availability">Availability:</dt>
-          <dd class="blacklight-availability">MISSING</dd>
-    </dl>
-    <dl class="dl-horizontal  dl-invert">
-          <dt class="blacklight-callnumber_display">Call Number:</dt>
-          <dd class="blacklight-callnumber_display">PS3557.I3415 S54 2013</dd>
-
-          <dt class="blacklight-location_display">Location:</dt>
-          <dd class="blacklight-location_display">ROCK</dd>
-
-          <dt class="blacklight-availability">Availability:</dt>
-          <dd class="blacklight-availability">AVAILABLE</dd>
-    </dl>
-  </div>
-  -->
+  <div id="availability"><!-- Populated by `availability_magic` <script> above. --></div>
 
 </div>
-
-
 
   <% if @document.respond_to?(:export_as_openurl_ctx_kev) %>
     <!--
