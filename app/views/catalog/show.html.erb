@@ -33,21 +33,15 @@
     function addStatus( json_output ) {
       /* Parses api data & updates DOM.
        * Called on doc.ready */
-      jstring = JSON.stringify(json_output, null, 2);
-      $("#availability").append( '<pre>' + jstring + '</pre>' );
+      // jstring = JSON.stringify(json_output, null, 2);
+      // $("#availability").append( '<pre>' + jstring + '</pre>' );
       prepareHtml( json_output.items );
     }
-
-//   function addStatus( json_output ) {
-//     /* Parses api data & updates DOM.
-//      * Called on doc.ready */
-//     $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
-//   }
 
     function prepareHtml( items ) {
       opening_div = '<div id="availability_manual">' + '\n';
       rule = '<hr/>' + '\n';
-      title = '<h5 itemprop="copies">Copy2 information</h5>' + '\n';
+      title = '<h5 itemprop="copies">Copy Information</h5>' + '\n';
       josiah_dl = [
         '<dl class="dl-horizontal  dl-invert">',
           '<dt class="blacklight-josiah_link]">Josiah link:</dt>',
@@ -60,9 +54,9 @@
         ].join('\n');
         items.forEach( makeItemHtml );
 
-      html = opening_div + rule + title + josiah_dl + all_items_html;
-      alert( html );
-      $("#availability_test").append( html )
+      html = opening_div + rule + title + josiah_dl + all_items_html + '</div>';
+      // alert( html );
+      $("#availability").append( html )
     }
 
     function makeItemHtml( item ) {
@@ -70,10 +64,8 @@
         '<dl class="dl-horizontal  dl-invert">',
           '<dt class="blacklight-callnumber_display">Call Number:</dt>',
           '<dd class="blacklight-callnumber_display">' + item.callnumber + '</dd>',
-
           '<dt class="blacklight-location_display">Location:</dt>',
           '<dd class="blacklight-location_display">' + item.location + '</dd>',
-
           '<dt class="blacklight-availability">Availability:</dt>',
           '<dd class="blacklight-availability">' + item.availability + '</dd>',
         '</dl>'
@@ -93,6 +85,9 @@
 
   </div>
 
+  <div id="availability"></div>
+
+  <!--
   <div id="availability_manual">
     <hr/>
     <h5 itemprop="copies">Copy information</h5>
@@ -121,10 +116,7 @@
           <dd class="blacklight-availability">AVAILABLE</dd>
     </dl>
   </div>
-
-  <div id="availability_test"></div>
-
-  <div id="availability"></div>
+  -->
 
 </div>
 
