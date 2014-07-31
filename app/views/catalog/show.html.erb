@@ -15,7 +15,19 @@
         bib_id = getBibId();
         api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
         $.getJSON( api_url, addStatus );
+
+                  $("#template-container").loadTemplate($("#templatez"),
+      {
+          author: 'Joe Bloggs',
+          date: '25th May 2013',
+          authorPicture: 'Authors/JoeBloggs.jpg',
+          post: 'This is the contents of my post'
+      });
+
       }
+
+
+
     );
 
     function getBibId() {
@@ -27,69 +39,28 @@
       return bib_id;
     }
 
-    function addStatus( json_output ) {
-      /* Parses api data & updates DOM.
-       * Called on doc.ready */
-      $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
+   function addStatus( json_output ) {
+     /* Parses api data & updates DOM.
+      * Called on doc.ready */
+     $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
+   }
+
+    function prepareHtml( items ) {
+
     }
 
   </script>
 
-  <!--
-    <script type="text/javascript">
 
-    $(document).ready(
-      function(){
-        var bib_id = getBibId();
-        // alert( bib_id );
-        var api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
-        $.getJSON( api_url, addStatus );
-      }
-    );
-
-    function getBibId() {
-      /* Pulls bib_id from DOM.
-       * Called on doc.ready */
-      bib_id_div_name = $( "div[id^='doc_']" )[0].id;
-      bib_id_start = bib_id_div_name.search( '_' ) + 1;
-      bib_id = bib_id_div_name.substring( bib_id_start );
-      return bib_id;
-    }
-
-    function addStatus( json_output ) {
-      /* Hits availability API & updates DOM.
-       * Called on doc.ready */
-      // alert( "in addStatus" );
-      // alert( JSON.stringify(json_output) );
-      // var availability = checkAvailability( json_output );
-      // alert( "and availability is: `" + availability + "`" );
-      // $("#availability").append( availability );
-      $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
-    }
-
-    function checkAvailability( json_output ) {
-      /* Parses api info.
-       * Called by addStatus() */
-      // alert( "in checkAvailability" );
-      var items = json_output.items;
-      if ( items.length == 0 ) {
-        item_status = "UKNOWN";
-      } else {
-        items.forEach( setAvailability );
-      }
-      return "<p>::: availability - " + item_status + " :::</p>";
-    }
-
-    function setAvailability( item ) {
-      /* Examines individual item.
-       * Called by checkAvailability() iteration. */
-      if ( item.availability == "AVAILABLE" ) {
-        item_status = "AVAILABLE";
-      }
-    }
-
+  <script type="text/html" id="templatez">
+      <div data-content="author"></div>
+      <div data-content="date"></div>
+      <img data-src="authorPicture" data-alt="author"/>
+      <div data-content="post"></div>
   </script>
-  -->
+
+
+  <div id="template-container"></div>
 
   <div id="doc_<%= @document.id.to_s.parameterize %>">
 
@@ -97,6 +68,35 @@
     <%= render_document_partials @document, blacklight_config.view_config(:show).partials %>
 
   </div>
+
+  <div id="availability_manual">
+    <h5 itemprop="copies">Copy information</h5>
+    <dl class="dl-horizontal  dl-invert">
+          <dt class="blacklight-josiah_link">Josiah link:</dt>
+          <dd class="blacklight-josiah_link">h<a hef="https://josiah.brown.edu/record=b1234549">https://josiah.brown.edu/record=b1234549</a></dd>
+    </dl>
+    <dl class="dl-horizontal  dl-invert">
+          <dt class="blacklight-callnumber_display">Call Number:</dt>
+          <dd class="blacklight-callnumber_display">PS3557.I3415 S54 2013</dd>
+
+          <dt class="blacklight-location_display">Location:</dt>
+          <dd class="blacklight-location_display">ROCK</dd>
+
+          <dt class="blacklight-availability">Availability:</dt>
+          <dd class="blacklight-availability">MISSING</dd>
+    </dl>
+    <dl class="dl-horizontal  dl-invert">
+          <dt class="blacklight-callnumber_display">Call Number:</dt>
+          <dd class="blacklight-callnumber_display">PS3557.I3415 S54 2013</dd>
+
+          <dt class="blacklight-location_display">Location:</dt>
+          <dd class="blacklight-location_display">ROCK</dd>
+
+          <dt class="blacklight-availability">Availability:</dt>
+          <dd class="blacklight-availability">AVAILABLE</dd>
+    </dl>
+  </div>
+
   <div id="availability"></div>
 
 </div>
