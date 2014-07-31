@@ -3,24 +3,13 @@ require 'open-uri'
 require 'summon'
 require 'rsolr'
 
-# class Easy
-#   def initialize query
-#     #get results from solr
-#     resp = open("http://daxdev.services.brown.edu:8082/solr/fedora_solr/select/?q=#{query}&wt=json")
-#     @results = JSON.parse resp.read
-#   end
-
-#   def to_json
-#     @results['response']['docs'].to_json
-#   end
-# end
-
-
 class Easy
     def initialize source, query
         if source == 'summon'
           summon_rsp = get_summon query
           @results = summon_rsp['response']['docs']
+        elsif source == 'bdr'
+          @results = get_bdr query
         else
           @results = get_cat query
         end
@@ -28,10 +17,42 @@ class Easy
 
     def to_json
         @results
-        #['response']['docs']
     end
 end
 
+def bdr_link id
+  item_url = ENV['BDR_ITEM_URL']
+  "#{item_url}/#{id}/"
+end
+
+def bdr_thumbnail id
+  url = ENV['BDR_THUMBNAIL_SERVICE']
+  "#{url}/#{id}"
+end
+
+def get_bdr query
+  solr_url = ENV['BDR_SEARCH_URL']
+  solr = RSolr.connect :url => solr_url
+
+  qp = {
+      :wt=>:json,
+      "fl"=>"id:pid, title:primary_title, thumb:thumbnail",
+      "q"=>"#{query}"
+  }
+  response = solr.get 'select', :params => qp
+  response.deep_stringify_keys!
+
+
+  response['response']['docs'].each do |doc|
+    doc['link'] = bdr_link doc['id']
+    doc['thumbnail'] = bdr_thumbnail doc['id']
+  end
+  response['response']
+end
+
+def catalog_link id
+  "/catalog/#{id}"
+end
 
 def get_cat query
   solr_url = ENV['SOLR_URL']
@@ -63,8 +84,9 @@ def get_cat query
       grp['doclist']['docs'].each do |doc|
           d = {
               'id'=>doc['id'],
-              'title'=>doc['title_display']
+              'title'=>doc['title_display'],
           }
+          d['link'] = catalog_link doc['id']
           grp_h['docs'] << d
       end
       groups << grp_h
