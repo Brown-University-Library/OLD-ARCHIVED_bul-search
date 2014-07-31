@@ -18,7 +18,7 @@
             </div>
         </div>
         <div id="bentos" class="col-md-9">
-            <div class="row">
+            <div class="row catalog">
                 <div id="books" class="col-md-6">
                     <h3>Books</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
@@ -32,13 +32,16 @@
                     <div class="more center-block"></div>
                 </div>
             </div>
+
             <div class="row">
-                <div id="bdr-search" class="col-md-6">
-                    <h3>Repository</h3>
+                <hr/>
+                <div id="bdr-search" class="col-md-12">
+                    <h3>Digital Repository</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                 </div>
             </div>
+
         </div>
     </div>
 <% end %>
@@ -51,6 +54,7 @@
 
 <script type="text/javascript">
   var dataUrl = "<%= data_link(params[:q]) =%>";
+  var numOtherCatalogBoxes = 2;
   $(document).ready(function() {
     var query = getParameterByName('q');
     if (query == "") {
@@ -86,7 +90,6 @@ function bento_bdr(query) {
 
 function catalogBentos(query) {
     <%#var dataUrl = $('#path').text();%>
-    var numOtherCatalogBoxes = 2;
     $.ajax(dataUrl, {
       success: function(response) {
         $('#books i').hide();
@@ -131,11 +134,15 @@ function addItemsToBox( items, box ){
 
 
 function catalogLi(item, div) {
-    $('#' + div + ' ul').append('<li><a href="' + item.link + '">' + item.title + '</a></li>');
+    var thumbSnippet = '';
+    //if ('thumbnail' in item == true) {
+    //  thumbSnippet = '<img class="thumbnail" src="' + item['thumbnail'] + '"/>'
+    //}
+    $('#' + div + ' ul').append('<li>' + thumbSnippet + '<a href="' + item.link + '">' + item.title + '</a></li>');
 }
 
 function addBox( boxID, boxName ){
-  var bentos = $('#bentos > div.row').last();
+  var bentos = $('#bentos > div.catalog').last();
   bentos.append('<div id="'+boxID+'" class="col-md-6"><h3 class="bento-header">'+boxName+'</h3><ul></ul></div>');
 }
 
