@@ -25,13 +25,18 @@ def bdr_link id
   "#{item_url}/#{id}/"
 end
 
+def bdr_thumbnail id
+  url = ENV['BDR_THUMBNAIL_SERVICE']
+  "#{url}/#{id}"
+end
+
 def get_bdr query
   solr_url = ENV['BDR_SEARCH_URL']
   solr = RSolr.connect :url => solr_url
 
   qp = {
       :wt=>:json,
-      "fl"=>"id:pid, title:primary_title",
+      "fl"=>"id:pid, title:primary_title, thumb:thumbnail",
       "q"=>"#{query}"
   }
   response = solr.get 'select', :params => qp
@@ -40,6 +45,7 @@ def get_bdr query
 
   response['response']['docs'].each do |doc|
     doc['link'] = bdr_link doc['id']
+    doc['thumbnail'] = bdr_thumbnail doc['id']
   end
   response['response']
 end
