@@ -98,7 +98,6 @@ function catalogBentos(query) {
           var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
           var sortedOther = sortByTopFormat(other);
           addOthers(sortedOther, numOtherCatalogBoxes);
-
           //do the format facet/filter.
           formats = response['formats'];
           addFormats(formats);
