@@ -24,6 +24,21 @@ For development the [dotenv](https://github.com/bkeepers/dotenv) gem has been ad
 
 An additional rails environment has been created called `devbox`.  I created this because I want to run Rails on `dblightcit` in development mode for now.  I also have had trouble installing the `debugger` gem on the server.  So creating another environment for local gemsets seems to be a route to take.  You can follow this pattern as well or just use the development Rails environment locally.
 
+## Article (summon)
+If you wish to include articles in the results you will need to set the
+SUMMON_ID and SUMMON_KEY
+
+## Repository (bdr)
+If you wish to include repository items in your results you will need to
+set the BDR_SEARCH_URL to a SOLR compatible endpoint
+
+For development you can use the dev public search api endpoint
+http://daxdev.services.brown.edu/api/search/
+
+For Repository links You will need to set BDR_ITEM_URL
+//daxdev.services.brown.edu/studio/item/
+
+
 #Indexing data
 
 ##Adding documents
