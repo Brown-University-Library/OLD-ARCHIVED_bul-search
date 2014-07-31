@@ -12,22 +12,10 @@
 
     $(document).ready(
       function(){
-        bib_id = getBibId();
+        var bib_id = getBibId();
         api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
         $.getJSON( api_url, addStatus );
-
-                  $("#template-container").loadTemplate($("#templatez"),
-      {
-          author: 'Joe Bloggs',
-          date: '25th May 2013',
-          authorPicture: 'Authors/JoeBloggs.jpg',
-          post: 'This is the contents of my post'
-      });
-
       }
-
-
-
     );
 
     function getBibId() {
@@ -39,24 +27,40 @@
       return bib_id;
     }
 
-   function addStatus( json_output ) {
-     /* Parses api data & updates DOM.
-      * Called on doc.ready */
-     $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
-   }
-
-    function prepareHtml( items ) {
-
+    function addStatus( json_output ) {
+      /* Parses api data & updates DOM.
+       * Called on doc.ready */
+      jstring = JSON.stringify(json_output, null, 2);
+      $("#availability").append( '<pre>' + jstring + '</pre>' );
+      prepareHtml( json_output.items );
     }
 
-  </script>
+//   function addStatus( json_output ) {
+//     /* Parses api data & updates DOM.
+//      * Called on doc.ready */
+//     $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
+//   }
 
+    function prepareHtml( items ) {
+      opening_div = '<div id="availability_manual">' + '\n';
+      rule = '<hr/>' + '\n';
+      title = '<h5 itemprop="copies">Copy2 information</h5>' + '\n';
+      josiah_dl = [
+        '<dl class="dl-horizontal  dl-invert">',
+          '<dt class="blacklight-josiah_link]">Josiah link:</dt>',
+          '<dd class="blacklight-josiah_link">',
+            '<a hef="https://josiah.brown.edu/record=' + bib_id + '">',
+            'https://josiah.brown.edu/record=' + bib_id,
+            '</a>',
+          '</dd>',
+        '</dl>'
+        ].join('\n');
 
-  <script type="text/html" id="templatez">
-      <div data-content="author"></div>
-      <div data-content="date"></div>
-      <img data-src="authorPicture" data-alt="author"/>
-      <div data-content="post"></div>
+      html = opening_div + rule + title + josiah_dl;
+      alert( html );
+      $("#availability_test").append( html )
+    }
+
   </script>
 
 
@@ -70,10 +74,11 @@
   </div>
 
   <div id="availability_manual">
+    <hr/>
     <h5 itemprop="copies">Copy information</h5>
     <dl class="dl-horizontal  dl-invert">
           <dt class="blacklight-josiah_link">Josiah link:</dt>
-          <dd class="blacklight-josiah_link">h<a hef="https://josiah.brown.edu/record=b1234549">https://josiah.brown.edu/record=b1234549</a></dd>
+          <dd class="blacklight-josiah_link"><a hef="https://josiah.brown.edu/record=b1234549">https://josiah.brown.edu/record=b1234549</a></dd>
     </dl>
     <dl class="dl-horizontal  dl-invert">
           <dt class="blacklight-callnumber_display">Call Number:</dt>
@@ -96,6 +101,8 @@
           <dd class="blacklight-availability">AVAILABLE</dd>
     </dl>
   </div>
+
+  <div id="availability_test"></div>
 
   <div id="availability"></div>
 
