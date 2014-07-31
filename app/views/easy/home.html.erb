@@ -21,18 +21,23 @@
             <div class="row">
                 <div id="books" class="col-md-6">
                     <h3>Books</h3>
-                    <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more"></div>
                 </div>
                 <div id="summon-search" class="col-md-6">
                     <h3>Articles</h3>
-                    <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more center-block"></div>
                 </div>
             </div>
             <div class="row">
+                <div id="bdr-search" class="col-md-6">
+                    <h3>Repository</h3>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                    <ul></ul>
+                </div>
             </div>
         </div>
     </div>
@@ -45,49 +50,53 @@
 <span id="summon-more" class="hidden"><%= summon_search(params[:q]) =%></span>
 
 <script type="text/javascript">
+  var dataUrl = "<%= data_link(params[:q]) =%>";
   $(document).ready(function() {
     var query = getParameterByName('q');
     if (query == "") {
         console.debug('no query');
-        //$('#bentos').html('<h3>No query provided.</h3>')
     } else {
-        //do_bento_madness
-        bento(query);
         catalogBentos(query);
+        bento(query);
+        bento_bdr(query);
     };
 });
 
 function bento(query) {
-    var dataUrl = $('#path').text();
+    <%#var dataUrl = $('#path').text();%>
     $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
         $('#summon-search i').hide();
-        //$("#bdr-search").html(response);
-        $.each(response, function(i, obj) {
-            var title = obj['title'];
-            $('#summon-search ul').append('<li><a href="' + obj['link'] + '">' + title + '</a></li>');
-        });
+        addItemsToBox(response, 'summon-search');
         var more = $('#summon-more').text();
         $('#summon-search .more').append('<a href="' + more + '">More results</a>');
       }
     });
-    //$("#riamco-search").text("Updated Riamco Text");
+};
+
+function bento_bdr(query) {
+    <%#var dataUrl = $('#path').text();%>
+    $.ajax(dataUrl + '&source=bdr', {
+      success: function(response) {
+        $('#bdr-search i').hide();
+        addItemsToBox(response.docs, 'bdr-search');
+      }
+    });
 };
 
 function catalogBentos(query) {
-    var dataUrl = $('#path').text();
+    <%#var dataUrl = $('#path').text();%>
     $.ajax(dataUrl, {
       success: function(response) {
         $('#books i').hide();
         var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
         if (books.length > 0) {
-          //add books to the book box.
-          addBooks(books[0]['docs'])
+          addItemsToBox(books[0]['docs'], 'books');
 
           //add other formats
           var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
-          var preppedOther = sortByTopFormat(other);
-          addOthers(preppedOther, 4);
+          var sortedOther = sortByTopFormat(other);
+          addOthers(sortedOther, 4);
 
           //do the format facet/filter.
           formats = response['formats'];
@@ -101,78 +110,45 @@ function catalogBentos(query) {
         };
       }
     });
-    //$("#riamco-search").text("Updated Riamco Text");
 };
 
 function sortByTopFormat(results) {
-    var sortedOther = _.sortBy(results, function(obj){ return +obj.numFound});
-    return sortedOther.reverse();
+    return _.sortBy(results, function(obj){ return -obj.numFound});
 }
 
 function addFormats(formats) {
     _.each(formats, function(item) {
-        <%#var format = item['format'];%>
-        //var link = '/catalog/' + item['id'];
         $('#format-list').append('<li>' + item.format + ' (' + item.count + ')</li>');
     });
 }
 
-function addBooks(books) {
-    _.each(books, function(item) {
-        catalogLi(item, 'books')
+function addItemsToBox( items, box ){
+    _.each(items, function(item) {
+        catalogLi(item, box)
     });
+
 }
 
 
 function catalogLi(item, div) {
-    //this should be initialized once.
-    var catalogPath = $('#catalog-path').text();
-    var title = item.title;
-    var link = catalogPath + item.id;
-    $('#' + div + ' ul').append('<li><a href="' + link + '">' + title + '</a></li>');
+    $('#' + div + ' ul').append('<li><a href="' + item.link + '">' + item.title + '</a></li>');
 }
 
-function addBox( boxID ){
+function addBox( boxID, boxName ){
   var bentos = $('#bentos > div.row').last();
-  console.log(bentos);
-  bentos.append('<div id="'+boxID+'" class="col-md-6"><h3 class="bento-header"></h3><ul></ul></div>');
+  bentos.append('<div id="'+boxID+'" class="col-md-6"><h3 class="bento-header">'+boxName+'</h3><ul></ul></div>');
 }
 
 function addOthers(others, num_others) {
-  _.each(others, function(other, index) {
-    var box = other;
-    var boxID= "bento"+index;
+  _.each(others, function(box, index) {
+    box.name = box.format
+    box.id = "bento-"+index;
     if (index < num_others) {
-        addBox(boxID);
-        var formatBox = box['format'];
-        $('#'+boxID+' .bento-header').text(formatBox);
-        _.each(box['docs'], function(item) {
-            catalogLi(item, boxID)
-        });
+        addBox(box.id, box.name);
+        addItemsToBox( box.docs, box.id);
     };
-    });
+  });
 }
-
-<%#function addOther(other) {%>
-    <%#var box3 = other[0];%>
-    <%#if (box3 != undefined) {%>
-        <%#var formatBox3 = box3['format'];%>
-        <%#$('#bento3 .bento-header').text(formatBox3);%>
-        <%#_.each(box3['docs'], function(item) {%>
-            <%#catalogLi(item, 'bento3')%>
-        <%#});%>
-    <%#};%>
-
-    <%#var box4 = other[1]%>
-    <%#//check if it exists.%>
-    <%#if (box4 != undefined) {%>
-        <%#var formatBox4 = box4['format'];%>
-        <%#$('#bento4 .bento-header').text(formatBox4);%>
-        <%#_.each(box4['docs'], function(item) {%>
-        <%#catalogLi(item, 'bento4')%>
-        <%#});%>
-    <%#}%>
-<%#}%>
 
 
 ///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript

@@ -1,4 +1,6 @@
 export RAILS_ENV=''
+export BDR_SEARCH_URL=''
+export BDR_ITEM_URL=''
 export SOLR_URL=''
 export SUMMON_ID='---'
 export SUMMON_KEY='---'
