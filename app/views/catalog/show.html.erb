@@ -8,7 +8,10 @@
 
 <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
 
-  <script type="text/javascript">
+  <script id="availability_magic" type="text/javascript">
+
+    var bib_id = null;
+    var all_items_html = '';
 
     $(document).ready(
       function(){
@@ -28,68 +31,58 @@
     }
 
     function addStatus( json_output ) {
-      /* Parses api data & updates DOM.
+      /* Calls html builders & updates DOM.
        * Called on doc.ready */
-      $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
+      header_html = buildHeaderHtml();
+      josiah_link_html = buildJosiahLinkHtml();
+      json_output.items.forEach( makeItemHtml );
+      html = header_html + josiah_link_html + all_items_html + '</div>';
+      // alert( html );
+      $("#availability").append( html )
     }
 
-  </script>
-
-  <!--
-    <script type="text/javascript">
-
-    $(document).ready(
-      function(){
-        var bib_id = getBibId();
-        // alert( bib_id );
-        var api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
-        $.getJSON( api_url, addStatus );
-      }
-    );
-
-    function getBibId() {
-      /* Pulls bib_id from DOM.
-       * Called on doc.ready */
-      bib_id_div_name = $( "div[id^='doc_']" )[0].id;
-      bib_id_start = bib_id_div_name.search( '_' ) + 1;
-      bib_id = bib_id_div_name.substring( bib_id_start );
-      return bib_id;
-    }
-
-    function addStatus( json_output ) {
-      /* Hits availability API & updates DOM.
-       * Called on doc.ready */
-      // alert( "in addStatus" );
-      // alert( JSON.stringify(json_output) );
-      // var availability = checkAvailability( json_output );
-      // alert( "and availability is: `" + availability + "`" );
-      // $("#availability").append( availability );
-      $("#availability").append( '<pre>' + JSON.stringify(json_output, null, 2) + '</pre>' )
-    }
-
-    function checkAvailability( json_output ) {
-      /* Parses api info.
+    function buildHeaderHtml() {
+      /* Builds initial copy info div html.
        * Called by addStatus() */
-      // alert( "in checkAvailability" );
-      var items = json_output.items;
-      if ( items.length == 0 ) {
-        item_status = "UKNOWN";
-      } else {
-        items.forEach( setAvailability );
-      }
-      return "<p>::: availability - " + item_status + " :::</p>";
+      header_html = [
+        '<div id="availability_manual">',
+          '<hr/>',
+          '<h5 itemprop="copies">Copy Information</h5>'
+      ].join('\n');
+      return header_html;
     }
 
-    function setAvailability( item ) {
-      /* Examines individual item.
-       * Called by checkAvailability() iteration. */
-      if ( item.availability == "AVAILABLE" ) {
-        item_status = "AVAILABLE";
-      }
+    function buildJosiahLinkHtml() {
+      /* Builds josiah link html.
+       * Called by addStatus() */
+      josiah_link_html = [
+        '<dl class="dl-horizontal  dl-invert">',
+          '<dt class="blacklight-josiah_link]">Josiah link:</dt>',
+          '<dd class="blacklight-josiah_link">',
+            '<a href="https://josiah.brown.edu/record=' + bib_id + '">', 'https://josiah.brown.edu/record=' + bib_id, '</a>',
+          '</dd>',
+        '</dl>'
+        ].join('\n');
+      return josiah_link_html;
     }
 
-  </script>
-  -->
+    function makeItemHtml( item ) {
+      /* Builds single item html.
+       * Called by addStatus() iteration */
+      item_html = [
+        '<dl class="dl-horizontal  dl-invert">',
+          '<dt class="blacklight-callnumber_display">Call Number:</dt>',
+          '<dd class="blacklight-callnumber_display">' + item.callnumber + '</dd>',
+          '<dt class="blacklight-location_display">Location:</dt>',
+          '<dd class="blacklight-location_display">' + item.location + '</dd>',
+          '<dt class="blacklight-availability">Availability:</dt>',
+          '<dd class="blacklight-availability">' + item.availability + '</dd>',
+        '</dl>'
+      ].join('\n');
+      all_items_html = all_items_html + item_html;
+    }
+
+  </script> <!-- end of `availability_magic` script -->
 
   <div id="doc_<%= @document.id.to_s.parameterize %>">
 
@@ -97,11 +90,10 @@
     <%= render_document_partials @document, blacklight_config.view_config(:show).partials %>
 
   </div>
-  <div id="availability"></div>
+
+  <div id="availability"><!-- Populated by `availability_magic` <script> above. --></div>
 
 </div>
-
-
 
   <% if @document.respond_to?(:export_as_openurl_ctx_kev) %>
     <!--
