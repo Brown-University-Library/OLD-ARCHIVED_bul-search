@@ -86,6 +86,7 @@ function bento_bdr(query) {
 
 function catalogBentos(query) {
     <%#var dataUrl = $('#path').text();%>
+    var numOtherCatalogBoxes = 2;
     $.ajax(dataUrl, {
       success: function(response) {
         $('#books i').hide();
@@ -96,7 +97,7 @@ function catalogBentos(query) {
           //add other formats
           var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
           var sortedOther = sortByTopFormat(other);
-          addOthers(sortedOther, 4);
+          addOthers(sortedOther, numOtherCatalogBoxes);
 
           //do the format facet/filter.
           formats = response['formats'];
