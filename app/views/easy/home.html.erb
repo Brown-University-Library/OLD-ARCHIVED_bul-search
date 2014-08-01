@@ -67,7 +67,6 @@
 });
 
 function bento(query) {
-    <%#var dataUrl = $('#path').text();%>
     $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
         $('#summon-search i').hide();
@@ -79,7 +78,6 @@ function bento(query) {
 };
 
 function bento_bdr(query) {
-    <%#var dataUrl = $('#path').text();%>
     $.ajax(dataUrl + '&source=bdr', {
       success: function(response) {
         $('#bdr-search i').hide();
@@ -89,7 +87,6 @@ function bento_bdr(query) {
 };
 
 function catalogBentos(query) {
-    <%#var dataUrl = $('#path').text();%>
     $.ajax(dataUrl, {
       success: function(response) {
         $('#books i').hide();
@@ -131,7 +128,6 @@ function addItemsToBox( items, box ){
     });
 
 }
-
 
 function catalogLi(item, div) {
     var thumbSnippet = '';
