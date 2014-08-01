@@ -51,6 +51,9 @@ def get_bdr query
 end
 
 def catalog_link id
+  if ENV['RAILS_ENV'] == 'development'
+    return "/find/catalog/#{id}"
+  end
   "/catalog/#{id}"
 end
 
