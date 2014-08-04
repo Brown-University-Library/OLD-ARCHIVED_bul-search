@@ -33,12 +33,15 @@
     function addStatus( json_output ) {
       /* Calls html builders & updates DOM.
        * Called on doc.ready */
-      header_html = buildHeaderHtml();
-      josiah_link_html = buildJosiahLinkHtml();
-      json_output.items.forEach( makeItemHtml );
-      html = header_html + josiah_link_html + all_items_html + '</div>';
-      // alert( html );
-      $("#availability").append( html )
+      //check for items before adding HTML.
+      if (json_output['items'].length > 0 ) {
+        header_html = buildHeaderHtml();
+        //josiah_link_html = buildJosiahLinkHtml();
+        json_output.items.forEach( makeItemHtml );
+        html = header_html + all_items_html + '</div>';
+        // alert( html );
+        $("#availability").append( html )
+      };
     }
 
     function buildHeaderHtml() {
