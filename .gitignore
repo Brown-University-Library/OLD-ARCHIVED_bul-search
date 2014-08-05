@@ -43,3 +43,6 @@ config/secrets.yml
 ## Environment normalisation:
 /.bundle
 /vendor/bundle
+
+## ignore local ruby verson spec
+.ruby-version
