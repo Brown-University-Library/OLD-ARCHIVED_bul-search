@@ -1,0 +1,118 @@
+<h2 class="sr-only top-content-title"><%= t('blacklight.search.search_results_header') %></h2>
+
+<% @page_title = t('blacklight.search.title', :application_name => application_name) %>
+
+
+<% content_for(:head) do -%>
+  <%= render_opensearch_response_metadata %>
+  <%= auto_discovery_link_tag(:rss, url_for(params.merge(:format => 'rss')), :title => t('blacklight.search.rss_feed') ) %>
+  <%= auto_discovery_link_tag(:atom, url_for(params.merge(:format => 'atom')), :title => t('blacklight.search.atom_feed') ) %>
+
+  <script id="result_list_availability" type="text/javascript">
+
+    // $(document).ready(
+    //   function(){
+    //     makeAvailabilityDivs();
+    //     populateAvailabilityDivs();
+    //   }
+    // );
+
+    $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
+      "page:change",
+      function() {
+        makeAvailabilityDivs();
+        populateAvailabilityDivs();
+    });
+
+    function makeAvailabilityDivs() {
+      /* Controller builds availability-divs.
+       * Called on doc.ready() */
+      the_docs = $( ".document" );
+      for (var i = 0; i < the_docs.length; i++) {
+         makeSingleAvailabilityDiv( the_docs[i] )
+       }
+    }
+
+    function makeSingleAvailabilityDiv( the_doc ) {
+      /* Builds and adds id-div.
+       * Called by makeAvailabilityDivs() */
+      bib_id = $( "form", the_doc ).attr( "data-doc-id" )
+      console.log( bib_id );
+      div_skeleton_html = [
+        '<div id="availability_' + bib_id + '">',
+        '</div>'
+        ].join('\n');
+      $( ".results_availability", the_doc ).append( div_skeleton_html );  // `<div class=results_availability>` added to _index_default.html.erb
+    }
+
+    function populateAvailabilityDivs() {
+      /* Controller gets data and builds html for all availability-divs.
+       * Called on doc.ready() */
+      the_docs = $( "div[id^='availability_']" )
+      for (var i = 0; i < the_docs.length; i++) {
+         getAvailabilityData( the_docs[i] )
+       }
+    }
+
+    function getAvailabilityData( the_doc ) {
+      /* Grabs item's availability data and initiates div's html creation.
+       * Called by populateAvailabilityDivs() */
+      bib_id_div_name = the_doc.id;  // from, eg, <div id="availability_b123>"
+      bib_id_start = bib_id_div_name.search( '_' ) + 1;
+      bib_id = bib_id_div_name.substring( bib_id_start );
+      api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
+      $.getJSON(
+        api_url,
+        function( response_object, success_status, ajax_object ) {  // these 3 vars are auto-created by $.getJSON; we only care about the response_object...
+          populateDiv( response_object, the_doc );  // ...and our `the_doc`, which requires the anonymous function syntax to pass it along
+        }
+      );
+    }
+
+    function populateDiv( response_object, the_doc) {
+      /* Determines item's overall availability and updates html.
+       * Called by getAvailabilityData() */
+      var availability_status = "unknown";
+      if (response_object['items'].length > 0 ) {
+        availability_status = checkAvailability( response_object );
+      }
+      var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" }
+      availability_html = '<h4 style="color:' + color_dict[availability_status] + '">' + '(' + availability_status + ')' + '</h4>';
+      $( the_doc ).append( availability_html );
+      // $( the_doc ).append( "<pre>" + JSON.stringify(response_object, undefined, 2) + "</pre>" );
+    }
+
+    function checkAvailability( response_object ) {
+      /* Determines and returns item's summarized availability.
+       * Called by populateDiv() */
+      var return_status = "init";
+      for ( var index_key in response_object["items"] ){
+        item = response_object["items"][index_key]
+        if ( item["is_available"] == true ) {
+          return_status = "available";
+          break;
+        } else if ( item["is_available"] == false ) {
+          return_status = "unavailable";
+        }
+      }
+      return return_status;
+    }
+
+  </script> <!-- end, `script id="result_list_availability"` -->
+
+<% end -%>
+
+
+<%= render 'search_header' %>
+
+<h2 class="sr-only"><%= t('blacklight.search.search_results') %></h2>
+
+<%- if @response.empty? %>
+  <%= render "zero_results" %>
+<%- elsif render_grouped_response? %>
+  <%= render_grouped_document_index %>
+<%- else %>
+  <%= render_document_index %>
+<%- end %>
+
+<%= render 'results_pagination' %>
