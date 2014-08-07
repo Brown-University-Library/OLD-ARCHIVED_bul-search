@@ -8,58 +8,33 @@
   <%= auto_discovery_link_tag(:rss, url_for(params.merge(:format => 'rss')), :title => t('blacklight.search.rss_feed') ) %>
   <%= auto_discovery_link_tag(:atom, url_for(params.merge(:format => 'atom')), :title => t('blacklight.search.atom_feed') ) %>
 
-  <script id="result_list_availability" type="text/javascript">
 
-    // $(document).ready(
-    //   function(){
-    //     makeAvailabilityDivs();
-    //     populateAvailabilityDivs();
-    //   }
-    // );
+  <script id="result_list_availability" type="text/javascript">
 
     $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
       "page:change",
       function() {
-        makeAvailabilityDivs();
-        populateAvailabilityDivs();
-    });
+        updateItemDivs();
+      }
+    );
 
-    function makeAvailabilityDivs() {
-      /* Controller builds availability-divs.
-       * Called on doc.ready() */
-      the_docs = $( ".document" );
-      for (var i = 0; i < the_docs.length; i++) {
-         makeSingleAvailabilityDiv( the_docs[i] )
-       }
-    }
-
-    function makeSingleAvailabilityDiv( the_doc ) {
-      /* Builds and adds id-div.
-       * Called by makeAvailabilityDivs() */
-      bib_id = $( "form", the_doc ).attr( "data-doc-id" )
-      console.log( bib_id );
-      div_skeleton_html = [
-        '<div id="availability_' + bib_id + '">',
-        '</div>'
-        ].join('\n');
-      $( ".results_availability", the_doc ).append( div_skeleton_html );  // `<div class=results_availability>` added to _index_default.html.erb
-    }
-
-    function populateAvailabilityDivs() {
+    function updateItemDivs() {
       /* Controller gets data and builds html for all availability-divs.
        * Called on doc.ready() */
-      the_docs = $( "div[id^='availability_']" )
+      console.log( "starting" );
+      the_docs = $( ".document" );
+      console.log( the_docs );
       for (var i = 0; i < the_docs.length; i++) {
-         getAvailabilityData( the_docs[i] )
-       }
+        the_doc = the_docs[i];
+        bib_id = $( "form", the_doc ).attr( "data-doc-id" );
+        console.log( bib_id );
+        getAvailabilityData( the_doc, bib_id );
+      }
     }
 
-    function getAvailabilityData( the_doc ) {
+    function getAvailabilityData( the_doc, bib_id ) {
       /* Grabs item's availability data and initiates div's html creation.
        * Called by populateAvailabilityDivs() */
-      bib_id_div_name = the_doc.id;  // from, eg, <div id="availability_b123>"
-      bib_id_start = bib_id_div_name.search( '_' ) + 1;
-      bib_id = bib_id_div_name.substring( bib_id_start );
       api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
       $.getJSON(
         api_url,
@@ -77,9 +52,26 @@
         availability_status = checkAvailability( response_object );
       }
       var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" }
-      availability_html = '<h4 style="color:' + color_dict[availability_status] + '">' + '(' + availability_status + ')' + '</h4>';
+      // availability_html = '<h4 style="color:' + color_dict[availability_status] + '">' + '(' + availability_status + ')' + '</h4>';
+      availability_html = buildAvailabilityHtml( availability_status );
       $( the_doc ).append( availability_html );
       // $( the_doc ).append( "<pre>" + JSON.stringify(response_object, undefined, 2) + "</pre>" );
+    }
+
+    function buildAvailabilityHtml( availability_status ) {
+      var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
+      availability_html = [
+        // '<hr style="width: 160px; margin-left: 0; border: none; border-top: 1px #CCCCCC solid; height: 1px;"/>',
+        // '<hr style="width:50%; margin-right:20px"/>',
+        // '<hr/>',
+        '<dl class="document-metadata dl-horizontal dl-invert">',
+          '<dt class="blacklight-summary_availability">Availability:</dt>',
+          '<dd class="blacklight-summary_availability">',
+            '<span class="summary_availability" style="color:' + color_dict[availability_status] + '">' +availability_status + '</span>',
+          '</dd>',
+        '</dl>'
+      ].join('\n');
+      return availability_html;
     }
 
     function checkAvailability( response_object ) {
@@ -98,7 +90,8 @@
       return return_status;
     }
 
-  </script> <!-- end, `script id="result_list_availability"` -->
+  </script>
+   <!-- end, `script id="result_list_availability"` -->
 
 <% end -%>
 
