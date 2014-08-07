@@ -19,22 +19,19 @@
     );
 
     function updateItemDivs() {
-      /* Controller gets data and builds html for all availability-divs.
-       * Called on doc.ready() */
-      console.log( "starting" );
+      /* Controller gets data and builds html for all item-divs.
+       * Called on doc.on() */
       the_docs = $( ".document" );
-      console.log( the_docs );
       for (var i = 0; i < the_docs.length; i++) {
         the_doc = the_docs[i];
         bib_id = $( "form", the_doc ).attr( "data-doc-id" );
-        console.log( bib_id );
         getAvailabilityData( the_doc, bib_id );
       }
     }
 
     function getAvailabilityData( the_doc, bib_id ) {
       /* Grabs item's availability data and initiates div's html creation.
-       * Called by populateAvailabilityDivs() */
+       * Called by updateItemDivs() */
       api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
       $.getJSON(
         api_url,
@@ -58,22 +55,6 @@
       // $( the_doc ).append( "<pre>" + JSON.stringify(response_object, undefined, 2) + "</pre>" );
     }
 
-    function buildAvailabilityHtml( availability_status ) {
-      var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
-      availability_html = [
-        // '<hr style="width: 160px; margin-left: 0; border: none; border-top: 1px #CCCCCC solid; height: 1px;"/>',
-        // '<hr style="width:50%; margin-right:20px"/>',
-        // '<hr/>',
-        '<dl class="document-metadata dl-horizontal dl-invert">',
-          '<dt class="blacklight-summary_availability">Availability:</dt>',
-          '<dd class="blacklight-summary_availability">',
-            '<span class="summary_availability" style="color:' + color_dict[availability_status] + '">' +availability_status + '</span>',
-          '</dd>',
-        '</dl>'
-      ].join('\n');
-      return availability_html;
-    }
-
     function checkAvailability( response_object ) {
       /* Determines and returns item's summarized availability.
        * Called by populateDiv() */
@@ -88,6 +69,21 @@
         }
       }
       return return_status;
+    }
+
+    function buildAvailabilityHtml( availability_status ) {
+      /* Builds availability html.
+       * Called by populateDiv() */
+      var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
+      availability_html = [
+        '<dl class="document-metadata dl-horizontal dl-invert">',
+          '<dt class="blacklight-summary_availability">Availability:</dt>',
+          '<dd class="blacklight-summary_availability">',
+            '<span class="summary_availability" style="color:' + color_dict[availability_status] + '">' +availability_status + '</span>',
+          '</dd>',
+        '</dl>'
+      ].join('\n');
+      return availability_html;
     }
 
   </script>
