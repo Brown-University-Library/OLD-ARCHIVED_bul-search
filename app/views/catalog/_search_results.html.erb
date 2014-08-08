@@ -19,7 +19,7 @@
     );
 
     function updateItemDivs() {
-      /* Controller gets data and builds html for all item-divs.
+      /* Triggers ajax call for every item-div.
        * Called on doc.on() */
       the_docs = $( ".document" );
       for (var i = 0; i < the_docs.length; i++) {
@@ -30,7 +30,7 @@
     }
 
     function getAvailabilityData( the_doc, bib_id ) {
-      /* Grabs item's availability data and initiates div's html creation.
+      /* Grabs item's availability data and triggers div's html creation.
        * Called by updateItemDivs() */
       api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
       $.getJSON(
@@ -49,7 +49,6 @@
         availability_status = checkAvailability( response_object );
       }
       var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" }
-      // availability_html = '<h4 style="color:' + color_dict[availability_status] + '">' + '(' + availability_status + ')' + '</h4>';
       availability_html = buildAvailabilityHtml( availability_status );
       $( the_doc ).append( availability_html );
       // $( the_doc ).append( "<pre>" + JSON.stringify(response_object, undefined, 2) + "</pre>" );
@@ -72,7 +71,7 @@
     }
 
     function buildAvailabilityHtml( availability_status ) {
-      /* Builds availability html.
+      /* Builds availability html. (TODO: replace color with css classes.)
        * Called by populateDiv() */
       var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
       availability_html = [
