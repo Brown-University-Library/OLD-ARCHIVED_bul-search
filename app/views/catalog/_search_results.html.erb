@@ -48,7 +48,6 @@
       if (response_object['items'].length > 0 ) {
         availability_status = checkAvailability( response_object );
       }
-      var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" }
       availability_html = buildAvailabilityHtml( availability_status );
       $( the_doc ).append( availability_html );
       // $( the_doc ).append( "<pre>" + JSON.stringify(response_object, undefined, 2) + "</pre>" );
