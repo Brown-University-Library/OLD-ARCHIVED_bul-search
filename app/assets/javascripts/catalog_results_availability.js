@@ -9,11 +9,11 @@
 $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
   "page:change",
   function() {
-    updateItemDivs();
+    grabItemDivs();
   }
 );
 
-function updateItemDivs() {
+function grabItemDivs() {
   /* Triggers ajax call for every item-div.
    * Called on doc.on() */
   the_docs = $( ".document" );
@@ -26,7 +26,7 @@ function updateItemDivs() {
 
 function getAvailabilityData( the_doc, bib_id ) {
   /* Grabs item's availability data and triggers div's html creation.
-   * Called by updateItemDivs() */
+   * Called by grabItemDivs() */
   api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
   $.getJSON(
     api_url,
