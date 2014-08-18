@@ -61,7 +61,6 @@ function populateDiv( the_doc, availability_status ) {
    * Called by getAvailabilityData() */
   availability_html = buildAvailabilityHtml( availability_status );
   $( the_doc ).append( availability_html );
-  // $( the_doc ).append( "<pre>" + JSON.stringify(response_object, undefined, 2) + "</pre>" );
 }
 
 function buildAvailabilityHtml( availability_status ) {
