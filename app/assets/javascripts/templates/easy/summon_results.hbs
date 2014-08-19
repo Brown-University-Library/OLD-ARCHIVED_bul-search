@@ -3,7 +3,7 @@
     <li>
         <a href="{{this.link}}">{{this.title}}</a>
         <br/>
-        {{this.author}}. <em>{{ this.venue }}</em> {{#if this.volume }}{{ this.volume }}{{/if}}{{#if this.issue }}:{{ this.issue }}{{/if}} {{this.year}}.
+        {{this.author}}. <em>{{ this.venue }}</em> {{this.year}} {{#if this.volume }}{{ this.volume }}{{/if}}{{#if this.issue }}:{{ this.issue }}{{/if}}{{#if this.start }} pg. {{this.start}}- {{/if}}.
     </li>
     {{/each}}
 </ul>

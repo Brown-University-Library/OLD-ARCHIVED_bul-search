@@ -71,11 +71,10 @@ function bento(query) {
         $('#summon i').hide();
         var summonSet = response;
         //addItemsToBox(summonSet.docs, 'summon');
-        addMoreLink('summon', summonSet.more, summonSet.numFound);
+        //addMoreLink('summon', summonSet.more, summonSet.numFound);
         var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
         var html = HandlebarsTemplates['easy/summon_results'](context);
         $('#summon').append(html);
-        console.debug(html);
       }
     });
 };
