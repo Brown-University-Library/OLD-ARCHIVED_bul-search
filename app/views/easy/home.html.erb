@@ -156,7 +156,8 @@ function addOthers(others, num_others) {
 }
 
 function addMoreLink(boxID, more, count) {
-  $('#' + boxID + ' div.more').html("<a href=\"" + more + "\">View " + count + " results</a>");
+  var formattedCount = commaSeparateNumber(count);
+  $('#' + boxID + ' div.more').html("<a href=\"" + more + "\">View " + formattedCount + " results</a>");
 }
 
 ///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
@@ -166,4 +167,14 @@ function getParameterByName(name) {
         results = regex.exec(location.search);
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+
+//http://stackoverflow.com/a/12947816/758157
+function commaSeparateNumber(val){
+    while (/(\d+)(\d{3})/.test(val.toString())){
+      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+    return val;
+  }
+
 </script>
