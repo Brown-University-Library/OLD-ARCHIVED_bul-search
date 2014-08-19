@@ -52,7 +52,7 @@ def get_bdr query
 end
 
 def catalog_base_url
-  Rails.application.config if Rails.application.config.respond_to?('relative_path_url')
+  Rails.application.config if Rails.application.config.respond_to?('relative_url_root')
 end
 
 def catalog_link id
