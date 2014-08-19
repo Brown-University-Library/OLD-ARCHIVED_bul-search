@@ -29,8 +29,8 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
-    blacklight (5.5.2)
-      bootstrap-sass (~> 3.0)
+    blacklight (5.6.0)
+      bootstrap-sass (~> 3.2)
       deprecation
       kaminari (~> 0.13)
       nokogiri (~> 1.6)
@@ -47,7 +47,7 @@ GEM
     bootstrap-sass (3.2.0.1)
       sass (~> 3.2)
     builder (3.2.2)
-    byebug (3.1.2)
+    byebug (3.2.0)
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
     childprocess (0.5.3)
@@ -63,7 +63,7 @@ GEM
     debugger-linecache (1.2.0)
     deprecation (0.1.0)
       activesupport
-    devise (3.2.4)
+    devise (3.3.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
@@ -82,6 +82,11 @@ GEM
     ffi (1.9.3)
     font-awesome-rails (4.1.0.0)
       railties (>= 3.2, < 5.0)
+    handlebars_assets (0.17.1)
+      execjs (>= 1.2.9)
+      multi_json
+      sprockets (>= 2.0.3)
+      tilt
     hike (1.2.3)
     i18n (0.6.11)
     jbuilder (1.5.3)
@@ -147,9 +152,9 @@ GEM
       sass (~> 3.2.0)
       sprockets (~> 2.8, <= 2.11.0)
       sprockets-rails (~> 2.0)
-    sdoc (0.4.0)
-      json (~> 1.8)
-      rdoc (~> 4.0, < 5.0)
+    sdoc (0.4.1)
+      json (~> 1.7, >= 1.7.7)
+      rdoc (~> 4.0)
     sprockets (2.11.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -173,7 +178,7 @@ GEM
       polyglot (>= 0.3.1)
     turbolinks (2.2.2)
       coffee-rails
-    tzinfo (1.2.1)
+    tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.5.3)
       execjs (>= 0.3.0)
@@ -197,6 +202,7 @@ DEPENDENCIES
   devise-guests (~> 0.3)
   dotenv-rails
   font-awesome-rails
+  handlebars_assets
   jbuilder (~> 1.2)
   jettywrapper (~> 1.7)
   jquery-rails

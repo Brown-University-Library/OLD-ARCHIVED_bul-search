@@ -28,8 +28,7 @@
                 <div id="summon" class="col-md-6">
                     <h3>Articles</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
-                    <ul></ul>
-                    <div class="more center-block"></div>
+                    <%#Handlebars template will be inserted here %>
                 </div>
             </div>
             <div class="row added-bentos">
@@ -45,7 +44,6 @@
         </div>
     </div>
 <% end %>
-
 
 <%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
@@ -64,6 +62,7 @@
         bento(query);
         bento_bdr(query);
     };
+
 });
 
 function bento(query) {
@@ -71,8 +70,12 @@ function bento(query) {
       success: function(response) {
         $('#summon i').hide();
         var summonSet = response;
-        addItemsToBox(summonSet.docs, 'summon');
+        //addItemsToBox(summonSet.docs, 'summon');
         addMoreLink('summon', summonSet.more, summonSet.numFound);
+        var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
+        var html = HandlebarsTemplates['easy/summon_results'](context);
+        $('#summon').append(html);
+        console.debug(html);
       }
     });
 };
@@ -156,7 +159,7 @@ function addOthers(others, num_others) {
 }
 
 function addMoreLink(boxID, more, count) {
-  var formattedCount = commaSeparateNumber(count);
+  var formattedCount = commaSeparatedNumber(count);
   $('#' + boxID + ' div.more').html("<a href=\"" + more + "\">View " + formattedCount + " results</a>");
 }
 
@@ -170,7 +173,7 @@ function getParameterByName(name) {
 
 
 //http://stackoverflow.com/a/12947816/758157
-function commaSeparateNumber(val){
+function commaSeparatedNumber(val){
     while (/(\d+)(\d{3})/.test(val.toString())){
       val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
     }

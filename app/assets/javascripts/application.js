@@ -13,7 +13,6 @@
 //= require jquery
 //= require 'blacklight_advanced_search'
 
-
 //= require jquery_ujs
 //= require turbolinks
 //
@@ -21,4 +20,7 @@
 //= require blacklight/blacklight
 //= require_tree ./global
 
-//=require underscore-min
+//= require underscore-min
+
+//= require handlebars
+//= require_tree ./templates

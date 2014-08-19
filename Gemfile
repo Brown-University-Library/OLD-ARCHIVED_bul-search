@@ -55,3 +55,5 @@ gem 'dotenv-rails', :groups => [:development, :test, :devbox]
 gem "font-awesome-rails"
 
 gem 'byebug', :groups => [:devbox]
+
+gem 'handlebars_assets'
