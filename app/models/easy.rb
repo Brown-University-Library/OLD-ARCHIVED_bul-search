@@ -2,6 +2,7 @@ require 'json'
 require 'open-uri'
 require 'summon'
 require 'rsolr'
+require 'uri'
 
 class Easy
     def initialize source, query
@@ -50,11 +51,14 @@ def get_bdr query
   response['response']
 end
 
+def catalog_base_url
+  Rails.application.routes.url_helpers.catalog_index_path
+end
+
 def catalog_link id
-  if ENV['RAILS_ENV'] == 'development'
-    return "/find/catalog/#{id}"
-  end
-  "/catalog/#{id}"
+  #byebug
+  #catalog_base_url + "#{id}"
+  Rails.application.routes.url_helpers.catalog_path(id)
 end
 
 def get_cat query
@@ -92,6 +96,10 @@ def get_cat query
           d['link'] = catalog_link doc['id']
           grp_h['docs'] << d
       end
+      #Link to more results.
+      cat_url = catalog_base_url
+      enc_format = URI.escape(format)
+      grp_h['more'] = "#{cat_url}/?f[format][]=#{enc_format}&q=#{query}"
       groups << grp_h
   end
 
