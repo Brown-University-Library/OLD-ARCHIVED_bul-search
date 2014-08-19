@@ -8,7 +8,7 @@ class Easy
     def initialize source, query
         if source == 'summon'
           summon_rsp = get_summon query
-          @results = summon_rsp['response']['docs']
+          @results = summon_rsp['response']
         elsif source == 'bdr'
           @results = get_bdr query
         else
@@ -53,6 +53,10 @@ end
 
 def catalog_base_url
   Rails.application.config.relative_url_root if Rails.application.config.respond_to?('relative_url_root')
+end
+
+def summon_url query
+  return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
 end
 
 def catalog_link id
@@ -150,6 +154,8 @@ def get_summon query
   end
 
   results['response'] = Hash.new
+  results['response']['more'] = summon_url(query)
   results['response']['docs'] = results_docs
+  results['response']['numFound'] = search.record_count
   return results
 end
