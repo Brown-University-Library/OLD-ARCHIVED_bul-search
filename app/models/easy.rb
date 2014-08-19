@@ -147,9 +147,18 @@ def get_summon query
   search.documents.each do |doc|
     d = Hash.new
     d['id'] = doc.id
-    d['title'] = doc.title
+    #Title without highlighting.
+    d['title'] = doc.title.gsub('<h>', '').gsub('</h>', '')
     d['link'] = doc.link
     d['year'] = doc.publication_date.year
+    doc.authors.each do |au|
+      d['author'] = au.fullname
+      break
+    end
+    d['venue'] = doc.publication_title  if doc.respond_to?('publication_title')
+    d['volume'] = doc.volume  if doc.respond_to?('volume')
+    d['issue'] = doc.issue  if doc.respond_to?('issue')
+    d['start'] = doc.start_page  if doc.respond_to?('start_page')
     results_docs << d
   end
 
