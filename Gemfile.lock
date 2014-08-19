@@ -137,6 +137,8 @@ GEM
     omniauth (1.2.2)
       hashie (>= 1.2, < 4)
       rack (~> 1.0)
+    omniauth-shibboleth (1.1.2)
+      omniauth (>= 1.0.0)
     orm_adapter (0.5.0)
     parslet (1.6.2)
       blankslate (>= 2.0, <= 4.0)
@@ -249,6 +251,7 @@ DEPENDENCIES
   jquery-rails
   mysql2
   omniauth
+  omniauth-shibboleth
   rails (= 4.1.4)
   rspec-rails
   sass-rails (~> 4.0.0)

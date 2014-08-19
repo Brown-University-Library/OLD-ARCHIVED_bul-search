@@ -48,6 +48,7 @@ gem "jettywrapper", "~> 1.7"
 gem "devise"
 gem "devise-guests", "~> 0.3"
 gem "omniauth"
+gem "omniauth-shibboleth"
 gem "blacklight-marc", "~> 5.5"
 #gem "blacklight-marc", :path => "/work/blacklight_marc"
 #gem "blacklight-marc", :git => 'https://github.com/lawlesst/blacklight_marc.git', :branch => 'marc-in-json'
