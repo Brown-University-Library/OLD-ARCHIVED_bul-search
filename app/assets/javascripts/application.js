@@ -22,5 +22,6 @@
 
 //= require underscore-min
 
-//= require handlebars
+
+//= require handlebars.runtime
 //= require_tree ./templates
