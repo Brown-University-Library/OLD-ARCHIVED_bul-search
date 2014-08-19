@@ -52,13 +52,18 @@ def get_bdr query
 end
 
 def catalog_base_url
-  Rails.application.routes.url_helpers.catalog_index_path
+  Rails.application.config if Rails.application.config.respond_to?('relative_path_url')
 end
 
 def catalog_link id
   #byebug
-  #catalog_base_url + "#{id}"
-  Rails.application.routes.url_helpers.catalog_path(id)
+  burl = catalog_base_url
+  cpath = Rails.application.routes.url_helpers.catalog_path(id)
+  if burl.nil?
+    return cpath
+  else
+    return burl + cpath
+  end
 end
 
 def get_cat query
