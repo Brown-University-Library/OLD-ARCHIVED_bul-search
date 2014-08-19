@@ -69,7 +69,7 @@
 function bento(query) {
     $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
-        $('#summon-search i').hide();
+        $('#summon i').hide();
         var summonSet = response;
         addItemsToBox(summonSet.docs, 'summon');
         addMoreLink('summon', summonSet.more, summonSet.numFound);
