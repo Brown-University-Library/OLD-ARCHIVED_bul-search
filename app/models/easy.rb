@@ -138,7 +138,8 @@ def get_summon query
     "s.fvf" => "ContentType,Journal Article",
     "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
     "s.ho" => "t",
-    "s.ps" => 5
+    "s.ps" => 5,
+    "s.hl" => false,
   )
 
   results = Hash.new
@@ -147,8 +148,7 @@ def get_summon query
   search.documents.each do |doc|
     d = Hash.new
     d['id'] = doc.id
-    #Title without highlighting.
-    d['title'] = doc.title.gsub('<h>', '').gsub('</h>', '')
+    d['title'] = doc.title
     d['link'] = doc.link
     d['year'] = doc.publication_date.year
     doc.authors.each do |au|
