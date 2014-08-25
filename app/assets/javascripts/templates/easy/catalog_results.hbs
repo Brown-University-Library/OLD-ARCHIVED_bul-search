@@ -6,11 +6,11 @@
     <li>
         <a href="{{this.link}}">{{this.title_display}}</a>
         <br/>
-        {{#if this.author_display}}{{this.author_display}}.&nbsp;{{/if}}{{#if this.pub_date }}{{this.pub_date}}{{/if}}
+        <small>{{#if this.author_display}}{{this.author_display}}.&nbsp;{{/if}}{{#if this.pub_date }}{{this.pub_date}}{{/if}}
         {{#if this.online }}
             <br/>
             <a href="{{this.link}}" class="label label-info">Online</a>
-        {{/if}}
+        {{/if}}</small>
     </li>
     {{/each}}
 </ul>

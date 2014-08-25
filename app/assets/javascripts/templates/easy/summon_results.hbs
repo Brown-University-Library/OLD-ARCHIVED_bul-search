@@ -3,9 +3,9 @@
     <li>
         <a href="{{this.link}}">{{this.title}}</a>
         <br/>
-        {{this.author}}.&nbsp;{{#if this.year }}{{this.year}}{{/if}}
+        <small>{{this.author}}.&nbsp;{{#if this.year }}{{this.year}}{{/if}}
         <br/>
-        <em>{{this.venue}}</em>.&nbsp;{{#if this.volume }}Vol: {{ this.volume }}.&nbsp;{{/if}}{{#if this.issue }}Issue: {{ this.issue }}.&nbsp;{{/if}}{{#if this.start }}pg. {{this.start}}{{/if}}.
+        <em>{{this.venue}}</em>.&nbsp;{{#if this.volume }}Vol: {{ this.volume }}.&nbsp;{{/if}}{{#if this.issue }}Issue: {{ this.issue }}.&nbsp;{{/if}}{{#if this.start }}pg. {{this.start}}{{/if}}.</small>
     </li>
     {{/each}}
 </ul>

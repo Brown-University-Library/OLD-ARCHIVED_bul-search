@@ -83,8 +83,10 @@ end
 def format_icon format
   rawf = format.to_s.downcase
   case rawf
+  #need a icon
   when 'journal'
-    icon = "book-open"
+    #icon = "book-open"
+    return nil
   when 'music'
     return rawf
   when 'map'
