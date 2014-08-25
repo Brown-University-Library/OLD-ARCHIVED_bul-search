@@ -12,7 +12,7 @@ class Easy
         elsif source == 'bdr'
           @results = get_bdr query
         else
-          @results = get_cat query
+          @results = get_catalog query
         end
     end
 
@@ -77,7 +77,7 @@ def catalog_link id
   return burl + id
 end
 
-def get_cat query
+def get_catalog query
   solr_url = ENV['SOLR_URL']
 
   solr = RSolr.connect :url => solr_url
@@ -88,7 +88,7 @@ def get_cat query
       "group.field"=>"format",
       "group"=>true,
       "group.limit"=>5,
-      "fl"=>"id, title_display, author_display, pub_date, format, online",
+      "fl"=>"id, title_display, author_display, pub_date, format, online:online_b",
       "q"=>"#{query}"
   }
 
