@@ -98,6 +98,10 @@ def get_cat query
       grp_h['docs'] = []
       grp['doclist']['docs'].each do |doc|
           doc['link'] = catalog_link doc['id']
+          #Don't show pub_dates for Journals.  Not relevant.
+          if format == 'Journal'
+            doc.delete('pub_date')
+          end
           #Take first value of pub_date
           if doc.has_key?("pub_date")
             doc['pub_date'] = doc['pub_date'][0]
@@ -116,9 +120,13 @@ def get_cat query
   formats = []
   response['facet_counts']['facet_fields']['format'].each_slice(2) do |fgrp|
       (format, count) = fgrp
+      #Link to more results.
+      cat_url = catalog_base_url
+      enc_format = URI.escape(format)
       d = {
           'format'=>format,
-          'count'=>count
+          'count'=>count,
+          'more'=>"#{cat_url}/?f[format][]=#{enc_format}&q=#{query}"
       }
       formats << d
   end

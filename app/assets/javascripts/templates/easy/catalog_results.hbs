@@ -1,11 +1,12 @@
+{{#if this.other}}
+    <h3 class="bento-header">{{this.box}}</h3>
+{{/if}}
 <ul class="list-unstyled">
     {{#each docs}}
     <li>
-        <a href="{{this.link}}">{{this.title}}</a>
+        <a href="{{this.link}}">{{this.title_display}}</a>
         <br/>
-        {{this.author_display}}.&nbsp;{{#if this.pub_date }}{{this.pub_date}}{{/if}}
-        <br/>
-        <em>{{this.venue}}</em>.&nbsp;{{#if this.volume }}Vol: {{ this.volume }}.&nbsp;{{/if}}{{#if this.issue }}Issue: {{ this.issue }}.&nbsp;{{/if}}{{#if this.start }}pg. {{this.start}}{{/if}}.
+        {{#if this.author_display}}{{this.author_display}}.&nbsp;{{/if}}{{#if this.pub_date }}{{this.pub_date}}{{/if}}
     </li>
     {{/each}}
 </ul>

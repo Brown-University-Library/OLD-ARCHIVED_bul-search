@@ -33,14 +33,14 @@
             </div>
             <div class="row added-bentos">
             </div>
-            <div class="row">
+            <%#<div class="row">
                 <hr/>
                 <div id="bdr-search" class="col-md-12">
                     <h3>Digital Repository</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                 </div>
-            </div>
+            </div>%>
         </div>
     </div>
 <% end %>
@@ -58,14 +58,14 @@
     if (query == "") {
         console.debug('no query');
     } else {
-        catalogBentos(query);
-        bento(query);
-        bento_bdr(query);
+        catalogBoxes(query);
+        summonBox(query);
+        //bdrBento(query);
     };
 
 });
 
-function bento(query) {
+function summonBox(query) {
     $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
         $('#summon i').hide();
@@ -79,7 +79,7 @@ function bento(query) {
     });
 };
 
-function bento_bdr(query) {
+function bdrBento(query) {
     $.ajax(dataUrl + '&source=bdr', {
       success: function(response) {
         $('#bdr-search i').hide();
@@ -88,15 +88,22 @@ function bento_bdr(query) {
     });
 };
 
-function catalogBentos(query) {
+function catalogBoxes(query) {
     $.ajax(dataUrl, {
       success: function(response) {
         $('#books i').hide();
         var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
         if (books.length > 0) {
           var bookSet = books[0];
-          addItemsToBox(bookSet['docs'], 'books');
-          addMoreLink('books', bookSet.more, bookSet.numFound);
+          var context = {
+            //'boxID': 'books',
+            'box': "Books",
+            'docs': bookSet.docs,
+            'total': commaSeparatedNumber(bookSet.numFound),
+            'more': bookSet.more
+          };
+          var html = HandlebarsTemplates['easy/catalog_results'](context);
+          $('#books').append(html);
           //add other formats
           var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
           var sortedOther = sortByTopFormat(other);
@@ -140,9 +147,9 @@ function catalogLi(item, div) {
     $('#' + div + ' ul').append('<li>' + thumbSnippet + '<a href="' + item.link + '">' + item.title + '</a></li>');
 }
 
-function addBox( boxID, boxName ){
+function addBox(boxID){
   var bentos = $('#bentos div.added-bentos');
-  bentos.append('<div id="'+boxID+'" class="col-md-6"><h3 class="bento-header">'+boxName+'</h3><ul></ul><div class="more"></div></div>');
+  bentos.append('<div id="'+boxID+'" class="col-md-6"></div>');
 }
 
 function addOthers(others, num_others) {
@@ -150,9 +157,19 @@ function addOthers(others, num_others) {
     box.name = box.format
     box.id = "bento-"+index;
     if (index < num_others) {
-        addBox(box.id, box.name);
-        addItemsToBox( box.docs, box.id);
-        addMoreLink(box.id, box.more, box.numFound)
+        addBox(box.id);
+        //addItemsToBox( box.docs, box.id);
+        //addMoreLink(box.id, box.more, box.numFound)
+        //add other so we know it's not the book box.
+        var context = {
+            'other': true,
+            'box': box.format,
+            'docs': box.docs,
+            'total': commaSeparatedNumber(box.numFound),
+            'more': box.more
+          };
+        var html = HandlebarsTemplates['easy/catalog_results'](context);
+        $("#" + box.id).append(html);
     };
   });
 }
