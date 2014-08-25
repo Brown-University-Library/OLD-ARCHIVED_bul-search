@@ -64,7 +64,7 @@ def format_filter_url(query, format)
   #Link to more results.
   cat_url = catalog_base_url
   enc_format = URI.escape(format.to_s)
-  "#{cat_url}?f[enc_format][]=#{enc_format}&q=#{query}"
+  "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
 end
 
 def summon_url query
