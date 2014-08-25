@@ -1,5 +1,5 @@
 {{#if this.other}}
-    <h3 class="bento-header">{{this.box}}</h3>
+    <h3 class="bento-header">{{#if this.icon}}<i class="fa fa-{{this.icon}}"></i>{{/if}}{{this.box}}</h3>
 {{/if}}
 <ul class="list-unstyled">
     {{#each docs}}

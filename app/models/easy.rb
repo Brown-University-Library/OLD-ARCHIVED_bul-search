@@ -77,6 +77,28 @@ def catalog_link id
   return burl + id
 end
 
+#Returns string with icon class or nil
+#
+#Assign a font-awesome icon based on the format string.
+def format_icon format
+  rawf = format.to_s.downcase
+  case rawf
+  when 'journal'
+    icon = "book-open"
+  when 'music'
+    return rawf
+  when 'map'
+    icon = 'globe'
+  when 'newspaper'
+    return rawf
+  when 'visual material'
+    icon = 'film'
+  else
+    icon = nil
+  end
+  return icon
+end
+
 def get_catalog query
   solr_url = ENV['SOLR_URL']
 
@@ -118,6 +140,8 @@ def get_catalog query
       end
       #Link to more results.
       grp_h['more'] = format_filter_url(query, format)
+      #icons
+      grp_h['icon'] = format_icon(format)
       groups << grp_h
   end
 

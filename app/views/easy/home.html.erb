@@ -20,13 +20,13 @@
         <div id="bentos" class="col-md-9">
             <div class="row">
                 <div id="books" class="col-md-6">
-                    <h3>Books</h3>
+                    <h3><i class="fa fa-book"></i>Books</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more center-block"></div>
                 </div>
                 <div id="summon" class="col-md-6">
-                    <h3>Journal Articles</h3>
+                    <h3><i class="fa fa-copy"></i>Journal Articles</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <%#Handlebars template will be inserted here %>
                 </div>
@@ -70,7 +70,7 @@
 function summonBox(query) {
     $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
-        $('#summon i').hide();
+        $('#summon i.waiting').hide();
         var summonSet = response;
         //addItemsToBox(summonSet.docs, 'summon');
         //addMoreLink('summon', summonSet.more, summonSet.numFound);
@@ -86,7 +86,7 @@ function summonBox(query) {
 function bdrBento(query) {
     $.ajax(dataUrl + '&source=bdr', {
       success: function(response) {
-        $('#bdr-search i').hide();
+        $('#bdr-search i.waiting').hide();
         addItemsToBox(response.docs, 'bdr-search');
       }
     });
@@ -97,7 +97,7 @@ function bdrBento(query) {
 function catalogBoxes(query) {
     $.ajax(dataUrl, {
       success: function(response) {
-        $('#books i').hide();
+        $('#books i.waiting').hide();
         var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
         if (books.length > 0) {
           var bookSet = books[0];
@@ -160,6 +160,7 @@ function addOthers(others, num_others) {
         var context = {
             'other': true,
             'box': box.format,
+            'icon': box.icon,
             'docs': box.docs,
             'total': commaSeparatedNumber(box.numFound),
             'more': box.more
