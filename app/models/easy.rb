@@ -53,12 +53,24 @@ def get_bdr query
 end
 
 def easy_base_url
-  ENV['RAILS_RELATIVE_URL_ROOT'] + '/easy/'
+  relative_root = ENV['RAILS_RELATIVE_URL_ROOT']
+  base = '/easy/'
+  if relative_root
+    return relative_root + base
+  else
+    return base
+  end
 end
 
 def catalog_base_url
   #Rails.application.config.relative_url_root if Rails.application.config.respond_to?('relative_url_root')
-  ENV['RAILS_RELATIVE_URL_ROOT'] + '/catalog/'
+  relative_root = ENV['RAILS_RELATIVE_URL_ROOT']
+  base = '/catalog/'
+  if relative_root
+    return relative_root + base
+  else
+    return base
+  end
 end
 
 def format_filter_url(query, format)
