@@ -80,7 +80,7 @@ def get_cat query
       "group.field"=>"format",
       "group"=>true,
       "group.limit"=>5,
-      "fl"=>"id, title_display",
+      "fl"=>"id, title_display, author_display, pub_date, format, online",
       "q"=>"#{query}"
   }
 
@@ -97,12 +97,12 @@ def get_cat query
       grp_h['numFound'] = grp['doclist']['numFound']
       grp_h['docs'] = []
       grp['doclist']['docs'].each do |doc|
-          d = {
-              'id'=>doc['id'],
-              'title'=>doc['title_display'],
-          }
-          d['link'] = catalog_link doc['id']
-          grp_h['docs'] << d
+          doc['link'] = catalog_link doc['id']
+          #Take first value of pub_date
+          if doc.has_key?("pub_date")
+            doc['pub_date'] = doc['pub_date'][0]
+          end
+          grp_h['docs'] << doc
       end
       #Link to more results.
       cat_url = catalog_base_url

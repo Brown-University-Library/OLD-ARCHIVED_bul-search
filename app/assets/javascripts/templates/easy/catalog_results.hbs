@@ -1,0 +1,14 @@
+<ul class="list-unstyled">
+    {{#each docs}}
+    <li>
+        <a href="{{this.link}}">{{this.title}}</a>
+        <br/>
+        {{this.author_display}}.&nbsp;{{#if this.pub_date }}{{this.pub_date}}{{/if}}
+        <br/>
+        <em>{{this.venue}}</em>.&nbsp;{{#if this.volume }}Vol: {{ this.volume }}.&nbsp;{{/if}}{{#if this.issue }}Issue: {{ this.issue }}.&nbsp;{{/if}}{{#if this.start }}pg. {{this.start}}{{/if}}.
+    </li>
+    {{/each}}
+</ul>
+<div class="more center-block">
+    <a href="{{this.more}}">View {{this.total}} results</a>
+</div>
