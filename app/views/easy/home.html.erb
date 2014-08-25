@@ -128,7 +128,7 @@ function sortByTopFormat(results) {
 
 function addFormats(formats) {
     _.each(formats, function(item) {
-        $('#format-list').append('<li>' + item.format + ' (' + item.count + ')</li>');
+        $('#format-list').append('<li><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>');
     });
 }
 

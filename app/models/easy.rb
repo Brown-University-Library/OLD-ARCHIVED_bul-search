@@ -51,8 +51,13 @@ def get_bdr query
   response['response']
 end
 
+def easy_base_url
+  ENV['BASE_URL'] + '/easy/'
+end
+
 def catalog_base_url
-  Rails.application.config.relative_url_root if Rails.application.config.respond_to?('relative_url_root')
+  #Rails.application.config.relative_url_root if Rails.application.config.respond_to?('relative_url_root')
+  ENV['BASE_URL'] + '/catalog/'
 end
 
 def summon_url query
@@ -61,12 +66,8 @@ end
 
 def catalog_link id
   burl = catalog_base_url
-  cpath = Rails.application.routes.url_helpers.catalog_path(id)
-  if burl.nil?
-    return cpath
-  else
-    return burl + cpath
-  end
+  #cpath = Rails.application.routes.url_helpers.catalog_path(id)
+  return burl + id
 end
 
 def get_cat query
@@ -111,7 +112,7 @@ def get_cat query
       #Link to more results.
       cat_url = catalog_base_url
       enc_format = URI.escape(format)
-      grp_h['more'] = "#{cat_url}/?f[format][]=#{enc_format}&q=#{query}"
+      grp_h['more'] = "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
       groups << grp_h
   end
 
@@ -126,7 +127,7 @@ def get_cat query
       d = {
           'format'=>format,
           'count'=>count,
-          'more'=>"#{cat_url}/?f[format][]=#{enc_format}&q=#{query}"
+          'more'=>"#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
       }
       formats << d
   end
