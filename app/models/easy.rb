@@ -48,6 +48,7 @@ def get_bdr query
     doc['link'] = bdr_link doc['id']
     doc['thumbnail'] = bdr_thumbnail doc['id']
   end
+  response['response']['more'] = "//repository.library.brown.edu/studio/search_results/?search_terms=search_terms:#{query}&scope=Search"
   response['response']
 end
 
