@@ -60,6 +60,13 @@ def catalog_base_url
   ENV['BASE_URL'] + '/catalog/'
 end
 
+def format_filter_url(query, format)
+  #Link to more results.
+  cat_url = catalog_base_url
+  enc_format = URI.escape(format.to_s)
+  "#{cat_url}?f[enc_format][]=#{enc_format}&q=#{query}"
+end
+
 def summon_url query
   return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
 end
@@ -110,9 +117,7 @@ def get_cat query
           grp_h['docs'] << doc
       end
       #Link to more results.
-      cat_url = catalog_base_url
-      enc_format = URI.escape(format)
-      grp_h['more'] = "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
+      grp_h['more'] = format_filter_url(query, format)
       groups << grp_h
   end
 
@@ -121,13 +126,10 @@ def get_cat query
   formats = []
   response['facet_counts']['facet_fields']['format'].each_slice(2) do |fgrp|
       (format, count) = fgrp
-      #Link to more results.
-      cat_url = catalog_base_url
-      enc_format = URI.escape(format)
       d = {
           'format'=>format,
           'count'=>count,
-          'more'=>"#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
+          'more'=>format_filter_url(query, format)
       }
       formats << d
   end
