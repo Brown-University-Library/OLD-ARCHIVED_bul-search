@@ -1,6 +1,11 @@
 // Place all the styles related to the easy controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#bentos {
+    padding-bottom: 3em;
+}
+
 .start-over {
     margin-left: 2em;
 }
@@ -13,4 +18,12 @@
 #facets {
     background-color: #eee;
     height: 100%;
+}
+
+#bentos ul li {
+    padding-bottom: 1em;
+}
+
+#bentos .fa {
+    margin-right: .25em;
 }

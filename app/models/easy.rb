@@ -2,16 +2,17 @@ require 'json'
 require 'open-uri'
 require 'summon'
 require 'rsolr'
+require 'uri'
 
 class Easy
     def initialize source, query
         if source == 'summon'
           summon_rsp = get_summon query
-          @results = summon_rsp['response']['docs']
+          @results = summon_rsp['response']
         elsif source == 'bdr'
           @results = get_bdr query
         else
-          @results = get_cat query
+          @results = get_catalog query
         end
     end
 
@@ -50,14 +51,57 @@ def get_bdr query
   response['response']
 end
 
-def catalog_link id
-  if ENV['RAILS_ENV'] == 'development'
-    return "/find/catalog/#{id}"
-  end
-  "/catalog/#{id}"
+def easy_base_url
+  ENV['BASE_URL'] + '/easy/'
 end
 
-def get_cat query
+def catalog_base_url
+  #Rails.application.config.relative_url_root if Rails.application.config.respond_to?('relative_url_root')
+  ENV['BASE_URL'] + '/catalog/'
+end
+
+def format_filter_url(query, format)
+  #Link to more results.
+  cat_url = catalog_base_url
+  enc_format = URI.escape(format.to_s)
+  "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
+end
+
+def summon_url query
+  return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
+end
+
+def catalog_link id
+  burl = catalog_base_url
+  #cpath = Rails.application.routes.url_helpers.catalog_path(id)
+  return burl + id
+end
+
+#Returns string with icon class or nil
+#
+#Assign a font-awesome icon based on the format string.
+def format_icon format
+  rawf = format.to_s.downcase
+  case rawf
+  #need a icon
+  when 'journal'
+    #icon = "book-open"
+    return nil
+  when 'music'
+    return rawf
+  when 'map'
+    icon = 'globe'
+  when 'newspaper'
+    return rawf
+  when 'visual material'
+    icon = 'film'
+  else
+    icon = nil
+  end
+  return icon
+end
+
+def get_catalog query
   solr_url = ENV['SOLR_URL']
 
   solr = RSolr.connect :url => solr_url
@@ -68,7 +112,7 @@ def get_cat query
       "group.field"=>"format",
       "group"=>true,
       "group.limit"=>5,
-      "fl"=>"id, title_display",
+      "fl"=>"id, title_display, author_display, pub_date, format, online:online_b",
       "q"=>"#{query}"
   }
 
@@ -85,13 +129,21 @@ def get_cat query
       grp_h['numFound'] = grp['doclist']['numFound']
       grp_h['docs'] = []
       grp['doclist']['docs'].each do |doc|
-          d = {
-              'id'=>doc['id'],
-              'title'=>doc['title_display'],
-          }
-          d['link'] = catalog_link doc['id']
-          grp_h['docs'] << d
+          doc['link'] = catalog_link doc['id']
+          #Don't show pub_dates for Journals.  Not relevant.
+          if format == 'Journal'
+            doc.delete('pub_date')
+          end
+          #Take first value of pub_date
+          if doc.has_key?("pub_date")
+            doc['pub_date'] = doc['pub_date'][0]
+          end
+          grp_h['docs'] << doc
       end
+      #Link to more results.
+      grp_h['more'] = format_filter_url(query, format)
+      #icons
+      grp_h['icon'] = format_icon(format)
       groups << grp_h
   end
 
@@ -102,7 +154,8 @@ def get_cat query
       (format, count) = fgrp
       d = {
           'format'=>format,
-          'count'=>count
+          'count'=>count,
+          'more'=>format_filter_url(query, format)
       }
       formats << d
   end
@@ -122,7 +175,8 @@ def get_summon query
     "s.fvf" => "ContentType,Journal Article",
     "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
     "s.ho" => "t",
-    "s.ps" => 5
+    "s.ps" => 5,
+    "s.hl" => false,
   )
 
   results = Hash.new
@@ -134,10 +188,20 @@ def get_summon query
     d['title'] = doc.title
     d['link'] = doc.link
     d['year'] = doc.publication_date.year
+    doc.authors.each do |au|
+      d['author'] = au.fullname
+      break
+    end
+    d['venue'] = doc.publication_title  if doc.respond_to?('publication_title')
+    d['volume'] = doc.volume  if doc.respond_to?('volume')
+    d['issue'] = doc.issue  if doc.respond_to?('issue')
+    d['start'] = doc.start_page  if doc.respond_to?('start_page')
     results_docs << d
   end
 
   results['response'] = Hash.new
+  results['response']['more'] = summon_url(query)
   results['response']['docs'] = results_docs
+  results['response']['numFound'] = search.record_count
   return results
 end
