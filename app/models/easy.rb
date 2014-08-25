@@ -117,7 +117,7 @@ def get_catalog query
       "q"=>"#{query}"
   }
 
-  response = response = solr.get 'select', :params => qp
+  response = solr.get 'select', :params => qp
 
   out_data = {}
 
