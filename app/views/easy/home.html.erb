@@ -22,8 +22,8 @@
               <ul class="list-inline">
                 <li>Results:</li>
                 <li><i class="fa fa-arrow-down"></i><a href="#books">Books</a></li>
-                <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#summon">Journal Articles</a></li>
-                <li><i class="fa fa-arrow-down"></i><a href="#bdr-search">Digital Repository</a></li>
+                <li><i class="fa fa-arrow-down"></i><a href="#summon">Journal Articles</a></li>
+                <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#bdr-search">Digital Repository</a></li>
               </ul>
             </div>
             <div class="row">
@@ -179,10 +179,14 @@ function addOthers(others, num_others) {
         var html = HandlebarsTemplates['easy/catalog_results'](context);
         $("#" + box.id).append(html);
         //jump links
-        $('<li class="dynamic"><i class="fa fa-arrow-down"></i><a href="#' + box.id + '">' + box.name + '</a></li>').insertAfter('#jump-links #dynamic');
+        addToJumpLinks(box.id, box.name)
     };
   });
 }
+
+function addToJumpLinks(id, name) {
+  $('<li><i class="fa fa-arrow-down"></i><a href="#' + id + '">' + name + '</a></li>').insertBefore('#jump-links #dynamic');
+};
 
 //Pull parameters from the url.
 ///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript

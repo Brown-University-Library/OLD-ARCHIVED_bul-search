@@ -120,6 +120,14 @@ def format_icon format
   return icon
 end
 
+def plural_format format
+  if format == 'Music'
+    return format
+  else
+    return format + 's'
+  end
+end
+
 def get_catalog query
   solr_url = ENV['SOLR_URL']
 
@@ -144,6 +152,10 @@ def get_catalog query
   response['grouped']['format']['groups'].each do |grp|
       format = grp['groupValue']
       grp_h = {}
+      #Pluralize most formats.
+      # if !format.nil? and format != 'Music'
+      #   format = format + 's'
+      # end
       grp_h['format'] = format
       grp_h['numFound'] = grp['doclist']['numFound']
       grp_h['docs'] = []
