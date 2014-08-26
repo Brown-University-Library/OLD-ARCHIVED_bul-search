@@ -37,7 +37,7 @@ def get_bdr query
 
   qp = {
       :wt=>:json,
-      "fl"=>"id:pid, title:primary_title, thumb:thumbnail",
+      "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim",
       "q"=>"#{query}"
   }
   response = solr.get 'select', :params => qp
@@ -47,6 +47,12 @@ def get_bdr query
   response['response']['docs'].each do |doc|
     doc['link'] = bdr_link doc['id']
     doc['thumbnail'] = bdr_thumbnail doc['id']
+    #take first creator, year only
+    ['author', 'year'].each do |k|
+      if doc.has_key?(k)
+        doc[k] = doc[k][0]
+      end
+    end
   end
   response['response']['more'] = "//repository.library.brown.edu/studio/search_results/?search_terms=search_terms:#{query}&scope=Search"
   response['response']

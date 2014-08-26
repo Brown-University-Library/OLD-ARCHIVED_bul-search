@@ -18,14 +18,14 @@
             </div>
         </div>
         <div id="bentos" class="col-md-9">
-            <%#<div class="row jump-links">
-              <span>Results:</span>
+            <div class="row" id="jump-links">
               <ul class="list-inline">
-                <li><i class="fa fa-arrow-down"></i>Books</li>
-                <li><i class="fa fa-arrow-down"></i>Journal Articles</li>
-                <li><i class="fa fa-arrow-down"></i>Digital Repository</li>
+                <li>Results:</li>
+                <li><i class="fa fa-arrow-down"></i><a href="#books">Books</a></li>
+                <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#summon">Journal Articles</a></li>
+                <li><i class="fa fa-arrow-down"></i><a href="#bdr-search">Digital Repository</a></li>
               </ul>
-            </div>%>
+            </div>
             <div class="row">
                 <div id="books" class="col-md-6">
                     <h3><i class="fa fa-book"></i>Books</h3>
@@ -178,6 +178,8 @@ function addOthers(others, num_others) {
           };
         var html = HandlebarsTemplates['easy/catalog_results'](context);
         $("#" + box.id).append(html);
+        //jump links
+        $('<li class="dynamic"><i class="fa fa-arrow-down"></i><a href="#' + box.id + '">' + box.name + '</a></li>').insertAfter('#jump-links #maker .dynamic').filter(':last');
     };
   });
 }
