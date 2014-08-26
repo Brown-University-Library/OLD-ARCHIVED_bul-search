@@ -179,7 +179,7 @@ function addOthers(others, num_others) {
         var html = HandlebarsTemplates['easy/catalog_results'](context);
         $("#" + box.id).append(html);
         //jump links
-        $('<li class="dynamic"><i class="fa fa-arrow-down"></i><a href="#' + box.id + '">' + box.name + '</a></li>').insertAfter('#jump-links #maker .dynamic').filter(':last');
+        $('<li class="dynamic"><i class="fa fa-arrow-down"></i><a href="#' + box.id + '">' + box.name + '</a></li>').insertAfter('#jump-links #dynamic');
     };
   });
 }
