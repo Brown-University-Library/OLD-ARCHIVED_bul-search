@@ -18,6 +18,14 @@
             </div>
         </div>
         <div id="bentos" class="col-md-9">
+            <%#<div class="row jump-links">
+              <span>Results:</span>
+              <ul class="list-inline">
+                <li><i class="fa fa-arrow-down"></i>Books</li>
+                <li><i class="fa fa-arrow-down"></i>Journal Articles</li>
+                <li><i class="fa fa-arrow-down"></i>Digital Repository</li>
+              </ul>
+            </div>%>
             <div class="row">
                 <div id="books" class="col-md-6">
                     <h3><i class="fa fa-book"></i>Books</h3>
@@ -32,15 +40,16 @@
                 </div>
             </div>
             <div class="row added-bentos">
+              <hr/>
             </div>
-            <%#<div class="row">
+            <div class="row">
                 <hr/>
                 <div id="bdr-search" class="col-md-12">
                     <h3>Digital Repository</h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
-                    <ul></ul>
+                    <%#Handlebars template will be inserted here %>
                 </div>
-            </div>%>
+            </div>
         </div>
     </div>
 <% end %>
@@ -60,7 +69,7 @@
     } else {
         catalogBoxes(query);
         summonBox(query);
-        //bdrBento(query);
+        bdrBento(query);
     };
 
 });
@@ -87,7 +96,9 @@ function bdrBento(query) {
     $.ajax(dataUrl + '&source=bdr', {
       success: function(response) {
         $('#bdr-search i.waiting').hide();
-        addItemsToBox(response.docs, 'bdr-search');
+        var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
+        var html = HandlebarsTemplates['easy/bdr_results'](context);
+        $('#bdr-search').append(html);
       }
     });
 };
