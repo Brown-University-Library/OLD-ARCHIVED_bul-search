@@ -1,0 +1,21 @@
+{{! comment: called by `app/assets/javascripts/cat_rec_ava_HB.js - addStatus()` }}
+
+<div id="availability_manual">
+  <hr>
+
+  <h5 itemprop="copies">Copy Information</h5>
+
+  {{#each items}}
+
+  <dl class="dl-horizontal dl-invert">
+    <dt class="blacklight-callnumber_display">Call Number:</dt>
+    <dd class="blacklight-callnumber_display">{{ callnumber }}</dd>
+    <dt class="blacklight-location_display">Location:</dt>
+    <dd class="blacklight-location_display">{{ location }}</dd>
+    <dt class="blacklight-availability">Availability:</dt>
+    <dd class="blacklight-availability">{{ availability }}</dd>
+  </dl>
+
+  {{/each}}
+
+</div>
