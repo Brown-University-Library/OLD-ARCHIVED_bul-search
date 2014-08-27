@@ -15,6 +15,7 @@
             <div id="format-filter">
                 <h4>Format</h3>
                 <ul id="format-list"></ul>
+                <ul id="sorted-format-list"></ul>
             </div>
         </div>
         <div id="bentos" class="col-md-9">
@@ -72,9 +73,18 @@
         bdrBento(query);
         addNewspaperArticlesCount(query);
     };
+  });
+  //call when all ajax is complete
+  $( document ).ajaxStop(function() {
+    console.debug("Triggered ajaxStop handler." );
+    sortFilterFacetList();
+  });
 
-});
-
+function sortFilterFacetList() {
+  $('#format-list li').sort(function(a, b){
+   return $(a).text() > $(b).text()
+  }).appendTo('ul#sorted-format-list')
+};
 
 //Add the Journal Articles box via Summon.
 function summonBox(query) {
@@ -87,6 +97,12 @@ function summonBox(query) {
         var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
         var html = HandlebarsTemplates['easy/summon_results'](context);
         $('#summon').append(html);
+        //add count to facet on left
+        addFormats([{
+          'format': 'Journal Articles',
+          'more': summonSet.more,
+          'count': commaSeparatedNumber(summonSet.numFound)
+        }]);
       }
     });
 };
@@ -156,12 +172,12 @@ function addFormats(formats) {
 function addNewspaperArticlesCount(query) {
     $.ajax(dataUrl + '&source=newspaper_articles', {
       success: function(response) {
-        var item = {};
-        item.format = "Newspaper Articles"
-        item.more = response.more;
-        item.count = commaSeparatedNumber(response.numFound);
-        f = [item];
-        addFormats(f);
+        //add count to facet on left
+        addFormats([{
+          'format': 'Newspaper Articles',
+          'more': response.more,
+          'count': commaSeparatedNumber(response.numFound)
+        }]);
       }
     });
 };
