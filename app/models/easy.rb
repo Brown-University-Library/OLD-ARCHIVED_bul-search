@@ -9,6 +9,9 @@ class Easy
         if source == 'summon'
           summon_rsp = get_summon query
           @results = summon_rsp['response']
+        elsif source == 'newspaper_articles'
+          summon_rsp = get_summon_newspaper query
+          @results = summon_rsp['response']
         elsif source == 'bdr'
           @results = get_bdr query
         else
@@ -233,6 +236,29 @@ def get_summon query
   results['response'] = Hash.new
   results['response']['more'] = summon_url(query)
   results['response']['docs'] = results_docs
+  results['response']['numFound'] = search.record_count
+  return results
+end
+
+
+def get_summon_newspaper query
+  aid = ENV['SUMMON_ID']
+  akey = ENV['SUMMON_KEY']
+
+  @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
+  search = @service.search(
+    "s.q" => "#{query}",
+    "s.fvf" => "ContentType,Newspaper Article",
+    "s.ho" => "t",
+    "s.ps" => 1,
+    "s.hl" => false,
+  )
+
+  results = Hash.new
+  results_docs = Array.new
+  results['response'] = Hash.new
+  more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Newspaper%20Article,f&l=en&q=#{query}"
+  results['response']['more'] = more
   results['response']['numFound'] = search.record_count
   return results
 end

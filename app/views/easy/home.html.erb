@@ -70,6 +70,7 @@
         catalogBoxes(query);
         summonBox(query);
         bdrBento(query);
+        addNewspaperArticlesCount(query);
     };
 
 });
@@ -150,6 +151,20 @@ function addFormats(formats) {
         $('#format-list').append('<li><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>');
     });
 }
+
+//Add newspaper article count via Summon.
+function addNewspaperArticlesCount(query) {
+    $.ajax(dataUrl + '&source=newspaper_articles', {
+      success: function(response) {
+        var item = {};
+        item.format = "Newspaper Articles"
+        item.more = response.more;
+        item.count = commaSeparatedNumber(response.numFound);
+        f = [item];
+        addFormats(f);
+      }
+    });
+};
 
 
 //Creates a single bento box with given id.
