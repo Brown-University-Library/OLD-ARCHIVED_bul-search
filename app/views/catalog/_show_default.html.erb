@@ -1,8 +1,10 @@
 <%# default partial to display solr document fields in catalog show view -%>
 
-<div class="abstract">
-    <%= document['abstract_display'][0] %>
-</div>
+<% if document['abstract_display'] %>
+    <div class="abstract">
+        <%= document['abstract_display'][0] %>
+    </div>
+<% end %>
 
 <hr/>
 <h4>Details</h4>
