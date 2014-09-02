@@ -101,6 +101,8 @@ class CatalogController < ApplicationController
     config.add_show_field 'subtitle_vern_display', :label => 'Subtitle'
     config.add_show_field 'author_display', :label => 'Author'
     config.add_show_field 'author_vern_display', :label => 'Author'
+    config.add_show_field 'author_addl_display', :label => 'Other Author'
+    config.add_show_field 'pub_date', :label => 'Publication date'
     config.add_show_field 'format', :label => 'Format'
     config.add_show_field "subject_topic_facet", :label => 'Subject'
     config.add_show_field 'url_fulltext_display', :label => 'URL'
