@@ -32,7 +32,7 @@ function addStatus( json_output ) {
   // console.log( json_output );
   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
     context = json_output;
-    html = HandlebarsTemplates['catalog/cat_rec_ava_HB_TP2'](context);
+    html = HandlebarsTemplates['catalog/ctlg_rcrd_avlblty'](context);
     $("#availability").append( html );
   };
 }
