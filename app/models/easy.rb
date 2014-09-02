@@ -41,7 +41,8 @@ def get_bdr query
   qp = {
       :wt=>:json,
       "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim",
-      "q"=>"#{query}"
+      "q"=>"#{query}",
+      "rows"=>5
   }
   response = solr.get 'select', :params => qp
   response.deep_stringify_keys!
