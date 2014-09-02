@@ -7,7 +7,6 @@
 <%# this should be in a partial -%>
 
 <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
-
   <%= javascript_include_tag 'catalog_record_availability', 'data-turbolinks-track' => true %>
 
   <div id="doc_<%= @document.id.to_s.parameterize %>">

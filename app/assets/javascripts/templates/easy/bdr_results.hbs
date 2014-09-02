@@ -1,0 +1,16 @@
+<ul class="list-unstyled">
+    {{#each docs}}
+    <li>
+        <a href="{{this.link}}">{{this.title}}</a>
+        <br/>
+        <small>{{#if this.author}}{{this.author}}.&nbsp;{{/if}}{{#if this.year }}{{this.year}}{{/if}}
+        {{#if this.online }}
+            <br/>
+            <a href="{{this.link}}" class="label label-info">Online</a>
+        {{/if}}</small>
+    </li>
+    {{/each}}
+</ul>
+<div class="more center-block">
+    <a href="{{this.more}}">View {{this.total}} results</a>
+</div>
