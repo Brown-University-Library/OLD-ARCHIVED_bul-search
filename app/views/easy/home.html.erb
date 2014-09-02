@@ -117,9 +117,13 @@ function bdrBento(query) {
     $.ajax(dataUrl + '&source=bdr', {
       success: function(response) {
         $('#bdr-search i.waiting').hide();
-        var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
-        var html = HandlebarsTemplates['easy/bdr_results'](context);
-        $('#bdr-search').append(html);
+        if (response.docs.length > 0) {
+          var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
+          var html = HandlebarsTemplates['easy/bdr_results'](context);
+          $('#bdr-search').append(html);
+        } else {
+          $('#bdr-search').append('<h5>No results from the Brown Digital Repsitory.</h5>');
+        }
       }
     });
 };
@@ -176,12 +180,14 @@ function addFormats(formats) {
 function addNewspaperArticlesCount(query) {
     $.ajax(dataUrl + '&source=newspaper_articles', {
       success: function(response) {
-        //add count to facet on left
-        addFormats([{
-          'format': 'Newspaper Articles',
-          'more': response.more,
-          'count': commaSeparatedNumber(response.numFound)
-        }]);
+        if (response.numFound > 0) {
+          //add count to facet on left
+          addFormats([{
+            'format': 'Newspaper Articles',
+            'more': response.more,
+            'count': commaSeparatedNumber(response.numFound)
+          }]);
+        };
       }
     });
 };
