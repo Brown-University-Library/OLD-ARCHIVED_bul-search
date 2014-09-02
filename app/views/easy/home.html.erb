@@ -91,17 +91,22 @@ function summonBox(query) {
       success: function(response) {
         $('#summon i.waiting').hide();
         var summonSet = response;
-        //addItemsToBox(summonSet.docs, 'summon');
-        //addMoreLink('summon', summonSet.more, summonSet.numFound);
-        var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
-        var html = HandlebarsTemplates['easy/summon_results'](context);
-        $('#summon').append(html);
-        //add count to facet on left
-        addFormats([{
-          'format': 'Journal Articles',
-          'more': summonSet.more,
-          'count': commaSeparatedNumber(summonSet.numFound)
-        }]);
+        if (summonSet.length > 0) {
+          //addItemsToBox(summonSet.docs, 'summon');
+          //addMoreLink('summon', summonSet.more, summonSet.numFound);
+          var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
+          var html = HandlebarsTemplates['easy/summon_results'](context);
+          $('#summon').append(html);
+          //add count to facet on left
+          addFormats([{
+            'format': 'Journal Articles',
+            'more': summonSet.more,
+            'count': commaSeparatedNumber(summonSet.numFound)
+          }]);
+        } else {
+          var txt = "<a href=\"" + summonSet.all + "\">expanding your search</a>"
+          $('#summon').append('<h5>No results.  Try ' + txt + '</h5>');
+        };
       }
     });
 };
@@ -149,7 +154,7 @@ function catalogBoxes(query) {
           var wcUrl = $('#worldcat-search').attr('href');
           var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
           $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
-          $('#format-filter').hide();
+          //$('#format-filter').hide();
         };
       }
     });
