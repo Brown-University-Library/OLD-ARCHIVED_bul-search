@@ -91,17 +91,22 @@ function summonBox(query) {
       success: function(response) {
         $('#summon i.waiting').hide();
         var summonSet = response;
-        //addItemsToBox(summonSet.docs, 'summon');
-        //addMoreLink('summon', summonSet.more, summonSet.numFound);
-        var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
-        var html = HandlebarsTemplates['easy/summon_results'](context);
-        $('#summon').append(html);
-        //add count to facet on left
-        addFormats([{
-          'format': 'Journal Articles',
-          'more': summonSet.more,
-          'count': commaSeparatedNumber(summonSet.numFound)
-        }]);
+        if (summonSet.docs.length > 0) {
+          //addItemsToBox(summonSet.docs, 'summon');
+          //addMoreLink('summon', summonSet.more, summonSet.numFound);
+          var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
+          var html = HandlebarsTemplates['easy/summon_results'](context);
+          $('#summon').append(html);
+          //add count to facet on left
+          addFormats([{
+            'format': 'Journal Articles',
+            'more': summonSet.more,
+            'count': commaSeparatedNumber(summonSet.numFound)
+          }]);
+        } else {
+          var txt = "<a href=\"" + summonSet.all + "\">expanding your search</a>"
+          $('#summon').append('<h5>No results.  Try ' + txt + '</h5>');
+        };
       }
     });
 };
@@ -112,9 +117,13 @@ function bdrBento(query) {
     $.ajax(dataUrl + '&source=bdr', {
       success: function(response) {
         $('#bdr-search i.waiting').hide();
-        var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
-        var html = HandlebarsTemplates['easy/bdr_results'](context);
-        $('#bdr-search').append(html);
+        if (response.docs.length > 0) {
+          var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
+          var html = HandlebarsTemplates['easy/bdr_results'](context);
+          $('#bdr-search').append(html);
+        } else {
+          $('#bdr-search').append('<h5>No results from the Brown Digital Repository.</h5>');
+        }
       }
     });
 };
@@ -149,7 +158,7 @@ function catalogBoxes(query) {
           var wcUrl = $('#worldcat-search').attr('href');
           var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
           $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
-          $('#format-filter').hide();
+          //$('#format-filter').hide();
         };
       }
     });
@@ -171,12 +180,14 @@ function addFormats(formats) {
 function addNewspaperArticlesCount(query) {
     $.ajax(dataUrl + '&source=newspaper_articles', {
       success: function(response) {
-        //add count to facet on left
-        addFormats([{
-          'format': 'Newspaper Articles',
-          'more': response.more,
-          'count': commaSeparatedNumber(response.numFound)
-        }]);
+        if (response.numFound > 0) {
+          //add count to facet on left
+          addFormats([{
+            'format': 'Newspaper Articles',
+            'more': response.more,
+            'count': commaSeparatedNumber(response.numFound)
+          }]);
+        };
       }
     });
 };

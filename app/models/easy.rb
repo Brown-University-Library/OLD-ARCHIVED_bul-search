@@ -41,7 +41,8 @@ def get_bdr query
   qp = {
       :wt=>:json,
       "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim",
-      "q"=>"#{query}"
+      "q"=>"#{query}",
+      "rows"=>5
   }
   response = solr.get 'select', :params => qp
   response.deep_stringify_keys!
@@ -89,8 +90,16 @@ def format_filter_url(query, format)
   "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
 end
 
-def summon_url query
-  return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
+#Produce a Brown Summon link.
+#
+#For searches with no results, return the link to Summon searches
+#that include materials outside fo the Brown collection.
+def summon_url(query, filtered)
+  if filtered == true
+    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
+  else
+    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=f&q=#{query}"
+  end
 end
 
 def catalog_link id
@@ -234,7 +243,8 @@ def get_summon query
   end
 
   results['response'] = Hash.new
-  results['response']['more'] = summon_url(query)
+  results['response']['more'] = summon_url(query, true)
+  results['response']['all'] = summon_url(query, false)
   results['response']['docs'] = results_docs
   results['response']['numFound'] = search.record_count
   return results

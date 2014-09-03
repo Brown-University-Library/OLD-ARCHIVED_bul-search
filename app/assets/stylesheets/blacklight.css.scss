@@ -4,6 +4,7 @@ $brand-primary: #c00404;
 
 $logo_image: 'bul/brown_logo.png';
 
+@import "bootstrap-sprockets";
 @import 'bootstrap';
 @import 'blacklight/blacklight';
 

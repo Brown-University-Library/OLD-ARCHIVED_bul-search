@@ -60,7 +60,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'building_facet', :label => 'Location'
     config.add_facet_field 'format', :label => 'Format'
     config.add_facet_field 'pub_date', :label => 'Publication Year', :single => true
-    config.add_facet_field 'subject_topic_facet', :label => 'Topic', :limit => 20 
+    config.add_facet_field 'topic_facet', :label => 'Topic', :limit => 20 
     config.add_facet_field 'language_facet', :label => 'Language', :limit => true 
     #config.add_facet_field 'lc_1letter_facet', :label => 'Call Number' 
     #config.add_facet_field 'subject_geo_facet', :label => 'Region' 
@@ -101,15 +101,15 @@ class CatalogController < ApplicationController
     config.add_show_field 'subtitle_vern_display', :label => 'Subtitle'
     config.add_show_field 'author_display', :label => 'Author'
     config.add_show_field 'author_vern_display', :label => 'Author'
+    config.add_show_field 'author_addl_display', :label => 'Other Author'
+    config.add_show_field 'pub_date', :label => 'Publication date'
     config.add_show_field 'format', :label => 'Format'
     config.add_show_field "subject_topic_facet", :label => 'Subject'
-    config.add_show_field 'url_fulltext_display', :label => 'URL'
-    config.add_show_field 'url_suppl_display', :label => 'More Information'
     config.add_show_field 'language_facet', :label => 'Language'
     config.add_show_field 'published_display', :label => 'Published'
     config.add_show_field 'published_vern_display', :label => 'Published'
-    config.add_show_field 'lc_callnum_display', :label => 'Call number'
     config.add_show_field 'isbn_t', :label => 'ISBN'
+    config.add_show_field 'issn_t', :label => 'ISSN'
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
