@@ -5,6 +5,7 @@
   - Hits availability api.
   - Determines summary availability.
   - Builds html & inserts it into dom.
+- Loaded by `app/views/catalog/_search_results.html.erb`.
 */
 
 $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
@@ -66,14 +67,11 @@ function populateDiv( the_doc, availability_status ) {
 function buildAvailabilityHtml( availability_status ) {
   /* Builds availability html. (TODO: replace color with css classes.)
    * Called by populateDiv() */
-  var color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
-  availability_html = [
-    '<dl class="document-metadata dl-horizontal dl-invert">',
-      '<dt class="blacklight-summary_availability">Availability:</dt>',
-      '<dd class="blacklight-summary_availability">',
-        '<span class="summary_availability" style="color:' + color_dict[availability_status] + '">' +availability_status + '</span>',
-      '</dd>',
-    '</dl>'
-  ].join('\n');
+  color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
+  context = {
+      "availability_color": color_dict[availability_status],
+      "availability_status": availability_status
+  };
+  availability_html = HandlebarsTemplates['catalog/ctlg_rslts_avlblty'](context);
   return availability_html;
 }

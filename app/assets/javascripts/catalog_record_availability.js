@@ -1,8 +1,9 @@
 /*
-Loaded by `app/views/catalog/show.html.erb`.
-- Grabs bib_id from dom.
-- Hits availability api.
-- Builds html & inserts it into dom.
+- Displays availability status of all items for given bib.
+  - Grabs bib_id from dom.
+  - Hits availability api.
+  - Builds html & inserts it into dom.
+- Loaded by `app/views/catalog/show.html.erb`.
 */
 
 var bib_id = null;
@@ -28,8 +29,6 @@ function getBibId() {
 function addStatus( json_output ) {
   /* Calls html builders & updates DOM.
    * Called on doc.ready */
-  // console.log( "json output..." );
-  // console.log( json_output );
   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
     context = json_output;
     html = HandlebarsTemplates['catalog/ctlg_rcrd_avlblty'](context);
