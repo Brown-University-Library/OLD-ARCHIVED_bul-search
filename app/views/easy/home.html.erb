@@ -91,7 +91,7 @@ function summonBox(query) {
       success: function(response) {
         $('#summon i.waiting').hide();
         var summonSet = response;
-        if (summonSet.length > 0) {
+        if (summonSet.docs.length > 0) {
           //addItemsToBox(summonSet.docs, 'summon');
           //addMoreLink('summon', summonSet.more, summonSet.numFound);
           var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
