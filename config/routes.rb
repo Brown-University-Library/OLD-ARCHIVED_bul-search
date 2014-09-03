@@ -2,6 +2,7 @@ BulSearch::Application.routes.draw do
   get "easy/search"
   root :to => "catalog#index"
   blacklight_for :catalog
+  post 'catalog/sms' => 'catalog#sms'
   Blacklight::Marc.add_routes(self)
   devise_for :users
 
