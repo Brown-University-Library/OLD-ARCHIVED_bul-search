@@ -105,12 +105,9 @@ class CatalogController < ApplicationController
     config.add_show_field 'pub_date', :label => 'Publication date'
     config.add_show_field 'format', :label => 'Format'
     config.add_show_field "subject_topic_facet", :label => 'Subject'
-    config.add_show_field 'url_fulltext_display', :label => 'URL'
-    config.add_show_field 'url_suppl_display', :label => 'More Information'
     config.add_show_field 'language_facet', :label => 'Language'
     config.add_show_field 'published_display', :label => 'Published'
     config.add_show_field 'published_vern_display', :label => 'Published'
-    config.add_show_field 'lc_callnum_display', :label => 'Call number'
     config.add_show_field 'isbn_t', :label => 'ISBN'
 
     # "fielded" search configuration. Used by pulldown among other places.

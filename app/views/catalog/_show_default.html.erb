@@ -5,16 +5,20 @@
         <%= document['abstract_display'][0] %>
     </div>
 <% end %>
+
+
+<%# Check for access urls.  -%>
 <% if has_access_urls(document) == true %>
-<hr/>
-<h4>Available online</h4>
-    <ul>
-    <% access_urls(document).each do |access| -%>
-        <%= access['url'] %>
-        <li><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
-    <% end -%>
-    </ul>
+    <hr/>
+    <h4>Available online</h4>
+        <ul>
+        <% access_urls(document).each do |access| -%>
+            <%= access['url'] %>
+            <li><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
+        <% end -%>
+        </ul>
 <% end %>
+
 <hr/>
 <h4>Details</h4>
 <dl class="dl-horizontal  dl-invert record-page">
@@ -25,3 +29,4 @@
     <% end -%>
   <% end -%>
 </dl>
+
