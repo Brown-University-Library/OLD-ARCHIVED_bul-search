@@ -17,9 +17,8 @@ module BlacklightHelper
     url_value = document['url_fulltext_display']
     url_label = document['url_suppl_display']
     unless url_value.nil?  || url_label.nil?
-        return url_label.zip(url_value).map{|l, u| {:label => l, :url => u || "Available online"} }
+        return url_label.zip(url_value).map{|l, u| {:label => l || "Available online", :url => u} }
     end
-    return []
   end
 
 end
