@@ -116,15 +116,17 @@ def format_icon format
   case rawf
   #need a icon
   when 'journal'
-    #icon = "book-open"
-    return nil
-  when 'music'
-    return rawf
+    #return 'book-open'
+    return
+  when 'sound recording'
+    return 'volume-up'
+  when 'musical score'
+    return 'music'
   when 'map'
     icon = 'globe'
   when 'newspaper'
     return rawf
-  when 'visual material'
+  when 'video'
     icon = 'film'
   else
     icon = nil
