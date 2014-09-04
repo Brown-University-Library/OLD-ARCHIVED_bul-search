@@ -15,9 +15,9 @@ module BlacklightHelper
   #Returns a hash with links and label text.
   def access_urls document
     url_value = document['url_fulltext_display']
-    url_label = document['url_suppl_display']
-    unless url_value.nil?  || url_label.nil?
-        return url_label.zip(url_value).map{|l, u| {:label => l || "Available online", :url => u} }
+    url_label = document['url_suppl_display'] ||= ["Available online"]
+    unless url_value.nil?
+        return url_label.zip(url_value).map{|l, u| {:label => l, :url => u} }
     end
   end
 
