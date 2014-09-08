@@ -60,17 +60,17 @@ function determineAvailability( response_object, the_doc ) {
 function populateDiv( the_doc, availability_status ) {
   /* Builds and updates html.
    * Called by getAvailabilityData() */
-  class_status = 'status_' + availability_status
-  availability_html = buildAvailabilityHtml( availability_status, class_status );
+  availability_html = buildAvailabilityHtml( availability_status );
   $( the_doc ).append( availability_html );
 }
 
-function buildAvailabilityHtml( availability_status, class_status ) {
-  /* Builds availability html.
+function buildAvailabilityHtml( availability_status ) {
+  /* Builds availability html. (TODO: replace color with css classes.)
    * Called by populateDiv() */
+  color_dict = { "available": "green", "unavailable": "red", "unknown": "purple" };
   context = {
-      'class_status': class_status,
-      'availability_status': availability_status
+      "availability_color": color_dict[availability_status],
+      "availability_status": availability_status
   };
   availability_html = HandlebarsTemplates['catalog/ctlg_rslts_avlblty'](context);
   return availability_html;
