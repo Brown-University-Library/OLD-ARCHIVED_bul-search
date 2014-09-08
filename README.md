@@ -75,3 +75,9 @@ The `bul-search` source code is checkout out to `/opt/local/bul-search-src`.  Th
  * `cd /opt/local/bul-search-src`
  * `git pull`
  * `touch tmp/restart.txt`
+
+#Solr queries
+
+## Fort stats
+
+ * All formats `facet.field=format&fact.sort=count&facet=true&rows=0&facet.limit=50&facet.mincount=1`
