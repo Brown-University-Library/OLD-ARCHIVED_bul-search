@@ -58,7 +58,7 @@ class CatalogController < ApplicationController
     # facet bar
     config.add_facet_field 'access_facet', :label => 'Access'
     config.add_facet_field 'building_facet', :label => 'Location'
-    config.add_facet_field 'format', :label => 'Format'
+    config.add_facet_field 'format', :label => 'Format', :limit => true
     config.add_facet_field 'region_facet', :label => 'Region', :limit => 20
     config.add_facet_field 'pub_date', :label => 'Publication Year', :single => true
     config.add_facet_field 'language_facet', :label => 'Language', :limit => true 
