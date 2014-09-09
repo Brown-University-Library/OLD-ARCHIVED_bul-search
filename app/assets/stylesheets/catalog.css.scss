@@ -1,0 +1,21 @@
+// Place all the styles related to the catalog controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+// availability statuses set in:
+// - `app/assets/javascripts/catalog_results_availability.js` and displayed in...
+// - `app/assets/javascripts/templates/catalog/ctlg_rslts_avlblty.hbs`
+
+.status_available {
+    color: green;
+}
+
+.status_unavailable {
+    color: red;
+}
+
+.status_unknown {
+    color: purple;
+}
+
