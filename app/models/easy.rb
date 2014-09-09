@@ -58,7 +58,7 @@ def get_bdr query
       end
     end
   end
-  response['response']['more'] = "/bdr/?utf8=✓&search_field=text&q=#{query}"
+  response['response']['more'] = ENV['BDR_URL'] + "?utf8=✓&search_field=text&q=#{query}"
   response['response']
 end
 
