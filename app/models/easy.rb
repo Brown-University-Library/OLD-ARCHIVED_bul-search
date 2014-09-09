@@ -26,7 +26,7 @@ end
 
 def bdr_link id
   item_url = ENV['BDR_ITEM_URL']
-  "#{item_url}/#{id}/"
+  "#{item_url}/#{id}"
 end
 
 def bdr_thumbnail id
@@ -58,7 +58,7 @@ def get_bdr query
       end
     end
   end
-  response['response']['more'] = "//repository.library.brown.edu/studio/search_results/?search_terms=search_terms:#{query}&scope=Search"
+  response['response']['more'] = ENV['BDR_URL'] + "?utf8=✓&search_field=text&q=#{query}"
   response['response']
 end
 
