@@ -15,6 +15,7 @@ class BdrController < ApplicationController
     config.default_solr_params = { 
       :qt => 'search',
       :rows => 10,
+      :fl => 'id:pid,*',
       :facet => 'true',
       'facet.mincount' => 1,
       'fq' => 'discover:BDR_PUBLIC',
