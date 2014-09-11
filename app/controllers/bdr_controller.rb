@@ -29,7 +29,7 @@ class BdrController < ApplicationController
     #
     config.default_document_solr_params = {
       :qt => 'search',
-      :fl => '*',
+      :fl => 'id:pid,*',
       :rows => 1,
       :q => '{!raw f=pid v=$id}' 
     }
