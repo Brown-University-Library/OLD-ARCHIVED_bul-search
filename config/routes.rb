@@ -8,8 +8,8 @@ BulSearch::Application.routes.draw do
 
   get 'easy/' => 'easy#home', as: :easyS
   get 'easy/search'
-  get 'bdr' => 'bdr#index'
-  get 'bdr/:id' => 'bdr#show'
+  get 'bdr' => 'bdr#index', as: :bdr_index
+  get 'bdr/:id' => 'bdr#show', as: :bdr
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
