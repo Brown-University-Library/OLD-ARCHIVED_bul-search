@@ -5,7 +5,7 @@ require 'blacklight/catalog'
 class BdrController < ApplicationController  
 
   include Blacklight::Catalog
-  include BlacklightAdvancedSearch::ParseBasicQ
+  #include BlacklightAdvancedSearch::ParseBasicQ
 
   configure_blacklight do |config|
     # solr path which will be added to solr base url before the other solr params.
