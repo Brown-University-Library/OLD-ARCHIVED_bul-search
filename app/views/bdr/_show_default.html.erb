@@ -1,4 +1,8 @@
-<%# default partial to display solr document fields in bdr show view -%>
+<%# default partial to display solr document fields in catalog show view -%>
+<% if document['bdr_data']['display_inline'] %>
+<%= document['bdr_data']['display_inline'].html_safe %>
+<% end %>
+
 <dl class="dl-horizontal  dl-invert">
   <% document_show_fields(document).each do |solr_fname, field| -%>
     <% if should_render_show_field? document, field %>
@@ -7,3 +11,15 @@
     <% end -%>
   <% end -%>
 </dl>
+
+<h2>Files (content)</h2>
+<p>
+<% document['bdr_data']['links']['content_datastreams'].each do |key, content_ds| -%>
+  <a href="<%= content_ds %>"><%= key %></a>
+<% end -%>
+
+<h2>Files (descriptive)</h2>
+<p>
+<% document['bdr_data']['links']['descriptive_datastreams'].each do |key, content_ds| -%>
+  <a href="<%= content_ds %>"><%= key %></a>
+<% end -%>

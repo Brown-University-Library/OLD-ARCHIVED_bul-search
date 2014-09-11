@@ -21,4 +21,28 @@ module BlacklightHelper
     end
   end
 
+  ##Overridden here to allow for special BDR item viewing.
+  # given a doc and action_name, this method attempts to render a partial template
+  # based on the value of doc[:format]
+  # if this value is blank (nil/empty) the "default" is used
+  # if the partial is not found, the "default" partial is rendered instead
+  def render_document_partial(doc, action_name, locals = {})
+    format = document_partial_name(doc)
+    if (action_name == :show) && (controller_name == 'bdr')
+      doc['bdr_data'] = bdr_grab_item_api_data(doc)
+    end
+
+    document_partial_path_templates.each do |str|
+      # XXX rather than handling this logic through exceptions, maybe there's a Rails internals method
+      # for determining if a partial template exists..
+      begin
+        return render :partial => (str % { :action_name => action_name, :format => format, :index_view_type => document_index_view_type }), :locals => locals.merge({:document=>doc})
+      rescue ActionView::MissingTemplate
+        nil
+      end
+    end
+
+    return ''
+  end
+
 end
