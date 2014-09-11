@@ -154,8 +154,4 @@ class BdrController < ApplicationController
     {url: ENV['BDR_SOLR_URL']}
   end
 
-  def url_for_document doc, options={}
-    "/bdr/#{doc.id}"
-  end
-
 end 
