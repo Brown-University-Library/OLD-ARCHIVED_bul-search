@@ -42,6 +42,8 @@ class BdrController < ApplicationController
     config.show.title_field = 'primary_title'
     config.show.display_type_field = 'object_type'
 
+    config.show.route = {:controller => :current}
+
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
     #
