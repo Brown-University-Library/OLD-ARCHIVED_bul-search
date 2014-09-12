@@ -6,14 +6,12 @@
 - Loaded by `app/views/catalog/show.html.erb`.
 */
 
-var bib_id = null;
-var all_items_html = '';
 
 $(document).ready(
   function(){
     bib_id = getBibId();
     api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
-    $.getJSON( api_url, addStatus );
+    $.getJSON( api_url, determine_ezb_availability );
   }
 );
 
@@ -26,12 +24,95 @@ function getBibId() {
   return bib_id;
 }
 
-function addStatus( json_output ) {
-  /* Calls html builders & updates DOM.
+function determine_ezb_availability( json_output ) {
+  /* Determines whether easyBorrow button should display.
    * Called on doc.ready */
-  if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
-    context = json_output;
-    html = HandlebarsTemplates['catalog/ctlg_rcrd_avlblty'](context);
-    $("#availability").append( html );
-  };
+  var show_ezb_button = false; var openurl = null;
+  if (json_output['items'].length > 0 ) {  //check for items before updating HTML.
+    var available_item = _.find(  // _.find() stops processing on first find
+      json_output['items'],
+      function( item ) {
+        if ( item['is_available'] == true ){ return item; } } );
+    if ( ! available_item ) {
+      show_ezb_button = true;
+      openurl = grab_openurl();
+    }
+    build_html( json_output, show_ezb_button, openurl );
+  }
 }
+
+function grab_openurl() {
+  /* Grabs and returns item's openurl created by blacklight from solr's marcxml.
+   * Called by determine_ezb_availability() */
+  // return "https://library.brown.edu/easyarticle/borrow/?ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info:ofi/fmt:kev:mtx:book&amp;amp;rfr_id=info:sid/blacklight.rubyforge.org:generator&amp;amp;rft.genre=book&amp;amp;rft.btitle=Beat Zen, square Zen, and Zen. &amp;amp;rft.title=Beat Zen, square Zen, and Zen. &amp;amp;rft.au=Watts, Alan,&amp;amp;rft.date=[c1959]&amp;amp;rft.place=[San Francisco]&amp;amp;rft.pub=City Lights Books&amp;amp;rft.edition=&amp;amp;rft.isbn=";
+  openurl_param = $(".Z3988")[0].title;
+  openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
+  console.log( 'openurl, ' + openurl );
+  return openurl;
+}
+
+function build_html( json_output, show_ezb_button, openurl ) {
+  /* Calls template for html, and updates DOM.
+   * Called by determine_ezb_availability() */
+  console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
+  console.log( 'show_ezb_button, ' + show_ezb_button );
+  context = json_output;
+  context['show_ezb_button'] = show_ezb_button;
+  context['openurl'] = openurl
+  html = HandlebarsTemplates['catalog/ctlg_rcrd_avlblty'](context);
+  $("#availability").append( html );
+}
+
+// function determine_ezb_availability( json_output ) {
+//   /* Calls html builders & updates DOM.
+//    * Called on doc.ready */
+//   console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
+//   var summary_availability_status = "unknown";
+//   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
+//     var available_items = _.filter(
+//       json_output['items'],
+//       function( item ){
+//         if ( item['is_available'] == true ){
+//           return item;
+//         }
+//       });
+//     console.log( 'available_items, ' + JSON.stringify(available_items, undefined, 2) );
+//     if ( available_items.length > 0 ) {
+//       summary_availability_status = 'available';
+//     } else {
+//       summary_availability_status = 'unavailable';
+//     }
+//     console.log( 'summary_availability_status, ' + summary_availability_status );
+//     console.log( 'next, call build_html' );
+//   }
+// }
+
+// function determine_ezb_availability( json_output ) {
+//   /* Calls html builders & updates DOM.
+//    * Called on doc.ready */
+//   console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
+//   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
+//     var summary_availability_status = "unknown";
+//     for ( var index_key in json_output['items'] ){
+//       item = json_output['items'][index_key]
+//       if ( item["is_available"] == true ) {
+//         summary_availability_status = "available";
+//         break;
+//       } else if ( item["is_available"] == false ) {
+//         summary_availability_status = "unavailable";
+//       }
+//     }
+//     console.log( 'summary_availability_status, ' + summary_availability_status );
+//     console.log( 'next, call build_html' );
+//   }
+// }
+
+// function addStatus( json_output ) {
+//   /* Calls html builders & updates DOM.
+//    * Called on doc.ready */
+//   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
+//     context = json_output;
+//     html = HandlebarsTemplates['catalog/ctlg_rcrd_avlblty'](context);
+//     $("#availability").append( html );
+//   };
+// }

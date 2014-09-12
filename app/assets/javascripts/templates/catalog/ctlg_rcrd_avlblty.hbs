@@ -18,4 +18,31 @@
 
   {{/each}}
 
+  {{#if show_ezb_button}}
+
+  <style type="text/css">
+    #ezb_button {
+      display: block;
+      width: 115px;
+      height: 25px;
+      background: #c00404;
+      padding: 2px;
+      text-align: center;
+      border-radius: 2px;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+
+  <dl class="dl-horizontal dl-invert">
+    <dd>
+      <a id="ezb_button" href="{{ openurl }}">
+        Request Item
+      </a>
+    </dd>
+  </dl>
+
+  {{/if}}
+
+
 </div>
