@@ -34,12 +34,12 @@
     <% end %>
     <% if @document.respond_to?( :to_email_text ) %>
       <li class="email">
-      <%= link_to t('blacklight.tools.email'), email_catalog_path(:id => @document), {:id => 'emailLink', :data => {:ajax_modal => "trigger"}} %>
+      <%= link_to t('blacklight.tools.email'), email_bdr_path(:id => @document), {:id => 'emailLink', :data => {:ajax_modal => "trigger"}} %>
       </li>
     <%- end -%>
     <%- if @document.respond_to?( :to_sms_text ) -%>
       <li class="sms">
-      <%= link_to t('blacklight.tools.sms'), sms_catalog_path(:id => @document), {:id => 'smsLink', :data => {:ajax_modal => "trigger"}} %>
+      <%= link_to t('blacklight.tools.sms'), sms_bdr_path(:id => @document), {:id => 'smsLink', :data => {:ajax_modal => "trigger"}} %>
       </li>
     <%- end -%>
     
