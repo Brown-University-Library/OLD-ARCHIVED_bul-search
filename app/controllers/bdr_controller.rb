@@ -11,11 +11,13 @@ class BdrController < ApplicationController
     # solr path which will be added to solr base url before the other solr params.
     config.solr_path = 'search'
 
+    config.solr_document_model = BdrSolrDocument
+
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = { 
       :qt => 'search',
       :rows => 10,
-      :fl => 'id:pid,*',
+      #:fl => 'id:pid,*',
       :facet => 'true',
       'facet.mincount' => 1,
       'fq' => 'discover:BDR_PUBLIC',
@@ -29,9 +31,9 @@ class BdrController < ApplicationController
     #
     config.default_document_solr_params = {
       :qt => 'search',
-      :fl => 'id:pid,*',
+      #:fl => 'id:pid,*',
       :rows => 1,
-      :q => '{!raw f=pid v=$id}' 
+      #:q => '{!raw f=pid v=$id}' 
     }
 
     # solr field configuration for search results/index views
