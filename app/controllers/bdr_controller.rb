@@ -33,7 +33,7 @@ class BdrController < ApplicationController
       :qt => 'search',
       #:fl => 'id:pid,*',
       :rows => 1,
-      #:q => '{!raw f=pid v=$id}' 
+      :q => '{!raw f=pid v=$id}'
     }
 
     # solr field configuration for search results/index views
