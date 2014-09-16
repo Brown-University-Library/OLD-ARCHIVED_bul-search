@@ -47,15 +47,15 @@ function grab_openurl() {
   // return "https://library.brown.edu/easyarticle/borrow/?ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info:ofi/fmt:kev:mtx:book&amp;amp;rfr_id=info:sid/blacklight.rubyforge.org:generator&amp;amp;rft.genre=book&amp;amp;rft.btitle=Beat Zen, square Zen, and Zen. &amp;amp;rft.title=Beat Zen, square Zen, and Zen. &amp;amp;rft.au=Watts, Alan,&amp;amp;rft.date=[c1959]&amp;amp;rft.place=[San Francisco]&amp;amp;rft.pub=City Lights Books&amp;amp;rft.edition=&amp;amp;rft.isbn=";
   openurl_param = $(".Z3988")[0].title;
   openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
-  console.log( 'openurl, ' + openurl );
+  //console.log( 'openurl, ' + openurl );
   return openurl;
 }
 
 function build_html( json_output, show_ezb_button, openurl ) {
   /* Calls template for html, and updates DOM.
    * Called by determine_ezb_availability() */
-  console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
-  console.log( 'show_ezb_button, ' + show_ezb_button );
+  //console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
+  //console.log( 'show_ezb_button, ' + show_ezb_button );
   context = json_output;
   context['show_ezb_button'] = show_ezb_button;
   context['openurl'] = openurl
@@ -66,7 +66,7 @@ function build_html( json_output, show_ezb_button, openurl ) {
 // function determine_ezb_availability( json_output ) {
 //   /* Calls html builders & updates DOM.
 //    * Called on doc.ready */
-//   console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
+//   //console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
 //   var summary_availability_status = "unknown";
 //   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
 //     var available_items = _.filter(
@@ -76,21 +76,21 @@ function build_html( json_output, show_ezb_button, openurl ) {
 //           return item;
 //         }
 //       });
-//     console.log( 'available_items, ' + JSON.stringify(available_items, undefined, 2) );
+//     //console.log( 'available_items, ' + JSON.stringify(available_items, undefined, 2) );
 //     if ( available_items.length > 0 ) {
 //       summary_availability_status = 'available';
 //     } else {
 //       summary_availability_status = 'unavailable';
 //     }
-//     console.log( 'summary_availability_status, ' + summary_availability_status );
-//     console.log( 'next, call build_html' );
+//     //console.log( 'summary_availability_status, ' + summary_availability_status );
+//     //console.log( 'next, call build_html' );
 //   }
 // }
 
 // function determine_ezb_availability( json_output ) {
 //   /* Calls html builders & updates DOM.
 //    * Called on doc.ready */
-//   console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
+//   //console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
 //   if (json_output['items'].length > 0 ) {  //check for items before adding HTML.
 //     var summary_availability_status = "unknown";
 //     for ( var index_key in json_output['items'] ){
@@ -102,8 +102,8 @@ function build_html( json_output, show_ezb_button, openurl ) {
 //         summary_availability_status = "unavailable";
 //       }
 //     }
-//     console.log( 'summary_availability_status, ' + summary_availability_status );
-//     console.log( 'next, call build_html' );
+//     //console.log( 'summary_availability_status, ' + summary_availability_status );
+//     //console.log( 'next, call build_html' );
 //   }
 // }
 
