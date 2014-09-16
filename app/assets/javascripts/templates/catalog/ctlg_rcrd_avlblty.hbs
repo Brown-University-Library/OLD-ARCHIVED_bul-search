@@ -20,29 +20,36 @@
 
   {{#if show_ezb_button}}
 
-  <style type="text/css">
-    #ezb_button {
-      display: block;
-      width: 115px;
-      height: 25px;
-      background: #c00404;
-      padding: 2px;
-      text-align: center;
-      border-radius: 2px;
-      color: white;
-      font-weight: bold;
-    }
-  </style>
-
   <dl class="dl-horizontal dl-invert">
     <dd>
-      <a id="ezb_button" href="{{ openurl }}">
-        Request Item
-      </a>
+      <a href="{{ openurl }}" class="btn btn-primary" role="button">Request Item</a>
+      <button class="glyphicon glyphicon-question-sign btn btn-default" data-toggle="modal" data-target="#myModal"></button>
     </dd>
   </dl>
 
   {{/if}}
 
+</div>
 
+
+<!-- Modal dialog box; only shows if question-button is clicked -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">When does the 'Request' button appear?</h4>
+      </div>
+      <div class="modal-body">
+        'Request' means we'll get you a copy from a partner Library.
+        There's a lot of logic we'll spare you, but in a nutshell, our goal is to get you a copy of a book you can take home.
+        So of course if a Library copy isn't available, you'll see the Request button,
+        but you may also see it if, for instance, the Library's only copy must be used within the Library.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
 </div>
