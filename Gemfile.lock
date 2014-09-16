@@ -83,7 +83,7 @@ GEM
     ffi (1.9.3)
     font-awesome-rails (4.2.0.0)
       railties (>= 3.2, < 5.0)
-    handlebars_assets (0.18)
+    handlebars_assets (0.17)
       execjs (>= 1.2.9)
       multi_json
       sprockets (>= 2.0.3)
@@ -204,7 +204,7 @@ DEPENDENCIES
   devise-guests (~> 0.3)
   dotenv-rails
   font-awesome-rails
-  handlebars_assets
+  handlebars_assets (= 0.17)
   jbuilder (~> 1.2)
   jettywrapper (~> 1.7)
   jquery-rails
