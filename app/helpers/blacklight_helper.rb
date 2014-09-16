@@ -45,4 +45,17 @@ module BlacklightHelper
     return ''
   end
 
+  def render_show_doc_actions(document=@document, options={})
+    wrapping_class = options.delete(:wrapping_class) || "documentFunctions"
+
+    if controller_name == 'bdr'
+      partial_location = 'bdr/bookmark_control'
+    else
+      partial_location = 'catalog/bookmark_control'
+    end
+    content = []
+    content << render(:partial => partial_location, :locals => {:document=> document}.merge(options)) if render_bookmarks_control?
+
+    content_tag("div", safe_join(content, "\n"), :class=> wrapping_class)
+  end
 end
