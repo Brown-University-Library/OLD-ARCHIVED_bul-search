@@ -1,5 +1,5 @@
-<%- if has_thumbnail?(document) && tn = render_thumbnail_tag(document, {}, :counter => document_counter_with_offset(document_counter)) %>
 <div class="document-thumbnail">
-  <%= tn %>
+  <a href="<%= bdr_solr_document_path(document.id) %>">
+    <img class="thumbnail" style="height:125px" src="https://repository.library.brown.edu/viewers/image/thumbnail/<%= document.id %>"/>
+  </a>
 </div>  
-<%- end %>
