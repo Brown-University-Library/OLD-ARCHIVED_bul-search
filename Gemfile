@@ -56,4 +56,4 @@ gem "font-awesome-rails"
 
 gem 'byebug', :groups => [:devbox]
 
-gem 'handlebars_assets'
+gem 'handlebars_assets', "= 0.17"
