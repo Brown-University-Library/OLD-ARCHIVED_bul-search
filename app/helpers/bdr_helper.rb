@@ -24,4 +24,20 @@ module BdrHelper
     { :data => {:'context-href' => bdr_track_path(document['pid'], per_page: params.fetch(:per_page, search_session['per_page']), counter: counter, search_id: current_search_session.try(:id))}}
   end
 
+  ##
+  # Render "docuemnt actions" area for search results view
+  # (normally renders next to title in the list view)
+  #
+  # @param [SolrDocument] document
+  # @param [Hash] options
+  # @option options [String] :wrapping_class
+  # @return [String]
+  def bdr_render_index_doc_actions(document, options={})
+    wrapping_class = options.delete(:wrapping_class) || "index-document-functions"
+
+    content = []
+    content << render(:partial => 'bdr/bookmark_control', :locals => {:document=> document}.merge(options)) if render_bookmarks_control?
+
+    content_tag("div", safe_join(content, "\n"), :class=> wrapping_class)
+  end
 end
