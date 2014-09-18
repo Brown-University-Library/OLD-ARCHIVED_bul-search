@@ -21,4 +21,35 @@ module BlacklightHelper
     end
   end
 
+  #Borrowed from SearchWorks
+  def get_book_ids document
+    isbn = add_prefix_to_elements( convert_to_array(document['isbn_t']), 'ISBN' )
+    oclc = add_prefix_to_elements( convert_to_array(document['oclc_t']), 'OCLC' )
+    #BUL doesn't have LCCNs in Solr index yet.
+    lccn = add_prefix_to_elements( convert_to_array(document['lccn_t']), 'LCCN' )
+
+    return { 'isbn' => isbn, 'oclc' => oclc, 'lccn' => lccn }
+  end
+
+
+  def add_prefix_to_elements arr, prefix
+    new_array = []
+
+    arr.each do |i|
+      new_array.push("#{prefix}#{i}")
+    end
+
+    new_array
+  end
+
+
+  def convert_to_array value = []
+    arr = []
+
+    arr = value if value.kind_of?(Array)
+    arr.push(value) if value.kind_of?(String)
+
+    arr
+  end
+
 end

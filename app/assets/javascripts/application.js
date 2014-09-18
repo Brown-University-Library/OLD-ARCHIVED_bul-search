@@ -25,3 +25,5 @@
 
 //= require handlebars.runtime
 //= require_tree ./templates
+
+//=require jquery.plug-google-content
