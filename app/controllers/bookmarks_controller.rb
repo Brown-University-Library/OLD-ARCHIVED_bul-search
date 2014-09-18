@@ -27,10 +27,8 @@ class BookmarksController < CatalogController
     bookmark_ids = @bookmarks.collect { |b| b.document_id.to_s unless b.document_type.to_s == 'BdrSolrDocument' }.compact
     bdr_bookmark_ids = @bookmarks.collect { |b| b.document_id.to_s if b.document_type.to_s == 'BdrSolrDocument' }.compact
   
-    puts "bookmark_ids: #{bookmark_ids}"
     @response, @document_list = get_solr_response_for_document_ids(bookmark_ids)
     @solr = RSolr.connect(bdr_solr_config)
-    puts "bdr_bookmark_ids: #{bdr_bookmark_ids}"
     @bdr_response, @bdr_document_list = bdr_get_solr_response_for_document_ids(bdr_bookmark_ids)
     @solr = nil
 
