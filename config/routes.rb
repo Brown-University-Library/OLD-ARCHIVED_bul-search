@@ -8,6 +8,7 @@ BulSearch::Application.routes.draw do
 
   get 'easy/' => 'easy#home', as: :easyS
   get 'easy/search'
+  get 'bdr/advanced' => 'bdr_advanced#index', as: :bdr_advanced_search
   get 'bdr' => 'bdr#index', as: :bdr_index
   get 'bdr/email' => 'bdr#email', as: :email_bdr
   post 'bdr/email' => 'bdr#email', as: :bdr_email

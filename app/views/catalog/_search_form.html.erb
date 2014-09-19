@@ -25,6 +25,10 @@
       <% end %>
 
       <% if @easy_search != true %>
+        <% if controller_name == 'bdr' %>
+        <%= link_to 'More options', bdr_advanced_search_path(params), :class=>'advanced_search'%>
+        <% else %>
         <%= link_to 'More options', advanced_search_path(params), :class=>'advanced_search'%>
+        <% end %>
       <% end %>
   <% end %>

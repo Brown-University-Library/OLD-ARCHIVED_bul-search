@@ -6,6 +6,7 @@ class BdrController < ApplicationController
 
   include Blacklight::Catalog
   include BlacklightAdvancedSearch::ParseBasicQ
+  include BlacklightAdvancedSearch::Controller
 
   configure_blacklight do |config|
     # solr path which will be added to solr base url before the other solr params.
@@ -15,6 +16,7 @@ class BdrController < ApplicationController
 
     config.advanced_search = {
       :query_parser => 'dismax',
+      :url_key => 'advanced',
     }
 
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
