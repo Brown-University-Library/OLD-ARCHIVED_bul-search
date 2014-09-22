@@ -111,10 +111,10 @@ class CatalogController < ApplicationController
     config.add_show_field 'published_display', :label => 'Published'
     config.add_show_field 'published_vern_display', :label => 'Published'
     config.add_show_field 'physical_display', :label => 'Physical Description'
+    config.add_show_field 'toc_display', :label => 'Contents'
     config.add_show_field 'isbn_t', :label => 'ISBN'
     config.add_show_field 'issn_t', :label => 'ISSN'
     config.add_show_field 'oclc_t', :label => 'OCLC'
-    config.add_show_field 'toc_display', :label => 'Contents'
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
