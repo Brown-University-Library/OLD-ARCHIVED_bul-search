@@ -36,42 +36,67 @@ function getAvailabilityData( the_doc, bib_id ) {
   $.getJSON(
     api_url,
     function( response_object, success_status, ajax_object ) {  // these 3 vars are auto-created by $.getJSON; we only care about the response_object...
-      determineAvailability( response_object, the_doc );  // ...and our `the_doc`, which requires the anonymous function syntax to pass it along
+      determineAvailability( response_object, the_doc, bib_id );  // ...and our `the_doc`, which requires the anonymous function syntax to pass it along
     }
   );
 }
 
-function determineAvailability( response_object, the_doc ) {
-  /* Determines item's summarized availability; triggers html creation.
+function determineAvailability( response_object, the_doc, bib_id ) {
+  /* Determines item's summarized availability, whether easyBorrow button should display, and triggers html creation.
    * Called by getAvailabilityData() */
-  var availability_status = "unknown";
-  for ( var index_key in response_object["items"] ){
-    item = response_object["items"][index_key]
-    if ( item["is_available"] == true ) {
-      availability_status = "available";
-      break;
-    } else if ( item["is_available"] == false ) {
-      availability_status = "unavailable";
+  // console.log( 'determineAvailability() response_object, ' + JSON.stringify(response_object, undefined, 2) );
+  var availability_status = "unknown"; var show_ezb_button = false; var openurl = null;
+  if (response_object['items'].length > 0 ) {  //check for items before updating HTML.
+    var available_item = _.find(  // _.find() stops processing on first find
+      response_object['items'],
+      function( item ) { if ( item['is_available'] == true ){ return item; } } );
+    if ( ! available_item ) {
+      availability_status = "unavailable"; show_ezb_button = true;
+    } else {
+      availability_status = "available"; show_ezb_button = false;
     }
+    populateDiv( the_doc, availability_status, show_ezb_button, bib_id );
   }
-  populateDiv( the_doc, availability_status );
 }
 
-function populateDiv( the_doc, availability_status ) {
+function populateDiv( the_doc, availability_status, show_ezb_button, bib_id ) {
   /* Builds and updates html.
-   * Called by getAvailabilityData() */
+   * Called by determineAvailability() */
   class_status = 'status_' + availability_status
-  availability_html = buildAvailabilityHtml( availability_status, class_status );
+  availability_html = buildAvailabilityHtml( availability_status, class_status, show_ezb_button, bib_id );
   $( the_doc ).append( availability_html );
 }
 
-function buildAvailabilityHtml( availability_status, class_status ) {
+function buildAvailabilityHtml( availability_status, class_status, show_ezb_button, bib_id ) {
   /* Builds availability html.
    * Called by populateDiv() */
   context = {
       'class_status': class_status,
-      'availability_status': availability_status
+      'availability_status': availability_status,
+      'show_ezb_button': show_ezb_button,
+      'bib_id': bib_id
   };
+  console.log( 'context, ' + JSON.stringify(context, undefined, 2) );
   availability_html = HandlebarsTemplates['catalog/ctlg_rslts_avlblty'](context);
   return availability_html;
 }
+
+
+/*
+ * On 'Request' button click...
+ */
+
+
+function doSomething( message ) {
+  alert( message );
+}
+
+function grab_openurl() {
+  /* Grabs and returns item's openurl created by blacklight from solr's marcxml.
+   * Called by zzz() */
+  openurl_param = "ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rfr_id=info%3Asid%2Fblacklight.rubyforge.org%3Agenerator&amp;rft.genre=book&amp;rft.btitle=Beat+Zen%2C+square+Zen%2C+and+Zen.+&amp;rft.title=Beat+Zen%2C+square+Zen%2C+and+Zen.+&amp;rft.au=Watts%2C+Alan%2C&amp;rft.date=%5Bc1959%5D&amp;rft.place=%5BSan+Francisco%5D&amp;rft.pub=City+Lights+Books&amp;rft.edition=&amp;rft.isbn=";
+  openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
+  console.log( 'openurl, ' + openurl );
+  return openurl;
+}
+
