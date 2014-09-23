@@ -5,4 +5,11 @@
   <dd class="blacklight-summary_availability">
     <span class="summary_availability {{ class_status }}">{{ availability_status }}</span>
   </dd>
+
+  {{#if show_ezb_button}}
+  <dd>
+    <a href="javascript:doSomething( '{{ bib_id }}' )" class="btn btn-primary btn-xs" role="button">Request Item</a>
+  </dd>
+  {{/if}}
+
 </dl>
