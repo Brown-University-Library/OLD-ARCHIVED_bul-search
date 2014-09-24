@@ -76,7 +76,6 @@ function buildAvailabilityHtml( availability_status, class_status, show_ezb_butt
       'show_ezb_button': show_ezb_button,
       'bib_id': bib_id
   };
-  console.log( 'context, ' + JSON.stringify(context, undefined, 2) );
   availability_html = HandlebarsTemplates['catalog/ctlg_rslts_avlblty'](context);
   return availability_html;
 }
@@ -86,17 +85,14 @@ function buildAvailabilityHtml( availability_status, class_status, show_ezb_butt
  * On 'Request' button click...
  */
 
-
-function doSomething( message ) {
-  alert( message );
+function redirect_ezaccess( bib_id ) {
+  /* Gets openurl and redirects to easyAccess landing page.
+   * Called on button click. */
+  $.get( "/catalog/" + bib_id, function( data ) {
+    var pattern = /<span class="Z3988" title="(.*?)"><\/span>/;  // grab anything _between_ the string before `(`, and the string after `)`
+    var openurl_param = pattern.exec( data )[1];  // yields 2 element array, the second, [1], we want
+    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
+    location.href = openurl;
+    }
+  );
 }
-
-function grab_openurl() {
-  /* Grabs and returns item's openurl created by blacklight from solr's marcxml.
-   * Called by zzz() */
-  openurl_param = "ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rfr_id=info%3Asid%2Fblacklight.rubyforge.org%3Agenerator&amp;rft.genre=book&amp;rft.btitle=Beat+Zen%2C+square+Zen%2C+and+Zen.+&amp;rft.title=Beat+Zen%2C+square+Zen%2C+and+Zen.+&amp;rft.au=Watts%2C+Alan%2C&amp;rft.date=%5Bc1959%5D&amp;rft.place=%5BSan+Francisco%5D&amp;rft.pub=City+Lights+Books&amp;rft.edition=&amp;rft.isbn=";
-  openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
-  console.log( 'openurl, ' + openurl );
-  return openurl;
-}
-
