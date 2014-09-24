@@ -189,4 +189,12 @@ class CatalogController < ApplicationController
     config.spell_max = 5
   end
 
+  def ourl_service
+    @response, @document = get_solr_response_for_doc_id
+    out = {}
+    out['id'] = @document['id']
+    out['ourl'] = @document.export_as_openurl_ctx_kev
+    render json: out
+  end
+
 end 

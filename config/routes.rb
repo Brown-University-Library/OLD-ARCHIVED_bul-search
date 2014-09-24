@@ -6,6 +6,8 @@ BulSearch::Application.routes.draw do
   Blacklight::Marc.add_routes(self)
   devise_for :users
 
+  get 'catalog/:id/ourl' => 'catalog#ourl_service', as: :catalog_service_ourl
+
   get 'easy/' => 'easy#home', as: :easyS
   get 'easy/search'
   get 'bdr/advanced' => 'bdr_advanced#index', as: :bdr_advanced_search
