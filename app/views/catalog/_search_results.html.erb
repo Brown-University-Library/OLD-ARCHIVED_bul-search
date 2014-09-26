@@ -26,3 +26,8 @@
 <%- end %>
 
 <%= render 'results_pagination' %>
+
+<%
+#Used in Javascript to determine catalog record path.
+%>
+<span class="hidden" id="record-path"><%= catalog_record_url %></span>
