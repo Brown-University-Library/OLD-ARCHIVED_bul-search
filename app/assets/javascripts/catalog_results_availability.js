@@ -88,10 +88,9 @@ function buildAvailabilityHtml( availability_status, class_status, show_ezb_butt
 function redirect_ezaccess( bib_id ) {
   /* Gets openurl and redirects to easyAccess landing page.
    * Called on button click. */
-  $.get( "/catalog/" + bib_id, function( data ) {
-    var pattern = /<span class="Z3988" title="(.*?)"><\/span>/;  // grab anything _between_ the string before `(`, and the string after `)`
-    var openurl_param = pattern.exec( data )[1];  // yields 2 element array, the second, [1], we want
-    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
+  var record_path = $('#record-path').text();
+  $.get( record_path + bib_id + "/ourl", function( data ) {
+    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + data['ourl'];
     location.href = openurl;
     }
   );
