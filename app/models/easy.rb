@@ -154,7 +154,8 @@ def get_catalog query
       "group"=>true,
       "group.limit"=>5,
       "fl"=>"id, title_display, author_display, pub_date, format, online:online_b",
-      "q"=>"#{query}"
+      "q"=>"#{query}",
+      "qt" => 'search'
   }
 
   response = solr.get 'select', :params => qp
