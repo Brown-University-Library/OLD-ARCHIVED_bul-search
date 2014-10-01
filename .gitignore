@@ -6,6 +6,7 @@
 
 .gemrc
 .env
+.env.*
 search_summon.rb
 
 
