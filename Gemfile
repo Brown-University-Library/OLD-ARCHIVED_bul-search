@@ -57,3 +57,7 @@ gem "font-awesome-rails"
 gem 'byebug', :groups => [:devbox]
 
 gem 'handlebars_assets', "= 0.17"
+
+gem 'mysql2'
+
+gem 'dotenv-deployment', :group => [:production]
