@@ -5,6 +5,8 @@ class CatalogController < ApplicationController
 
   include Blacklight::Catalog
 
+  include Blacklight::BlacklightHelperBehavior  # gives us document_partial_name(), used in ourl_service()
+
   configure_blacklight do |config|
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = {
@@ -200,13 +202,14 @@ class CatalogController < ApplicationController
       field.include_in_simple_select = false
       field.solr_parameters = { :qf => "pub_date" }
     end
-  end
+
+  end  # end of `configure_blacklight do |config|`
 
   def ourl_service
     @response, @document = get_solr_response_for_doc_id
     out = {}
     out['id'] = @document['id']
-    out['ourl'] = @document.export_as_openurl_ctx_kev
+    out['ourl'] = @document.export_as_openurl_ctx_kev( document_partial_name(@document) )
     render json: out
   end
 
