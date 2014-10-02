@@ -25,7 +25,7 @@ test:
   timeout: 5000
 
 production:
-  adapter: mysql2
+  adapter: <%= ENV['DATABASE_ADAPTER'] %>
   encoding: utf8
   database: <%= ENV['DATABASE'] %>
   pool: 5
