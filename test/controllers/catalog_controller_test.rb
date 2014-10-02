@@ -20,8 +20,8 @@ class CatalogControllerTest < ActionController::TestCase
   end
 
   test "OURL API response should contain isbn on modern work" do
-    dummy_var = get :ourl_service, { id: "b3296321" }
-    jdata = JSON.parse( dummy_var.body )
+    controller_test_instance = get :ourl_service, { id: "b3296321" }
+    jdata = JSON.parse( controller_test_instance.body )
     print jdata["ourl"]
     assert_equal( true, jdata["ourl"].include?("ctx") )
     assert_equal( true, jdata["ourl"].include?("isbn") )  # should be `true` and should pass
