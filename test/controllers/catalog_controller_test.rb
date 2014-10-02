@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'byebug'
 require 'json'
 
 class CatalogControllerTest < ActionController::TestCase
@@ -21,10 +20,10 @@ class CatalogControllerTest < ActionController::TestCase
 
   test "OURL API response should contain isbn on modern work" do
     controller_test_instance = get :ourl_service, { id: "b3296321" }
-    jdata = JSON.parse( controller_test_instance.body )
-    print jdata["ourl"]
-    assert_equal( true, jdata["ourl"].include?("ctx") )
-    assert_equal( true, jdata["ourl"].include?("isbn") )  # should be `true` and should pass
+    jhash = JSON.parse( controller_test_instance.body )
+    assert_equal( ["id", "ourl"], jhash.keys.sort )
+    assert_equal( true, jhash["ourl"].include?("ctx") )
+    assert_equal( true, jhash["ourl"].include?("isbn") )  # should be `true` and should pass
   end
 
 end
