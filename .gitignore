@@ -47,3 +47,6 @@ config/secrets.yml
 
 ## ignore local ruby verson spec
 .ruby-version
+
+## Ignore precompiled assets
+/public/assets
