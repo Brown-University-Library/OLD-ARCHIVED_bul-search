@@ -42,20 +42,20 @@ function determine_ezb_availability( json_output ) {
 }
 
 function grab_openurl() {
-  /* Grabs and returns item's openurl created by blacklight from solr's marcxml.
+  /* Grabs and returns item's openurl from openurl-api.
    * Called by determine_ezb_availability() */
-  // return "https://library.brown.edu/easyarticle/borrow/?ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info:ofi/fmt:kev:mtx:book&amp;amp;rfr_id=info:sid/blacklight.rubyforge.org:generator&amp;amp;rft.genre=book&amp;amp;rft.btitle=Beat Zen, square Zen, and Zen. &amp;amp;rft.title=Beat Zen, square Zen, and Zen. &amp;amp;rft.au=Watts, Alan,&amp;amp;rft.date=[c1959]&amp;amp;rft.place=[San Francisco]&amp;amp;rft.pub=City Lights Books&amp;amp;rft.edition=&amp;amp;rft.isbn=";
-  openurl_param = $(".Z3988")[0].title;
-  openurl = 'https://library.brown.edu/easyarticle/borrow/?' + openurl_param;
-  //console.log( 'openurl, ' + openurl );
+  var openurl = "init";
+  current_url = location.href;
+  $.ajaxSetup( {async: false} );  // otherwise "init" would immediately be returned while $.get makes it's request asynchronously
+  $.get( current_url + "/ourl", function( data ) {
+    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + data['ourl'];
+    } );
   return openurl;
 }
 
 function build_html( json_output, show_ezb_button, openurl ) {
   /* Calls template for html, and updates DOM.
    * Called by determine_ezb_availability() */
-  //console.log( 'json_output, ' + JSON.stringify(json_output, undefined, 2) );
-  //console.log( 'show_ezb_button, ' + show_ezb_button );
   context = json_output;
   context['show_ezb_button'] = show_ezb_button;
   context['openurl'] = openurl
