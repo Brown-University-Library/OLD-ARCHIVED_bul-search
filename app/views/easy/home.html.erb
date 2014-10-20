@@ -14,8 +14,9 @@
                 </ul>
             <div id="format-filter">
                 <h4>Format</h3>
-                <ul id="format-list"></ul>
-                <ul id="sorted-format-list"></ul>
+                <ul id="format-list">
+                  <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
+                </ul>
             </div>
             <div id="library-chat">
               <h4>Help</h4>
@@ -72,6 +73,7 @@
 <script type="text/javascript">
   var dataUrl = "<%= data_link(params[:q]) =%>";
   var numOtherCatalogBoxes = 2;
+  var facetFormats = [];
   $(document).ready(function() {
     var query = getParameterByName('q');
     if (query == "") {
@@ -82,16 +84,22 @@
         bdrBento(query);
         addNewspaperArticlesCount(query);
     };
-  });
-  //call when all ajax is complete
-  $( document ).ajaxStop(function() {
-    sortFilterFacetList();
+    //call when all ajax is complete
+    $( document )
+      .ajaxStop(function() {
+        sortFilterFacetList();
+    });
   });
 
+//sort the returned formats alphabetically and display.
 function sortFilterFacetList() {
-  $('#format-list li').sort(function(a, b){
-   return $(a).text() > $(b).text()
-  }).appendTo('ul#sorted-format-list')
+  var sortedList = _.sortBy(facetFormats, function(fv) {return fv.format});
+  _.each(sortedList, function(item) {
+    console.debug(item.format);
+    var li = '<li><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>';
+    $('ul#format-list').append(li);
+  });
+  $('ul#format-list i.waiting').hide();
 };
 
 //Add the Journal Articles box via Summon.
@@ -181,7 +189,7 @@ function sortByTopFormat(results) {
 //Adds the format facet on the left.
 function addFormats(formats) {
     _.each(formats, function(item) {
-        $('#format-list').append('<li><a href="' + item.more + '">' + item.format + ' (' + commaSeparatedNumber(item.count) + ')</li>');
+        facetFormats.push({'format': item.format, 'count': item.count, 'more': item.more});
     });
 }
 
