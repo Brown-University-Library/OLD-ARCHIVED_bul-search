@@ -39,13 +39,13 @@
             </div>
             <div class="row">
                 <div id="books" class="col-md-6">
-                    <h3><i class="fa fa-book"></i>Books</h3>
+                    <h3 class="bento-header"><a href="#"><i class="fa fa-book"></i>Books</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more center-block"></div>
                 </div>
                 <div id="summon" class="col-md-6">
-                    <h3><i class="fa fa-copy"></i>Journal Articles</h3>
+                    <h3 class="bento-header"><a href="<%= summon_search(params[:q]) =%>"><i class="fa fa-copy"></i>Journal Articles</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <%#Handlebars template will be inserted here %>
                 </div>
@@ -56,7 +56,7 @@
             <div class="row">
                 <hr/>
                 <div id="bdr-search" class="col-md-12">
-                    <h3>Digital Repository</h3>
+                    <h3 class="bento-header"><a href="#">Digital Repository</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <%#Handlebars template will be inserted here %>
                 </div>
@@ -95,7 +95,6 @@
 function sortFilterFacetList() {
   var sortedList = _.sortBy(facetFormats, function(fv) {return fv.format});
   _.each(sortedList, function(item) {
-    console.debug(item.format);
     var li = '<li><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>';
     $('ul#format-list').append(li);
   });
@@ -138,6 +137,7 @@ function bdrBento(query) {
           var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
           var html = HandlebarsTemplates['easy/bdr_results'](context);
           $('#bdr-search').append(html);
+          $('#bdr-search h3.bento-header a').attr('href', response.more);
         } else {
           $('#bdr-search').append('<h5>No results from the Brown Digital Repository.</h5>');
         }
@@ -163,6 +163,7 @@ function catalogBoxes(query) {
           };
           var html = HandlebarsTemplates['easy/catalog_results'](context);
           $('#books').append(html);
+          $('#books h3.bento-header a').attr('href', bookSet.more);
           //add other formats
           var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
           var sortedOther = sortByTopFormat(other);
