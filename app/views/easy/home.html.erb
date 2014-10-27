@@ -7,26 +7,15 @@
 <% else %>
     <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
-            <h4>All results</h3>
-                <ul>
-                    <li><a href="<%= summon_search(params[:q]) =%>">Articles</a></li>
-                    <li><a href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search">Worldcat</a></li>
-                </ul>
             <div id="format-filter">
                 <h4>Format</h3>
                 <ul id="format-list">
                   <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
                 </ul>
+                <div id="worldcat-section">
+                    <a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a>
+                </div>
             </div>
-            <div id="library-chat">
-              <h4>Help</h4>
-              <div id="libchat" class="needs-js">
-                <p>
-                  <a href="http://library.brown.edu/libweb/askalib.php" alt="txt, email, phone, in-person" title="txt, email, phone, in-person">
-                    Chat, Text, Email, Phone, In Person</a>
-                </p>
-              </div>
-          </div>
         </div>
         <div id="bentos" class="col-md-9">
             <div class="row" id="jump-links">
