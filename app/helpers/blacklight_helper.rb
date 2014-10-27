@@ -5,6 +5,15 @@ module BlacklightHelper
     "Brown University Library Search"
   end
 
+  def last_easy_search
+    query = session[:last_easy_search]
+    if query.nil?
+      return url_for :controller=>'easy'
+    else
+      return url_for :controller=>'easy', :action=> 'home', :q => query
+    end
+  end
+
 
   def has_access_urls document
     return !document['url_fulltext_display'].nil?

@@ -1,3 +1,6 @@
 en:
   blacklight:
     application_name: 'Brown University Library Search'
+    search:
+        #Label for users to go back to easySearch from withing Blacklight.
+        restart_label: "Start search from beginning"
