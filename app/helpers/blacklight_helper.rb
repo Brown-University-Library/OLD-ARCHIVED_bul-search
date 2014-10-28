@@ -103,4 +103,17 @@ module BlacklightHelper
     arr
   end
 
+  # Search History and Saved Searches display
+  def link_to_previous_search(params)
+    #require 'byebug'; byebug
+    if params[:controller] == 'easy'
+      query = params[:q]
+      url = url_for :controller=>'easy', :action=> 'home', :q => query
+      label = render_search_to_s_element(t('blacklight.bento.label'), query)
+      link_to(label, url)
+    else
+      link_to(render_search_to_s(params), search_action_path(params))
+    end
+  end
+
 end
