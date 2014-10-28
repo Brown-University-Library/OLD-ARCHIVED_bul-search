@@ -6,6 +6,8 @@ en:
     search:
         #Label for users to go back to easySearch from withing Blacklight.
         restart_label: "Start search from beginning"
-
         all_results:
             title: "All Results"
+
+    #For results list
+    back_to_search: 'Back to results'
