@@ -12,7 +12,7 @@ class EasyController < ApplicationController
 
   def search
     @search_result = Easy.new params[:source], params[:q]
-    session[:last_easy_search] = params[:q]
+    #session[:last_easy_search] = params[:q]
     render json: @search_result.to_json
   end
 

@@ -5,8 +5,11 @@ module BlacklightHelper
     "Brown University Library Search"
   end
 
-  def last_easy_search
-    query = session[:last_easy_search]
+  #Link back to easySearch with the q param if available.
+  #
+  #Returns a url string to the easy controller.
+  def easy_search_link
+    query = params[:q]
     if query.nil?
       return url_for :controller=>'easy'
     else
