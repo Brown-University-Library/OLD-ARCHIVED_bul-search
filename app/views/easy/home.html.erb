@@ -84,7 +84,7 @@
 function sortFilterFacetList() {
   var sortedList = _.sortBy(facetFormats, function(fv) {return fv.format});
   _.each(sortedList, function(item) {
-    var elementId = 'more-' + item.format.toLowerCase().replace(' ', '-');
+    var elementId = 'more-' + item.format.toLowerCase().replace(/\W/g, '-');
     var li = '<li id="' + elementId + '"><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>';
     //Add the element if it doesn't exist.
     if ( $('#' + elementId).length == 0) {
