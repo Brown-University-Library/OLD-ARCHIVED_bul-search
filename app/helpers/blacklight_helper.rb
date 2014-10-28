@@ -10,7 +10,7 @@ module BlacklightHelper
   #Returns a url string to the easy controller.
   def easy_search_link
     #Get the search from the history if it's there or from q param.
-    query = @current_search_session.query_params[:q] || params[:q]
+    query = @current_search_session.query_params[:q] if @current_search_session.respond_to? :query_params || params[:q]
     if query.nil?
       return url_for :controller=>'easy', :action=> 'home'
     else
