@@ -10,7 +10,9 @@
       </div>
 
     <div class="pull-right search-widgets">
-        <%= link_back_to_catalog :class => 'btn' %>
+        <% if session[:last_easy_earch] != nil %>
+          <%= link_back_to_catalog :class => 'btn' %>
+        <% end %>
         <%= link_to t('blacklight.search.restart_label'), easy_search_link, :class=>'btn', :id=>"startOverLink" %>
   	</div>
   </div>

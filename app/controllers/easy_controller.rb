@@ -2,6 +2,7 @@
 
 class EasyController < ApplicationController
   include Blacklight::Catalog
+  include Blacklight::BlacklightHelperBehavior
   def home
     @easy_search = true
     if params[:q].blank?
@@ -13,8 +14,11 @@ class EasyController < ApplicationController
 
   def search
     @search_result = Easy.new params[:source], params[:q]
+    #Add search to history for search history page.
     s = Search.create(:query_params => params)
     add_to_search_history(s)
+    #Set session variable with this query.
+    session[:last_easy_search] = params[:q]
     render json: @search_result.to_json
   end
 

@@ -7,6 +7,8 @@ class CatalogController < ApplicationController
 
   include Blacklight::BlacklightHelperBehavior  # gives us document_partial_name(), used in ourl_service()
 
+  before_filter :set_easy_search
+
   configure_blacklight do |config|
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = {
@@ -211,6 +213,14 @@ class CatalogController < ApplicationController
     out['id'] = @document['id']
     out['ourl'] = @document.export_as_openurl_ctx_kev( document_partial_name(@document) )
     render json: out
+  end
+
+  #Removes the last_easy_search session variable when a user runs a catalog search
+  #
+  def set_easy_search
+    if params[:action] == 'index'
+        session[:last_easy_search] = nil
+    end
   end
 
 end

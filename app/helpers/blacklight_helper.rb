@@ -5,20 +5,6 @@ module BlacklightHelper
     "Brown University Library Search"
   end
 
-  #Link back to easySearch with the last search if available.
-  #
-  #Returns a url string to the easy controller.
-  def easy_search_link
-    #Get the search from the history if it's there or from q param.
-    query = @current_search_session.query_params[:q] if @current_search_session.respond_to? :query_params || params[:q]
-    if query.nil?
-      return url_for :controller=>'easy', :action=> 'home'
-    else
-      return url_for :controller=>'easy', :action=> 'home', :q => query
-    end
-  end
-
-
   def has_access_urls document
     return !document['url_fulltext_display'].nil?
   end
