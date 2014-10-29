@@ -59,6 +59,6 @@ function build_html( json_output, show_ezb_button, openurl ) {
   context = json_output;
   context['show_ezb_button'] = show_ezb_button;
   context['openurl'] = openurl
-  html = HandlebarsTemplates['catalog/ctlg_rcrd_avlblty'](context);
+  html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append( html );
 }
