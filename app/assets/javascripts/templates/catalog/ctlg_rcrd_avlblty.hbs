@@ -1,22 +1,24 @@
 {{! comment: called by `app/assets/javascripts/catalog_record_availability.js - addStatus()` }}
 
 <div id="availability_manual">
-  <hr>
-
-  <h5 itemprop="copies">Copy Information</h5>
-
-  {{#each items}}
-
-  <dl class="dl-horizontal dl-invert">
-    <dt class="blacklight-callnumber_display">Call Number:</dt>
-    <dd class="blacklight-callnumber_display">{{ callnumber }}</dd>
-    <dt class="blacklight-location_display">Location:</dt>
-    <dd class="blacklight-location_display">{{ location }}</dd>
-    <dt class="blacklight-availability">Availability:</dt>
-    <dd class="blacklight-availability">{{ availability }}</dd>
-  </dl>
-
-  {{/each}}
+  <hr/>
+  <h4>Availability</h4>
+  <table id="holdings-table" class="table">
+    <tr>
+      <th>Call number</th>
+      <th>Location</th>
+      <th>Status</th>
+    </tr>
+    <tbody>
+      {{#each items}}
+        <tr>
+          <td>{{ callnumber }}</td>
+          <td>{{ location }} </td>
+          <td>{{ availability }}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 
   {{#if show_ezb_button}}
 
