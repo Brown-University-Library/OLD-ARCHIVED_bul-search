@@ -18,7 +18,7 @@ class EasyController < ApplicationController
     s = Search.create(:query_params => params)
     add_to_search_history(s)
     #Set session variable with this query.
-    session[:last_easy_search] = params[:q]
+    set_last_easy_search(params[:q])
     render json: @search_result.to_json
   end
 
@@ -26,7 +26,8 @@ class EasyController < ApplicationController
       url_for(:controller => 'easy', :action => 'home', :only_path => true)
   end
 
-  def options_for_select
-    return []
+  def set_last_easy_search query
+    session[:last_easy_search] = query
   end
+
 end
