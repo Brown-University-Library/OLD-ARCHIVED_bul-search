@@ -7,6 +7,17 @@
 // - `app/assets/javascripts/catalog_results_availability.js` and displayed in...
 // - `app/assets/javascripts/templates/catalog/ctlg_rslts_avlblty.hbs`
 
+#holdings-wrapper {
+    width: 60%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+#holdings-wrapper table {
+    font-size: small;
+    margin-left: 1em;
+}
+
 .status_available {
     color: green;
 }
@@ -19,7 +30,6 @@
     color: purple;
 }
 
-
 .preview-info {
     color: red;
     font-size: 3em;
@@ -31,11 +41,4 @@
 
 #worldcat-search img {
     padding-right: .25em;
-}
-
-#holdings-table {
-    font-size: small;
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
 }
