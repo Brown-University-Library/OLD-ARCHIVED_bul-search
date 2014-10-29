@@ -5,6 +5,10 @@ module BlacklightHelper
     "Brown University Library Search"
   end
 
+  def availability_service_url
+    ENV['AVAILABILITY_SERVICE']
+  end
+
   def has_access_urls document
     return !document['url_fulltext_display'].nil?
   end

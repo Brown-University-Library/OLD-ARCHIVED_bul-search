@@ -10,7 +10,7 @@
 $(document).ready(
   function(){
     bib_id = getBibId();
-    api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
+    api_url = availService + bib_id + "/?callback=?";
     $.getJSON( api_url, determine_ezb_availability );
   }
 );
