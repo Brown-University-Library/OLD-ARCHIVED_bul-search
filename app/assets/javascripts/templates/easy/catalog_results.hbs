@@ -4,7 +4,7 @@
 <ul class="list-unstyled">
     {{#each docs}}
     <li>
-        <a href="{{this.link}}">{{this.title_display}}</a>
+        <a href="{{this.link}}">{{truncate this.title_display ../max_title_length}}</a>
         <br/>
         <small>
             {{#if this.author_display}}{{this.author_display}}.&nbsp;{{/if}}

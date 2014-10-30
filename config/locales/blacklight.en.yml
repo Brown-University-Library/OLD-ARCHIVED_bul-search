@@ -3,6 +3,7 @@ en:
     application_name: 'Brown University Library Search'
     bento:
         label: "easySearch"
+        max_title_length: 75
     search:
         #Label for users to go back to easySearch from withing Blacklight.
         restart_label: "Start search from beginning"

@@ -1,7 +1,7 @@
 <ul class="list-unstyled">
     {{#each docs}}
     <li>
-        <a href="{{this.link}}">{{this.title}}</a>
+        <a href="{{this.link}}">{{truncate this.title ../max_title_length}}</a>
         <br/>
         <small>{{#if this.author}}{{this.author}}.&nbsp;{{/if}}{{#if this.year }}{{this.year}}{{/if}}
         {{#if this.online }}

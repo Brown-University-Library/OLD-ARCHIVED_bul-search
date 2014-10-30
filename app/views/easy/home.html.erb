@@ -62,6 +62,7 @@
 <script type="text/javascript">
   var dataUrl = "<%= data_link(params[:q]) =%>";
   var numOtherCatalogBoxes = 2;
+  var maxTitleLength = <%= t('blacklight.bento.max_title_length') =%>;
   var facetFormats = [];
   $(document).ready(function() {
     var query = getParameterByName('q');
@@ -103,7 +104,7 @@ function summonBox(query) {
         if (summonSet.docs.length > 0) {
           //addItemsToBox(summonSet.docs, 'summon');
           //addMoreLink('summon', summonSet.more, summonSet.numFound);
-          var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more};
+          var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more, 'max_title_length': maxTitleLength};
           var html = HandlebarsTemplates['easy/summon_results'](context);
           $('#summon').append(html);
           //add count to facet on left
@@ -127,7 +128,12 @@ function bdrBento(query) {
       success: function(response) {
         $('#bdr-search i.waiting').hide();
         if (response.docs.length > 0) {
-          var context = {'docs': response.docs, 'total': commaSeparatedNumber(response.numFound), 'more': response.more};
+          var context = {
+            'docs': response.docs,
+            'total': commaSeparatedNumber(response.numFound),
+            'more': response.more,
+            'max_title_length': maxTitleLength
+          };
           var html = HandlebarsTemplates['easy/bdr_results'](context);
           $('#bdr-search').append(html);
           $('#bdr-search h3.bento-header a').attr('href', response.more);
@@ -152,7 +158,8 @@ function catalogBoxes(query) {
             'box': "Books",
             'docs': bookSet.docs,
             'total': commaSeparatedNumber(bookSet.numFound),
-            'more': bookSet.more
+            'more': bookSet.more,
+            'max_title_length': maxTitleLength,
           };
           var html = HandlebarsTemplates['easy/catalog_results'](context);
           $('#books').append(html);
@@ -226,7 +233,8 @@ function addOthers(others, num_others) {
             'icon': box.icon,
             'docs': box.docs,
             'total': commaSeparatedNumber(box.numFound),
-            'more': box.more
+            'more': box.more,
+            'max_title_length': maxTitleLength
           };
         var html = HandlebarsTemplates['easy/catalog_results'](context);
         $("#" + box.id).append(html);
