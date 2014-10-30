@@ -22,7 +22,7 @@
               <ul class="list-inline">
                 <li>Results:</li>
                 <li><i class="fa fa-arrow-down"></i><a href="#books">Books</a></li>
-                <li><i class="fa fa-arrow-down"></i><a href="#summon">Journal Articles</a></li>
+                <li><i class="fa fa-arrow-down"></i><a href="#summon"><%= t('blacklight.articles.heading')%></a></li>
                 <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#bdr-search">Brown Digital Repository</a></li>
               </ul>
             </div>
@@ -34,7 +34,11 @@
                     <div class="more center-block"></div>
                 </div>
                 <div id="summon" class="col-md-6">
-                    <h3 class="bento-header"><a href="<%= summon_search(params[:q]) =%>"><i class="fa fa-copy"></i>Journal Articles</a></h3>
+                    <h3 class="bento-header">
+                      <a href="<%= summon_search(params[:q]) =%>">
+                        <%= t('blacklight.articles.icon').html_safe %><%= t('blacklight.articles.heading')%>
+                      </a>
+                    </h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <%#Handlebars template will be inserted here %>
                 </div>

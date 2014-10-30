@@ -9,6 +9,8 @@ en:
         restart_label: "Start search from beginning"
         all_results:
             title: "All Results"
-
+    articles:
+        heading: "Journal Articles"
+        icon: '<i class="fa fa-copy"></i>'
     #For results list
     back_to_search: 'Back to results'
