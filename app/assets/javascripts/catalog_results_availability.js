@@ -32,7 +32,7 @@ function grabItemDivs() {
 function getAvailabilityData( the_doc, bib_id ) {
   /* Grabs item's availability data and triggers div's html creation.
    * Called by grabItemDivs() */
-  api_url = "http://library.brown.edu/services/availability/id/" + bib_id + "/?callback=?";
+  api_url = availabilityService + bib_id + "/?callback=?";
   $.getJSON(
     api_url,
     function( response_object, success_status, ajax_object ) {  // these 3 vars are auto-created by $.getJSON; we only care about the response_object...
@@ -76,7 +76,7 @@ function buildAvailabilityHtml( availability_status, class_status, show_ezb_butt
       'show_ezb_button': show_ezb_button,
       'bib_id': bib_id
   };
-  availability_html = HandlebarsTemplates['catalog/ctlg_rslts_avlblty'](context);
+  availability_html = HandlebarsTemplates['catalog/catalog_results_availability_display'](context);
   return availability_html;
 }
 
