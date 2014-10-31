@@ -106,4 +106,15 @@ module BlacklightHelper
     end
   end
 
+  def item_subheading document
+    text = []
+    text << convert_to_array(document['statement_of_responsibility_display'])[0]
+    text << convert_to_array(document['pub_date'])[0]
+    if text == []
+      return nil
+    else
+      return content_tag("h5", safe_join(text.compact, ". "), :class => "title-subheading")
+    end
+  end
+
 end

@@ -1,6 +1,7 @@
 <%# default partial to display solr document fields in catalog show view -%>
-
 <%= render_cover_image document %>
+<%# Statement of responsiblity and publication date. -%>
+<%= item_subheading document %>
 
 <% if document['abstract_display'] %>
     <div class="abstract">
