@@ -117,4 +117,15 @@ module BlacklightHelper
     end
   end
 
+  def index_item_subheading document
+    text = []
+    text << convert_to_array(document['author_display'])[0]
+    text << convert_to_array(document['pub_date'])[0]
+    if text == []
+      return nil
+    else
+      return content_tag("div", safe_join(text.compact, ". "), :class => "title-subheading")
+    end
+  end
+
 end
