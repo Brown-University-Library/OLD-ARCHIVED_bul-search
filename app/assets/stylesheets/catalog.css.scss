@@ -18,6 +18,11 @@
     margin-left: 1em;
 }
 
+#holdings-wrapper.results table {
+  font-size: .8em;
+  margin-bottom: .25em;
+}
+
 .status_available {
     color: green;
 }
@@ -55,3 +60,15 @@
 .title-subheading {
     color: grey;
 }
+
+#documents img.cover-image {
+    max-height: 150px;
+}
+
+#documents .document {
+  margin: 1em;
+  padding: .5em;
+  border: 1px dotted #dddddd;
+}
+
+

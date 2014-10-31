@@ -36,7 +36,20 @@ function getAvailabilityData( the_doc, bib_id ) {
   $.getJSON(
     api_url,
     function( response_object, success_status, ajax_object ) {  // these 3 vars are auto-created by $.getJSON; we only care about the response_object...
-      determineAvailability( response_object, the_doc, bib_id );  // ...and our `the_doc`, which requires the anonymous function syntax to pass it along
+      context = {};
+      //determineAvailability( response_object, the_doc, bib_id );  // ...and our `the_doc`, which requires the anonymous function syntax to pass it along
+      if (response_object['items'].length > 0) {
+        context = response_object;
+        context['show_ezb_button'] = false;
+        context['openurl'] = null;
+        context['class'] = 'results';
+        context['results'] = true;
+        $(the_doc).append( html );
+      } else if (response_object['summary']) {
+        context['results'] = true;
+        context['summary'] = response_object['summary']
+      };
+      html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
     }
   );
 }

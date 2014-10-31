@@ -1,7 +1,14 @@
 {{! comment: called by `app/assets/javascripts/catalog_record_availability.js - addStatus()` }}
 
-<div id="holdings-wrapper">
-  <h4>Availability</h4>
+<div id="holdings-wrapper" {{#if results}}class="results"{{/if}}>
+  {{#if summary}}
+    <div>
+      Library has: {{ summary }}
+    </div>
+  {{/if}}
+  {{#unless results}}
+    <h4>Availability</h4>
+  {{/unless}}
   <table class="table">
     <tr>
       <th>Call number</th>
