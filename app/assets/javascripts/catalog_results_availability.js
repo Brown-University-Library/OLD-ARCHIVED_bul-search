@@ -42,14 +42,16 @@ function getAvailabilityData( the_doc, bib_id ) {
         context = response_object;
         context['show_ezb_button'] = false;
         context['openurl'] = null;
-        context['class'] = 'results';
-        context['results'] = true;
-        $(the_doc).append( html );
-      } else if (response_object['summary']) {
-        context['results'] = true;
+      } else if ($.isEmptyObject(response_object['summary']) != true) {
         context['summary'] = response_object['summary']
       };
-      html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
+      //Make sure we have something to show.
+      if ($.isEmptyObject(context) != true) {
+        console.debug(context);
+        context['results'] = true;
+        html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
+        $(the_doc).append( html );
+      }
     }
   );
 }

@@ -3,7 +3,7 @@
 <div id="holdings-wrapper" {{#if results}}class="results"{{/if}}>
   {{#if summary}}
     <div>
-      Library has: {{ summary }}
+      Library has: {{ summary.held }}. {{ summary.location }}. {{ summary.callnumber }}
     </div>
   {{/if}}
   {{#unless results}}
