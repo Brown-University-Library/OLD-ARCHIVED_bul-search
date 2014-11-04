@@ -13,7 +13,8 @@ class CatalogController < ApplicationController
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = {
       :qt => 'search',
-      :rows => 10
+      :rows => 10,
+      :spellcheck => false
     }
 
     # solr path which will be added to solr base url before the other solr params.
