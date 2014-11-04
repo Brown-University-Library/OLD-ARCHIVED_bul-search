@@ -47,7 +47,6 @@ function getAvailabilityData( the_doc, bib_id ) {
       };
       //Make sure we have something to show.
       if ($.isEmptyObject(context) != true) {
-        console.debug(context);
         context['results'] = true;
         html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
         $(the_doc).append( html );
