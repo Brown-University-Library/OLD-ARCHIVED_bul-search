@@ -168,13 +168,6 @@ function catalogBoxes(query) {
           var html = HandlebarsTemplates['easy/catalog_results'](context);
           $('#books').append(html);
           $('#books h3.bento-header a').attr('href', bookSet.more);
-          //add other formats
-          var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
-          var sortedOther = sortByTopFormat(other);
-          addOthers(sortedOther, numOtherCatalogBoxes);
-          //do the format facet/filter.
-          formats = response['formats'];
-          addFormats(formats);
         } else {
           //no results from catalog.
           var wcUrl = $('#worldcat-search').attr('href');
@@ -182,6 +175,13 @@ function catalogBoxes(query) {
           $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
           //$('#format-filter').hide();
         };
+        //add other formats
+        var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
+        var sortedOther = sortByTopFormat(other);
+        addOthers(sortedOther, numOtherCatalogBoxes);
+        //do the format facet/filter.
+        formats = response['formats'];
+        addFormats(formats);
       }
     });
 };
