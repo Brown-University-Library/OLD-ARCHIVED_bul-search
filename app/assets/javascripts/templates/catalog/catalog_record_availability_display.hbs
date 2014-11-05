@@ -28,6 +28,12 @@
     </tbody>
   </table>
 
+  {{#if more }}
+    <div class="more-results pull-right">
+        <a href="{{ more_link }}" class="label label-default">more</a>
+    </div>
+  {{/if}}
+
   {{#if show_ezb_button}}
 
     <div class="pull-right">

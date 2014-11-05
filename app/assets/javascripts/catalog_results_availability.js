@@ -48,6 +48,11 @@ function getAvailabilityData( the_doc, bib_id ) {
       //Make sure we have something to show.
       if ($.isEmptyObject(context) != true) {
         context['results'] = true;
+        if (context['items'].length > 2) {
+          context['items'] = context['items'].slice(0, 2);
+          context['more'] = true;
+          context['more_link'] = './catalog/' + bib_id;
+        }
         html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
         $(the_doc).append( html );
       }

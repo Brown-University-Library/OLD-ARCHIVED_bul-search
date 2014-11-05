@@ -13,6 +13,10 @@
     margin-bottom: 1em;
 }
 
+#holdings-wrapper.results {
+  margin: 0;
+}
+
 #holdings-wrapper table {
     font-size: small;
     margin-left: 1em;
@@ -21,6 +25,10 @@
 #holdings-wrapper.results table {
   font-size: .8em;
   margin-bottom: .25em;
+}
+
+#holdings-wrapper.more-results {
+  font-size: small;
 }
 
 .status_available {
@@ -75,6 +83,8 @@
   padding: 1em;
 }
 
-.summary-holdings {
+#holdings-wrapper.results .summary-holdings {
+  padding: .5em;
   font-size: .8em;
 }
+
