@@ -35,8 +35,13 @@
 <dl class="dl-horizontal  dl-invert record-page">
   <% document_show_fields(document).each do |solr_fname, field| -%>
     <% if should_render_show_field? document, field %>
-	    <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
-	    <dd class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_value document, :field => solr_fname %></dd>
+        <% if field.linked_fielded_search %>
+            <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+            <dd class="blacklight-<%= solr_fname.parameterize %>"><%= fielded_search(field.label, document[field.field], field.linked_fielded_search) %></dd>
+        <% else %>
+            <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+            <dd class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_value document, :field => solr_fname %></dd>
+        <% end -%>
     <% end -%>
   <% end -%>
 </dl>

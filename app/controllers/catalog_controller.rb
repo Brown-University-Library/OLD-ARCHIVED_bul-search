@@ -106,7 +106,7 @@ class CatalogController < ApplicationController
     #config.add_show_field 'abstract_display', :label => 'Abstract/summary'
     config.add_show_field 'subtitle_display', :label => 'Subtitle'
     config.add_show_field 'subtitle_vern_display', :label => 'Subtitle'
-    config.add_show_field 'author_display', :label => 'Author'
+    config.add_show_field 'author_display', :label => 'Author', :linked_fielded_search => 'author'
     config.add_show_field 'author_vern_display', :label => 'Author'
     config.add_show_field 'author_addl_display', :label => 'Other Author'
     config.add_show_field 'pub_date', :label => 'Publication date'
