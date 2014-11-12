@@ -63,3 +63,5 @@ gem 'handlebars_assets', "= 0.17"
 gem 'mysql2', :group => [:production]
 
 gem 'dotenv-deployment', :group => [:production]
+
+gem "rspec-rails", :group => [:development, :test]
