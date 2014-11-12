@@ -108,7 +108,9 @@ class CatalogController < ApplicationController
     config.add_show_field 'subtitle_vern_display', :label => 'Subtitle'
     config.add_show_field 'author_display', :label => 'Author', :linked_fielded_search => 'author'
     config.add_show_field 'author_vern_display', :label => 'Author'
-    config.add_show_field 'author_addl_display', :label => 'Other Author'
+    config.add_show_field 'author_addl_display', :label => 'Other Author', :linked_fielded_search => 'author', :multi => true
+    config.add_show_field 'marc_subjects', :label => 'Subject', :hot_link => true, :doc_key => 'marc_subjects', :index => 'subject'
+    #config.add_show_field 'other_authors', :label => 'Other Author', :hot_link => true, :doc_Key => 'marc_additional_authors', :index => 'author'
     config.add_show_field 'pub_date', :label => 'Publication date'
     config.add_show_field 'format', :label => 'Format'
     config.add_show_field "subject_topic_facet", :label => 'Subject'

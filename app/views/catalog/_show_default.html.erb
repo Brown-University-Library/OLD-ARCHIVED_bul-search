@@ -37,10 +37,21 @@
     <% if should_render_show_field? document, field %>
         <% if field.linked_fielded_search %>
             <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
-            <dd class="blacklight-<%= solr_fname.parameterize %>"><%= fielded_search(field.label, document[field.field], field.linked_fielded_search) %></dd>
+            <% if field.multi %>
+                <% document[field.field].each do |fvalue| %>
+                    <dd class="blacklight-<%= solr_fname.parameterize %>"><%= fielded_search(fvalue, field.linked_fielded_search) %></dd>
+                <% end -%>
+            <% else %>
+                <dd class="blacklight-<%= solr_fname.parameterize %>"><%= fielded_search(document[field.field], field.linked_fielded_search) %></dd>
+            <% end -%>
         <% else %>
             <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
             <dd class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_value document, :field => solr_fname %></dd>
+        <% end -%>
+    <% elsif field.hot_link %>
+        <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+        <% hot_link(document.send(field.doc_key), field.index).each do |anchor| -%>
+            <dd><%= anchor %></dd>
         <% end -%>
     <% end -%>
   <% end -%>
