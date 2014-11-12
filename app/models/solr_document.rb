@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'marc'
+
 class SolrDocument
 
   include Blacklight::Solr::Document
@@ -34,8 +36,23 @@ class SolrDocument
   use_extension( Blacklight::Solr::Document::DublinCore)
 
   #Local MARC extensions
-  module MarcSubjects
+  module BulMarc
     include Blacklight::Solr::Document::Marc
+
+    #Allow for marc-in-json
+    def load_marc
+      case _marc_format_type.to_s
+      when 'marcxml'
+        records = MARC::XMLReader.new(StringIO.new( fetch(_marc_source_field) )).to_a
+        return records[0]
+      when 'marc21'
+        return MARC::Record.new_from_marc( fetch(_marc_source_field) )
+      when 'json'
+        return MARC::Record.new_from_hash( JSON.parse( fetch(_marc_source_field) ) )
+      else
+        raise UnsupportedMarcFormatType.new("Only marcxml and marc21 are supported, this documents format is #{_marc_format_type} and the current extension parameters are #{self.class.extension_parameters.inspect}")
+      end
+    end
 
     def marc_subjects
       subjs = []
@@ -51,7 +68,7 @@ class SolrDocument
 
   end
 
-  use_extension(MarcSubjects) do |document|
+  use_extension(BulMarc) do |document|
     document.key?( :marc_display )
   end
 

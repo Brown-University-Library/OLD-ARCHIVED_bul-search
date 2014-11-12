@@ -47,9 +47,9 @@ gem 'blacklight_advanced_search', '~> 5.0'
 gem "jettywrapper", "~> 1.7"
 gem "devise"
 gem "devise-guests", "~> 0.3"
-#gem "blacklight-marc", "~> 5.0"
+gem "blacklight-marc", "~> 5.0"
 #gem "blacklight-marc", :path => "/work/blacklight_marc"
-gem "blacklight-marc", :git => 'https://github.com/lawlesst/blacklight_marc.git', :branch => 'marc-in-json'
+#gem "blacklight-marc", :git => 'https://github.com/lawlesst/blacklight_marc.git', :branch => 'marc-in-json'
 
 gem "summon", "~> 2.0.5"
 
