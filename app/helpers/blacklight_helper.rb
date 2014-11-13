@@ -106,10 +106,9 @@ module BlacklightHelper
     end
   end
 
-  def item_subheading document
+  def item_subheading fld_value
     text = []
-    text << convert_to_array(document['statement_of_responsibility_display'])[0]
-    text << convert_to_array(document['pub_date'])[0]
+    text << convert_to_array(fld_value)[0]
     if text == []
       return nil
     else

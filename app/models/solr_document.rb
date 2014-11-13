@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'marc'
+require 'bulmarc'
 
 class SolrDocument
 
@@ -7,9 +7,6 @@ class SolrDocument
       # The following shows how to setup this blacklight document to display marc documents
   extension_parameters[:marc_source_field] = :marc_display
   extension_parameters[:marc_format_type] = :json
-  use_extension( Blacklight::Solr::Document::Marc) do |document|
-    document.key?( :marc_display  )
-  end
 
   field_semantics.merge!(
                          :title => "title_display",
@@ -17,9 +14,6 @@ class SolrDocument
                          :language => "language_facet",
                          :format => "format"
                          )
-
-
-
   # self.unique_key = 'id'
 
   # Email uses the semantic field mappings below to generate the body of an email.
@@ -36,7 +30,7 @@ class SolrDocument
   use_extension( Blacklight::Solr::Document::DublinCore)
 
   #Local MARC extensions
-  module BulMarc
+  module BrownMarcDisplay
     include Blacklight::Solr::Document::Marc
 
     #Allow for marc-in-json
@@ -54,21 +48,17 @@ class SolrDocument
       end
     end
 
+    def marc_display_field(name)
+      to_marc.send(name)
+    end
+
     def marc_subjects
-      subjs = []
-      to_marc.find_all {|f| ('600'..'699') === f.tag}.each do |field|
-        txt = []
-        field.each do |sub_field|
-          txt << sub_field.value
-        end
-        subjs << "#{txt.join(" -- ")}"
-      end
-      return subjs
+      to_marc.subjects
     end
 
   end
 
-  use_extension(BulMarc) do |document|
+  use_extension(BrownMarcDisplay) do |document|
     document.key?( :marc_display )
   end
 
