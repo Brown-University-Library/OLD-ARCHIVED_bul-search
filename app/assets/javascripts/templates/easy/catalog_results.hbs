@@ -9,10 +9,10 @@
         <small>
             {{#if this.author_display}}{{this.author_display}}.&nbsp;{{/if}}
             {{#if this.pub_date }}{{this.pub_date}}{{/if}}
-        {{#if this.online }}
-            <br/>
-            <a href="{{this.link}}" class="label label-info">Online</a>
-        {{/if}}</small>
+            {{#if this.online }}
+                <a href="{{this.link}}" class="label label-info">Online</a>
+            {{/if}}
+        </small>
     </li>
     {{/each}}
 </ul>
