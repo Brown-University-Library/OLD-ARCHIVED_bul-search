@@ -23,7 +23,7 @@
         <ul class="list-unstyled">
         <% access_urls(document).each do |access| -%>
             <%= access['url'] %>
-            <li><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
+            <li><span class="label label-info">Online</span><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
         <% end -%>
         </ul>
     </div>
