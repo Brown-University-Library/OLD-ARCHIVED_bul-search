@@ -17,4 +17,16 @@
   <% end -%>
 
 
+  <%# Check for access urls.  -%>
+  <% if has_access_urls(document) == true %>
+    <div class="index-online">
+        <ul class="list-unstyled">
+        <% access_urls(document).each do |access| -%>
+            <%= access['url'] %>
+            <li><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
+        <% end -%>
+        </ul>
+    </div>
+  <% end %>
+
 </dl>
