@@ -4,11 +4,11 @@ module Constants
     ICONS = {
         "Book" => "book",
         "Computer File" => "file-code-o",
-        "Journal" => "newspaper",
+        "Journal" => "newspaper-o",
         "Map" => "globe",
         "Musical Score" => "music",
-        "Newspaper" => "newspaper",
-        "Periodical Title" => "newspaper",
+        "Newspaper" => "newspaper-o",
+        "Periodical Title" => "newspaper-o",
         "Sound Recording" => "volume-up",
         "Video" => "film",
     }
