@@ -30,13 +30,13 @@ module MarcHelper
     end
   end
 
-  def icon(format, size=nil)
+  def icon(format, size=nil, css_class=nil)
     if Constants::ICONS.has_key?(format)
       cls = "fa-#{Constants::ICONS[format]}"
       if size
         cls += " fa-#{size}"
       end
-      content_tag('i', '', :class=>"format-icon fa #{cls}")
+      content_tag('i', '', :class=>"fa #{cls}")
     end
   end
 

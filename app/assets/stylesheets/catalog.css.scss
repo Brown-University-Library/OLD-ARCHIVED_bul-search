@@ -65,10 +65,14 @@
     padding-right: .5em;
 }
 
-.title-subheading {
+.title-subheading, .index_format {
     color: grey;
     margin-top: 0em;
     margin-bottom: 0em;
+}
+
+.title-subheading i {
+  color: black;
 }
 
 #documents img.cover-image {
@@ -103,6 +107,6 @@ div.blacklight-title_vern_display {
   margin-right: 1em;
 }
 
-.format-icon {
-  margin-left: .5em;
+.title-subheading i {
+  margin-right: .5em;
 }
