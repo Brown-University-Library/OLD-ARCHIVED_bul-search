@@ -15,4 +15,5 @@ en:
     #For results list
     back_to_search: 'Back to results'
     tools:
+        email: 'Email this'
         sms: 'Text this'
