@@ -1,7 +1,7 @@
 
 //https://gist.github.com/TastyToast/5053642
 Handlebars.registerHelper ('truncate', function (str, len) {
-    if (str.length > len && str.length > 0) {
+    if ((str != undefined) && (str.length > len && str.length > 0)) {
         var new_str = str + " ";
         new_str = str.substr (0, len);
         new_str = str.substr (0, new_str.lastIndexOf(" "));
