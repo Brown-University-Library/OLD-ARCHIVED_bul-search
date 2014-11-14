@@ -18,4 +18,15 @@ module MarcHelper
     out
   end
 
+  def toc_link_display(document)
+    url = marc_display(document, 'toc_link')
+    if url
+      content_tag(
+        "h6",
+        link_to("Online Table of Contents", url),
+        :class=> "toc-link"
+      )
+    end
+  end
+
 end
