@@ -14,3 +14,5 @@ en:
         icon: '<i class="fa fa-copy"></i>'
     #For results list
     back_to_search: 'Back to results'
+    tools:
+        sms: 'Text this'
