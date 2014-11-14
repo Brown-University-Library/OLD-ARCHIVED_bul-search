@@ -112,25 +112,7 @@ end
 #
 #Assign a font-awesome icon based on the format string.
 def format_icon format
-  rawf = format.to_s.downcase
-  case rawf
-  #need a icon
-  when 'journal'
-    #return 'book-open'
-    return
-  when 'sound recording'
-    return 'volume-up'
-  when 'musical score'
-    return 'music'
-  when 'map'
-    icon = 'globe'
-  when 'newspaper'
-    return rawf
-  when 'video'
-    icon = 'film'
-  else
-    icon = nil
-  end
+  icon = Constants::ICONS[format.titleize]
   return icon
 end
 

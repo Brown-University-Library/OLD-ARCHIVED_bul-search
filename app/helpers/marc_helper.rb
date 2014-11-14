@@ -1,3 +1,4 @@
+
 module MarcHelper
 
   def marc_display(document, name)
@@ -26,6 +27,16 @@ module MarcHelper
         link_to("Online Table of Contents", url),
         :class=> "toc-link"
       )
+    end
+  end
+
+  def icon(format, size=nil)
+    if Constants::ICONS.has_key?(format)
+      cls = "fa-#{Constants::ICONS[format]}"
+      if size
+        cls += " fa-#{size}"
+      end
+      content_tag('i', '', :class=>"format-icon fa #{cls}")
     end
   end
 
