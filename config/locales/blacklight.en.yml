@@ -17,3 +17,7 @@ en:
     tools:
         email: 'Email this'
         sms: 'Text this'
+
+    search:
+        form:
+            q: "Enter keywords to search library resources"
