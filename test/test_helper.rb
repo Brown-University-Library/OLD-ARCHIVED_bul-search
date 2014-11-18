@@ -12,4 +12,10 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+
+  # fixes ``ActionView::Template::Error: undefined method `authenticate' for nil:NilClass`` error,
+  #  ...which appears when trying to access a page that uses the devise/user model, like the catalog record page.
+  # from <http://stackoverflow.com/a/4308872>, which leads to <https://github.com/plataformatec/devise#test-helpers>.
+  include Devise::TestHelpers
+
 end

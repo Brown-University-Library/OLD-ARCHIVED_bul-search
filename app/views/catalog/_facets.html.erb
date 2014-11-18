@@ -1,0 +1,36 @@
+<% # main container for facets/limits menu -%>
+<% if has_facet_values?  %>
+<div id="facets" class="facets sidenav">
+
+  <div class="top-panel-heading panel-heading">
+    <button type="button" class="facets-toggle" data-toggle="collapse" data-target="#facet-panel-collapse">
+      <span class="sr-only">Toggle facets</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+
+    <h4>
+    	<%= t('blacklight.search.facets.title') %>
+    </h4>
+  </div>
+
+  <div id="facet-panel-collapse" class="collapse panel-group">
+  <%= render_facet_partials %>
+  </div>
+
+  <% if params[:q].present? %>
+    <div class="panel-heading">
+      <h4><%= t('blacklight.search.all_results.title') %></h4>
+    </div>
+
+    <div id="facet-panel-all-results" class="panel-group">
+      <ul class="list-unstyled">
+        <li><%= t('blacklight.articles.icon').html_safe %><a href="<%= summon_search(params[:q]) =%>"><%= t('blacklight.articles.heading')%></a></li>
+        <li><a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a></li>
+      </ul>
+    </div>
+  <% end %>
+
+</div>
+<% end %>

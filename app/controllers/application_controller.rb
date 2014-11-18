@@ -9,4 +9,13 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
+
+  #make sure bdr searches render with the correct url
+  def search_action_url *args
+    if !args.empty? && args[0]['controller'] == 'bdr'
+      bdr_index_url *args
+    else
+      catalog_index_url *args
+    end
+  end
 end

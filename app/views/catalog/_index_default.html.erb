@@ -1,0 +1,35 @@
+<%# default partial to display solr document fields in catalog index view -%>
+<%# Statement of responsiblity and publication date. -%>
+<%= index_item_subheading document %>
+<div class="title-subheading">
+  <%= icon(document['format'], css_class="index-format-icon") %><%= document['format'] %>
+</div>
+
+<dl class="document-metadata dl-horizontal dl-invert">
+
+    <% if document['isbn_t'] %>
+            <span class="thumbnail pull-right">
+                <img class="cover-image ISBN<%= document['isbn_t'][0] %>" data-isbn="ISBN<%= document['isbn_t'][0] %>"/>
+            </span>
+    <% end %>
+
+  <% index_fields(document).each do |solr_fname, field| -%>
+    <% if should_render_index_field? document, field %>
+	    <div class="blacklight-<%= solr_fname.parameterize %>"><%= render_index_field_value document, :field => solr_fname %></div>
+    <% end -%>
+  <% end -%>
+
+
+  <%# Check for access urls.  -%>
+  <% if has_access_urls(document) == true %>
+    <div class="index-online">
+        <ul class="list-unstyled">
+        <% access_urls(document).each do |access| -%>
+            <%= access['url'] %>
+            <li><span class="label label-info">Online</span><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
+        <% end -%>
+        </ul>
+    </div>
+  <% end %>
+
+</dl>

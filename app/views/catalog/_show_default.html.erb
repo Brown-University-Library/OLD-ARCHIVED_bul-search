@@ -1,0 +1,71 @@
+<%# default partial to display solr document fields in catalog show view -%>
+<%= render_cover_image document %>
+<%# Statement of responsiblity and publication date. -%>
+<%= item_subheading marc_display(document, 'statement_of_responsibility') %>
+<%= item_subheading marc_display(document, 'imprint') %>
+
+<% if document['abstract_display'] %>
+    <div class="abstract">
+        <%= document['abstract_display'][0] %>
+    </div>
+<% end %>
+
+
+<%# Check for access urls.  -%>
+<% if has_access_urls(document) == true %>
+    <hr/>
+    <h4>Availability</h4>
+        <ul>
+        <% access_urls(document).each do |access| -%>
+            <%= access['url'] %>
+            <li><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
+        <% end -%>
+        </ul>
+<% end %>
+
+<div id="availability">
+    <script>
+        var availabilityService = '<%= availability_service_url %>';
+    </script>
+    <!-- Populated by `catalog_record_availability` <script> above. -->
+</div>
+
+
+<hr/>
+<h4>Details</h4>
+<%= toc_link_display(document) %>
+<dl class="dl-horizontal  dl-invert record-page">
+  <% document_show_fields(document).each do |solr_fname, field| -%>
+    <% if should_render_show_field? document, field %>
+        <% if field.linked_fielded_search %>
+            <dt class="blacklight-<%= solr_fname.parameterize %>">
+                <%= render_document_show_field_label document, :field => solr_fname %></dt>
+            <% if field.multi %>
+                <% document[field.field].each do |fvalue| %>
+                    <dd class="blacklight-<%= solr_fname.parameterize %>"><%= fielded_search(fvalue, field.linked_fielded_search) %></dd>
+                <% end -%>
+            <% else %>
+                <dd class="blacklight-<%= solr_fname.parameterize %>">
+                    <%= fielded_search(document[field.field], field.linked_fielded_search) %>
+                </dd>
+            <% end -%>
+        <% else %>
+            <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+            <dd class="blacklight-<%= solr_fname.parameterize %>">
+                <% if field.show_icon %>
+                    <%= icon(document[field.field]) %>
+                <% end -%>
+                <%= render_document_show_field_value document, :field => solr_fname %>
+            </dd>
+        <% end -%>
+    <% elsif field.hot_link %>
+        <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+        <% hot_link(document.send(field.doc_key), field.index).each do |anchor| -%>
+            <dd><%= anchor %></dd>
+        <% end -%>
+    <% end -%>
+  <% end -%>
+</dl>
+
+
+

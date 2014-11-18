@@ -1,16 +1,58 @@
 // Place all the styles related to the easy controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#bentos {
+    padding-bottom: 3em;
+}
+
 .start-over {
     margin-left: 2em;
 }
 
 .more {
     margin-left: 4em;
-    font-size: smaller;
 }
 
 #facets {
     background-color: #eee;
     height: 100%;
+}
+
+#bentos ul li {
+    padding-bottom: 1em;
+}
+
+#bentos .fa {
+    margin-right: .25em;
+}
+
+#format-list {
+    min-height: 10em;
+}
+
+h3.bento-header a {
+    color: #333333;;
+}
+
+#worldcat-section {
+    padding-top: 1em;
+    padding-bottom: 1.5em;
+}
+
+#worldcat-section img {
+    padding-right: .25em;
+}
+
+#bentos .label-info {
+    margin-left: 2em;
+}
+
+#jump-links a {
+    font-size: small;
+}
+
+.gsc-control-cse {
+    padding: 0 !important;
+    margin: 0 !important;
 }

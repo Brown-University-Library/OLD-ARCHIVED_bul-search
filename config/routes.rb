@@ -2,11 +2,22 @@ BulSearch::Application.routes.draw do
   get "easy/search"
   root :to => "catalog#index"
   blacklight_for :catalog
+  post 'catalog/sms' => 'catalog#sms'
   Blacklight::Marc.add_routes(self)
   devise_for :users
 
-  get 'easy/' => 'easy#home'
+  get 'catalog/:id/ourl' => 'catalog#ourl_service', as: :catalog_service_ourl
+
+  get 'easy/' => 'easy#home', as: :easyS
   get 'easy/search'
+  get 'bdr/advanced' => 'bdr_advanced#index', as: :bdr_advanced_search
+  get 'bdr' => 'bdr#index', as: :bdr_index
+  get 'bdr/email' => 'bdr#email', as: :email_bdr
+  post 'bdr/email' => 'bdr#email', as: :bdr_email
+  get 'bdr/sms' => 'bdr#sms', as: :sms_bdr
+  post 'bdr/sms' => 'bdr#sms', as: :bdr_sms
+  post 'bdr/:id/track' => 'bdr#track', as: :bdr_track
+  get 'bdr/:id' => 'bdr#show', as: :bdr_solr_document
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

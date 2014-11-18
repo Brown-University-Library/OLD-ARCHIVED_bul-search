@@ -1,0 +1,112 @@
+// Place all the styles related to the catalog controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+// availability statuses set in:
+// - `app/assets/javascripts/catalog_results_availability.js` and displayed in...
+// - `app/assets/javascripts/templates/catalog/ctlg_rslts_avlblty.hbs`
+
+#holdings-wrapper {
+    width: 60%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+#holdings-wrapper.results {
+  margin: 0;
+}
+
+#holdings-wrapper table {
+    font-size: small;
+    margin-left: 1em;
+}
+
+#holdings-wrapper.results table {
+  font-size: .8em;
+  margin-bottom: .25em;
+}
+
+#holdings-wrapper.more-results {
+  font-size: small;
+}
+
+.status_available {
+    color: green;
+}
+
+.status_unavailable {
+    color: red;
+}
+
+.status_unknown {
+    color: purple;
+}
+
+.preview-info {
+    color: red;
+    font-size: 3em;
+}
+
+.gbs {
+    margin-left: 1em;
+}
+
+#worldcat-search img {
+    padding-right: .25em;
+}
+
+
+#facet-panel-all-results ul {
+    margin-left: 1.33em;
+}
+
+#facet-panel-all-results img, #facet-panel-all-results i {
+    padding-right: .5em;
+}
+
+.title-subheading, .index_format {
+    color: grey;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+.title-subheading i {
+  color: black;
+}
+
+#documents img.cover-image {
+    max-height: 150px;
+}
+
+#documents .document {
+  margin: 1em;
+  padding: .5em;
+  border: 1px dotted #dddddd;
+}
+
+.summary-holdings {
+  padding: 1em;
+}
+
+#holdings-wrapper.results .summary-holdings {
+  padding: .5em;
+  font-size: .8em;
+}
+
+div.blacklight-title_vern_display {
+  margin-top: 1em;
+}
+
+.index-online {
+  margin-top: 1em;
+  font-size: small;
+}
+
+.index-online span.label-info {
+  margin-right: 1em;
+}
+
+.title-subheading i {
+  margin-right: .5em;
+}

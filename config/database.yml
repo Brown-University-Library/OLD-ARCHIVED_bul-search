@@ -25,7 +25,10 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
+  adapter: <%= ENV['DATABASE_ADAPTER'] %>
+  encoding: utf8
+  database: <%= ENV['DATABASE'] %>
   pool: 5
-  timeout: 5000
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  host: localhost

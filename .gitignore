@@ -4,7 +4,9 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+.gemrc
 .env
+.env.*
 search_summon.rb
 
 
@@ -42,3 +44,9 @@ config/secrets.yml
 ## Environment normalisation:
 /.bundle
 /vendor/bundle
+
+## ignore local ruby verson spec
+.ruby-version
+
+## Ignore precompiled assets
+/public/assets
