@@ -24,6 +24,7 @@
                 <li><i class="fa fa-arrow-down"></i><a href="#books">Books</a></li>
                 <li><i class="fa fa-arrow-down"></i><a href="#summon"><%= t('blacklight.articles.heading')%></a></li>
                 <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#bdr-search">Brown Digital Repository</a></li>
+                <li><i class="fa fa-arrow-down"></i><a href="#website">Library website</a></li>
               </ul>
             </div>
             <div class="row">
@@ -52,6 +53,14 @@
                     <h3 class="bento-header"><a href="#">Brown Digital Repository</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <%#Handlebars template will be inserted here %>
+                </div>
+            </div>
+            <div class="row">
+                <hr/>
+                <div id="website" class="col-md-12">
+                    <h3 class="bento-header"><a href="#">Library website</a></h3>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                    <gcse:searchresults-only queryParameterName="q" linkTarget="_self" webSearchResultSetSize="5">
                 </div>
             </div>
         </div>
@@ -270,6 +279,17 @@ function commaSeparatedNumber(val){
     }
     return val;
   }
+</script>
 
 
+<!-- Google cse. -->
+<script>
+(function() {
+  var cx = '015192785404496812646:ac4fr7did5y'; // Insert your own Custom Search engine ID here
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = (document.location.protocol == 'https' ? 'https:' : 'http:') +
+      '//www.google.com/cse/cse.js?cx=' + cx;
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+  $('#website i.waiting').hide();
+})();
 </script>
