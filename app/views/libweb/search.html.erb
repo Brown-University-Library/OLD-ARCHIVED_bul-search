@@ -1,0 +1,24 @@
+<% if @has_query != true %>
+    <div class="col-md-6 col-md-offset-3">
+        <div class="well well-lg">
+            Lorem ipsum dolor sit amet, luptatum vivendum quo ex, pri cu veri commune definiebas, id homero omnesque postulant est. Minimum recteque sed ne, usu no case officiis intellegebat, ius an esse fabellas. Ne cum tation labores officiis. No doming reprehendunt his, mei id natum salutandi deterruisset. Eos quem integre et, dictas argumentum definitiones vel ad.
+        </div>
+    </div>
+<% else %>
+    <h3>Library website search</h3>
+    <div id="libweb-search" class="col-md-12">
+        <gcse:searchresults-only queryParameterName="q" linkTarget="_self" webSearchResultSetSize="10">
+    </div>
+<% end %>
+
+<!-- Google cse. -->
+<script>
+(function() {
+  var cx = '015192785404496812646:ac4fr7did5y'; // Insert your own Custom Search engine ID here
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = (document.location.protocol == 'https' ? 'https:' : 'http:') +
+      '//www.google.com/cse/cse.js?cx=' + cx;
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+  $('#website i.waiting').hide();
+})();
+</script>

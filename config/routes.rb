@@ -18,6 +18,8 @@ BulSearch::Application.routes.draw do
   post 'bdr/sms' => 'bdr#sms', as: :bdr_sms
   post 'bdr/:id/track' => 'bdr#track', as: :bdr_track
   get 'bdr/:id' => 'bdr#show', as: :bdr_solr_document
+
+  get 'libweb/' => 'libweb#search', as: :lib_web
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

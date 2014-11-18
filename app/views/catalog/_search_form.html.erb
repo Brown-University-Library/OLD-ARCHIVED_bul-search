@@ -2,7 +2,7 @@
     <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
 
     <div class="input-group col-md-9 col-md-offset-1">
-    <% unless search_fields.empty? | @easy_search == true %>
+    <% unless search_fields.empty? || @easy_search == true || @libweb_search == true %>
 
       <span class="input-group-addon">
         <label for="search_field" class="sr-only"><%= t('blacklight.search.form.search_field.label') %></label>
@@ -22,8 +22,10 @@
       </div>
       <% if @easy_search == true && @has_query == true %>
         <span class="start-over"><%= link_to "Start over", @easy %></span>
+      <% elsif @libweb_search && @has_query %>
+        <span class="start-over"><%= link_to "Search again", @libweb %></span>
       <% end %>
-      <% if @easy_search != true %>
+      <% if @easy_search != true && @libweb_search != true %>
         <% if controller_name == 'bdr' %>
           <%= link_to 'Advanced Search', bdr_advanced_search_path(params), :class=>'advanced_search'%>
         <% elsif controller_name != 'advanced' %>
