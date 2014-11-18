@@ -58,7 +58,7 @@
             <div class="row">
                 <hr/>
                 <div id="website" class="col-md-12">
-                    <h3 class="bento-header"><a href="#">Library website</a></h3>
+                    <h3 class="bento-header"><a id="libweb-more" href="<%= libweb_more_link(params[:q]) =%>">Library website</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <gcse:searchresults-only queryParameterName="q" linkTarget="_self" webSearchResultSetSize="5">
                 </div>
@@ -291,5 +291,7 @@ function commaSeparatedNumber(val){
       '//www.google.com/cse/cse.js?cx=' + cx;
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
   $('#website i.waiting').hide();
+  //var more = $('#libweb-more a').attr('href');
+  //$('#__gcse_0').append("<div class=\"more center-block\">" + more + "</div");
 })();
 </script>
