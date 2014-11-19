@@ -22,8 +22,6 @@
       </div>
       <% if @easy_search == true && @has_query == true %>
         <span class="start-over"><%= link_to "Start over", @easy %></span>
-      <% elsif @libweb_search && @has_query %>
-        <span class="start-over"><%= link_to "Search again", @libweb %></span>
       <% end %>
       <% if @easy_search != true && @libweb_search != true %>
         <% if controller_name == 'bdr' %>
