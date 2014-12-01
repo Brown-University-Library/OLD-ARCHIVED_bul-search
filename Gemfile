@@ -60,12 +60,12 @@ gem 'byebug', :groups => [:devbox]
 
 gem 'handlebars_assets', "= 0.17"
 
-gem 'mysql2', :group => [:production]
+# gem 'mysql2', :group => [:production]
 
 gem 'dotenv-deployment', :group => [:production]
 
 gem "rspec-rails", :group => [:development, :test]
 
 #gem "bulmarc", :path => "/work/bul_marc_utils"
-gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
+gem "bulmarc", :git => 'https://bentbul@bitbucket.org:/bul/bulmarc.git', :branch => 'blight-display'
 
