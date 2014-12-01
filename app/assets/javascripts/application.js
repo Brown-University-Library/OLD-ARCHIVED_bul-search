@@ -13,12 +13,18 @@
 //= require jquery
 //= require 'blacklight_advanced_search'
 
-
 //= require jquery_ujs
 //= require turbolinks
 //
 // Required by Blacklight
 //= require blacklight/blacklight
-//= require_tree .
+//= require_tree ./global
 
-//=require underscore-min
+//= require underscore-min
+
+
+//= require handlebars.runtime
+//= require_tree ./templates
+//= require handlebars.helpers
+
+//=require jquery.plug-google-content

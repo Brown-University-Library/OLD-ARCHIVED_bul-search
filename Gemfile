@@ -48,10 +48,24 @@ gem "jettywrapper", "~> 1.7"
 gem "devise"
 gem "devise-guests", "~> 0.3"
 gem "blacklight-marc", "~> 5.0"
+#gem "blacklight-marc", :path => "/work/blacklight_marc"
+#gem "blacklight-marc", :git => 'https://github.com/lawlesst/blacklight_marc.git', :branch => 'marc-in-json'
 
 gem "summon", "~> 2.0.5"
 
-gem 'dotenv-rails', :groups => [:development, :test]
+gem 'dotenv-rails', :groups => [:development, :test, :devbox]
 gem "font-awesome-rails"
 
 gem 'byebug', :groups => [:devbox]
+
+gem 'handlebars_assets', "= 0.17"
+
+gem 'mysql2', :group => [:production]
+
+gem 'dotenv-deployment', :group => [:production]
+
+gem "rspec-rails", :group => [:development, :test]
+
+#gem "bulmarc", :path => "/work/bul_marc_utils"
+gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
+

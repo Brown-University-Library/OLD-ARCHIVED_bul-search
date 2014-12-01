@@ -1,5 +1,8 @@
 <div class="navbar-right">
   <ul class="nav navbar-nav">
+    <% if @easy_search != true %>
+      <li><%= link_to t('blacklight.bento.label'), easy_search_link %></li>
+    <% end %>
     <% if render_bookmarks_control? %>
     <li>
       <%= link_to t('blacklight.header_links.bookmarks'), bookmarks_path %>
@@ -12,6 +15,9 @@
     <% end %>
     <li>
     <%= link_to t('blacklight.header_links.search_history'), search_history_path %>
+    </li>
+    <li>
+      <a href="http://library.brown.edu/libweb/askalib.php">Help</a>
     </li>
   </ul>
 </div>

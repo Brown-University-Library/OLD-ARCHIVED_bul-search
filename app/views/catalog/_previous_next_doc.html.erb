@@ -1,0 +1,19 @@
+<% #Using the Bootstrap Pagination class  -%>
+<% if @previous_document || @next_document %>
+	<div id="previousNextDocument">
+    <div class="page_links">
+      <%= link_to_previous_document @previous_document %> |
+
+      <%= item_page_entry_info %> |
+
+      <%= link_to_next_document @next_document %>
+      </div>
+
+    <div class="pull-right search-widgets">
+        <% if get_last_easy_search.nil? %>
+          <%= link_back_to_catalog :class => 'btn' %>
+        <% end %>
+        <%= link_to t('blacklight.search.restart_label'), easy_search_link, :class=>'btn', :id=>"startOverLink" %>
+  	</div>
+  </div>
+<% end %>

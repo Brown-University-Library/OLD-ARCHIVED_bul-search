@@ -1,3 +1,23 @@
 en:
   blacklight:
     application_name: 'Brown University Library Search'
+    bento:
+        label: "easySearch"
+        max_title_length: 75
+    search:
+        #Label for users to go back to easySearch from withing Blacklight.
+        form:
+            q: "Enter keywords to search library resources"
+        restart_label: "Start search from beginning"
+        all_results:
+            title: "All Results"
+    articles:
+        heading: "Journal Articles"
+        icon: '<i class="fa fa-copy"></i>'
+    #For results list
+    back_to_search: 'Back to results'
+    tools:
+        email: 'Email this'
+        sms: 'Text this'
+    #search:
+

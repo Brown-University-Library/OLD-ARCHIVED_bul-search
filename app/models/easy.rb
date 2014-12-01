@@ -2,38 +2,129 @@ require 'json'
 require 'open-uri'
 require 'summon'
 require 'rsolr'
-
-# class Easy
-#   def initialize query
-#     #get results from solr
-#     resp = open("http://daxdev.services.brown.edu:8082/solr/fedora_solr/select/?q=#{query}&wt=json")
-#     @results = JSON.parse resp.read
-#   end
-
-#   def to_json
-#     @results['response']['docs'].to_json
-#   end
-# end
-
+require 'uri'
 
 class Easy
     def initialize source, query
         if source == 'summon'
           summon_rsp = get_summon query
-          @results = summon_rsp['response']['docs']
+          @results = summon_rsp['response']
+        elsif source == 'newspaper_articles'
+          summon_rsp = get_summon_newspaper query
+          @results = summon_rsp['response']
+        elsif source == 'bdr'
+          @results = get_bdr query
         else
-          @results = get_cat query
+          @results = get_catalog query
         end
     end
 
     def to_json
         @results
-        #['response']['docs']
     end
 end
 
+def bdr_link id
+  item_url = ENV['BDR_ITEM_URL']
+  "#{item_url}/#{id}"
+end
 
-def get_cat query
+def bdr_thumbnail id
+  url = ENV['BDR_THUMBNAIL_SERVICE']
+  "#{url}/#{id}"
+end
+
+def get_bdr query
+  solr_url = ENV['BDR_SEARCH_URL']
+  solr = RSolr.connect :url => solr_url
+
+  qp = {
+      :wt=>:json,
+      "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim",
+      "q"=>"#{query}",
+      "rows"=>5
+  }
+  response = solr.get 'select', :params => qp
+  response.deep_stringify_keys!
+
+
+  response['response']['docs'].each do |doc|
+    doc['link'] = bdr_link doc['id']
+    doc['thumbnail'] = bdr_thumbnail doc['id']
+    #take first creator, year only
+    ['author', 'year'].each do |k|
+      if doc.has_key?(k)
+        doc[k] = doc[k][0]
+      end
+    end
+  end
+  response['response']['more'] = ENV['BDR_URL'] + "?utf8=✓&search_field=text&q=#{query}"
+  response['response']
+end
+
+def easy_base_url
+  relative_root = ENV['RAILS_RELATIVE_URL_ROOT']
+  base = '/easy/'
+  if relative_root
+    return relative_root + base
+  else
+    return base
+  end
+end
+
+def catalog_base_url
+  #Rails.application.config.relative_url_root if Rails.application.config.respond_to?('relative_url_root')
+  relative_root = ENV['RAILS_RELATIVE_URL_ROOT']
+  base = '/catalog/'
+  if relative_root
+    return relative_root + base
+  else
+    return base
+  end
+end
+
+def format_filter_url(query, format)
+  #Link to more results.
+  cat_url = catalog_base_url
+  enc_format = URI.escape(format.to_s)
+  "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
+end
+
+#Produce a Brown Summon link.
+#
+#For searches with no results, return the link to Summon searches
+#that include materials outside fo the Brown collection.
+def summon_url(query, filtered)
+  if filtered == true
+    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
+  else
+    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=f&q=#{query}"
+  end
+end
+
+def catalog_link id
+  burl = catalog_base_url
+  #cpath = Rails.application.routes.url_helpers.catalog_path(id)
+  return burl + id
+end
+
+#Returns string with icon class or nil
+#
+#Assign a font-awesome icon based on the format string.
+def format_icon format
+  icon = Constants::ICONS[format.titleize]
+  return icon
+end
+
+def plural_format format
+  if format == 'Music'
+    return format
+  else
+    return format + 's'
+  end
+end
+
+def get_catalog query
   solr_url = ENV['SOLR_URL']
 
   solr = RSolr.connect :url => solr_url
@@ -44,11 +135,13 @@ def get_cat query
       "group.field"=>"format",
       "group"=>true,
       "group.limit"=>5,
-      "fl"=>"id, title_display",
-      "q"=>"#{query}"
+      "fl"=>"id, title_display, author_display, pub_date, format, online:online_b",
+      "q"=>"#{query}",
+      "qt" => 'search',
+      :spellcheck => false,
   }
 
-  response = response = solr.get 'select', :params => qp
+  response = solr.get 'select', :params => qp
 
   out_data = {}
 
@@ -57,16 +150,29 @@ def get_cat query
   response['grouped']['format']['groups'].each do |grp|
       format = grp['groupValue']
       grp_h = {}
+      #Pluralize most formats.
+      # if !format.nil? and format != 'Music'
+      #   format = format + 's'
+      # end
       grp_h['format'] = format
       grp_h['numFound'] = grp['doclist']['numFound']
       grp_h['docs'] = []
       grp['doclist']['docs'].each do |doc|
-          d = {
-              'id'=>doc['id'],
-              'title'=>doc['title_display']
-          }
-          grp_h['docs'] << d
+          doc['link'] = catalog_link doc['id']
+          #Don't show pub_dates for Journals.  Not relevant.
+          if format == 'Journal'
+            doc.delete('pub_date')
+          end
+          #Take first value of pub_date
+          if doc.has_key?("pub_date")
+            doc['pub_date'] = doc['pub_date'][0]
+          end
+          grp_h['docs'] << doc
       end
+      #Link to more results.
+      grp_h['more'] = format_filter_url(query, format)
+      #icons
+      grp_h['icon'] = format_icon(format)
       groups << grp_h
   end
 
@@ -77,7 +183,8 @@ def get_cat query
       (format, count) = fgrp
       d = {
           'format'=>format,
-          'count'=>count
+          'count'=>count,
+          'more'=>format_filter_url(query, format)
       }
       formats << d
   end
@@ -97,7 +204,8 @@ def get_summon query
     "s.fvf" => "ContentType,Journal Article",
     "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
     "s.ho" => "t",
-    "s.ps" => 5
+    "s.ps" => 5,
+    "s.hl" => false,
   )
 
   results = Hash.new
@@ -109,10 +217,44 @@ def get_summon query
     d['title'] = doc.title
     d['link'] = doc.link
     d['year'] = doc.publication_date.year
+    doc.authors.each do |au|
+      d['author'] = au.fullname
+      break
+    end
+    d['venue'] = doc.publication_title  if doc.respond_to?('publication_title')
+    d['volume'] = doc.volume  if doc.respond_to?('volume')
+    d['issue'] = doc.issue  if doc.respond_to?('issue')
+    d['start'] = doc.start_page  if doc.respond_to?('start_page')
     results_docs << d
   end
 
   results['response'] = Hash.new
+  results['response']['more'] = summon_url(query, true)
+  results['response']['all'] = summon_url(query, false)
   results['response']['docs'] = results_docs
+  results['response']['numFound'] = search.record_count
+  return results
+end
+
+
+def get_summon_newspaper query
+  aid = ENV['SUMMON_ID']
+  akey = ENV['SUMMON_KEY']
+
+  @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
+  search = @service.search(
+    "s.q" => "#{query}",
+    "s.fvf" => "ContentType,Newspaper Article",
+    "s.ho" => "t",
+    "s.ps" => 1,
+    "s.hl" => false,
+  )
+
+  results = Hash.new
+  results_docs = Array.new
+  results['response'] = Hash.new
+  more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Newspaper%20Article,f&l=en&q=#{query}"
+  results['response']['more'] = more
+  results['response']['numFound'] = search.record_count
   return results
 end

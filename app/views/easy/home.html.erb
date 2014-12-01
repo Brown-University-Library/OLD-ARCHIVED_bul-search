@@ -1,14 +1,5 @@
 <% if @has_query != true %>
     <div class="col-md-6 col-md-offset-3">
-         <!--<form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="easyFind" name="q">
-            </div>
-            <button type="submit" class="btn btn-primary search-btn" id="search">
-                <span class="submit-search-text">Search</span>
-                <span class="glyphicon glyphicon-search"></span>
-            </button>
-        </form>-->
         <div class="well well-lg">
             Lorem ipsum dolor sit amet, luptatum vivendum quo ex, pri cu veri commune definiebas, id homero omnesque postulant est. Minimum recteque sed ne, usu no case officiis intellegebat, ius an esse fabellas. Ne cum tation labores officiis. No doming reprehendunt his, mei id natum salutandi deterruisset. Eos quem integre et, dictas argumentum definitiones vel ad.
         </div>
@@ -16,45 +7,56 @@
 <% else %>
     <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
-            <h4>All results</h3>
-                <ul>
-                    <li><a href="<%= summon_search(params[:q]) =%>">Articles</a></li>
-                    <li><a href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search">Worldcat</a></li>
-                </ul>
             <div id="format-filter">
                 <h4>Format</h3>
-                <ul id="format-list"></ul>
+                <ul id="format-list">
+                  <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
+                </ul>
+                <div id="worldcat-section">
+                    <a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a>
+                </div>
             </div>
         </div>
         <div id="bentos" class="col-md-9">
+            <div class="row" id="jump-links">
+              <ul class="list-inline">
+                <li>Results:</li>
+                <li><i class="fa fa-arrow-down"></i><a href="#books">Books</a></li>
+                <li><i class="fa fa-arrow-down"></i><a href="#summon"><%= t('blacklight.articles.heading')%></a></li>
+                <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#bdr-search">Brown Digital Repository</a></li>
+              </ul>
+            </div>
             <div class="row">
-                <div id="books" class="col-md-4">
-                    <h3>Books</h3>
-                    <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
-                    <ul></ul>
-                    <div class="more"></div>
-                </div>
-                <div id="summon-search" class="col-md-5">
-                    <h3>Articles</h3>
-                    <i class="fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                <div id="books" class="col-md-6">
+                    <h3 class="bento-header"><a href="#"><i class="fa fa-book"></i>Books</a></h3>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
                     <div class="more center-block"></div>
                 </div>
+                <div id="summon" class="col-md-6">
+                    <h3 class="bento-header">
+                      <a href="<%= summon_search(params[:q]) =%>">
+                        <%= t('blacklight.articles.icon').html_safe %><%= t('blacklight.articles.heading')%>
+                      </a>
+                    </h3>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                    <%#Handlebars template will be inserted here %>
+                </div>
+            </div>
+            <div class="row added-bentos">
+              <hr/>
             </div>
             <div class="row">
-                <div class="col-md-4" id="bento3">
-                    <h3 class="bento-header"></h3>
-                    <ul></ul>
-                </div>
-                <div class="col-md-5" id="bento4">
-                    <h3 class="bento-header"></h3>
-                    <ul></ul>
+                <hr/>
+                <div id="bdr-search" class="col-md-12">
+                    <h3 class="bento-header"><a href="#">Brown Digital Repository</a></h3>
+                    <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
+                    <%#Handlebars template will be inserted here %>
                 </div>
             </div>
         </div>
     </div>
 <% end %>
-
 
 <%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(params[:q]) =%></span>
@@ -62,118 +64,195 @@
 <span id="summon-more" class="hidden"><%= summon_search(params[:q]) =%></span>
 
 <script type="text/javascript">
+  var dataUrl = "<%= data_link(params[:q]) =%>";
+  var numOtherCatalogBoxes = 2;
+  var maxTitleLength = <%= t('blacklight.bento.max_title_length') =%>;
+  var facetFormats = [];
   $(document).ready(function() {
     var query = getParameterByName('q');
     if (query == "") {
         console.debug('no query');
-        //$('#bentos').html('<h3>No query provided.</h3>')
     } else {
-        //do_bento_madness
-        bento(query);
-        catalogBentos(query);
+        catalogBoxes(query);
+        summonBox(query);
+        bdrBento(query);
+        addNewspaperArticlesCount(query);
     };
-});
-
-function bento(query) {
-    var dataUrl = $('#path').text();
-    $.ajax(dataUrl + '&source=summon', {
-      success: function(response) {
-        $('#summon-search i').hide();
-        //$("#bdr-search").html(response);
-        $.each(response, function(i, obj) {
-            var title = obj['title'];
-            $('#summon-search ul').append('<li><a href="' + obj['link'] + '">' + title + '</a></li>');
-        });
-        var more = $('#summon-more').text();
-        $('#summon-search .more').append('<a href="' + more + '">More results</a>');
-      }
+    //call when all ajax is complete
+    $( document )
+      .ajaxStop(function() {
+        sortFilterFacetList();
     });
-    //$("#riamco-search").text("Updated Riamco Text");
+  });
+
+//sort the returned formats alphabetically and display.
+function sortFilterFacetList() {
+  var sortedList = _.sortBy(facetFormats, function(fv) {return fv.format});
+  _.each(sortedList, function(item) {
+    var elementId = 'more-' + item.format.toLowerCase().replace(/\W/g, '-');
+    var li = '<li id="' + elementId + '"><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>';
+    //Add the element if it doesn't exist.
+    if ( $('#' + elementId).length == 0) {
+      $('ul#format-list').append(li);
+    };
+  });
+  $('ul#format-list i.waiting').hide();
 };
 
-function catalogBentos(query) {
-    var dataUrl = $('#path').text();
-    $.ajax(dataUrl, {
+//Add the Journal Articles box via Summon.
+function summonBox(query) {
+    $.ajax(dataUrl + '&source=summon', {
       success: function(response) {
-        $('#books i').hide();
-        var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
-        if (books.length > 0) {
-            //add books to the book box.
-            addBooks(books[0]['docs'])
-            //add other formats
-             var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
-            var preppedOther = sortByTopFormat(other);
-            //add these to the screen.
-            addOther(preppedOther);
-            //do the format facet/filter.
-            formats = response['formats'];
-            addFormats(formats);
+        $('#summon i.waiting').hide();
+        var summonSet = response;
+        if (summonSet.docs.length > 0) {
+          //addItemsToBox(summonSet.docs, 'summon');
+          //addMoreLink('summon', summonSet.more, summonSet.numFound);
+          var context = {'docs': summonSet.docs, 'total': commaSeparatedNumber(summonSet.numFound), 'more': summonSet.more, 'max_title_length': maxTitleLength};
+          var html = HandlebarsTemplates['easy/summon_results'](context);
+          $('#summon').append(html);
+          //add count to facet on left
+          addFormats([{
+            'format': 'Journal Articles',
+            'more': summonSet.more,
+            'count': commaSeparatedNumber(summonSet.numFound)
+          }]);
         } else {
-            //no results from catalog.
-            var wcUrl = $('#worldcat-search').attr('href');
-            var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
-            $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
-            $('#format-filter').hide();
+          var txt = "<a href=\"" + summonSet.all + "\">expanding your search</a>"
+          $('#summon').append('<h5>No results.  Try ' + txt + '</h5>');
         };
       }
     });
-    //$("#riamco-search").text("Updated Riamco Text");
+};
+
+
+//Can call the BDR easy search handler.
+function bdrBento(query) {
+    $.ajax(dataUrl + '&source=bdr', {
+      success: function(response) {
+        $('#bdr-search i.waiting').hide();
+        if (response.docs.length > 0) {
+          var context = {
+            'docs': response.docs,
+            'total': commaSeparatedNumber(response.numFound),
+            'more': response.more,
+            'max_title_length': maxTitleLength
+          };
+          var html = HandlebarsTemplates['easy/bdr_results'](context);
+          $('#bdr-search').append(html);
+          $('#bdr-search h3.bento-header a').attr('href', response.more);
+        } else {
+          $('#bdr-search').append('<h5>No results from the Brown Digital Repository.</h5>');
+        }
+      }
+    });
+};
+
+
+//Adds the books and the dynamic boxes.
+function catalogBoxes(query) {
+    $.ajax(dataUrl, {
+      success: function(response) {
+        $('#books i.waiting').hide();
+        var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
+        if (books.length > 0) {
+          var bookSet = books[0];
+          var context = {
+            //'boxID': 'books',
+            'box': "Books",
+            'docs': bookSet.docs,
+            'total': commaSeparatedNumber(bookSet.numFound),
+            'more': bookSet.more,
+            'max_title_length': maxTitleLength,
+          };
+          var html = HandlebarsTemplates['easy/catalog_results'](context);
+          $('#books').append(html);
+          $('#books h3.bento-header a').attr('href', bookSet.more);
+        } else {
+          //no results from catalog.
+          var wcUrl = $('#worldcat-search').attr('href');
+          var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
+          $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
+          //$('#format-filter').hide();
+        };
+        //add other formats
+        var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
+        var sortedOther = sortByTopFormat(other);
+        addOthers(sortedOther, numOtherCatalogBoxes);
+        //do the format facet/filter.
+        formats = response['formats'];
+        addFormats(formats);
+      }
+    });
 };
 
 function sortByTopFormat(results) {
-    //sort the array by numFound, take top two, and reverse.
-    //only two other boxes.
-    //taking top two for now.
-    var size = -2;
-    var sortedOther = _.sortBy(results, function(obj){ return +obj.numFound});
-    return sortedOther.slice(size).reverse();
+    return _.sortBy(results, function(obj){ return -obj.numFound});
 }
 
+
+//Adds the format facet on the left.
 function addFormats(formats) {
     _.each(formats, function(item) {
-        var format = item['format'];
-        //var link = '/catalog/' + item['id'];
-        $('#format-list').append('<li>' + format + ' (' + item['count'] + ')</li>');
+        facetFormats.push({'format': item.format, 'count': item.count, 'more': item.more});
     });
 }
 
-function addBooks(books) {
-    _.each(books, function(item) {
-        catalogLi(item, 'books')
+//Add newspaper article count via Summon.
+function addNewspaperArticlesCount(query) {
+    $.ajax(dataUrl + '&source=newspaper_articles', {
+      success: function(response) {
+        if (response.numFound > 0) {
+          //add count to facet on left
+          addFormats([{
+            'format': 'Newspaper Articles',
+            'more': response.more,
+            'count': commaSeparatedNumber(response.numFound)
+          }]);
+        };
+      }
     });
+};
+
+
+//Creates a single bento box with given id.
+function addBox(boxID){
+  var bentos = $('#bentos div.added-bentos');
+  bentos.append('<div id="'+boxID+'" class="col-md-6"></div>');
 }
 
-
-function catalogLi(item, div) {
-    //this should be initialized once.
-    var catalogPath = $('#catalog-path').text();
-    var title = item['title'];
-    var link = catalogPath + item['id'];
-    $('#' + div + ' ul').append('<li><a href="' + link + '">' + title + '</a></li>');
-}
-
-function addOther(other) {
-    var box3 = other[0];
-    if (box3 != undefined) {
-        var formatBox3 = box3['format'];
-        $('#bento3 .bento-header').text(formatBox3);
-        _.each(box3['docs'], function(item) {
-            catalogLi(item, 'bento3')
-        });
+//Add the dynamic bento boxes.
+function addOthers(others, num_others) {
+  _.each(others, function(box, index) {
+    box.name = box.format
+    box.id = "bento-"+index;
+    if (index < num_others) {
+        addBox(box.id);
+        //addItemsToBox( box.docs, box.id);
+        //addMoreLink(box.id, box.more, box.numFound)
+        //add other so we know it's not the book box.
+        var context = {
+            'other': true,
+            'box': box.format,
+            'icon': box.icon,
+            'docs': box.docs,
+            'total': commaSeparatedNumber(box.numFound),
+            'more': box.more,
+            'max_title_length': maxTitleLength
+          };
+        var html = HandlebarsTemplates['easy/catalog_results'](context);
+        $("#" + box.id).append(html);
+        //jump links
+        addToJumpLinks(box.id, box.name)
     };
-
-    var box4 = other[1]
-    //check if it exists.
-    if (box4 != undefined) {
-        var formatBox4 = box4['format'];
-        $('#bento4 .bento-header').text(formatBox4);
-        _.each(box4['docs'], function(item) {
-        catalogLi(item, 'bento4')
-        });
-    }
+  });
 }
 
+function addToJumpLinks(id, name) {
+  $('<li><i class="fa fa-arrow-down"></i><a href="#' + id + '">' + name + '</a></li>').insertBefore('#jump-links #dynamic');
+};
 
+//Pull parameters from the url.
 ///http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -181,4 +260,14 @@ function getParameterByName(name) {
         results = regex.exec(location.search);
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+
+//Create a comma separated number
+//http://stackoverflow.com/a/12947816/758157
+function commaSeparatedNumber(val){
+    while (/(\d+)(\d{3})/.test(val.toString())){
+      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+    return val;
+  }
 </script>
