@@ -11,6 +11,73 @@ body {
 }
 
 
+/* adjust top banner styles
+   edits also made to: blacklight.css.scss, _header_navbar.html.erb
+   additional edits to come to tweak responsive breakpoints
+*/
+
+#header-navbar {
+	margin-top: 1.9em;
+	border-top: #c81700 .33em solid;
+	background-color: #2b0b07;
+	height: 4.6em;
+}
+
+.navbar-right {
+	margin-top: -1em;
+	margin-bottom: 1.5em;
+	margin-left: 0;
+	margin-right: 0;
+	float: right;
+	background-color: #eed4aa;
+	width: 100%;
+}
+
+.navbar-nav {
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	padding-right: 15%;
+	float: right;
+}
+
+#header-navbar a {
+	color: #2b0b07;
+	font-weight: bold;
+}
+
+div#search-navbar {
+	background-color: none;
+	float: right;
+	margin-top: -4em;
+	margin-right: -2%;
+	width: 50%;
+}
+
+.navbar-static-top {
+	background: none;
+	border-bottom: none;
+}
+
+.search-btn {
+	background-color: #d58100;
+	border-color: #d58100;
+}
+
+.search-btn:hover {
+	background-color: #ad8d89;
+	border-color: #ad8d89;
+}
+
+.search-query-form {
+	margin-top: .25em;
+}
+
+.start-over a {
+	display: none;
+}
+
+
 /* adjust background tints; adjust misc. padding & margins */
 
 @media (min-width: 0px) {
@@ -36,7 +103,7 @@ body {
 	}
 	
 	div#jump-links.row {
-		margin-top: 1.5em;
+		margin-top: 0em;
 		margin-left: 2%;
 	}
 
