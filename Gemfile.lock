@@ -240,6 +240,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jettywrapper (~> 1.7)
   jquery-rails
+  mysql2
   rails (= 4.1.4)
   rspec-rails
   sass-rails (~> 4.0.0)
