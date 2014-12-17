@@ -49,15 +49,12 @@
             </div>
             <div class="row">
                 <hr/>
-                <div id="bdr-search" class="col-md-12">
+                <div id="bdr-search" class="col-md-6">
                     <h3 class="bento-header"><a href="#">Brown Digital Repository</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <%#Handlebars template will be inserted here %>
                 </div>
-            </div>
-            <div class="row">
-                <hr/>
-                <div id="website" class="col-md-12">
+                <div id="website" class="col-md-6">
                     <h3 class="bento-header"><a class="libweb-more" href="<%= libweb_more_link(params[:q]) =%>">Library website</a></h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <gcse:searchresults-only queryParameterName="q" linkTarget="_self" webSearchResultSetSize="5">
