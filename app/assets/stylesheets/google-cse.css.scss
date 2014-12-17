@@ -37,6 +37,8 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
     border: none!important;
 }
 
+
+
 /*links in search results */
 #website div.gs-bidi-start-align.gs-visibleUrl.gs-visibleUrl-long{
     color: #333333;
@@ -44,6 +46,10 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
 }
 
 #website .gs-snippet {
+    display: none;
+}
+
+#website .gsc-thumbnail {
     display: none;
 }
 
