@@ -1,0 +1,67 @@
+/* Google CSE display overrides */
+
+.gsc-control-cse {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+/* Google CSE customizations from
+http://www.labnol.org/internet/google-custom-search-css/28360/
+*/
+/* Use a different font family for search results */
+.gs-title, .gs-snippet {
+   font-family: 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
+   font-size: 150%;
+}
+
+#libweb-search .gs-title, .gs-snippet {
+   font-family: 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
+}
+
+#website .gsc-resultsRoot, #website .gsc-above-wrapper-area {
+    background-color: #f7f6f2;
+    border: none;
+}
+
+#website .gs-title a, #website .gs-result a.gs-title, #website a.gs-title b {
+    color: #c00404;
+    text-decoration: none;
+}
+
+#website a.gs-title {
+    text-decoration: none!important;
+}
+
+#website .gs-webResult {
+    border: none;
+}
+
+#website .gsc-webResult.gsc-result {
+    border: none;
+}
+
+/*links in search results */
+#website div.gs-bidi-start-align.gs-visibleUrl.gs-visibleUrl-long{
+    color: #333333;
+    font-size: 85%;
+}
+
+/* Add a border between individual search results */
+.gs-webResult {
+    border: 1px solid #eee;
+    padding: 1em;
+}
+
+
+/* Do no display the count of search results on Bento */
+#website .gsc-result-info {
+    display: none;
+}
+
+#website .gsc-cursor-page {
+    display: none;
+}
+
+
+
