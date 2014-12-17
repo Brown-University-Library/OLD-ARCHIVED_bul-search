@@ -68,4 +68,3 @@ gem "rspec-rails", :group => [:development, :test]
 
 #gem "bulmarc", :path => "/work/bul_marc_utils"
 gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
-
