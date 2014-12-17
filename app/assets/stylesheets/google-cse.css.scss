@@ -47,6 +47,10 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
     font-size: 85%;
 }
 
+#website .gs-snippet {
+    display: none;
+}
+
 /* Add a border between individual search results */
 .gs-webResult {
     border: 1px solid #eee;
