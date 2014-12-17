@@ -33,12 +33,8 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
     text-decoration: none!important;
 }
 
-#website .gs-webResult {
-    border: none;
-}
-
-#website .gsc-webResult.gsc-result {
-    border: none;
+#website .gsc-webResult.gsc-result, #website .gs-webResult,  {
+    border: none!important;
 }
 
 /*links in search results */
