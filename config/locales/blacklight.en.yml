@@ -4,6 +4,8 @@ en:
     bento:
         label: "easySearch"
         max_title_length: 75
+    header_links:
+        account: "Library account"
     search:
         #Label for users to go back to easySearch from withing Blacklight.
         form:
