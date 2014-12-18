@@ -61,9 +61,9 @@ class CatalogController < ApplicationController
     #
     # :show may be set to false if you don't want the facet to be drawn in the
     # facet bar
-    config.add_facet_field 'access_facet', :label => 'Access'
-    config.add_facet_field 'building_facet', :label => 'Location'
+    config.add_facet_field 'access_facet', :label => 'Access', :collapse => false
     config.add_facet_field 'format', :label => 'Format', :limit => true
+    config.add_facet_field 'building_facet', :label => 'Location'
     config.add_facet_field 'region_facet', :label => 'Region', :limit => 20
     config.add_facet_field 'pub_date', :label => 'Publication Year', :single => true
     config.add_facet_field 'language_facet', :label => 'Language', :limit => true
