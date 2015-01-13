@@ -35,7 +35,7 @@ def bdr_thumbnail id
 end
 
 def get_bdr query
-  solr_url = ENV['BDR_SEARCH_URL']
+  solr_url = ENV['BDR_SOLR_URL']
   solr = RSolr.connect :url => solr_url
 
   qp = {
