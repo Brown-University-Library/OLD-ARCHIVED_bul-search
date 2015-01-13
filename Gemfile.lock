@@ -36,15 +36,15 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     bcrypt (3.1.9)
-    blacklight (5.8.2)
+    blacklight (5.7.2)
       bootstrap-sass (~> 3.2)
       deprecation
       kaminari (~> 0.13)
       nokogiri (~> 1.6)
       rails (>= 3.2.6, < 5)
       rsolr (~> 1.0.6)
-    blacklight-marc (5.5.0)
-      blacklight (~> 5.8)
+    blacklight-marc (5.4.0)
+      blacklight (>= 5.4.0.rc1, < 6.0)
       marc (>= 0.4.3, < 1.1)
       rails
     blacklight_advanced_search (5.1.2)
@@ -225,7 +225,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  blacklight (>= 5.5.0)
+  blacklight (= 5.7.2)
   blacklight-marc (~> 5.0)
   blacklight_advanced_search (~> 5.0)
   bulmarc!
