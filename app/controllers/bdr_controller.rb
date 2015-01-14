@@ -9,6 +9,8 @@ class BdrController < ApplicationController
   include BlacklightAdvancedSearch::Controller
 
   configure_blacklight do |config|
+    # URL for non-default Solr instance
+    config.solr_url = ENV['BDR_SOLR_URL']
     # solr path which will be added to solr base url before the other solr params.
     config.solr_path = 'search'
 
