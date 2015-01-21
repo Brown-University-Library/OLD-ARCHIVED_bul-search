@@ -1,0 +1,11 @@
+<%# partial for notes fields -%>
+
+<% note_display.each do |note| -%>
+    <dt class="blacklight-note"><%= note[:label] %>:</dt>
+    <% note[:values].each do |text| -%>
+        <dd><%= text %></dd>
+    <% end -%>
+<% end -%>
+
+
+

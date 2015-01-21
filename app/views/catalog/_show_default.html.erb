@@ -65,6 +65,10 @@
         <% end -%>
     <% end -%>
   <% end -%>
+
+  <%# Calls method with notes config will display nothing if note doesn't
+  exist or fetching for MARC fails -%>
+  <%= render_record_notes document %>
 </dl>
 
 

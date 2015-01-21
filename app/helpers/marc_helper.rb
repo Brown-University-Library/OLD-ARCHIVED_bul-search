@@ -5,6 +5,10 @@ module MarcHelper
     document.marc_display_field(name)
   end
 
+  def marc_display_tag(document, number)
+    document.marc_tag(number)
+  end
+
   def fielded_search(query, field)
     params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> query}
     link_url = search_action_path(params)
@@ -38,6 +42,28 @@ module MarcHelper
       end
       content_tag('i', '', :class=>"fa #{cls}")
     end
+  end
+
+  ##Notes
+  def render_record_notes(document)
+    config = [
+      {:label => "Note", :tag => "500"},
+      {:label => "Dissertation information", :tag => "502"},
+      {:label => "Bibliography", :tag => "504"},
+      {:label => "Table of Contents", :tag => "505"},
+      {:label => "Restrictions", :tag => "506"},
+      {:label => "Scale of Material", :tag => "507"},
+      {:label => "Other Formats", :tag => "530"}
+    ]
+    to_display = []
+    config.each do |note_config|
+      #render partial: "catalog/record/notes", locals: locals
+      values = marc_display_tag(document, note_config[:tag])
+      if !values.nil? && !values.empty?
+        to_display << {:label => note_config[:label], :values => values}
+      end
+    end
+    render partial: "catalog/record/notes", locals: {:note_display => to_display}
   end
 
 end

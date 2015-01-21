@@ -59,11 +59,21 @@ class SolrDocument
     end
 
     def marc_display_field(name)
-      to_marc.send(name)
+      #Return an empty array if method doesn't exist.
+      begin
+        to_marc.send(name)
+      rescue NoMethodError
+        nil
+      end
     end
 
     def marc_subjects
       to_marc.subjects
+    end
+
+    #Can be a tag or array of tag numbers.
+    def marc_tag(number)
+      to_marc.by_tag(number)
     end
 
   end
