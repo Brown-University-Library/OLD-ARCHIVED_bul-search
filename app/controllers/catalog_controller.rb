@@ -211,9 +211,10 @@ class CatalogController < ApplicationController
   end  # end of `configure_blacklight do |config|`
 
   def ourl_service
-    @response, @document = get_solr_response_for_doc_id
+    doc_id = params['id']
+    @response, @document = get_solr_response_for_doc_id(id=doc_id)
     out = {}
-    out['id'] = @document['id']
+    out['id'] = doc_id
     out['ourl'] = @document.export_as_openurl_ctx_kev( document_partial_name(@document) )
     render json: out
   end
