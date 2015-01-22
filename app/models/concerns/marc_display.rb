@@ -1,3 +1,5 @@
+#Handle local display logic for show pages based
+#on MARC records
 module MarcDisplay
 
 	def marc_display_field(name)
