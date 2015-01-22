@@ -28,3 +28,4 @@
 //= require handlebars.helpers
 
 //=require jquery.plug-google-content
+//=require tooltips
