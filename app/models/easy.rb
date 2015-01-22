@@ -112,8 +112,16 @@ end
 #
 #Assign a font-awesome icon based on the format string.
 def format_icon format
-  icon = Constants::ICONS[format.titleize]
-  return icon
+  Constants::ICONS[format.titleize]
+end
+
+#Returns info text or nil
+#
+def info_text format
+  config = Constants::FORMAT[format.titleize]
+  unless config.nil?
+    return config[:info]
+  end
 end
 
 def plural_format format
@@ -173,6 +181,8 @@ def get_catalog query
       grp_h['more'] = format_filter_url(query, format)
       #icons
       grp_h['icon'] = format_icon(format)
+      #info text
+      grp_h['info'] = info_text(format)
       groups << grp_h
   end
 

@@ -22,9 +22,11 @@ en:
         email: 'Email this'
         sms: 'Text this'
     info:
-        #Format helper text.  Use codes from traject translation maps.
+        #Format helper text.  Use raw terms from index.
         formats:
-          bk: "Books and eBooks at Brown. In some cases books are requested from off-site storage or they are only available for use in the library."
-          cf: "Electronic resources that are not primarily described by another format. For example: datasets, computer programs, or online services."
+          Book: "Books and eBooks at Brown. In some cases books are requested from off-site storage or they are only available for use in the library."
+          Articles: "Full-text articles from scholarly journals, conference proceedings, book chapters, and other electronic content from the library’s subscription resources"
+          Computer File: "Electronic resources that are not primarily described by another format. For example: datasets, computer programs, or online services."
+          Sound Recording: "Any item that is primarily record sound, either music or spoken word, in any format. Some resources may need to be searched in the specific database."
     #search:
 

@@ -27,5 +27,8 @@
 //= require_tree ./templates
 //= require handlebars.helpers
 
-//=require jquery.plug-google-content
-//=require tooltips
+//= require jquery.plug-google-content
+
+//= require bootstrap/tooltip
+//= require bootstrap/popover
+//= require infobox

@@ -14,4 +14,10 @@ module EasyHelper
   def summon_search(query)
     return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
   end
+  def render_info_text(format)
+    text = Constants::FORMAT[format]
+    unless text.nil?
+      render partial: "shared/info_box", locals: {:text => text[:info]}
+    end
+  end
 end
