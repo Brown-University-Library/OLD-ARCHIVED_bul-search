@@ -2,14 +2,13 @@ module MarcDisplay
 
 	def marc_display_field(name)
 		return nil unless self.respond_to?(:to_marc)
-    marc = self.to_marc
-    return marc.subjects
-	  #Return an empty array if method doesn't exist.
-	  begin
-	    marc.send(name)
-	  rescue NoMethodError
-	    nil
-	  end
+		marc = self.to_marc
+		#Return an empty array if method doesn't exist.
+		begin
+			marc.send(name)
+		rescue NoMethodError
+			nil
+		end
 	end
 
 	def marc_subjects
