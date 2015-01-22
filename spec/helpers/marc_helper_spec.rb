@@ -1,6 +1,6 @@
 require "spec_helper"
 
-def imprint
+def general_note
     <<-xml
     <record>
       <datafield tag="245">
@@ -17,11 +17,29 @@ def imprint
     xml
 end
 
+def note_multiple_values
+  <<-xml
+  <record>
+    <datafield tag="245">
+      <subfield code="a">My title</subfield>
+    </datafield>
+    <datafield tag="507">
+      <subfield code="a">Less</subfield>
+      <subfield code="b">Moore</subfield>
+    </datafield>
+    <datafield tag="507">
+      <subfield code="a">Medium</subfield>
+    </datafield>
+  </record>
+  xml
+end
+
 describe MarcHelper do
 
   before(:each) do
     SolrDocument.extension_parameters[:marc_format_type]   = :marcxml
-    @solrdoc = SolrDocument.new(:marc_display => imprint)
+    @solrdoc = SolrDocument.new(:marc_display => general_note)
+    @solrdoc2 = SolrDocument.new(:marc_display => note_multiple_values)
   end
 
   describe "#marc_display" do
@@ -52,7 +70,19 @@ describe MarcHelper do
       )
       helper.render_record_notes(@solrdoc)
     end
-  end
 
+    it "renders multiple and repeating notes partial with the expected locals" do
+      note_display = [{:label => "Scale of Material", :values => ["Less Moore", "Medium"]}]
+       #http://teaisaweso.me/blog/2013/05/27/rspecs-new-message-expectation-syntax/
+       expect(helper).to receive(:render).with(
+         {
+           :partial=>'catalog/record/notes',
+           :locals=>{:note_display => note_display}
+         }
+       )
+       helper.render_record_notes(@solrdoc2)
+    end
+
+  end
 
 end
