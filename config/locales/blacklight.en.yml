@@ -21,5 +21,10 @@ en:
     tools:
         email: 'Email this'
         sms: 'Text this'
+    info:
+        #Format helper text.  Use codes from traject translation maps.
+        formats:
+          bk: "Books and eBooks at Brown. In some cases books are requested from off-site storage or they are only available for use in the library."
+          cf: "Electronic resources that are not primarily described by another format. For example: datasets, computer programs, or online services."
     #search:
 
