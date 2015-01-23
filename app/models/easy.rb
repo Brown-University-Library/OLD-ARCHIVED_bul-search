@@ -118,7 +118,7 @@ end
 #Returns info text or nil
 #
 def info_text format
-  config = Constants::FORMAT[format.titleize]
+  return nil
   unless config.nil?
     return config[:info]
   end

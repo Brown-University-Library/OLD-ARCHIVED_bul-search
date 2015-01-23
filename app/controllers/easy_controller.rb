@@ -5,10 +5,12 @@ class EasyController < ApplicationController
   include Blacklight::BlacklightHelperBehavior
   def home
     @easy_search = true
-    if params[:q].blank?
+    query = params[:q]
+    if query.blank?
         @has_query = false
     else
         @has_query = true
+        catalog_results = get_catalog query
     end
   end
 
