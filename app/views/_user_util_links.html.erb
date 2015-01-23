@@ -22,5 +22,12 @@
     <li>
       <%= link_to t('blacklight.header_links.account'), "https://josiah.brown.edu/patroninfo" %>
     </li>
+    <% if @easy_search != true && @libweb_search != true %>
+        <% if controller_name == 'bdr' %>
+          <li><%= link_to 'Advanced Search', bdr_advanced_search_path(params), :class=>'advanced_search'%></li>
+        <% elsif controller_name != 'advanced' %>
+          <li><%= link_to 'Advanced Search', advanced_search_path(params), :class=>'advanced_search'%></li>
+        <% end %>
+      <% end %>
   </ul>
 </div>
