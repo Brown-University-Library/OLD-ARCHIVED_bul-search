@@ -10,7 +10,6 @@ class EasyController < ApplicationController
         @has_query = false
     else
         @has_query = true
-        catalog_results = get_catalog query
     end
   end
 
