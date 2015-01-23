@@ -5,8 +5,8 @@ module MarcHelper
     document.marc_display_field(name)
   end
 
-  def marc_display_tag(document, number)
-    document.marc_tag(number)
+  def marc_display_tag(document, number, exclude=[])
+    document.marc_tag(number, exclude=exclude)
   end
 
   def fielded_search(query, field)
@@ -46,19 +46,14 @@ module MarcHelper
 
   ##Notes
   def render_record_notes(document)
-    config = [
-      {:label => "Note", :tag => "500"},
-      {:label => "Dissertation information", :tag => "502"},
-      {:label => "Bibliography", :tag => "504"},
-      {:label => "Table of Contents", :tag => "505"},
-      {:label => "Restrictions", :tag => "506"},
-      {:label => "Scale of Material", :tag => "507"},
-      {:label => "Other Formats", :tag => "530"}
-    ]
+    config = Constants::NOTES_DISPLAY
     to_display = []
     config.each do |note_config|
-      #render partial: "catalog/record/notes", locals: locals
-      values = marc_display_tag(document, note_config[:tag])
+      if note_config[:all] == true
+        values = document.marc_note(note_config[:tag], options={exclude: []})
+      else
+        values = document.marc_note(note_config[:tag])
+      end
       if !values.nil? && !values.empty?
         to_display << {:label => note_config[:label], :values => values}
       end
