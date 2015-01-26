@@ -37,6 +37,8 @@ function determine_ezb_availability( json_output ) {
       show_ezb_button = true;
       openurl = grab_openurl();
     }
+    //turning off until we have proper logic in place.
+    show_ezb_button = false;
     build_html( json_output, show_ezb_button, openurl );
   }
 }
