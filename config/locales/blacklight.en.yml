@@ -23,10 +23,9 @@ en:
         sms: 'Text this'
     info:
         #Format helper text.  Use raw terms from index.
-        formats:
-          Book: "Books and eBooks at Brown. In some cases books are requested from off-site storage or they are only available for use in the library."
-          Articles: "Full-text articles from scholarly journals, conference proceedings, book chapters, and other electronic content from the library’s subscription resources"
-          Computer File: "Electronic resources that are not primarily described by another format. For example: datasets, computer programs, or online services."
-          Sound Recording: "Any item that is primarily record sound, either music or spoken word, in any format. Some resources may need to be searched in the specific database."
-    #search:
-
+        sources:
+          worldcat: "WorldCat lets you search the collections of libraries in your community and thousands more around the world. To request material from other libraries use Brown wireless, EZProxy or VPN."
+          bdr: "Academic work by Brown community, raw datasets, and other digital unique, local resources. "
+        features:
+            bookmarks: "Store items from your search. Log in to save these for future use."
+            history: "Past searches in easySearch"
