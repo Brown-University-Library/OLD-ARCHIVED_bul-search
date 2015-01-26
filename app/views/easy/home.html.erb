@@ -31,6 +31,7 @@
                 <div id="books" class="col-md-6">
                     <h3 class="bento-header">
                       <a href="#"><i class="fa fa-book"></i>Books</a>
+                      <%= render_info_text "Book" %>
                     </h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
                     <ul></ul>
@@ -40,6 +41,7 @@
                     <h3 class="bento-header">
                       <a href="<%= summon_search(params[:q]) =%>">
                         <%= t('blacklight.articles.icon').html_safe %><%= t('blacklight.articles.heading')%>
+                        <%= render_info_text "Articles" %>
                       </a>
                     </h3>
                     <i class="waiting fa fa-circle-o-notch fa-spin fa-2x spinner"></i>
@@ -75,6 +77,9 @@
 <span id="catalog-path" class="hidden"><%= catalog_record_url =%></span>
 <span id="summon-more" class="hidden"><%= summon_search(params[:q]) =%></span>
 
+<%# Hidden info boxes to attach to bento boxes after page load %>
+<span>Computer File<%= render_info_text "Computer File" %></span>
+
 <script type="text/javascript">
   var dataUrl = "<%= data_link(params[:q]) =%>";
   var numOtherCatalogBoxes = 2;
@@ -93,6 +98,7 @@
     //call when all ajax is complete
     $( document )
       .ajaxStop(function() {
+        addInfoBoxes();
         sortFilterFacetList();
     });
   });
@@ -260,6 +266,17 @@ function addOthers(others, num_others) {
     };
   });
 }
+
+//Add info boxes to dynamic bentos.
+function addInfoBoxes() {
+  _.each($('.added-bentos button.info-box'), function(item) {
+    $(item).popover({
+      trigger: 'hover',
+      placement: 'auto'
+   });
+   $(item).popover()
+  });
+};
 
 function addToJumpLinks(id, name) {
   $('<li><i class="fa fa-arrow-down"></i><a href="#' + id + '">' + name + '</a></li>').insertBefore('#jump-links #dynamic');

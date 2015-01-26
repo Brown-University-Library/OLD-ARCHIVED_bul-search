@@ -1,7 +1,9 @@
 {{#if this.other}}
     <h3 class="bento-header">
         <a href="{{ this.more}}">{{#if this.icon}}<i class="fa fa-{{this.icon}}"></i>{{/if}}{{this.box}}</a>
-        {{#if this.info}}{{this.info}}{{/if}}
+        {{#if this.info}}<button type="button" class="btn btn-sm info-box" data-content="{{ this.info }}">
+        <i class="fa fa-info"></i>
+        </button>{{/if}}
     </h3>
 {{/if}}
 <ul class="list-unstyled">

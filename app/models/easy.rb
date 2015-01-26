@@ -109,18 +109,25 @@ def catalog_link id
 end
 
 #Returns string with icon class or nil
-#
-#Assign a font-awesome icon based on the format string.
 def format_icon format
-  Constants::ICONS[format.titleize]
+  config = Constants::FORMAT[format]
+  unless config.nil?
+    info = config[:icon]
+    unless info.nil?
+      return info
+    end
+  end
 end
 
 #Returns info text or nil
 #
 def info_text format
-  return nil
+  config = Constants::FORMAT[format]
   unless config.nil?
-    return config[:info]
+    info = config[:info]
+    unless info.nil?
+      return info
+    end
   end
 end
 
