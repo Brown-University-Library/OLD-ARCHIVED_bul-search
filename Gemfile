@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.1.4'
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+gem 'sqlite3', :group => [:development, :test]
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -60,13 +60,13 @@ gem 'byebug', :groups => [:devbox]
 
 gem 'handlebars_assets', "= 0.17"
 
-#gem 'mysql2', :group => [:production]
+gem 'mysql2', :group => [:production]
 
 gem 'dotenv-deployment', :group => [:production]
 
 gem "rspec-rails", :group => [:development, :test]
 
 #gem "bulmarc", :path => "/work/bul_marc_utils"
-gem "bulmarc", '~>0.0.4.2', :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
+gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]

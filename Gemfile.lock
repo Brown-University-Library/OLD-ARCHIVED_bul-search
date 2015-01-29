@@ -1,9 +1,9 @@
 GIT
   remote: git@bitbucket.org:bul/bulmarc.git
-  revision: a9e8c036e2faff2272b9574fbab971ec1c66e8e6
+  revision: e2dddc9078dc90e9f870b86face7775b429bf21c
   branch: blight-display
   specs:
-    bulmarc (0.0.4.1)
+    bulmarc (0.0.4.2)
 
 GEM
   remote: https://rubygems.org/
@@ -252,4 +252,5 @@ DEPENDENCIES
   summon (~> 2.0.5)
   therubyracer
   turbolinks
+  tzinfo-data
   uglifier (>= 1.3.0)
