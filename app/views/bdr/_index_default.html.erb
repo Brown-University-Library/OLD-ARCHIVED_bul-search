@@ -1,0 +1,11 @@
+<%# default partial to display solr document fields in bdr index view -%>
+<%= bdr_render_index_item_subheading document %>
+<%= render_index_format_subheading document %>
+<dl class="document-metadata dl-horizontal dl-invert">
+  <% index_fields(document).each do |solr_fname, field| -%>
+    <% if should_render_index_field? document, field %>
+        <div class="blacklight-<%= solr_fname.parameterize %>"><%= render_index_field_value document, :field => solr_fname %></div>
+    <% end -%>
+  <% end -%>
+
+</dl>

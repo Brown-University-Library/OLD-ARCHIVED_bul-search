@@ -59,18 +59,51 @@ module BdrHelper
         content << render_constraint_element(
           label, query,
           :remove => url
-        )   
-      end 
+        )
+      end
       if (@advanced_query.keyword_op == "OR" &&
           @advanced_query.keyword_queries.length > 1)
         content.unshift content_tag(:span, "Any of:", class:'operator')
         content_tag :span, class: "inclusive_or appliedFilter well" do
           safe_join(content.flatten, "\n")
-        end 
+        end
       else
-        safe_join(content.flatten, "\n")        
-      end 
-    end 
+        safe_join(content.flatten, "\n")
+      end
+    end
+  end
+
+  ##Create the item display on index page / results view
+  #This matches the catalog.  Rendering code be moved to partial.
+  def bdr_render_index_item_subheading document
+    raw_date = convert_to_array(document['copyrightDate'])[0]
+    if raw_date == nil
+      year = nil
+    else
+      date = raw_date.split('-')
+      year = date[0]
+    end
+    text = []
+    text << convert_to_array(document['contributor_display'])[0]
+    text << year
+    compacted = text.compact
+    if compacted == []
+      return nil
+    else
+      return content_tag("div", safe_join(compacted, ". "), :class => "title-subheading")
+    end
+  end
+
+  ##Display the format and an icon for items in the BDR
+  #Need a list of icons to use for BDR formats.  Also should
+  #considering normalizing the BDR formats to match catalog
+  #as much as possible.
+  def render_index_format_subheading document
+    format = convert_to_array(document['genre'])
+    if ( format.nil?) || ( format.empty?)
+    else
+      return content_tag("div", format.join("; "), :class => "title-subheading")
+    end
   end
 
 end
