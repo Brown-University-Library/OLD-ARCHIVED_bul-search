@@ -87,7 +87,7 @@ class BdrController < ApplicationController
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
     #config.add_index_field 'primary_title', :label => 'Title:'
-    config.add_index_field 'copyrightDate', :label => 'Published'
+    #config.add_index_field 'copyrightDate', :label => 'Published'
     #config.add_index_field 'contributor_display', :label => 'People and Places:'
     #config.add_index_field 'genre', :label => 'Genre:'
     #config.add_index_field 'ir_collection_name', :label => 'Collection Title:'
