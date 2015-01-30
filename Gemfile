@@ -67,6 +67,6 @@ gem 'dotenv-deployment', :group => [:production]
 gem "rspec-rails", :group => [:development, :test]
 
 #gem "bulmarc", :path => "/work/bul_marc_utils"
-gem "bulmarc", '~>0.0.4.2', :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
+gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'blight-display'
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
