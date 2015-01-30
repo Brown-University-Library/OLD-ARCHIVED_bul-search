@@ -60,7 +60,7 @@ gem 'byebug', :groups => [:devbox]
 
 gem 'handlebars_assets', "= 0.17"
 
-#gem 'mysql2', :group => [:production]
+gem 'mysql2', :group => [:production]
 
 gem 'dotenv-deployment', :group => [:production]
 
