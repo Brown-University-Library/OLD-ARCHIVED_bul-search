@@ -3,12 +3,6 @@ module BdrHelper
   require 'openssl'
   require 'open-uri'
 
-  def bdr_grab_item_api_data(doc)
-    url = "#{ENV['BDR_ITEM_API_URL']}#{doc.id}/"
-    response = open(url, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
-    bdr_item = JSON.parse(response.read)
-  end
-
   ##
   # Attributes for a link that gives a URL we can use to track clicks for the current search session
   # @param [SolrDocument] document

@@ -1,6 +1,6 @@
 <%# default partial to display solr document fields in catalog show view -%>
-<% if document['bdr_data']['display_inline'] %>
-<%= document['bdr_data']['display_inline'].html_safe %>
+<% if document.item['display_inline'] %>
+    <%= document.item['display_inline'].html_safe %>
 <% end %>
 
 <dl class="dl-horizontal  dl-invert">
@@ -14,12 +14,12 @@
 
 <h2>Files (content)</h2>
 <p>
-<% document['bdr_data']['links']['content_datastreams'].each do |key, content_ds| -%>
+<% document.item['links']['content_datastreams'].each do |key, content_ds| -%>
   <a href="<%= content_ds %>"><%= key %></a>
 <% end -%>
 
 <h2>Files (descriptive)</h2>
 <p>
-<% document['bdr_data']['links']['descriptive_datastreams'].each do |key, content_ds| -%>
+<% document.item['links']['descriptive_datastreams'].each do |key, content_ds| -%>
   <a href="<%= content_ds %>"><%= key %></a>
 <% end -%>
