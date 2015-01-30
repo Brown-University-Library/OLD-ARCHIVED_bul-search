@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 class BdrSolrDocument < SolrDocument
+  include BdrDisplay
 
   self.unique_key = 'pid'
 
