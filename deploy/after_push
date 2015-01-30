@@ -13,5 +13,8 @@ umask 002
 
 git submodule sync && git submodule update --init --recursive
 
+source .env
+echo "Deploying with EVN $RAILS_ENV."
+
 run deploy/before_restart
 run deploy/restart && run deploy/after_restart
