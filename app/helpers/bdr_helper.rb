@@ -73,16 +73,22 @@ module BdrHelper
     end
   end
 
+  ##Split full date into a year string.
+  #expecting dates like these 1944-01-01T00:00:00Z
+  def year value
+    if value == nil
+      return nil
+    else
+      date = value.split('-')
+      return date[0]
+    end
+  end
+
   ##Create the item display on index page / results view
   #This matches the catalog.  Rendering code be moved to partial.
   def bdr_render_index_item_subheading document
     raw_date = convert_to_array(document['copyrightDate'])[0]
-    if raw_date == nil
-      year = nil
-    else
-      date = raw_date.split('-')
-      year = date[0]
-    end
+    year = year(raw_date)
     text = []
     text << convert_to_array(document['contributor_display'])[0]
     text << year
@@ -103,6 +109,20 @@ module BdrHelper
     if ( format.nil?) || ( format.empty?)
     else
       return content_tag("div", format.join("; "), :class => "title-subheading")
+    end
+  end
+
+  ##Display / show page.  Heading under title.
+  def render_bdr_index_item_subheading document
+    contrib = document.item['contributor_display']
+    year = year(document.item['dateCreated'])
+    text = []
+    text << convert_to_array(contrib)[0]
+    text << year
+    if text == []
+      return nil
+    else
+      return content_tag("div", safe_join(text.compact, ". "), :class => "title-subheading")
     end
   end
 

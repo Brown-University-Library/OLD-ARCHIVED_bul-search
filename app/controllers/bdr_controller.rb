@@ -96,7 +96,7 @@ class BdrController < ApplicationController
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
-    config.add_show_field 'primary_title', :label => 'Title:'
+    #config.add_show_field 'primary_title', :label => 'Title:'
     #config.add_show_field 'contributor_display', :label => 'Contributor:'
     #config.add_show_field 'object_type', :label => 'Object Type:'
 
