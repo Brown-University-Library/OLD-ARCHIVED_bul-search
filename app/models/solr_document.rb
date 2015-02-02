@@ -9,9 +9,6 @@ class SolrDocument
 
   extension_parameters[:marc_source_field] = :marc_display
   extension_parameters[:marc_format_type] = :json
-  use_extension( Blacklight::Solr::Document::Marc) do |document|
-    document.key?( :marc_display  )
-  end
 
   field_semantics.merge!(
                          :title => "title_display",
@@ -33,5 +30,24 @@ class SolrDocument
   # and Blacklight::Solr::Document#to_semantic_values
   # Recommendation: Use field names from Dublin Core
   use_extension( Blacklight::Solr::Document::DublinCore)
+
+  #Local overrides
+  module BrownMarcDisplay
+    include Blacklight::Solr::Document::Marc
+
+    def self.extended(document)
+      document.will_export_as(:xml)
+      document.will_export_as(:marc, "application/marc")
+      # marcxml content type:
+      # http://tools.ietf.org/html/draft-denenberg-mods-etc-media-types-00
+      document.will_export_as(:marcxml, "application/marcxml+xml")
+      document.will_export_as(:openurl_ctx_kev, "application/x-openurl-ctx-kev")
+      document.will_export_as(:endnote, "application/x-endnote-refer")
+    end
+  end
+
+  use_extension(BrownMarcDisplay) do |document|
+    document.key?( :marc_display )
+  end
 
 end
