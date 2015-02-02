@@ -32,3 +32,6 @@
 //= require bootstrap/tooltip
 //= require bootstrap/popover
 //= require infobox
+
+//= require analytics
+

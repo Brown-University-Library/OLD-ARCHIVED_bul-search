@@ -5,6 +5,15 @@ module BlacklightHelper
     "Brown University Library Search"
   end
 
+  ##Render a hidden div with the GA code
+  def render_analytics_code
+    code = ENV['GOOGLE_ANALYTICS_CODE']
+    if code == nil
+      return
+    end
+    content_tag(:div, "", :class => "hidden", :"data-analytics-id" => code)
+  end
+
   def availability_service_url
     ENV['AVAILABILITY_SERVICE']
   end
