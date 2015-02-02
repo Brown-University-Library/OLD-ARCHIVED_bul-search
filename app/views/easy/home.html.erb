@@ -79,6 +79,8 @@
 <span id="catalog-path" class="hidden"><%= catalog_record_url =%></span>
 <span id="summon-more" class="hidden"><%= summon_search(params[:q]) =%></span>
 
+<%= render_crazy_egg_code %>
+
 <script type="text/javascript">
   var dataUrl = "<%= data_link(params[:q]) =%>";
   var numOtherCatalogBoxes = 2;

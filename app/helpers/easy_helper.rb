@@ -30,4 +30,18 @@ module EasyHelper
     render partial: "shared/info_box", locals: {:text => text}
   end
 
+  def render_crazy_egg_code
+    code = ENV['CRAZY_EGG_CODE']
+    return nil unless !code.nil?
+    js = <<-HTML
+    <script type="text/javascript">
+    setTimeout(function(){var a=document.createElement("script");
+    var b=document.getElementsByTagName("script")[0];
+    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/#{code}.js?"+Math.floor(new Date().getTime()/3600000);
+    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+    </script>
+    HTML
+    render inline: js
+  end
+
 end

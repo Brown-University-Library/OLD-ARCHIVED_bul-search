@@ -8,9 +8,7 @@ module BlacklightHelper
   ##Render a hidden div with the GA code
   def render_analytics_code
     code = ENV['GOOGLE_ANALYTICS_CODE']
-    if code == nil
-      return
-    end
+    return nil unless !code.nil?
     content_tag(:div, "", :class => "hidden", :"data-analytics-id" => code)
   end
 
