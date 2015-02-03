@@ -100,6 +100,11 @@ class BdrController < ApplicationController
     #config.add_show_field 'contributor_display', :label => 'Contributor:'
     #config.add_show_field 'object_type', :label => 'Object Type:'
 
+    config.add_show_field 'mods_type_of_resource', :label => 'Format'
+    config.add_show_field 'genre_local', :label => 'Genre', :linked_fielded_search => 'genre', :multi => true
+    config.add_show_field 'keyword', :label => 'Keywords', :linked_fielded_search => 'text', :multi => true
+    #config.add_show_field 'mods_subject_ssim', :label => 'MODS subject', :linked_fielded_search => 'text', :multi => true
+
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
     #
@@ -144,6 +149,13 @@ class BdrController < ApplicationController
         :type => 'dismax',
         :qf => 'all_subjects',
         #:pf => '$title_pf'
+      }
+    end
+
+    config.add_search_field('genre') do |field|
+      field.solr_local_parameters = {
+        :type => 'dismax',
+        :qf => 'genre_local',
       }
     end
 

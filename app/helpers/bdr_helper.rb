@@ -1,4 +1,5 @@
 module BdrHelper
+
   ##
   # Attributes for a link that gives a URL we can use to track clicks for the current search session
   # @param [SolrDocument] document
@@ -120,6 +121,66 @@ module BdrHelper
     else
       return content_tag("div", safe_join(text.compact, ". "), :class => "title-subheading")
     end
+  end
+
+  ##Datastreams
+  # @param [SolrDocument] document
+  # @param [String] type of datastream
+  #@return [Array] array of hashes containing label and url
+  def bdr_pull_item_api_links document, ds_type
+    out = []
+    document.item['links'][ds_type].each do |key, content|
+      out << {:key => key, :content => content }
+    end
+    if out == []
+      return nil
+    else
+      return out
+    end
+  end
+
+  ##Views
+  # @param [SolrDocument] document
+  # @param [String] type of datastream
+  #@return [Array] array of hashes containing label and url
+  def bdr_pull_item_api_views document, ds_type
+    out = []
+    views = document.item['views']
+    return nil unless views.present?
+    views[ds_type].each do |key, content|
+      out << {:key => key, :content => content }
+    end
+    if out == []
+      return nil
+    else
+      return out
+    end
+  end
+
+  def bdr_pull_item_api_links document, fkey
+    out = []
+    document.item['links'][fkey].each do |key, content|
+      out << {:key => key, :content => content }
+    end
+    if out == []
+      return nil
+    else
+      return out
+    end
+  end
+
+  def bdr_fielded_search(query, field)
+    params = {:controller => "bdr", :action => 'index', :search_field => field, :q=> query}
+    link_url = search_action_path(params)
+    link_to(query, link_url)
+  end
+
+  def bdr_hot_link(terms, index)
+    out = []
+    terms.each do |term|
+      out << bdr_fielded_search(term, index).html_safe
+    end
+    out
   end
 
 end
