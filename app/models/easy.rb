@@ -42,6 +42,7 @@ def get_bdr query
       :wt=>:json,
       "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim",
       "q"=>"#{query}",
+      "fq"=>"discover:BDR_PUBLIC",
       "rows"=>5
   }
   response = solr.get 'select', :params => qp
