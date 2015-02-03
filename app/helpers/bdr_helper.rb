@@ -110,12 +110,14 @@ module BdrHelper
   end
 
   ##Display / show page.  Heading under title.
-  def render_bdr_index_item_subheading document
+  def render_bdr_show_item_subheading document
     contrib = document.item['contributor_display']
-    year = year(document.item['dateCreated'])
+    years = []
+    years << year(document.item['dateCreated'])
+    years << year(document.item['copyrightDate'])
     text = []
     text << convert_to_array(contrib)[0]
-    text << year
+    text << years.compact![0]
     if text == []
       return nil
     else

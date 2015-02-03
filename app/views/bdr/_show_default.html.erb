@@ -1,4 +1,4 @@
-<%= render_bdr_index_item_subheading document %>
+<%= render_bdr_show_item_subheading document %>
 <% collections = bdr_pull_item_api_links document, 'collections' %>
 <%# Collections -%>
 <% if collections.present? %>
@@ -59,6 +59,7 @@
         <% end -%>
     <% end -%>
 
+    <hr/>
     <%# file datastreams -%>
     <% content_ds = bdr_pull_item_api_links document, 'content_datastreams' %>
     <% if content_ds.present? %>
