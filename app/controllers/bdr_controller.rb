@@ -8,6 +8,8 @@ class BdrController < ApplicationController
   include BlacklightAdvancedSearch::ParseBasicQ
   include BlacklightAdvancedSearch::Controller
 
+  before_filter :set_easy_search
+
   configure_blacklight do |config|
     # URL for non-default Solr instance
     config.solr_url = ENV['BDR_SOLR_URL']
@@ -177,5 +179,13 @@ class BdrController < ApplicationController
   def blacklight_solr_config
     {url: ENV['BDR_SOLR_URL']}
   end
+
+  #Removes the last_easy_search session variable when a user runs a bdr search
+  def set_easy_search
+    if params[:action] == 'index'
+        session[:last_easy_search] = nil
+    end
+  end
+
 
 end
