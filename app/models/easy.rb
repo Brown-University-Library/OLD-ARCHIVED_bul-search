@@ -40,7 +40,7 @@ def get_bdr query
 
   qp = {
       :wt=>:json,
-      "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim",
+      "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim, part:partnumber",
       "q"=>"#{query}",
       "fq"=>"discover:BDR_PUBLIC",
       "rows"=>5
