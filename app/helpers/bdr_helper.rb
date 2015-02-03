@@ -81,14 +81,27 @@ module BdrHelper
     end
   end
 
+  ##Get a year value by checking several fields. Take the first.
+  def bdr_year_from_doc document
+    dates = []
+    ['dateCreated', 'dateIssued_year_ssim', 'copyrightDate'].each do |value|
+      #we also need to convert this to an array because some are single
+      #valued solr fields and others repeat.
+      val = convert_to_array(document[value])
+      if val != nil || val != []
+        dates = dates.concat(val)
+      end
+    end
+    #First four digit year
+    return year(dates.compact[0])
+  end
+
   ##Create the item display on index page / results view
   #This matches the catalog.  Rendering code be moved to partial.
   def bdr_render_index_item_subheading document
-    raw_date = convert_to_array(document['copyrightDate'])[0]
-    year = year(raw_date)
     text = []
     text << convert_to_array(document['contributor_display'])[0]
-    text << year
+    text << bdr_year_from_doc(document)
     compacted = text.compact
     if compacted == []
       return nil
@@ -112,12 +125,9 @@ module BdrHelper
   ##Display / show page.  Heading under title.
   def render_bdr_show_item_subheading document
     contrib = document.item['contributor_display']
-    years = []
-    years << year(document.item['dateCreated'])
-    years << year(document.item['copyrightDate'])
     text = []
     text << convert_to_array(contrib)[0]
-    text << years.compact![0]
+    text << bdr_year_from_doc(document)
     if text == []
       return nil
     else

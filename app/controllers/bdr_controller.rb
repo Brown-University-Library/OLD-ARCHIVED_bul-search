@@ -102,6 +102,7 @@ class BdrController < ApplicationController
     #config.add_show_field 'contributor_display', :label => 'Contributor:'
     #config.add_show_field 'object_type', :label => 'Object Type:'
 
+    config.add_show_field 'collection_title', :label => 'Collection', :linked_fielded_search => 'text', :multi => true
     config.add_show_field 'mods_type_of_resource', :label => 'Format'
     config.add_show_field 'contributor_display', :label => 'People and Places', :linked_fielded_search => 'text', :multi => true
     config.add_show_field 'genre_local', :label => 'Genre', :linked_fielded_search => 'genre', :multi => true

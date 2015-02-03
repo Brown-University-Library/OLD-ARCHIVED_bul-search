@@ -1,13 +1,4 @@
 <%= render_bdr_show_item_subheading document %>
-<% collections = bdr_pull_item_api_links document, 'collections' %>
-<%# Collections -%>
-<% if collections.present? %>
-    <div class="bdr-collections-header">
-    <% collections.each do |col| -%>
-        <%= bdr_fielded_search(col[:key], "text") %>
-    <% end -%>
-    </div>
-<% end -%>
 
 <% if document['abstract'] %>
     <div class="abstract">
