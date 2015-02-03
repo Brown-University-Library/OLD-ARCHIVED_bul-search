@@ -1,8 +1,4 @@
 module BdrHelper
-  require 'json'
-  require 'openssl'
-  require 'open-uri'
-
   ##
   # Attributes for a link that gives a URL we can use to track clicks for the current search session
   # @param [SolrDocument] document
