@@ -25,7 +25,7 @@ en:
         #Format helper text.  Use raw terms from index.
         sources:
           worldcat: "WorldCat lets you search the collections of libraries in your community and thousands more around the world. To request material from other libraries use Brown wireless, EZProxy or VPN."
-          bdr: "Academic work by Brown community, raw datasets, and other digital unique, local resources. "
+          bdr: "The Brown Digital repository is an archive of scholarly digital materials and other digital unique, local resources from the Brown Community. Results are not duplicated in other boxes. "
         features:
             bookmarks: "Store items from your search. Log in to save these for future use."
             history: "Past searches in easySearch"
