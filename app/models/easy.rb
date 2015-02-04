@@ -40,14 +40,13 @@ def get_bdr query
 
   qp = {
       :wt=>:json,
-      "fl"=>"id:pid, title:primary_title, thumb:thumbnail, author:creator, year:dateIssued_year_ssim, part:partnumber",
+      "fl"=>"id:pid, title:primary_title, nonsort: nonsort, thumb:thumbnail, author:creator, year:dateIssued_year_ssim, genre:genre_local",
       "q"=>"#{query}",
       "fq"=>"discover:BDR_PUBLIC",
       "rows"=>5
   }
   response = solr.get 'select', :params => qp
   response.deep_stringify_keys!
-
 
   response['response']['docs'].each do |doc|
     doc['link'] = bdr_link doc['id']
