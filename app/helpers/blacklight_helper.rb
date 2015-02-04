@@ -69,10 +69,11 @@ module BlacklightHelper
 
   def convert_to_array value = []
     arr = []
-
-    arr = value if value.kind_of?(Array)
-    arr.push(value) if value.kind_of?(String)
-
+    if value.nil?
+    else
+      arr = value if value.kind_of?(Array)
+      arr.push(value) if value.kind_of?(String)
+    end
     arr
   end
 

@@ -1,3 +1,8 @@
+require 'json'
+require 'openssl'
+require 'open-uri'
+
+
 module BdrDisplay
 
   def item_api_url

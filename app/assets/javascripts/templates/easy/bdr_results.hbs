@@ -1,9 +1,10 @@
 <ul class="list-unstyled">
     {{#each docs}}
     <li>
-        <a href="{{this.link}}">{{truncate this.title ../max_title_length}}</a>
+        <a href="{{this.link}}">{{#if this.nonsort}}{{this.nonsort}} {{/if}}{{truncate this.title ../max_title_length}}</a>
         <br/>
-        <small>{{#if this.author}}{{this.author}}.&nbsp;{{/if}}{{#if this.year }}{{this.year}}{{/if}}
+        <small>{{#if this.author}}{{this.author}}. {{/if}}{{#if this.year }}{{this.year}}.{{/if}}
+        {{#if this.genre }}<br/>{{this.genre}}{{/if}}
         {{#if this.online }}
             <br/>
             <a href="{{this.link}}" class="label label-info">Online</a>
