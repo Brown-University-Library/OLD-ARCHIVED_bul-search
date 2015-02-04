@@ -5,13 +5,18 @@
         <div id="facets" class="col-md-3">
             <div id="format-filter">
                 <h4>Format</h3>
-                <ul id="format-list">
+                <ul id="format-list" class="unstyled">
                   <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
                 </ul>
-                <div id="worldcat-section">
-                    <a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a>
+                <ul id="other-searches" class="list-unstyled">
+                    <li class="worldcat">
+                      <a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a>
                       <%= render_info_text t('blacklight.info.sources.worldcat') %>
-                </div>
+                    </li>
+                    <li>
+                      <a href="<%= website_search(params[:q]) =%>">Library website</a>
+                    </li>
+                </ul>
             </div>
         </div>
         <div id="bentos" class="col-md-9">
@@ -156,6 +161,7 @@ function bdrBento(query) {
           var html = HandlebarsTemplates['easy/bdr_results'](context);
           $('#bdr-search').append(html);
           $('#bdr-search h3.bento-header a').attr('href', response.more);
+          $('<li><a href="' + response.more + '">Brown Digital Respository</a>').insertAfter('ul#other-searches .worldcat');
         } else {
           $('#bdr-search').append('<h5>No results from the Brown Digital Repository.</h5>');
         }
