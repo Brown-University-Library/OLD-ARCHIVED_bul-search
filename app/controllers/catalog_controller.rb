@@ -10,6 +10,10 @@ class CatalogController < ApplicationController
   before_filter :set_easy_search
 
   configure_blacklight do |config|
+    #Removing bookmarks
+    config.index.document_actions.delete(:bookmark)
+    config.show.document_actions.delete(:bookmark)
+
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = {
       :qt => 'search',
