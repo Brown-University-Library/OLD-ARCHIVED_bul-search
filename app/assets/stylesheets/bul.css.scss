@@ -78,6 +78,16 @@ div#search-navbar {
 }
 
 
+/* removes gray background of search pop-up options */
+.input-group-addon {
+	background: none;
+	width: auto;
+	border: none;
+	margin-right: 0;
+	padding-right: 0;
+}
+
+
 /* adjust background tints; adjust misc. padding & margins */
 
 @media (min-width: 0px) {
