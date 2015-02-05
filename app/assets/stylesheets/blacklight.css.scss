@@ -9,10 +9,12 @@ $logo_image: 'bul/BU-shield+type_501x87.png';
 @import 'blacklight/blacklight';
 
 
+/* moved header-navbar selectors to media-query sections of bul.css
+
 #header-navbar {
   border-top: #7f2320 thick solid;
 
-  .navbar-brand {  /* The main logo image for the Blacklight instance */
+  .navbar-brand {
     width: 501px;
     height: 87px;
     background:transparent image_url($logo_image) no-repeat left center;
@@ -25,6 +27,7 @@ $logo_image: 'bul/BU-shield+type_501x87.png';
     padding-left: 2%;
   }
 }
+*/
 
 .dl-horizontal.dl-invert.record-page {
   margin-left: 1em;
