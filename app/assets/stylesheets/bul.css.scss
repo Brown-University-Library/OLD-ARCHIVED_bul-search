@@ -118,6 +118,32 @@ div#search-navbar {
 		margin-left: 2%;
 	}
 
+	#header-navbar {
+		margin-top: 1.9em;
+		border-top: #c81700 .33em solid;
+		border-bottom: 0em solid #eed4aa;
+		background-color: #2b0b07;
+		height: 4.6em;
+	}
+
+	#header-navbar {
+	  border-top: #7f2320 thick solid;
+	
+	  .navbar-brand {  /* The main logo image for the Blacklight instance */
+	    width: 307px;
+	    height: 87px;
+	    background:transparent image_url('bul/BU-shield+type_307x87.png') no-repeat left center;
+	/*  display: inline-block;  */
+	    text-indent: 20%;
+	    white-space: nowrap;
+	    overflow: visible;
+	    padding-right:0;
+	    margin-top: -17px;
+	    margin-right:20px;
+	    padding-left: 2%;
+	  }
+	}
+
 }
 
 @media (min-width: 992px) {
@@ -144,6 +170,32 @@ div#search-navbar {
 	
 	div#jump-links.row {
 		margin-left: 2%;
+	}
+	
+	#header-navbar {
+		margin-top: 1.9em;
+		border-top: #c81700 .33em solid;
+		border-bottom: .4em solid #eed4aa;
+		background-color: #2b0b07;
+		height: 5.1em;
+	}
+
+	#header-navbar {
+	  border-top: #7f2320 thick solid;
+	
+	  .navbar-brand {  /* The main logo image for the Blacklight instance */
+	    width: 501px;
+	    height: 87px;
+	    background:transparent image_url('bul/BU-shield+type_501x87.png') no-repeat left center;
+	/*  display: inline-block;  */
+	    text-indent: 20%;
+	    white-space: nowrap;
+	    overflow: visible;
+	    padding-right:0;
+	    margin-top: -17px;
+	    margin-right:20px;
+	    padding-left: 2%;
+	  }
 	}
 	
 }
