@@ -20,9 +20,9 @@ function grabItemDivs() {
   the_docs = $( ".document" );
   for (var i = 0; i < the_docs.length; i++) {
     the_doc = the_docs[i];
-    target_span = $( ".summary_availability", the_doc );  // check to see if the dom has already been updated (Safari event issue)
-    if ( target_span.length == 0 ) {
-      bib_id = $( "form", the_doc ).attr( "data-doc-id" );
+    target_span = $( ".summary-availability", the_doc );  // check to see if the dom has already been updated (Safari event issue)
+    if ( target_span.length == 1 ) {
+      bib_id = $( target_span ).attr( "data-id" );
       getAvailabilityData( the_doc, bib_id );
     }
   }
