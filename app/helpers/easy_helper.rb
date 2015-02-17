@@ -47,4 +47,12 @@ module EasyHelper
     render inline: js
   end
 
+  def render_best_bet bet
+    render partial: "best_bet", locals: {
+      :name => bet[:name_display][0],
+      :url => bet[:url_display][0],
+      :description => bet[:description_display][0]
+    }
+  end
+
 end

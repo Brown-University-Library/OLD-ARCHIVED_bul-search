@@ -20,7 +20,7 @@ class Easy
     end
 
     def to_json
-        @results
+      @results
     end
 end
 
@@ -274,4 +274,24 @@ def get_summon_newspaper query
   results['response']['more'] = more
   results['response']['numFound'] = search.record_count
   return results
+end
+
+
+def get_best_bet query
+  solr_url = ENV['BEST_BETS_SOLR_URL']
+  puts solr_url
+
+  solr = RSolr.connect :url => solr_url
+
+  qp = {
+      :wt=>"json",
+      "q"=>"#{query}",
+      "qt" => 'search',
+  }
+
+  response = solr.get 'search', :params => qp
+  response[:response][:docs].each do |doc|
+    return doc
+  end
+
 end
