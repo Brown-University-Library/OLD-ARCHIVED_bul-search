@@ -59,11 +59,18 @@ button.info-box {
 #best-bet {
     background-color: #f7f6f2;
     margin-left: 2%;
-    width: 40%;
-    padding-bottom: 1em;
+    padding: 1em;
+    margin-bottom: 1em;
 }
 
-#best-bet div {
-    float: right;
-    padding: 1em;
+#best-bet h5 {
+    display: inline;
+    clear: left;
 }
+
+#best-bet .branding {
+    text: right;
+    display: inline;
+    margin-left: 1.5em;
+}
+
