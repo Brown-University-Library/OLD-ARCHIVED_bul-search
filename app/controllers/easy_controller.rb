@@ -7,10 +7,10 @@ class EasyController < ApplicationController
     @easy_search = true
     query = params[:q]
     if query.blank?
-        @has_query = false
+      @has_query = false
     else
-        @has_query = true
-        @best_bet = get_best_bet(query)
+      @has_query = true
+      @best_bet = get_best_bet(query)
     end
   end
 
@@ -30,6 +30,20 @@ class EasyController < ApplicationController
 
   def set_last_easy_search query
     session[:last_easy_search] = query
+  end
+
+  def get_best_bet query
+    solr_url = ENV['BEST_BETS_SOLR_URL']
+    solr = RSolr.connect :url => solr_url
+
+    qp = {
+        :wt=>"json",
+        "q"=>"#{query}",
+        "qt" => 'search',
+    }
+
+    response = solr.get 'search', :params => qp
+    response[:response][:docs][0]
   end
 
 end
