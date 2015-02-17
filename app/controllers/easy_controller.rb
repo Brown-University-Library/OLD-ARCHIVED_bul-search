@@ -10,6 +10,7 @@ class EasyController < ApplicationController
         @has_query = false
     else
         @has_query = true
+        @best_bet = get_best_bet(query)
     end
   end
 
