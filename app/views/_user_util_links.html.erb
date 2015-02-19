@@ -32,16 +32,13 @@
           <li><%= link_to 'Advanced Search', advanced_search_path(params), :class=>'advanced_search'%></li>
         <% end %>
       <% end %>
-  </ul>
-
-  <% if has_user_authentication_provider? %>
-    <ul class="nav navbar-nav">
+    <% if has_user_authentication_provider? %>
       <% if !current_user %>
       <li data-no-turbolink>
         <%= link_to t('blacklight.header_links.login'), user_omniauth_authorize_path(:shibboleth) %>
       </li>
       <% end %>
-    </ul>
-  <% end %>
+    <% end %>
+  </ul>
 
 </div>
