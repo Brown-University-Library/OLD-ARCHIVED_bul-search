@@ -81,8 +81,8 @@
         .removeClass('hide')
         .addClass('show');
 
-      imageEl.parent().parent().find('span.fake-cover')
-        .addClass('hide');
+      //remove hide
+      imageEl.parent().removeClass('hide');
 
       var previewEl = imageEl.parent().find('span.preview-info a');
 
