@@ -6,6 +6,11 @@
     <li>
       <%= link_to t('blacklight.feedback.label'), t('blacklight.feedback.link') %>
     </li>
+    <% if render_bookmarks_control? %>
+    <li>
+      <%= link_to t('blacklight.header_links.bookmarks'), bookmarks_path %>
+    </li>
+    <% end %>
     <% if has_user_authentication_provider? and current_user %>
       <li>
       <%= link_to t('blacklight.header_links.saved_searches'), saved_searches_path %>
@@ -27,5 +32,13 @@
           <li><%= link_to 'Advanced Search', advanced_search_path(params), :class=>'advanced_search'%></li>
         <% end %>
       <% end %>
+    <% if has_user_authentication_provider? %>
+      <% if !current_user %>
+      <li data-no-turbolink>
+        <%= link_to t('blacklight.header_links.login'), user_omniauth_authorize_path(:shibboleth) %>
+      </li>
+      <% end %>
+    <% end %>
   </ul>
+
 </div>

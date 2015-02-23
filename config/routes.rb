@@ -5,8 +5,9 @@ BulSearch::Application.routes.draw do
   blacklight_for :catalog
   post 'catalog/sms' => 'catalog#sms'
   Blacklight::Marc.add_routes(self)
-  devise_for :users
   get 'catalog/:id/ourl' => 'catalog#ourl_service', as: :catalog_service_ourl
+  devise_for :users, :controllers => {omniauth_callbacks: 'omniauth_callbacks'},
+      :skip => [:sessions]
 
   #easySearch
   get "easy/search"
