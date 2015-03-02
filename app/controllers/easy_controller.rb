@@ -32,6 +32,10 @@ class EasyController < ApplicationController
     session[:last_easy_search] = query
   end
 
+  #
+  # Get a best bet for the given query.
+  # Return hash with keys expected by partial
+  #
   def get_best_bet query
     solr_url = ENV['BEST_BETS_SOLR_URL']
     solr = RSolr.connect :url => solr_url
@@ -43,7 +47,15 @@ class EasyController < ApplicationController
     }
 
     response = solr.get 'search', :params => qp
-    response[:response][:docs][0]
+    #Always take the first doc.
+    response[:response][:docs].each do |doc|
+      return {
+        :name => doc[:name_display],
+        :url => doc[:url_display][0],
+        :description => doc.fetch(:description_display, [nil])[0]
+      }
+    end
+    return nil
   end
 
 end
