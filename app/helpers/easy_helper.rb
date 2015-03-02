@@ -48,15 +48,7 @@ module EasyHelper
   end
 
   def render_best_bet bet
-    if bet == []
-      return
-    else
-      render partial: "best_bet", locals: {
-        :name => bet[:name_display][0],
-        :url => bet[:url_display][0],
-        :description => bet[:description_display][0]
-      }
-    end
+    render partial: "best_bet", locals: bet
   end
 
 end
