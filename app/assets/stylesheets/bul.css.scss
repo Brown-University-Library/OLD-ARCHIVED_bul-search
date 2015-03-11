@@ -89,7 +89,7 @@ div#search-navbar {
 }
 
 
-/* adjust background tints; adjust misc. padding & margins */
+/* adjust background tints; adjust misc. padding & margins & positioning per width ranges */
 
 @media (min-width: 0px) {
 
@@ -139,7 +139,8 @@ div#search-navbar {
 	    overflow: visible;
 	    padding-right:0;
 	    margin-top: -17px;
-	    margin-right:20px;
+	    margin-right:0px;
+	    margin-left: .5em;
 	    padding-left: 2%;
 	  }
 	}
