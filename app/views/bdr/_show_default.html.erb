@@ -1,25 +1,69 @@
-<%# default partial to display solr document fields in catalog show view -%>
+<%= render_bdr_show_item_subheading document %>
+
+<% if document['abstract'] %>
+    <div class="abstract">
+        <%= document['abstract'][0] %>
+    </div>
+<% end %>
+
+<hr/>
+
+<%# Viewer iframe -%>
 <% if document.item['display_inline'] %>
     <%= document.item['display_inline'].html_safe %>
 <% end %>
 
-<dl class="dl-horizontal  dl-invert">
-  <% document_show_fields(document).each do |solr_fname, field| -%>
-    <% if should_render_show_field? document, field %>
-	    <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
-	    <dd class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_value document, :field => solr_fname %></dd>
+<hr/>
+<h4>Details</h4>
+<dl class="dl-horizontal  dl-invert record-page">
+
+    <%# views -%>
+    <%
+=begin %>
+    <% views = bdr_pull_item_api_links document, 'views' %>
+    <% if views.present? %>
+        <dt class="blacklight-details-files-content">Viewers</dt>
+        <% views.each do |vw| -%>
+          <dd><a href="<%= vw[:content] %>"><%= vw[:key] %></a></dd>
+        <% end -%>
     <% end -%>
-  <% end -%>
+<%
+=end%>
+
+    <%# show_fields from bdr_controller -%>
+    <% document_show_fields(document).each do |solr_fname, field| -%>
+        <% if should_render_show_field? document, field %>
+            <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+            <% if field.linked_fielded_search %>
+                <% if field.multi %>
+                    <% document[field.field].each do |fvalue| %>
+                        <dd class="blacklight-<%= solr_fname.parameterize %>"><%= bdr_fielded_search(fvalue, field.linked_fielded_search) %></dd>
+                    <% end -%>
+                <% else %>
+                    <dd class="blacklight-<%= solr_fname.parameterize %>">
+                        <%= bdr_fielded_search(document[field.field], field.linked_fielded_search) %>
+                    </dd>
+                <% end -%>
+            <% else -%>
+            <dd class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_value document, :field => solr_fname %></dd>
+            <% end -%>
+        <% end -%>
+    <% end -%>
+
+    <hr/>
+    <%# file datastreams -%>
+    <% content_ds = bdr_pull_item_api_links document, 'content_datastreams' %>
+    <% if content_ds.present? %>
+        <dt class="blacklight-details-files-content">Content files</dt>
+        <% content_ds.each do |ds| -%>
+          <dd><a href="<%= ds[:content] %>"><%= ds[:key] %></a></dd>
+        <% end -%>
+    <% end -%>
+    <% descriptive_ds = bdr_pull_item_api_links document, 'descriptive_datastreams' %>
+    <% if descriptive_ds.present? %>
+        <dt class="blacklight-details-files-descriptive">Descriptive files</dt>
+        <% descriptive_ds.each do |ds| -%>
+          <dd><a href="<%= ds[:content] %>"><%= ds[:key] %></a></dd>
+        <% end -%>
+    <% end -%>
 </dl>
-
-<h2>Files (content)</h2>
-<p>
-<% document.item['links']['content_datastreams'].each do |key, content_ds| -%>
-  <a href="<%= content_ds %>"><%= key %></a>
-<% end -%>
-
-<h2>Files (descriptive)</h2>
-<p>
-<% document.item['links']['descriptive_datastreams'].each do |key, content_ds| -%>
-  <a href="<%= content_ds %>"><%= key %></a>
-<% end -%>

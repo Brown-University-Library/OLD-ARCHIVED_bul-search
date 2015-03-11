@@ -14,7 +14,7 @@
   $.fn.plugGoogleBookContent = function() {
     var $parent,
         booksPerAjaxCall = 25,
-        booksApiUrl = 'http://books.google.com/books?jscmd=viewapi&bibkeys=',
+        booksApiUrl = '//books.google.com/books?jscmd=viewapi&bibkeys=',
         selectorCoverImg = 'img.cover-image',
         batches = [];
 
@@ -81,8 +81,8 @@
         .removeClass('hide')
         .addClass('show');
 
-      imageEl.parent().parent().find('span.fake-cover')
-        .addClass('hide');
+      //remove hide
+      imageEl.parent().removeClass('hide');
 
       var previewEl = imageEl.parent().find('span.preview-info a');
 

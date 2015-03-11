@@ -20,7 +20,11 @@ module MarcHelper
     terms.each do |term|
       out << fielded_search(term, index).html_safe
     end
-    out
+    if out.size == 0
+      return nil
+    else
+      return out
+    end
   end
 
   def toc_link_display(document)

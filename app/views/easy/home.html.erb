@@ -14,7 +14,7 @@
                       <%= render_info_text t('blacklight.info.sources.worldcat') %>
                     </li>
                     <li>
-                      <a href="<%= website_search(params[:q]) =%>">Library website</a>
+                      <a data-no-turbolink='true' href="<%= website_search(params[:q]) =%>">Library website</a>
                     </li>
                 </ul>
             </div>
@@ -310,8 +310,7 @@ function commaSeparatedNumber(val){
 (function() {
     var cx = '015192785404496812646:ac4fr7did5y'; // Insert your own Custom Search engine ID here
   var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
-  gcse.src = (document.location.protocol == 'https' ? 'https:' : 'http:') +
-      '//www.google.com/cse/cse.js?cx=' + cx;
+  gcse.src = '//www.google.com/cse/cse.js?cx=' + cx;
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
     $('#website i.waiting').hide();
     var moreLink = $( "#website h3 a" ).attr('href');

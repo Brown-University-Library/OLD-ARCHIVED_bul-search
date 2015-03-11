@@ -8,8 +8,8 @@
 <dl class="document-metadata dl-horizontal dl-invert">
 
     <% if document['isbn_t'] %>
-            <span class="thumbnail pull-right">
-                <img class="cover-image ISBN<%= document['isbn_t'][0] %>" data-isbn="ISBN<%= document['isbn_t'][0] %>"/>
+            <span class="thumbnail pull-right hide">
+                <img class="cover-image hide ISBN<%= document['isbn_t'][0] %>" data-isbn="ISBN<%= document['isbn_t'][0] %>"/>
             </span>
     <% end %>
 
@@ -31,5 +31,7 @@
         </ul>
     </div>
   <% end %>
+
+  <span class="hidden summary-availability" data-id="<%= document['id'] %>"></span>
 
 </dl>

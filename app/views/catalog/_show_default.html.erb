@@ -59,9 +59,12 @@
             </dd>
         <% end -%>
     <% elsif field.hot_link %>
-        <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
-        <% hot_link(document.send(field.doc_key), field.index).each do |anchor| -%>
-            <dd><%= anchor %></dd>
+        <% values = hot_link(document.send(field.doc_key), field.index) %>
+        <% if values %>
+            <dt class="blacklight-<%= solr_fname.parameterize %>"><%= render_document_show_field_label document, :field => solr_fname %></dt>
+            <% values.each do |anchor| -%>
+                <dd><%= anchor %></dd>
+            <% end -%>
         <% end -%>
     <% end -%>
   <% end -%>
