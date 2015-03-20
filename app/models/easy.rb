@@ -25,7 +25,7 @@ class Easy
 end
 
 def bdr_link id
-  item_url = ENV['BDR_ITEM_URL']
+  item_url = ENV['BDR_ITEM_URL'].chomp('/')
   "#{item_url}/#{id}"
 end
 
@@ -58,7 +58,7 @@ def get_bdr query
       end
     end
   end
-  response['response']['more'] = ENV['BDR_URL'] + "?utf8=✓&search_field=text&q=#{query}"
+  response['response']['more'] = ENV['BDR_SEARCH_URL'] + "?q=#{query}"
   response['response']
 end
 
