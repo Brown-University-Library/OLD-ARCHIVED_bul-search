@@ -42,7 +42,7 @@ class EasyController < ApplicationController
 
     qp = {
         :wt=>"json",
-        "q"=>"#{query}",
+        "q"=>"\"#{query}\"",
         "qt" => 'search',
     }
 
