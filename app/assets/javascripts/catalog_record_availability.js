@@ -6,12 +6,17 @@
 - Loaded by `app/views/catalog/show.html.erb`.
 */
 
+var locateLocations = [
+  'rock'
+]
+var locatorViewURL = 'http://localhost:5000/'
+var locatorDataURL = 'http://localhost:5000/data/'
 
 $(document).ready(
   function(){
     bib_id = getBibId();
     api_url = availabilityService + bib_id + "/?callback=?";
-    $.getJSON( api_url, determine_ezb_availability );
+    $.getJSON( api_url, addAvailability );
   }
 );
 
@@ -24,43 +29,79 @@ function getBibId() {
   return bib_id;
 }
 
-function determine_ezb_availability( json_output ) {
-  /* Determines whether easyBorrow button should display.
-   * Called on doc.ready */
-  var show_ezb_button = false; var openurl = null;
-  if (json_output['items'].length > 0 ) {  //check for items before updating HTML.
-    var available_item = _.find(  // _.find() stops processing on first find
-      json_output['items'],
-      function( item ) {
-        if ( item['is_available'] == true ){ return item; } } );
-    if ( ! available_item ) {
-      show_ezb_button = true;
-      openurl = grab_openurl();
-    }
-    //turning off until we have proper logic in place.
-    show_ezb_button = false;
-    build_html( json_output, show_ezb_button, openurl );
-  }
+function getTitle() {
+  return $('h3[itemprop="name"]').text();;
 }
 
-function grab_openurl() {
-  /* Grabs and returns item's openurl from openurl-api.
-   * Called by determine_ezb_availability() */
-  var openurl = "init";
-  current_url = location.href;
-  $.ajaxSetup( {async: false} );  // otherwise "init" would immediately be returned while $.get makes it's request asynchronously
-  $.get( current_url + "/ourl", function( data ) {
-    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + data['ourl'];
-    } );
-  return openurl;
+function processItems(availabilityResponse) {
+  var out = []
+  $.each(availabilityResponse.items, function( index, item ) {
+    var loc = item['location'].toLowerCase();
+    item['locate'] = false;
+    if (locateLocations.indexOf(loc) > -1) {
+      item['locate'] = true;
+      var locaterParams = {
+        title: getTitle(),
+        call: item['callnumber'], 
+        loc: item['location'].toLowerCase()
+      }
+      //item['location'] = getLocation(item);
+      item['item_id'] = "item" + index;
+      addLocation(item, item['item_id'])
+      item['locate_map_url'] =  locatorViewURL + "?" + $.param(locaterParams);
+    };
+    out.push(item);
+  });
+  var rsp = availabilityResponse;
+  rsp['items'] = out;
+  return rsp;
 }
 
-function build_html( json_output, show_ezb_button, openurl ) {
-  /* Calls template for html, and updates DOM.
-   * Called by determine_ezb_availability() */
-  context = json_output;
-  context['show_ezb_button'] = show_ezb_button;
-  context['openurl'] = openurl
+function addAvailability(availabilityResponse) {
+  context = processItems(availabilityResponse);
+  //console.debug(context);
+  //turning off for now.
+  context['show_ezb_button'] = false;
+  //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
-  $("#availability").append( html );
+  $("#availability").append(html);
+  //do book locator
+  //locate(availabilityResponse['items']);
+  //doLocate();
+}
+
+function doLocate() {
+  $('.locate-item').each(function( index, item) {
+    console.debug(item);
+  });
+}
+
+function locate(items) {
+    console.log(items);
+    //postLocator(items);
+    $.ajax({
+        type: "POST",
+        url: 'http://localhost:5000/data/',
+        //dataType: 'json',
+        //contentType: "application/json",
+        data: JSON.stringify(items),
+        success: function (data) {
+            console.log(data);
+            $('#holdings-wrapper').append("<h1>" + data['items'][0]['floor'] + "</h1>");
+        }
+    })
+}
+
+function addLocation(item, index) {
+  $.getJSON( locatorDataURL, {
+    loc: item.location,
+    call: item.callnumber
+  })
+  .done(function( data ) {
+      $.each( data, function( i, item ) {
+        $('#' + index + ' span.locate-item a').text(
+          "Level " + item.floor + ", Aisle " + item.aisle
+        );
+      });
+  });
 }

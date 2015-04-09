@@ -13,15 +13,15 @@
   {{/if}}
   <table class="table">
     <tr>
-      <th>Call number</th>
       <th>Location</th>
+      <th>Call number</th>
       <th>Status</th>
     </tr>
     <tbody>
       {{#each items}}
         <tr>
+          <td id="{{item_id}}"><span class="location">{{ location }}</span>{{#if locate}} -- <span class="locate-item"><a href="{{ locate_map_url }}">map</a></span>{{/if}}</td>
           <td>{{ callnumber }}</td>
-          <td>{{ location }} </td>
           <td>{{ availability }}</td>
         </tr>
       {{/each}}
