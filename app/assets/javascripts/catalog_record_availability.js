@@ -44,66 +44,22 @@ function processItems(availabilityResponse) {
         title: getTitle(),
         call: item['callnumber'], 
         loc: item['location'].toLowerCase()
-      }
-      //item['location'] = getLocation(item);
+      };
       item['item_id'] = "item" + index;
-      addLocation(item, item['item_id'])
       item['locate_map_url'] =  locatorViewURL + "?" + $.param(locaterParams);
     };
     out.push(item);
   });
   var rsp = availabilityResponse;
-  rsp['items'] = out;
   return rsp;
 }
 
 function addAvailability(availabilityResponse) {
-  context = processItems(availabilityResponse);
+  context = processItems(availabilityResponse[0]);
   //console.debug(context);
   //turning off for now.
   context['show_ezb_button'] = false;
   //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append(html);
-  //do book locator
-  //locate(availabilityResponse['items']);
-  //doLocate();
-}
-
-function doLocate() {
-  $('.locate-item').each(function( index, item) {
-    console.debug(item);
-  });
-}
-
-function locate(items) {
-    console.log(items);
-    //postLocator(items);
-    $.ajax({
-        type: "POST",
-        url: 'http://localhost:5000/data/',
-        //dataType: 'json',
-        //contentType: "application/json",
-        data: JSON.stringify(items),
-        success: function (data) {
-            console.log(data);
-            $('.holdings-wrapper').append("<h1>" + data['items'][0]['floor'] + "</h1>");
-        }
-    })
-}
-
-function addLocation(item, index) {
-  $.getJSON( locatorDataURL, {
-    loc: item.location.replace(' ', '-'),
-    call: item.callnumber
-  })
-  .done(function( data ) {
-      $.each( data, function( i, item ) {
-        if (item !== null) {
-          $('#' + index + ' span.locate-item a').text(
-            "Level " + item.floor + ", Aisle " + item.aisle
-          );
-        }
-      });
-  });
 }
