@@ -7,10 +7,17 @@
 - Loaded by `app/views/catalog/_search_results.html.erb`.
 */
 
+var locateLocations = [
+  'rock'
+]
+var locatorViewURL = 'http://localhost:5000/'
+var locatorDataURL = 'http://localhost:5000/data/'
+
 $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
   "page:change",
   function() {
     grabItemDivs();
+    console.debug(locatorDataURL);
   }
 );
 
@@ -47,7 +54,8 @@ function getAvailabilityData( the_doc, bib_id ) {
       //Make sure we have something to show.
       if ($.isEmptyObject(context) != true) {
         context['results'] = true;
-        if (context['items'].length > 2) {
+
+        if ((context['items'] !== undefined) && (context['items'].length > 2)) {
           context['items'] = context['items'].slice(0, 2);
           context['more'] = true;
           context['more_link'] = './catalog/' + bib_id;

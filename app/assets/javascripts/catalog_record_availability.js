@@ -7,10 +7,10 @@
 */
 
 var locateLocations = [
-  'rock'
+  'rock',
 ]
-var locatorViewURL = 'http://localhost:5000/'
-var locatorDataURL = 'http://localhost:5000/data/'
+var locatorViewURL = 'https://apps.library.brown.edu/booklocator/'
+var locatorDataURL = 'https://apps.library.brown.edu/booklocator/data/'
 
 $(document).ready(
   function(){
@@ -87,21 +87,23 @@ function locate(items) {
         data: JSON.stringify(items),
         success: function (data) {
             console.log(data);
-            $('#holdings-wrapper').append("<h1>" + data['items'][0]['floor'] + "</h1>");
+            $('.holdings-wrapper').append("<h1>" + data['items'][0]['floor'] + "</h1>");
         }
     })
 }
 
 function addLocation(item, index) {
   $.getJSON( locatorDataURL, {
-    loc: item.location,
+    loc: item.location.replace(' ', '-'),
     call: item.callnumber
   })
   .done(function( data ) {
       $.each( data, function( i, item ) {
-        $('#' + index + ' span.locate-item a').text(
-          "Level " + item.floor + ", Aisle " + item.aisle
-        );
+        if (item !== null) {
+          $('#' + index + ' span.locate-item a').text(
+            "Level " + item.floor + ", Aisle " + item.aisle
+          );
+        }
       });
   });
 }
