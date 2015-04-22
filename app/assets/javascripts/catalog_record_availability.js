@@ -6,17 +6,15 @@
 - Loaded by `app/views/catalog/show.html.erb`.
 */
 
-var locateLocations = [
-  'rock',
-]
-var locatorViewURL = 'https://apps.library.brown.edu/booklocator/'
-var locatorDataURL = 'https://apps.library.brown.edu/booklocator/data/'
-
 $(document).ready(
   function(){
     bib_id = getBibId();
     api_url = availabilityService + bib_id + "/?callback=?";
     $.getJSON( api_url, addAvailability );
+    $('.holdings-wrapper').on('click', '.stack-map-link', function(e) {
+      //do something
+      console.log('here');
+    });
   }
 );
 
@@ -30,24 +28,13 @@ function getBibId() {
 }
 
 function getTitle() {
-  return $('h3[itemprop="name"]').text();;
+  return $('h3[itemprop="name"]').text();
 }
 
 function processItems(availabilityResponse) {
   var out = []
   $.each(availabilityResponse.items, function( index, item ) {
     var loc = item['location'].toLowerCase();
-    item['locate'] = false;
-    if (locateLocations.indexOf(loc) > -1) {
-      item['locate'] = true;
-      var locaterParams = {
-        title: getTitle(),
-        call: item['callnumber'], 
-        loc: item['location'].toLowerCase()
-      };
-      item['item_id'] = "item" + index;
-      item['locate_map_url'] =  locatorViewURL + "?" + $.param(locaterParams);
-    };
     out.push(item);
   });
   var rsp = availabilityResponse;
@@ -55,7 +42,9 @@ function processItems(availabilityResponse) {
 }
 
 function addAvailability(availabilityResponse) {
-  context = processItems(availabilityResponse[0]);
+  context = processItems(availabilityResponse);
+  context['book_title'] = getTitle();
+  context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
   //console.debug(context);
   //turning off for now.
   context['show_ezb_button'] = false;

@@ -7,45 +7,47 @@
 - Loaded by `app/views/catalog/_search_results.html.erb`.
 */
 
-var locateLocations = [
-  'rock'
-]
-var locatorViewURL = 'http://localhost:5000/'
-var locatorDataURL = 'http://localhost:5000/data/'
-
 $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
   "page:change",
   function() {
-    //grabItemDivs();
     collectBibs();
   }
 );
 
 function collectBibs() {
   var bibs = [];
-  $.each($('.summary-availability'), function(i, bib) {
+  $.each($('.index_title'), function(i, bib) {
       bibs.push($(bib).data('id'));
   });
   getAvailability(bibs);
 }
 
+function getTitle(bib) {
+  return $('[data-id="' + bib + '"] a').text();
+}
 
+//POST the list of bis to the service.
 function getAvailability(bibs) {
-    console.log(bibs);
-    //postLocator(items);
     $.ajax({
         type: "POST",
-        url: 'http://localhost:5000/bib/',
+        //url: 'https://apps.library.brown.edu/bibutils/bib/',
+        url: availabilityService,
         //dataType: 'json',
         //contentType: "application/json",
         data: JSON.stringify(bibs),
         success: function (data) {
             $.each(data, function(bib, context){
               context['results'] = true;
-              context['items'] = _.filter(context['items'], function(item){ return item['location'] != 'ONLINE BOOK'})
-              console.debug(bib);
-              console.debug(context);
-              var elem = $('[data-id="' + bib + '"]');
+              //context.items = _.filter(context['items'], function(item){ return (item['location'] != 'ONLINE BOOK') && (item['location'] != 'ONLINE SERIAL')})
+              context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle(bib)});
+              if (context.items.length > 5) {
+                context.items = context.items.slice(0, 5)
+                context.more = true
+                //context.more_link = 
+              }
+              //console.debug(bib);
+              //console.debug(context);
+              var elem = $('[data-availability="' + bib + '"]');
               html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
               $(elem).append(html);
               $(elem).removeClass('hidden');
