@@ -470,33 +470,6 @@
     See http://wiki.apache.org/solr/SpatialSearch
    -->
     <fieldtype name="geohash" class="solr.GeoHashField"/>
-
-    <!--
-      RPT incorporates the basic features of LatLonType and PointType, such 
-      as lat-lon bounding boxes and circles, in addition to supporting geofilt,
-      bbox, geodist, and a range-queries.
-      See https://cwiki.apache.org/confluence/display/solr/Spatial+Search#SpatialSearch-SpatialRecursivePrefixTreeFieldType(abbreviatedasRPT)
-    -->
-    <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
-               distErrPct="0.025"
-               maxDistErr="0.000009"
-               units="degrees"
-            />
-
-    <!--
-      The BBoxField field type indexes a single rectangle (bounding box) per
-      document field and supports searching via a bounding box.  It supports
-      most spatial search predicates, it has enhanced relevancy modes based on the
-      overlap or area between the search rectangle and the indexed rectangle.
-      See https://cwiki.apache.org/confluence/display/solr/Spatial+Search#SpatialSearch-BBoxField
-    -->
-    <fieldType name="bbox" class="solr.BBoxField" geo="true" 
-               units="degrees" numberType="_bbox_coord"
-            />
-
-    <fieldType name="_bbox_coord" class="solr.TrieDoubleField" precisionStep="8"
-               docValues="true" stored="false"
-            />
  </types>
 
 
@@ -597,9 +570,6 @@
    <dynamicField name="*_sort" type="alphaOnlySort" indexed="true" stored="false" multiValued="false" />
    <dynamicField name="*_unstem_search" type="text_general" indexed="true" stored="false" multiValued="true" />
    <dynamicField name="*spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
-
-   <dynamicField name="*_rpt" type="location_rpt" stored="true" indexed="true"/>
-   <dynamicField name="*_bbox" type="bbox" stored="true" indexed="true"/>
 
    <!-- uncomment the following to ignore any fields that don't already match an existing 
         field name or dynamic field, rather than reporting them as an error. 
