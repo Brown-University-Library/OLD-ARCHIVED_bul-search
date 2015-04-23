@@ -95,9 +95,9 @@
          title_addl_t^2500
          title_added_entry_unstem_search^1500
          title_added_entry_t^1250
-         subject_topic_unstem_search^1000
+         <!-- subject_topic_unstem_search^1000 -->
          subject_unstem_search^750
-         subject_topic_facet^625
+         <!-- subject_topic_facet^625 -->
          subject_t^500
          author_unstem_search^250
          author_addl_unstem_search^250
@@ -119,9 +119,9 @@
          title_addl_t^25000
          title_added_entry_unstem_search^15000
          title_added_entry_t^12500
-         subject_topic_unstem_search^10000
+         <!-- subject_topic_unstem_search^10000 -->
          subject_unstem_search^7500
-         subject_topic_facet^6250
+         <!-- subject_topic_facet^6250 -->
          subject_t^5000
          author_unstem_search^2500
          author_addl_unstem_search^2500
