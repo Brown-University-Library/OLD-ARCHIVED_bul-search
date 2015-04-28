@@ -598,8 +598,6 @@
    <!-- unstemmed fields -->
    <copyField source="title_t" dest="title_unstem_search"/>
    <copyField source="subtitle_t" dest="subtitle_unstem_search"/>
-   <copyField source="title_addl_t" dest="title_addl_unstem_search"/>
-   <copyField source="title_added_entry_t" dest="title_added_entry_unstem_search"/>
    <copyField source="title_series_t" dest="title_series_unstem_search"/>
    <copyField source="author_t" dest="author_unstem_search"/>
    <copyField source="author_addl_t" dest="author_addl_unstem_search"/>
@@ -633,8 +631,6 @@
    <!-- OpenSearch query field should match request handler search fields -->
    <copyField source="title_t" dest="opensearch_display"/>
    <copyField source="subtitle_t" dest="opensearch_display"/>
-   <copyField source="addl_titles_t" dest="opensearch_display"/>
-   <copyField source="title_added_entry_t" dest="opensearch_display"/>
    <copyField source="title_series_t" dest="opensearch_display"/>
    <copyField source="author_t" dest="opensearch_display"/>
    <copyField source="author_addl_t" dest="opensearch_display"/>
