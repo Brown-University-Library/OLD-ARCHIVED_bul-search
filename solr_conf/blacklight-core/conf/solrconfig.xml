@@ -99,7 +99,6 @@
 
        <str name="qf">
          title_unstem_search^100000
-         subtitle_unstem_search^50000
          title_t^25000
          <!-- subject_topic_unstem_search^1000 -->
          subject_unstem_search^750
@@ -196,8 +195,6 @@
          subject_topic_facet,
          subject_geo_facet,
          subject_era_facet,
-         subtitle_display,
-         subtitle_vern_display,
          url_fulltext_display,
          url_suppl_display,
        </str>
@@ -323,25 +320,15 @@
       <!-- for user query terms in title text box -->
       <str name="qf_title">
         title_unstem_search^50000
-        subtitle_unstem_search^25000
-        title_addl_unstem_search^10000
         title_t^5000
         subtitle_t^2500
-        title_addl_t^100
-        title_added_entry_unstem_search^50
-        title_added_entry_t^10
         title_series_unstem_search^5
         title_series_t
       </str>
       <str name="pf_title">
         title_unstem_search^500000
-        subtitle_unstem_search^250000
-        title_addl_unstem_search^100000
         title_t^50000
         subtitle_t^25000
-        title_addl_t^1000
-        title_added_entry_unstem_search^500
-        title_added_entry_t^100
         title_series_t^50
         title_series_unstem_search^10
       </str>
