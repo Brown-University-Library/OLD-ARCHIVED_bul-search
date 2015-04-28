@@ -98,31 +98,39 @@
        -->
 
        <str name="qf">
-         title_unstem_search^100000
-         title_t^25000
-         subject_unstem_search^750
-         subject_t^500
-         author_unstem_search^250
-         author_addl_unstem_search^250
+         title_exact_search^1000
+         title_unstem_search^500
+         title_t^250
+         title_series_unstem_search^75
+         title_series_t^75
+
+         author_unstem_search^125
          author_t^100
+         author_addl_unstem_search^75
          author_addl_t^50
-         title_series_unstem_search^25
-         title_series_t^10
+
+         subject_unstem_search^50
+         subject_t^25
+
          isbn_t
          text
        </str>
        <str name="pf">
-         title_unstem_search^1000000
-         title_t^250000
-         subject_unstem_search^7500
-         subject_t^5000
-         author_unstem_search^2500
-         author_addl_unstem_search^2500
-         author_t^1000
-         author_addl_t^500
-         title_series_unstem_search^250
-         title_series_t^100
-         text^10
+         title_exact_search^1000
+         title_unstem_search^500
+         title_t^250
+         title_series_unstem_search^75
+         title_series_t^75
+
+         author_unstem_search^125
+         author_t^100
+         author_addl_unstem_search^75
+         author_addl_t^50
+
+         subject_unstem_search^50
+         subject_t^25
+
+         text
        </str>
        <str name="author_qf">
          author_unstem_search^200
