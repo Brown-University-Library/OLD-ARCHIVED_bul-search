@@ -101,7 +101,6 @@
          title_unstem_search^100000
          subtitle_unstem_search^50000
          title_t^25000
-         subtitle_t^10000
          <!-- subject_topic_unstem_search^1000 -->
          subject_unstem_search^750
          <!-- subject_topic_facet^625 -->
@@ -119,9 +118,7 @@
        </str>
        <str name="pf">
          title_unstem_search^1000000
-         subtitle_unstem_search^500000
          title_t^250000
-         subtitle_t^100000
          <!-- subject_topic_unstem_search^10000 -->
          subject_unstem_search^7500
          <!-- subject_topic_facet^6250 -->
