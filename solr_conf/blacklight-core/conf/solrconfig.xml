@@ -106,7 +106,7 @@
          subject_t^500
          author_unstem_search^250
          author_addl_unstem_search^250
-         author_t^100
+         author_t^100`
          author_addl_t^50
          title_series_unstem_search^25
          title_series_t^10
@@ -116,9 +116,7 @@
        <str name="pf">
          title_unstem_search^1000000
          title_t^250000
-         <!-- subject_topic_unstem_search^10000 -->
          subject_unstem_search^7500
-         <!-- subject_topic_facet^6250 -->
          subject_t^5000
          author_unstem_search^2500
          author_addl_unstem_search^2500
