@@ -477,16 +477,9 @@
     -->
     <fieldtype name="text_anchored" class="solr.TextField" positionIncrementGap="10000" autoGeneratePhraseQueries="true">
       <analyzer>
-        <!-- put beginning and ending anchors on field value, removing trailing chars -->
-        <!-- watch out for query time whitespace separated chars that will be processed as their own token stream, e.g. in 'felines : warm and fuzzy' -->
         <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="^\s*(.*[\S&amp;&amp;[^\.\,:;/=&lt;&gt;\(\)\[\]\&amp;\|]])[\s\.\,:;/=&lt;&gt;\(\)\[\]\&amp;\|]*$" replacement="aaaaaa$1zzzzzz"/>
-        <tokenizer class="solr.WhitespaceTokenizerFactory" />
-        <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
+        <tokenizer class="solr.ICUTokenizerFactory"/>
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>
-        <!--<filter class="solr.WordDelimiterFilterFactory"
-          splitOnCaseChange="1" generateWordParts="1" catenateWords="1"
-          splitOnNumerics="0" generateNumberParts="1" catenateNumbers="1"
-          catenateAll="0" preserveOriginal="0" stemEnglishPossessive="1" />-->
       </analyzer>
     </fieldtype>
  </types>
@@ -525,7 +518,7 @@
    <!-- these display fields are NOT multi-valued -->
    <field name="marc_display" type="string" indexed="false" stored="true" multiValued="false"/>
    <field name="title_display" type="string" indexed="false" stored="true" multiValued="false"/>
-   <field name="title_exact_search" type="text_anchored" indexed="true" stored="false" multiValued="false"/>
+   <field name="title_primary_search" type="text_general" indexed="true" stored="true" multiValued="false"/>
    <field name="title_vern_display" type="string" indexed="false" stored="true" multiValued="false"/>
    <field name="subtitle_display" type="string" indexed="false" stored="true" multiValued="false"/>
    <field name="subtitle_vern_display" type="string" indexed="false" stored="true" multiValued="false"/>
@@ -617,7 +610,7 @@
         
    <!-- unstemmed fields -->
    <copyField source="title_display" dest="title_unstem_search"/>
-   <copyField source="title_display" dest="title_exact_search"/>
+   <copyField source="title_display" dest="title_primary_search"/>
    <copyField source="title_t" dest="title_unstem_search"/>
    <copyField source="subtitle_t" dest="subtitle_unstem_search"/>
    <copyField source="title_series_t" dest="title_series_unstem_search"/>

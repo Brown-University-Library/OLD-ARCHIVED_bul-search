@@ -87,7 +87,8 @@
        <int name="rows">10</int>
 
        <str name="q.alt">*:*</str>
-       <str name="mm">1</str>
+       <str name="mm">2&lt;-1 5&lt;-2 6&lt;90%</str>
+       <str name="sort">score desc, title_sort asc</str>
 
        <!-- this qf and pf are used by default, if not otherwise specified by
             client. The default blacklight_config will use these for the
@@ -98,7 +99,7 @@
        -->
 
        <str name="qf">
-         title_exact_search^500
+         title_primary_search^25000
          title_unstem_search^1000
          title_t^250
          title_series_unstem_search^75
@@ -116,7 +117,7 @@
          text
        </str>
        <str name="pf">
-         title_exact_search^500
+         title_primary_search^25000
          title_unstem_search^1000
          title_t^250
          title_series_unstem_search^75
@@ -201,12 +202,12 @@
        <str name="facet.field">subject_geo_facet</str>
        <str name="facet.field">subject_topic_facet</str>
        
-       <str name="spellcheck">true</str>
+<!--        <str name="spellcheck">true</str>
        <str name="spellcheck.dictionary">default</str>
        <str name="spellcheck.onlyMorePopular">true</str>
        <str name="spellcheck.extendedResults">true</str>
        <str name="spellcheck.collate">false</str>
-       <str name="spellcheck.count">5</str>
+       <str name="spellcheck.count">5</str> -->
 
      </lst>
     <!-- In addition to defaults, "appends" params can be specified
@@ -382,6 +383,8 @@
       <str>spellcheck</str>
     </arr>
   </requestHandler>
+
+  <requestHandler name="/admin/luke" class="org.apache.solr.handler.admin.LukeRequestHandler" />
 
 <!-- Spell Check
 
