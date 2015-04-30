@@ -610,9 +610,8 @@
         
    <!-- unstemmed fields -->
    <copyField source="title_display" dest="title_unstem_search"/>
-   <copyField source="title_display" dest="title_primary_search"/>
-   <copyField source="title_t" dest="title_unstem_search"/>
-   <copyField source="subtitle_t" dest="subtitle_unstem_search"/>
+   <copyField source="title_t" dest="title_other_unstem_search"/>
+   <copyField source="subtitle_t" dest="subtitle_other_unstem_search"/>
    <copyField source="title_series_t" dest="title_series_unstem_search"/>
    <copyField source="author_t" dest="author_unstem_search"/>
    <copyField source="author_addl_t" dest="author_addl_unstem_search"/>
