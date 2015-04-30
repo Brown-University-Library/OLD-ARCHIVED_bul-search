@@ -99,7 +99,7 @@
        -->
 
        <str name="qf">
-         title_unstem_search^25000
+         title_unstem_search^5000
          title_other_unstem_search^1000
          title_t^250
          title_series_unstem_search^75
@@ -117,7 +117,7 @@
          text
        </str>
        <str name="pf">
-         title_unstem_search^25000
+         title_unstem_search^5000
          title_other_unstem_search^1000
          title_t^250
          title_series_unstem_search^75
