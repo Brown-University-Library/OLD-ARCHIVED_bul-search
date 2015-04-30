@@ -384,7 +384,7 @@
     </arr>
   </requestHandler>
 
-  <requestHandler name="/admin/luke" class="org.apache.solr.handler.admin.LukeRequestHandler" />
+  <!-- <requestHandler name="/admin/luke" class="org.apache.solr.handler.admin.LukeRequestHandler" /> -->
 
 <!-- Spell Check
 
