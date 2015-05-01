@@ -146,16 +146,18 @@
          author_addl_t^10
        </str>
        <str name="title_qf">
-         title_unstem_search^50000
-         title_t^5000
+         title_unstem_search^5000
+         title_other_unstem_search^1000
+         title_t^500
          title_series_unstem_search^5
          title_series_t
        </str>
        <str name="title_pf">
-         title_unstem_search^500000
-         title_t^50000
-         title_series_t^50
-         title_series_unstem_search^10
+         title_unstem_search^5000
+         title_other_unstem_search^1000
+         title_t^500
+         title_series_unstem_search^5
+         title_series_t
        </str>
        <str name="subject_qf">
          subject_unstem_search^125
@@ -309,18 +311,18 @@
       
       <!-- for user query terms in title text box -->
       <str name="qf_title">
-        title_unstem_search^50000
-        title_t^5000
-        subtitle_t^2500
+        title_other_unstem_search^1000
+        title_unstem_search^500
+        title_t^250
         title_series_unstem_search^5
         title_series_t
       </str>
       <str name="pf_title">
-        title_unstem_search^500000
-        title_t^50000
-        subtitle_t^25000
-        title_series_t^50
-        title_series_unstem_search^10
+        title_other_unstem_search^1000
+        title_unstem_search^500
+        title_t^250
+        title_series_unstem_search^5
+        title_series_t
       </str>
       
       <!-- for user query terms in subject text box -->
