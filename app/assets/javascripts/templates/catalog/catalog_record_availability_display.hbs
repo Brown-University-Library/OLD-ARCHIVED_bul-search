@@ -2,7 +2,9 @@
 
 <div class="holdings-wrapper" {{#if results}}class="results"{{/if}}>
   {{#unless results}}
+    {{#if items}}
     <h4>Availability</h4>
+    {{/if}}
   {{/unless}}
   {{#if summary}}
       {{#each summary }}

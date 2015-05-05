@@ -41,13 +41,24 @@ function processItems(availabilityResponse) {
   return rsp;
 }
 
+function hasItems(availabilityResponse) {
+  if (availabilityResponse.items.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function addAvailability(availabilityResponse) {
   //check for request button
   addRequestButton(availabilityResponse)
   //do realtime holdings
-  context = processItems(availabilityResponse);
+  context = availabilityResponse;
   context['book_title'] = getTitle();
-  context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
+  if (hasItems(availabilityResponse)) {
+    // add title to map link.
+    _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
+  }
   //console.debug(context);
   //turning off for now.
   context['show_ezb_button'] = false;
