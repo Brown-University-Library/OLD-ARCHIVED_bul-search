@@ -52,6 +52,7 @@ function hasItems(availabilityResponse) {
 function addAvailability(availabilityResponse) {
   //check for request button
   addRequestButton(availabilityResponse)
+  console.log(availabilityResponse);
   //do realtime holdings
   context = availabilityResponse;
   context['book_title'] = getTitle();
@@ -62,9 +63,17 @@ function addAvailability(availabilityResponse) {
   //console.debug(context);
   //turning off for now.
   context['show_ezb_button'] = false;
+  if (availabilityResponse.requestable) {
+    context['request_link'] = requestLink();
+  };
   //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append(html);
+}
+
+function requestLink() {
+  var bib = getBibId();
+  return 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
 }
 
 function addRequestButton(availabilityResponse) {
@@ -73,6 +82,6 @@ function addRequestButton(availabilityResponse) {
   if (availabilityResponse.requestable) {
     var bib = getBibId();
     var url = 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
-    $('#sidebar ul.nav').prepend('<li><a href=\"' + url + '\">Request this</a></li>');
+    //$('#sidebar ul.nav').prepend('<li><a href=\"' + url + '\">Request this</a></li>');
   };
 }
