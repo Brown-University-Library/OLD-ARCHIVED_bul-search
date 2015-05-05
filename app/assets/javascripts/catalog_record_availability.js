@@ -52,7 +52,6 @@ function hasItems(availabilityResponse) {
 function addAvailability(availabilityResponse) {
   //check for request button
   addRequestButton(availabilityResponse)
-  console.log(availabilityResponse);
   //do realtime holdings
   context = availabilityResponse;
   context['book_title'] = getTitle();
