@@ -89,12 +89,12 @@
 
        <str name="qf">
          title_unstem_search^5000
-         title_other_unstem_search^1000
+         title_other_unstem_search^500
          title_t^250
          title_series_unstem_search^75
          title_series_t^75
 
-         author_unstem_search^125
+         author_unstem_search^2000
          author_t^100
          author_addl_unstem_search^75
          author_addl_t^50
@@ -107,12 +107,12 @@
        </str>
        <str name="pf">
          title_unstem_search^5000
-         title_other_unstem_search^1000
+         title_other_unstem_search^500
          title_t^250
          title_series_unstem_search^75
          title_series_t^75
 
-         author_unstem_search^125
+         author_unstem_search^2000
          author_t^100
          author_addl_unstem_search^75
          author_addl_t^50
