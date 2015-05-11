@@ -2,7 +2,12 @@
 
 <div class="holdings-wrapper" {{#if results}}class="results"{{/if}}>
   {{#unless results}}
-    <h4>Availability</h4>
+    {{#if items}}
+      <h4>
+        Availability
+        {{#if request_link }}<a class="btn request-this-link" href="{{ request_link }}">Request this</a>{{/if}}
+      </h4>
+    {{/if}}
   {{/unless}}
   {{#if summary}}
       {{#each summary }}

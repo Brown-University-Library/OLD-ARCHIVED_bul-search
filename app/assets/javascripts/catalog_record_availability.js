@@ -41,14 +41,46 @@ function processItems(availabilityResponse) {
   return rsp;
 }
 
+function hasItems(availabilityResponse) {
+  if (availabilityResponse.items.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function addAvailability(availabilityResponse) {
-  context = processItems(availabilityResponse);
+  //check for request button
+  addRequestButton(availabilityResponse)
+  //do realtime holdings
+  context = availabilityResponse;
   context['book_title'] = getTitle();
-  context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
+  if (hasItems(availabilityResponse)) {
+    // add title to map link.
+    _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
+  }
   //console.debug(context);
   //turning off for now.
   context['show_ezb_button'] = false;
+  if (availabilityResponse.requestable) {
+    context['request_link'] = requestLink();
+  };
   //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append(html);
+}
+
+function requestLink() {
+  var bib = getBibId();
+  return 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
+}
+
+function addRequestButton(availabilityResponse) {
+  //ugly Josiah request url.
+  //https://josiah.brown.edu/search~S7?/.b2305331/.b2305331/1%2C1%2C1%2CB/request~b2305331
+  if (availabilityResponse.requestable) {
+    var bib = getBibId();
+    var url = 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
+    //$('#sidebar ul.nav').prepend('<li><a href=\"' + url + '\">Request this</a></li>');
+  };
 }
