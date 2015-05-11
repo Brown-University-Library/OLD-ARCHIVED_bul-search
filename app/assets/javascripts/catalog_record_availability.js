@@ -6,12 +6,15 @@
 - Loaded by `app/views/catalog/show.html.erb`.
 */
 
-
 $(document).ready(
   function(){
     bib_id = getBibId();
     api_url = availabilityService + bib_id + "/?callback=?";
-    $.getJSON( api_url, determine_ezb_availability );
+    $.getJSON( api_url, addAvailability );
+    $('.holdings-wrapper').on('click', '.stack-map-link', function(e) {
+      //do something
+      console.log('here');
+    });
   }
 );
 
@@ -24,43 +27,28 @@ function getBibId() {
   return bib_id;
 }
 
-function determine_ezb_availability( json_output ) {
-  /* Determines whether easyBorrow button should display.
-   * Called on doc.ready */
-  var show_ezb_button = false; var openurl = null;
-  if (json_output['items'].length > 0 ) {  //check for items before updating HTML.
-    var available_item = _.find(  // _.find() stops processing on first find
-      json_output['items'],
-      function( item ) {
-        if ( item['is_available'] == true ){ return item; } } );
-    if ( ! available_item ) {
-      show_ezb_button = true;
-      openurl = grab_openurl();
-    }
-    //turning off until we have proper logic in place.
-    show_ezb_button = false;
-    build_html( json_output, show_ezb_button, openurl );
-  }
+function getTitle() {
+  return $('h3[itemprop="name"]').text();
 }
 
-function grab_openurl() {
-  /* Grabs and returns item's openurl from openurl-api.
-   * Called by determine_ezb_availability() */
-  var openurl = "init";
-  current_url = location.href;
-  $.ajaxSetup( {async: false} );  // otherwise "init" would immediately be returned while $.get makes it's request asynchronously
-  $.get( current_url + "/ourl", function( data ) {
-    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + data['ourl'];
-    } );
-  return openurl;
+function processItems(availabilityResponse) {
+  var out = []
+  $.each(availabilityResponse.items, function( index, item ) {
+    var loc = item['location'].toLowerCase();
+    out.push(item);
+  });
+  var rsp = availabilityResponse;
+  return rsp;
 }
 
-function build_html( json_output, show_ezb_button, openurl ) {
-  /* Calls template for html, and updates DOM.
-   * Called by determine_ezb_availability() */
-  context = json_output;
-  context['show_ezb_button'] = show_ezb_button;
-  context['openurl'] = openurl
+function addAvailability(availabilityResponse) {
+  context = processItems(availabilityResponse);
+  context['book_title'] = getTitle();
+  context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
+  //console.debug(context);
+  //turning off for now.
+  context['show_ezb_button'] = false;
+  //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
-  $("#availability").append( html );
+  $("#availability").append(html);
 }

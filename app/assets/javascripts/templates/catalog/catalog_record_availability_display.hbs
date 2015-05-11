@@ -1,6 +1,6 @@
 {{! comment: called by `app/assets/javascripts/catalog_record_availability.js - addStatus()` }}
 
-<div id="holdings-wrapper" {{#if results}}class="results"{{/if}}>
+<div class="holdings-wrapper" {{#if results}}class="results"{{/if}}>
   {{#unless results}}
     <h4>Availability</h4>
   {{/unless}}
@@ -11,22 +11,24 @@
       </div>
       {{/each}}
   {{/if}}
+  {{#if items}}
   <table class="table">
     <tr>
-      <th>Call number</th>
       <th>Location</th>
+      <th>Call number</th>
       <th>Status</th>
     </tr>
     <tbody>
       {{#each items}}
         <tr>
+          <td id="{{item_id}}"><span class="location">{{ location }}</span>{{#if shelf}} -- <a href="{{ map }}" class="stack-map-link">Level {{ shelf.floor }}, Aisle {{ shelf.aisle }}</a>{{/if}}</td>
           <td>{{ callnumber }}</td>
-          <td>{{ location }} </td>
-          <td>{{ availability }}</td>
+          <td>{{ status }}</td>
         </tr>
       {{/each}}
     </tbody>
   </table>
+  {{/if}}
 
   {{#if more }}
     <div class="more-results pull-right">
@@ -44,6 +46,8 @@
   {{/if}}
 
 </div>
+
+
 
 
 <!-- Modal dialog box; only shows if question-button is clicked -->

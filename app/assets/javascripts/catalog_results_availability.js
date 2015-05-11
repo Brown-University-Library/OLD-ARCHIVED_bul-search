@@ -10,66 +10,48 @@
 $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
   "page:change",
   function() {
-    grabItemDivs();
+    collectBibs();
   }
 );
 
-function grabItemDivs() {
-  /* Triggers ajax call for every item-div if necessary.
-   * Called on doc.on() */
-  the_docs = $( ".document" );
-  for (var i = 0; i < the_docs.length; i++) {
-    the_doc = the_docs[i];
-    target_span = $( ".summary-availability", the_doc );  // check to see if the dom has already been updated (Safari event issue)
-    if ( target_span.length == 1 ) {
-      bib_id = $( target_span ).attr( "data-id" );
-      getAvailabilityData( the_doc, bib_id );
-    }
-  }
+function collectBibs() {
+  var bibs = [];
+  $.each($('.index_title'), function(i, bib) {
+      bibs.push($(bib).data('id'));
+  });
+  getAvailability(bibs);
 }
 
-function getAvailabilityData( the_doc, bib_id ) {
-  /* Grabs item's availability data and triggers div's html creation.
-   * Called by grabItemDivs() */
-  api_url = availabilityService + bib_id + "/?callback=?";
-  $.getJSON(
-    api_url,
-    function( response_object, success_status, ajax_object ) {  // these 3 vars are auto-created by $.getJSON; we only care about the response_object...
-      context = {};
-      //determineAvailability( response_object, the_doc, bib_id );  // ...and our `the_doc`, which requires the anonymous function syntax to pass it along
-      if (response_object['items'].length > 0) {
-        context = response_object;
-        context['show_ezb_button'] = false;
-        context['openurl'] = null;
-      } else if ($.isEmptyObject(response_object['summary']) != true) {
-        context['summary'] = response_object['summary']
-      };
-      //Make sure we have something to show.
-      if ($.isEmptyObject(context) != true) {
-        context['results'] = true;
-        if (context['items'].length > 2) {
-          context['items'] = context['items'].slice(0, 2);
-          context['more'] = true;
-          context['more_link'] = './catalog/' + bib_id;
+function getTitle(bib) {
+  return $('[data-id="' + bib + '"] a').text();
+}
+
+//POST the list of bis to the service.
+function getAvailability(bibs) {
+    $.ajax({
+        type: "POST",
+        //url: 'https://apps.library.brown.edu/bibutils/bib/',
+        url: availabilityService,
+        //dataType: 'json',
+        //contentType: "application/json",
+        data: JSON.stringify(bibs),
+        success: function (data) {
+            $.each(data, function(bib, context){
+              context['results'] = true;
+              //context.items = _.filter(context['items'], function(item){ return (item['location'] != 'ONLINE BOOK') && (item['location'] != 'ONLINE SERIAL')})
+              context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle(bib)});
+              if (context.items.length > 5) {
+                context.items = context.items.slice(0, 5)
+                context.more = true
+                //context.more_link = 
+              }
+              //console.debug(bib);
+              //console.debug(context);
+              var elem = $('[data-availability="' + bib + '"]');
+              html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
+              $(elem).append(html);
+              $(elem).removeClass('hidden');
+            });
         }
-        html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
-        $(the_doc).append( html );
-      }
-    }
-  );
-}
-
-/*
- * On 'Request' button click...
- */
-
-function redirect_ezaccess( bib_id ) {
-  /* Gets openurl and redirects to easyAccess landing page.
-   * Called on button click. */
-  var record_path = $('#record-path').text();
-  $.get( record_path + bib_id + "/ourl", function( data ) {
-    openurl = 'https://library.brown.edu/easyarticle/borrow/?' + data['ourl'];
-    location.href = openurl;
-    }
-  );
+    })
 }

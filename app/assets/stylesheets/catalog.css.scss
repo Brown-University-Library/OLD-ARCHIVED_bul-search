@@ -7,27 +7,27 @@
 // - `app/assets/javascripts/catalog_results_availability.js` and displayed in...
 // - `app/assets/javascripts/templates/catalog/ctlg_rslts_avlblty.hbs`
 
-#holdings-wrapper {
+.holdings-wrapper {
     width: 60%;
     margin-top: 2em;
     margin-bottom: 1em;
 }
 
-#holdings-wrapper.results {
+.holdings-wrapper.results {
   margin: 0;
 }
 
-#holdings-wrapper table {
+.holdings-wrapper table {
     font-size: small;
     margin-left: 1em;
 }
 
-#holdings-wrapper.results table {
+.holdings-wrapper.results table {
   font-size: .8em;
   margin-bottom: .25em;
 }
 
-#holdings-wrapper.more-results {
+.holdings-wrapper.more-results {
   font-size: small;
 }
 
