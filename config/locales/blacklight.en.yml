@@ -14,7 +14,7 @@ en:
         #Label for users to go back to easySearch from withing Blacklight.
         form:
             q: "Enter keywords to search library resources"
-        restart_label: "Start search from beginning"
+        restart_label: "Return to main search"
         all_results:
             title: "All Results"
     articles:
