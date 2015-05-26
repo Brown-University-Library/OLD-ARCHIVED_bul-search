@@ -37,20 +37,18 @@ function getAvailability(bibs) {
         data: JSON.stringify(bibs),
         success: function (data) {
             $.each(data, function(bib, context){
-              context['results'] = true;
-              //context.items = _.filter(context['items'], function(item){ return (item['location'] != 'ONLINE BOOK') && (item['location'] != 'ONLINE SERIAL')})
-              context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle(bib)});
-              if (context.items.length > 5) {
-                context.items = context.items.slice(0, 5)
-                context.more = true
-                //context.more_link = 
-              }
-              //console.debug(bib);
-              //console.debug(context);
-              var elem = $('[data-availability="' + bib + '"]');
-              html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
-              $(elem).append(html);
-              $(elem).removeClass('hidden');
+              if (context) {
+                context['results'] = true;
+                //context.items = _.filter(context['items'], function(item){ return (item['location'] != 'ONLINE BOOK') && (item['location'] != 'ONLINE SERIAL')})
+                context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle(bib)});
+                if (context['has_more'] == true) {
+                  context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
+                };
+                var elem = $('[data-availability="' + bib + '"]');
+                html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
+                $(elem).append(html);
+                $(elem).removeClass('hidden');
+              };
             });
         }
     })

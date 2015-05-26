@@ -10,11 +10,12 @@ $(document).ready(
   function(){
     bib_id = getBibId();
     api_url = availabilityService + bib_id + "/?callback=?";
+    var limit = getUrlParameter("limit");
+    console.debug(limit);
+    if (limit == "false") {
+      api_url = api_url + "&limit=false"
+    }
     $.getJSON( api_url, addAvailability );
-    $('.holdings-wrapper').on('click', '.stack-map-link', function(e) {
-      //do something
-      console.log('here');
-    });
   }
 );
 
@@ -60,6 +61,9 @@ function addAvailability(availabilityResponse) {
     _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
   }
   //console.debug(context);
+  if (context['has_more'] == true) {
+    context['more_link'] = window.location.href + '?limit=false';
+  }
   //turning off for now.
   context['show_ezb_button'] = false;
   if (availabilityResponse.requestable) {
@@ -83,4 +87,19 @@ function addRequestButton(availabilityResponse) {
     var url = 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
     //$('#sidebar ul.nav').prepend('<li><a href=\"' + url + '\">Request this</a></li>');
   };
+}
+
+
+function getUrlParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return sParameterName[1];
+        }
+    }
 }
