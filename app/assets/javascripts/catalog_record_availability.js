@@ -11,7 +11,6 @@ $(document).ready(
     bib_id = getBibId();
     api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
-    console.debug(limit);
     if (limit == "false") {
       api_url = api_url + "&limit=false"
     }
