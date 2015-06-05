@@ -8,12 +8,13 @@ en:
         label: "Feedback"
         link: "https://docs.google.com/forms/d/1VFbkZQR_1EIqsZ8RgLv1mo_0nnKtIT6AIe-Ms_SY_1E/viewform"
     header_links:
-        account: "Library account"
+        account: "My Library Account"
+        search_history: 'My History'
     search:
         #Label for users to go back to easySearch from withing Blacklight.
         form:
             q: "Enter keywords to search library resources"
-        restart_label: "Start search from beginning"
+        restart_label: "Return to main search"
         all_results:
             title: "All Results"
     articles:
@@ -32,3 +33,5 @@ en:
         features:
             bookmarks: "Store items from your search. Log in to save these for future use."
             history: "Past searches in easySearch"
+    worldcat:
+        heading: Get from Libraries Worldwide
