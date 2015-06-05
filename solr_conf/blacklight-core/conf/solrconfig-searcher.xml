@@ -103,6 +103,8 @@
          subject_t^25
 
          isbn_t
+         oclc_t
+         issn_t
          text
        </str>
        <str name="pf">
