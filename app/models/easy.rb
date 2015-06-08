@@ -59,7 +59,7 @@ def get_bdr query
       end
     end
   end
-  response['response']['more'] = ENV['BDR_SEARCH_URL'] + "?q=#{query}"
+  response['response']['more'] = ENV['BDR_SEARCH_URL'] + '?' + URI.encode_www_form( {'q'=> query} )
   response['response']
 end
 
@@ -97,10 +97,11 @@ end
 #For searches with no results, return the link to Summon searches
 #that include materials outside fo the Brown collection.
 def summon_url(query, filtered)
+  eq = CGI.escape(query)
   if filtered == true
-    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
+    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{eq}"
   else
-    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=f&q=#{query}"
+    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=f&q=#{eq}"
   end
 end
 
@@ -247,10 +248,9 @@ def get_summon query
     results_docs << d
   end
 
-  eq = CGI.escape(query)
   results['response'] = Hash.new
-  results['response']['more'] = summon_url(eq, true)
-  results['response']['all'] = summon_url(eq, false)
+  results['response']['more'] = summon_url(query, true)
+  results['response']['all'] = summon_url(query, false)
   results['response']['docs'] = results_docs
   results['response']['numFound'] = search.record_count
   return results
