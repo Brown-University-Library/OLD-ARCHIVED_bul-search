@@ -2,6 +2,18 @@
 
 <div class="holdings-wrapper" {{#if results}}class="results"{{/if}}>
   {{#unless results}}
+    {{#if summary}}
+      <h4>Summary</h4>
+      {{#each summary}}
+      <div class="summary-holdings">
+        {{#each this}}
+          <span>{{this.label}}:&nbsp;</span>
+          <span>{{this.value}}</span>
+          </br>
+        {{/each}}
+      </div>
+      {{/each}}
+    {{/if}}
     {{#if items}}
       <h4>
         Availability
@@ -9,13 +21,6 @@
       </h4>
     {{/if}}
   {{/unless}}
-  {{#if summary}}
-      {{#each summary }}
-      <div class="summary-holdings {{#if results}}results{{/if}}">
-        <strong>Library has:</strong> {{ held }}. {{ location }}. {{ callnumber }}
-      </div>
-      {{/each}}
-  {{/if}}
   {{#if items}}
   <table class="table">
     <tr>
@@ -28,7 +33,7 @@
         <tr>
           <td id="{{item_id}}"><span class="location">{{ location }}</span>{{#if shelf}} -- <a href="{{ map }}" class="stack-map-link">Level {{ shelf.floor }}, Aisle {{ shelf.aisle }}</a>{{/if}}</td>
           <td>{{ callnumber }}</td>
-          <td>{{ status }}</td>
+          <td>{{ status }} {{#if scan}} <a href="{{scan}}" class="scan">scan</a>{{/if}}</td>
         </tr>
       {{/each}}
     </tbody>

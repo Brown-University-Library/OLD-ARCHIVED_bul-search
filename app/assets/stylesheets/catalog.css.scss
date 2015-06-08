@@ -8,7 +8,7 @@
 // - `app/assets/javascripts/templates/catalog/ctlg_rslts_avlblty.hbs`
 
 .holdings-wrapper {
-    width: 60%;
+    width: 70%;
     margin-top: 2em;
     margin-bottom: 1em;
 }
@@ -85,9 +85,6 @@
   border: 1px dotted #dddddd;
 }
 
-.summary-holdings {
-  padding: 1em;
-}
 
 #holdings-wrapper.results .summary-holdings {
   padding: .5em;
@@ -110,3 +107,9 @@ div.blacklight-title_vern_display {
 .title-subheading i {
   margin-right: .5em;
 }
+
+/* added by JS when appropriate */
+a.scan {
+  margin-left: 1em;
+}
+

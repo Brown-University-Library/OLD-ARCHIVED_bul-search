@@ -31,6 +31,10 @@ function getTitle() {
   return $('h3[itemprop="name"]').text();
 }
 
+function getFormat() {
+  return $("dd.blacklight-format").text().trim();
+}
+
 function processItems(availabilityResponse) {
   var out = []
   $.each(availabilityResponse.items, function( index, item ) {
@@ -49,7 +53,19 @@ function hasItems(availabilityResponse) {
   }
 }
 
+function addEasyScanLink(item, format, bib, title) {
+  var loc = ['annex']
+  var formats = ['book', 'periodical title']
+  if ((loc.indexOf(item['location'].toLowerCase()) > -1) && (formats.indexOf(format.toLowerCase()) > -1)) {
+    return item['scan'] + '&title=' + title + '&bibnum=' + bib;
+  }
+  return null;
+}
+
 function addAvailability(availabilityResponse) {
+  var title = getTitle();
+  var bib = getBibId();
+  var format = getFormat();
   //check for request button
   addRequestButton(availabilityResponse)
   //do realtime holdings
@@ -58,6 +74,12 @@ function addAvailability(availabilityResponse) {
   if (hasItems(availabilityResponse)) {
     // add title to map link.
     _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
+  }
+  //add easyScan link for appropriate locations and formats
+  if (hasItems(availabilityResponse)) {
+    _.each(context['items'], function(item) {
+      item['scan'] = addEasyScanLink(item, format, bib, title)
+    });
   }
   //console.debug(context);
   if (context['has_more'] == true) {
