@@ -1,3 +1,4 @@
+require 'cgi'
 require 'json'
 require 'open-uri'
 require 'summon'
@@ -87,7 +88,8 @@ def format_filter_url(query, format)
   #Link to more results.
   cat_url = catalog_base_url
   enc_format = URI.escape(format.to_s)
-  "#{cat_url}?f[format][]=#{enc_format}&q=#{query}"
+  eq = CGI.escape(query)
+  "#{cat_url}?f[format][]=#{enc_format}&q=#{eq}"
 end
 
 #Produce a Brown Summon link.
@@ -245,9 +247,10 @@ def get_summon query
     results_docs << d
   end
 
+  eq = CGI.escape(query)
   results['response'] = Hash.new
-  results['response']['more'] = summon_url(query, true)
-  results['response']['all'] = summon_url(query, false)
+  results['response']['more'] = summon_url(eq, true)
+  results['response']['all'] = summon_url(eq, false)
   results['response']['docs'] = results_docs
   results['response']['numFound'] = search.record_count
   return results
@@ -266,11 +269,11 @@ def get_summon_newspaper query
     "s.ps" => 1,
     "s.hl" => false,
   )
-
+  eq = CGI.escape(query)
   results = Hash.new
   results_docs = Array.new
   results['response'] = Hash.new
-  more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Newspaper%20Article,f&l=en&q=#{query}"
+  more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Newspaper%20Article,f&l=en&q=#{eq}"
   results['response']['more'] = more
   results['response']['numFound'] = search.record_count
   return results
