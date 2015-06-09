@@ -148,7 +148,6 @@ def get_catalog query
   solr = RSolr.connect :url => solr_url
 
   qp = {
-      :defType=>"edismax",
       "group.ngroups"=>true,
       "group.field"=>"format",
       "group"=>true,
