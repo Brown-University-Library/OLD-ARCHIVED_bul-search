@@ -1,7 +1,7 @@
 GIT
   remote: git@bitbucket.org:bul/bulmarc.git
-  revision: e2dddc9078dc90e9f870b86face7775b429bf21c
-  branch: blight-display
+  revision: 25a0026f6575c7cb74be417692a5ec2a163cd465
+  branch: master
   specs:
     bulmarc (0.0.4.2)
 
