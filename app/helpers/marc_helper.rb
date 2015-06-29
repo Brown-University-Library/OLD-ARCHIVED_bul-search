@@ -11,7 +11,7 @@ module MarcHelper
 
   def fielded_search(query, field)
     #Remove > for links and replace with blank.
-    params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> query.gsub('>|--', '')}
+    params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> query.gsub(/>|--/, '')}
     link_url = search_action_path(params)
     link_to(query, link_url)
   end
