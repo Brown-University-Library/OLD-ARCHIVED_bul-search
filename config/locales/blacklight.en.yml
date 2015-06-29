@@ -16,10 +16,12 @@ en:
             q: "Enter keywords to search library resources"
         restart_label: "Return to main search"
         all_results:
-            title: "All Results"
+            title: "Other Results"
     articles:
         heading: "Journal Articles"
         icon: '<i class="fa fa-copy"></i>'
+    bdr:
+        heading: "Brown Digital Repository"
     #For results list
     back_to_search: 'Back to results'
     tools:
