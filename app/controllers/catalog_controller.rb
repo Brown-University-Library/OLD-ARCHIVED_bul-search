@@ -63,12 +63,13 @@ class CatalogController < ApplicationController
     # facet bar
     config.add_facet_field 'access_facet', :label => 'Access', :collapse => false
     config.add_facet_field 'format', :label => 'Format', :limit => true
-    config.add_facet_field 'building_facet', :label => 'Location'
-    config.add_facet_field 'region_facet', :label => 'Region', :limit => 20
-    config.add_facet_field 'pub_date', :label => 'Publication Year', :limit => 20
-    config.add_facet_field 'language_facet', :label => 'Language', :limit => 20
     config.add_facet_field 'author_facet', :label => 'Author', :limit => 20
+    config.add_facet_field 'pub_date', :label => 'Publication Year', :limit => 20
     config.add_facet_field 'topic_facet', :label => 'Topic', :limit => 20
+    config.add_facet_field 'region_facet', :label => 'Topic: Region', :limit => 20
+    config.add_facet_field 'language_facet', :label => 'Language', :limit => 20
+    config.add_facet_field 'building_facet', :label => 'Location'
+
     #config.add_facet_field 'lc_1letter_facet', :label => 'Call Number'
     #config.add_facet_field 'subject_geo_facet', :label => 'Region'
     #config.add_facet_field 'subject_era_facet', :label => 'Era'
