@@ -1,3 +1,5 @@
+require 'cgi'
+
 module EasyHelper
   def data_link(query)
     url_for :controller=>'easy', :action=> 'search', :q => query
@@ -11,11 +13,19 @@ module EasyHelper
     base = url_for :controller=>'catalog'
     return base + 'catalog/'
   end
+  def escape_query query
+    CGI.escape(query)
+  end
   def worldcat_search(query)
     return "http://www.worldcat.org/search?&q=#{query}"
   end
   def summon_search(query)
     return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
+  end
+
+  def bdr_search(query)
+    eq = escape_query(query)
+    return ENV["BDR_SEARCH_URL"] + "?q=#{eq}"
   end
 
   def render_format_info_text(format)

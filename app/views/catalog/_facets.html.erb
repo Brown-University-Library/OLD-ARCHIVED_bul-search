@@ -28,6 +28,7 @@
       <ul class="list-unstyled">
         <li><%= t('blacklight.articles.icon').html_safe %><a href="<%= summon_search(params[:q]) =%>"><%= t('blacklight.articles.heading')%></a></li>
         <li><a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a></li>
+        <li><a class="large" href="<%= bdr_search(params[:q]) =%>" id="bdr-search"><%= t('blacklight.bdr.heading')%></a></li>
       </ul>
     </div>
   <% end %>
