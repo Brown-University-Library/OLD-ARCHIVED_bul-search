@@ -14,16 +14,6 @@ BulSearch::Application.routes.draw do
   get 'easy/' => 'easy#home', as: :easyS
   get 'easy/search'
 
-  #bdr
-  get 'bdr/advanced' => 'bdr_advanced#index', as: :bdr_advanced_search
-  get 'bdr' => 'bdr#index', as: :bdr_index
-  get 'bdr/email' => 'bdr#email', as: :email_bdr
-  post 'bdr/email' => 'bdr#email', as: :bdr_email
-  get 'bdr/sms' => 'bdr#sms', as: :sms_bdr
-  post 'bdr/sms' => 'bdr#sms', as: :bdr_sms
-  post 'bdr/:id/track' => 'bdr#track', as: :bdr_track
-  get 'bdr/:id' => 'bdr#show', as: :bdr_solr_document
-
   #libweb
   get 'libweb/' => 'libweb#search', as: :lib_web
 
