@@ -224,7 +224,7 @@ PLATFORMS
 
 DEPENDENCIES
   blacklight (~> 5.13)
-  blacklight-marc (~> 5.5)
+  blacklight-marc (~> 5.10)
   blacklight_advanced_search (~> 5.0)
   bulmarc!
   byebug
