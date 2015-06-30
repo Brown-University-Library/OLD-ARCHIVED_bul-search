@@ -32,8 +32,6 @@
 
   <dataDir>${solr.blacklight-core.data.dir:}</dataDir>
   
-  <requestHandler name="/replication" class="solr.ReplicationHandler" startup="lazy" /> 
-
   <requestDispatcher handleSelect="true" >
     <requestParsers enableRemoteStreaming="false" multipartUploadLimitInKB="2048" />
   </requestDispatcher>
