@@ -102,12 +102,27 @@ module BlacklightHelper
 
   def index_item_subheading document
     text = []
-    text << convert_to_array(document['author_display'])[0]
+    text << catalog_author_display(document)
     text << convert_to_array(document['pub_date'])[0]
     if text == []
       return nil
     else
       return content_tag("div", safe_join(text.compact, ". "), :class => "title-subheading")
+    end
+  end
+
+  ##
+  # This function is used to create an author string display
+  # for both the bento results at the catalog results.
+  def catalog_author_display document
+    primary = document['author_display']
+    if primary
+      return primary
+    else
+      added = document['author_addl_display']
+      if added
+        return added[0]
+      end
     end
   end
 

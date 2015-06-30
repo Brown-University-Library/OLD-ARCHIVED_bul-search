@@ -168,6 +168,7 @@
          score,
          author_display,
          author_vern_display, 
+         author_addl_display,
          format, 
          isbn_t, 
          language_facet, 

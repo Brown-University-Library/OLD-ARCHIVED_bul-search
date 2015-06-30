@@ -12,7 +12,7 @@
         <a href="{{this.link}}">{{truncate this.title_display ../max_title_length}}</a>
         <br/>
         <small>
-            {{#if this.author_display}}{{this.author_display}}.&nbsp;{{/if}}
+            {{#if this.author_text}}{{this.author_text}}.&nbsp;{{/if}}
             {{#if this.pub_date }}{{this.pub_date}}{{/if}}
             {{#if this.online }}
                 <a href="{{this.link}}" class="label label-info">Online</a>
