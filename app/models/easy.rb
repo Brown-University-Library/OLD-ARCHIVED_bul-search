@@ -40,10 +40,17 @@ class Easy
     solr_url = ENV['BDR_SOLR_URL']
     solr = RSolr.connect :url => solr_url
 
+    # Clean up query booleans if present
+    # This shouldn't be required but without this change
+    # results are different.
+    query.gsub!(' or ', ' OR ')
+    query.gsub!(' and ', ' AND ')
+
     qp = {
         :wt=>:json,
         "fl"=>"id:pid, title:primary_title, nonsort: nonsort, thumb:thumbnail, author:creator, year:dateIssued_year_ssim, genre:genre_local",
         "q"=>"#{query}",
+        "qt" => 'search',
         "fq"=>"discover:BDR_PUBLIC",
         "rows"=>5
     }
