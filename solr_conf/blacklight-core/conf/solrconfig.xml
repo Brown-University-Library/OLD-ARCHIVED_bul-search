@@ -32,8 +32,7 @@
 
   <dataDir>${solr.blacklight-core.data.dir:}</dataDir>
   
-  <!-- replication
-  Need to add solrconfig.xml and other relevant config files -->
+  <!-- replication -->
   <requestHandler name="/replication" class="solr.ReplicationHandler" >
     <lst name="master">
         <str name="replicateAfter">optimize</str>
