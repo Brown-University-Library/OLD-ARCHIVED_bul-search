@@ -62,7 +62,7 @@ class CatalogController < ApplicationController
     # :show may be set to false if you don't want the facet to be drawn in the
     # facet bar
     config.add_facet_field 'access_facet', :label => 'Access', :collapse => false
-    config.add_facet_field 'format', :label => 'Format', :limit => true
+    config.add_facet_field 'format', :label => 'Format', :limit => true, :collapse => false
     config.add_facet_field 'author_facet', :label => 'Author', :limit => 20
     config.add_facet_field 'pub_date', :label => 'Publication Year', :limit => 20
     config.add_facet_field 'topic_facet', :label => 'Topic', :limit => 20
