@@ -29,7 +29,7 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
     text-decoration: none;
 }
 
-#website a.gs-title {
+a.gs-title {
     text-decoration: none!important;
 }
 
@@ -46,10 +46,14 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
 }
 
 #website .gs-snippet {
-    display: none;
+    font-size: 80%;
 }
 
 #website .gsc-thumbnail {
+    display: none;
+}
+
+#website .gsc-url-bottom {
     display: none;
 }
 
