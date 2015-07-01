@@ -35,10 +35,6 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
     font-size: 85%;
 }
 
-#website .gs-snippet {
-    font-size: 80%;
-}
-
 #website .gsc-thumbnail {
     display: none;
 }
@@ -73,5 +69,6 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
 }
 
 .gs-result .gs-title, .gs-result .gs-title * { text-decoration : none !important ; }
+#website .gs-snippet { font-size : 13px !important ; line-height : 1.6 !important ; }
 
 
