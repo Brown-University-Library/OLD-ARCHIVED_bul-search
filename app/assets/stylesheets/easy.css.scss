@@ -74,7 +74,30 @@ button.info-box {
     margin-left: 1.5em;
 }
 
+#best-bet .label-primary {
+    background-color: #7bab54;
+}
+
+#best-bet .label-primary a {
+    color: #fff;
+}
+
+#best-bet .label-primary a:hover {
+    text-decoration: none;
+}
+
+
 .request-this-link {
     float: right;
+}
+
+/* change color of 'online' indicator */
+
+.label-info {
+    background-color: #7bab54;
+}
+
+.label-info[href]:hover, .label-info[href]:focus {
+    background-color: #7bab54;
 }
 
