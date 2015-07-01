@@ -72,8 +72,6 @@ http://www.labnol.org/internet/google-custom-search-css/28360/
     padding : 0px !important ; background-color : transparent !important ;
 }
 
-a.gs-title {
-    text-decoration: none !important;
-}
+.gs-result .gs-title, .gs-result .gs-title * { text-decoration : none !important ; }
 
 
