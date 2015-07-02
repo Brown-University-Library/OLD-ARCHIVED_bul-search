@@ -64,7 +64,15 @@ class CatalogController < ApplicationController
     config.add_facet_field 'access_facet', :label => 'Access', :collapse => false
     config.add_facet_field 'format', :label => 'Format', :limit => true, :collapse => false
     config.add_facet_field 'author_facet', :label => 'Author', :limit => 20
-    config.add_facet_field 'pub_date', :label => 'Publication Year', :limit => 20
+    #config.add_facet_field 'pub_date', :label => 'Publication Year', :limit => 20, :sort => 'index', :collapse => false
+    config.add_facet_field 'pub_date', :label => 'Publication Year', :range => true
+    # config.add_facet_field 'pub_date_sort', :label => 'Publish Date', :query => {
+    #   :years_5 => { :label => 'within 5 Years', :fq => "pub_date:[#{Time.now.year - 5 } TO *]" },
+    #   :years_10 => { :label => 'within 10 Years', :fq => "pub_date:[#{Time.now.year - 10 } TO *]" },
+    #   :years_25 => { :label => 'within 25 Years', :fq => "pub_date:[#{Time.now.year - 25 } TO *]" },
+    #   :years_more => { :label => 'older than 25 Years', :fq => "pub_date:[#{Time.now.year - 26 } TO *]" }
+    # }
+
     config.add_facet_field 'topic_facet', :label => 'Topic', :limit => 20
     config.add_facet_field 'region_facet', :label => 'Topic: Region', :limit => 20
     config.add_facet_field 'language_facet', :label => 'Language', :limit => 20
@@ -76,11 +84,6 @@ class CatalogController < ApplicationController
 
     #config.add_facet_field 'example_pivot_field', :label => 'Pivot Field', :pivot => ['format', 'language_facet']
 
-    #config.add_facet_field 'example_query_facet_field', :label => 'Publish Date', :query => {
-    #   :years_5 => { :label => 'within 5 Years', :fq => "pub_date:[#{Time.now.year - 5 } TO *]" },
-    #   :years_10 => { :label => 'within 10 Years', :fq => "pub_date:[#{Time.now.year - 10 } TO *]" },
-    #   :years_25 => { :label => 'within 25 Years', :fq => "pub_date:[#{Time.now.year - 25 } TO *]" }
-    #}
 
 
     # Have BL send all facet field names to Solr, which has been the default
@@ -112,7 +115,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'author_addl_display', :label => 'Other Author', :linked_fielded_search => 'author', :multi => true
     config.add_show_field 'marc_subjects', :label => 'Subject', :hot_link => true, :doc_key => 'marc_subjects', :index => 'subject'
     #config.add_show_field 'other_authors', :label => 'Other Author', :hot_link => true, :doc_Key => 'marc_additional_authors', :index => 'author'
-    config.add_show_field 'pub_date', :label => 'Publication date'
+    config.add_show_field 'pub_date', :label => 'Publication Year'
     config.add_show_field "subject_topic_facet", :label => 'Subject'
     config.add_show_field 'language_facet', :label => 'Language'
     config.add_show_field 'published_display', :label => 'Published'
