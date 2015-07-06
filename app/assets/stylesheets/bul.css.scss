@@ -13,7 +13,7 @@ body {
 
 /* adjust top banner styles
    edits also made to: blacklight.css.scss, _header_navbar.html.erb
-   additional edits to come to tweak responsive breakpoints
+   additional edits to come to fine-tune responsive breakpoints
 */
 
 #header-navbar {
@@ -32,19 +32,21 @@ body {
 	float: right;
 	background-color: #eed4aa;
 	width: 100%;
+	height: 2.33em;
 }
 
 .navbar-nav {
 	position: relative;
 	margin-left: auto;
 	margin-right: auto;
-	padding-right: 5%;
+	padding-right: 8.5%;
 	float: right;
 }
 
 #header-navbar a {
 	color: #2b0b07;
 	font-weight: bold;
+	margin-top: -.75em;
 }
 
 div#search-navbar {
