@@ -48,7 +48,6 @@ body {
 }
 
 div#search-navbar {
-	background-color: none;
 	float: right;
 	margin-top: -4em;
 	margin-right: -2%;
@@ -129,16 +128,17 @@ div#search-navbar {
 	#header-navbar {
 	  border-top: #7f2320 thick solid;
 	
-	  .navbar-brand {  /* The main logo image for the Blacklight instance */
-	    width: 307px;
-	    height: 87px;
-	    background:transparent image_url('bul/shield_307_87.png') no-repeat left center;
-	/*  display: inline-block;  */
+	  .navbar-brand {
+	    width: 230px;
+	    height: 65px;
+	    background-image: url('bul/shield_307_87.png');
+	    background-color: transparent;
+	    background-size: 100%;
 	    text-indent: 20%;
 	    white-space: nowrap;
 	    overflow: visible;
 	    padding-right:0;
-	    margin-top: -17px;
+	    margin-top: -5px;
 	    margin-right:0px;
 	    margin-left: .5em;
 	    padding-left: 2%;
@@ -146,12 +146,15 @@ div#search-navbar {
 	}
 
 	div#search-navbar {
-		background-color: none;
 		clear: both;
 		float: left;
 		margin-top: 1em;
 		margin-right: -2%;
 		width: 100%;
+	}
+
+	.navbar-toggle {
+		margin-top: 13px;
 	}
 
 }
@@ -194,11 +197,11 @@ div#search-navbar {
 	#header-navbar {
 	  border-top: #7f2320 thick solid;
 	
-	  .navbar-brand {  /* The main logo image for the Blacklight instance */
+	  .navbar-brand {  
 	    width: 307px;
 	    height: 87px;
-	    background:transparent image_url('bul/shield_307_87.png') no-repeat left center;
-	/*  display: inline-block;  */
+	    background-image: url('bul/shield_307_87.png');
+	    background-color: transparent;
 	    text-indent: 20%;
 	    white-space: nowrap;
 	    overflow: visible;
@@ -210,7 +213,6 @@ div#search-navbar {
 	}
 	
 	div#search-navbar {
-		background-color: none;
 		float: right;
 		margin-top: -4em;
 		margin-right: -2%;
@@ -256,11 +258,11 @@ div#search-navbar {
 	#header-navbar {
 	  border-top: #7f2320 thick solid;
 	
-	  .navbar-brand {  /* The main logo image for the Blacklight instance */
+	  .navbar-brand {
 	    width: 501px;
 	    height: 87px;
-	    background:transparent image_url('bul/shield_501_87.png') no-repeat left center;
-	/*  display: inline-block;  */
+	    background-image: url('bul/shield_501_87.png');
+	    background-color: transparent;
 	    text-indent: 20%;
 	    white-space: nowrap;
 	    overflow: visible;
@@ -272,7 +274,6 @@ div#search-navbar {
 	}
 	
 	div#search-navbar {
-		background-color: none;
 		float: right;
 		margin-top: -4em;
 		margin-right: -2%;
