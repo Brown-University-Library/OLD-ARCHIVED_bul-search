@@ -5,23 +5,21 @@
 
   <h2><%= t('blacklight.bookmarks.need_login') %></h2>
 
-<%- elsif (@document_list.blank? && @bdr_document_list.blank?) -%>
-
+<%- elsif (@document_list.blank?) -%>
   <h3><%= t('blacklight.bookmarks.no_bookmarks') %></h3>
 <% else %>
   <%= link_to t('blacklight.bookmarks.clear.action_title'), clear_bookmarks_path, :method => :delete, :data => { :confirm => t('blacklight.bookmarks.clear.action_confirm') }, :class => 'clear-bookmarks btn btn-danger pull-right' %>
 
   <% if !@document_list.blank? %>
-  <% @document_list.each do |doc| %>
-    <div><%= link_to doc['title_display'], catalog_path(doc) %></div>
-  <% end %>
+    <% @document_list.each do |doc| %>
+      <div class="bookmark">
+        <%= link_to doc['title_display'], catalog_path(doc) %>
+        <br/>
+        <%= index_item_subheading(doc) %>
+      </div>
+    <% end %>
   <% end %>
 
-  <% if !@bdr_document_list.blank? %>
-  <% @bdr_document_list.each do |doc| %>
-    <div><%= link_to doc['primary_title'], bdr_solr_document_path(doc['pid']) %></div>
-  <% end %>
-  <% end %>
 <% end %>
 </div>
 
