@@ -49,7 +49,7 @@ module Constants
             info: "Any item that is primarily record sound, either music or spoken word, in any format. Some resources may need to be searched in the specific database."
         },
         "Thesis/Dissertation" => {
-            icon: nil,
+            icon: "file-text",
             info: "Brown theses/dissertations which are available in a physical format or through ProQuest. Most theses and dissertations written after 2008 will be found in the Brown Digital Repository holdings."
         },
         "Video" => {
