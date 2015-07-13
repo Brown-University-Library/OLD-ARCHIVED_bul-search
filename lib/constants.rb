@@ -64,6 +64,14 @@ module Constants
             icon: "file-image-o",
             info: ""
         }
+        "Archive" => {
+            icon: "archive",
+            info: ""
+        }
+        "Manuscript" => {
+            icon: "pencil-square-o",
+            info: ""
+        }
     }
 
     #Used on individual record pages.
