@@ -25,9 +25,6 @@
     <li>
       <a href="http://library.brown.edu/libweb/askalib.php">Help</a>
     </li>
-    <li>
-      <%= link_to t('blacklight.header_links.account'), "https://josiah.brown.edu/patroninfo" %>
-    </li>
     <% if @easy_search != true && @libweb_search != true %>
         <% if controller_name == 'bdr' %>
           <li><%= link_to 'Advanced Search', bdr_advanced_search_path(params), :class=>'advanced_search'%></li>
