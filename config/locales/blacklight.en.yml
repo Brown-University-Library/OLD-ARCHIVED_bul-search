@@ -2,7 +2,7 @@ en:
   blacklight:
     application_name: 'Brown University Library Search'
     bento:
-        label: "easySearch"
+        label: "Search Home"
         max_title_length: 75
     feedback:
         label: "Feedback"
