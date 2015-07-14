@@ -60,6 +60,18 @@ module Constants
             icon: nil,
             info: "3D artifacts such as sculptures, models, games, clothing, or specimens."
         }
+        "Visual Material" => {
+            icon: "file-image-o",
+            info: ""
+        }
+        "Archive" => {
+            icon: "archive",
+            info: ""
+        }
+        "Manuscript" => {
+            icon: "pencil-square-o",
+            info: ""
+        }
     }
 
     #Used on individual record pages.
