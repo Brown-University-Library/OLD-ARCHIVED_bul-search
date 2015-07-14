@@ -59,17 +59,13 @@ module Constants
         "3D object" => {
             icon: nil,
             info: "3D artifacts such as sculptures, models, games, clothing, or specimens."
-        }
+        },
         "Visual Material" => {
             icon: "file-image-o",
             info: ""
-        }
-        "Archive" => {
+        },
+        "Archives/Manuscripts" => {
             icon: "archive",
-            info: ""
-        }
-        "Manuscript" => {
-            icon: "pencil-square-o",
             info: ""
         }
     }
