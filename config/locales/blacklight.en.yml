@@ -10,6 +10,7 @@ en:
     header_links:
         account: "My Library Account"
         search_history: 'My History'
+        josiah: "Classic Josiah"
     search:
         #Label for users to go back to easySearch from withing Blacklight.
         form:
