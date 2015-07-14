@@ -11,6 +11,34 @@ body {
 	overflow-x:hidden;
 }
 
+#topmost-nav-links {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#topmost-nav-links a {
+	color: black;
+	text-decoration: none;
+	font-size: 90%;
+}
+
+#topmost-nav-links a:hover {
+	color: #C00404;
+	text-decoration: none;
+}
+
+#topmost-nav-links ul {
+	text-align: center;
+	height: auto;
+	margin-top: .25em;
+	margin-bottom: -1.5em;
+}
+
+#topmost-nav-links li {
+	display: inline-block;
+	list-style-type: none;
+	margin-right: 2.5em;
+}
 
 /* adjust top banner styles
    edits also made to: blacklight.css.scss, _header_navbar.html.erb
@@ -18,6 +46,7 @@ body {
 */
 
 #header-navbar {
+	clear: both;
 	margin-top: 1.9em;
 	border-top: #c81700 .33em solid;
 	border-bottom: .4em solid #eed4aa;
