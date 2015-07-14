@@ -1,13 +1,16 @@
 <div id="content" class="col-md-12">
 <h1><%= t('blacklight.bookmarks.title') %></h1>
 
-<%- if current_or_guest_user.blank? -%>
-
-  <h2><%= t('blacklight.bookmarks.need_login') %></h2>
-
-<%- elsif (@document_list.blank?) -%>
+<%- if (@document_list.blank?) -%>
   <h3><%= t('blacklight.bookmarks.no_bookmarks') %></h3>
 <% else %>
+    <% if has_user_authentication_provider? %>
+      <% if !current_user %>
+      <h3 data-no-turbolink>
+        You must <%= link_to t('blacklight.header_links.login'), user_omniauth_authorize_path(:shibboleth) %> to save your bookmarks.
+      </h3>
+      <% end %>
+    <% end %>
   <%= link_to t('blacklight.bookmarks.clear.action_title'), clear_bookmarks_path, :method => :delete, :data => { :confirm => t('blacklight.bookmarks.clear.action_confirm') }, :class => 'clear-bookmarks btn btn-danger pull-right' %>
 
   <% if !@document_list.blank? %>
