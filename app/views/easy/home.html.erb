@@ -222,7 +222,9 @@ function sortByTopFormat(results) {
 //Adds the format facet on the left.
 function addFormats(formats) {
     _.each(formats, function(item) {
-        facetFormats.push({'format': item.format, 'count': item.count, 'more': item.more});
+        facetFormats.push(
+          {'format': item.format, 'count': commaSeparatedNumber(item.count), 'more': item.more}
+        );
     });
 }
 
