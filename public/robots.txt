@@ -1,5 +1,12 @@
-# See http://www.robotstxt.org/wc/norobots.html for documentation on how to use the robots.txt file
-#
-# To ban all spiders from the entire site uncomment the next two lines:
-# User-agent: *
-# Disallow: /
+
+# Ban all spiders by default:
+User-agent: *
+Disallow: /
+
+# Allow these cagents to crawl catalog
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: msnbot-media
+User-agent: bingbot
+Crawl-delay: 30
+Allow: /catalog
