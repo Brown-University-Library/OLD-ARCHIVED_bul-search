@@ -75,3 +75,5 @@ gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'master'
 gem "http_logger", :group => [:development]
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+
+gem 'openurl', '~> 1.0.0'

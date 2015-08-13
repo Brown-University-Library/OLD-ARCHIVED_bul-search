@@ -44,10 +44,41 @@ class SolrDocument
       document.will_export_as(:openurl_ctx_kev, "application/x-openurl-ctx-kev")
       document.will_export_as(:endnote, "application/x-endnote-refer")
     end
+
+    #override blacklight-marc with our own OpenURL code
+    def export_as_openurl_ctx_kev(format = nil)
+      self.openurl_ctx_kev(format)
+    end
+
   end
 
   use_extension(BrownMarcDisplay) do |document|
     document.key?( :marc_display )
   end
 
+  def openurl_ctx_kev(format = nil)
+    ctx_obj = OpenURL::ContextObject.new
+    if format == 'book'
+      ctx_obj.referent.set_format('book')
+      ctx_obj.referent.set_metadata('btitle', self.fetch('title_display')) if self.key?('title_display')
+      ctx_obj.referent.set_metadata('au', self.fetch('author_display')) if self.key?('author_display')
+      ctx_obj.referent.set_metadata('pub', self.fetch('published_display').join(' ')) if self.key?('published_display')
+      ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
+      ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
+    elsif (format =~ /journal/i)
+      ctx_obj.referent.set_format('journal')
+      ctx_obj.referent.set_metadata('jtitle', self.fetch('title_display')) if self.key?('title_display')
+      ctx_obj.referent.set_metadata('au', self.fetch('author_display')) if self.key?('author_display')
+      ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
+      ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
+    else
+      #DC metadata about the object
+      ctx_obj.referent.set_format('dc')
+      ctx_obj.referent.set_metadata('format', format) unless format.nil?
+      ctx_obj.referent.set_metadata('title', self.fetch('title_display')) if self.key?('title_display')
+      ctx_obj.referent.set_metadata('creator', self.fetch('author_display')) if self.key?('author_display')
+      ctx_obj.referent.set_metadata('publisher', self.fetch('published_display').join(' ')) if self.key?('published_display')
+    end
+    ctx_obj.kev
+  end
 end
