@@ -8,6 +8,7 @@ class EasyController < ApplicationController
     @query = params[:q]
     if @query.blank?
       @has_query = false
+      @query = '*'
     else
       @has_query = true
       @best_bet = get_best_bet(@query)

@@ -1,6 +1,3 @@
-<% if @has_query != true %>
-    <%= render "index_text" %>
-<% else %>
     <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
             <div id="format-filter">
@@ -19,6 +16,11 @@
                 </ul>
             </div>
         </div>
+<% if @has_query != true %>
+    <div id="welcome" class="col-md-9">
+    <%= render "index_text" %>
+    </div>
+<% else %>
         <div id="bentos" class="col-md-9">
             <div class="row" id="jump-links">
               <ul class="list-inline">
