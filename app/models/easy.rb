@@ -155,13 +155,19 @@ class Easy
 
     solr = RSolr.connect :url => solr_url
 
+    if query == '*'
+      q = ''
+    else
+      q = query
+    end
+
     qp = {
         "group.ngroups"=>true,
         "group.field"=>"format",
         "group"=>true,
         "group.limit"=>5,
         "fl"=>"id, title_display, author_display, author_addl_display, pub_date, format, online:online_b",
-        "q"=>"#{query}",
+        "q"=>"#{q}",
         "qt" => 'search',
         :spellcheck => false,
     }
