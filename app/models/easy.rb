@@ -37,7 +37,7 @@ class Easy
   end
 
   def get_bdr query
-    solr_url = ENV['BDR_SOLR_URL']
+    solr_url = ENV['BDR_SEARCH_API_URL']
     solr = RSolr.connect :url => solr_url
 
     # Clean up query booleans if present
