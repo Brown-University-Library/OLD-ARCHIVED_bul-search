@@ -174,7 +174,7 @@ class BookmarksController < CatalogController
   end
 
   def bdr_solr_config
-    {url: ENV['BDR_SOLR_URL']}
+    {url: ENV['BDR_SEARCH_API_URL']}
   end
 
   def bdr_get_solr_response_for_document_ids(ids=[], extra_solr_params = {}) 

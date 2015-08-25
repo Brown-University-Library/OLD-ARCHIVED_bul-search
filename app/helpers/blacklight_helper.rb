@@ -12,6 +12,16 @@ module BlacklightHelper
     content_tag(:div, "", :class => "hidden", :"data-analytics-id" => code)
   end
 
+  def render_constraints_notes params
+    content = ""
+    params[:f].each_pair do |facet,values|
+      if facet == 'format' && values.include?('Thesis/Dissertation')
+        content << 'See the <a href="https://repository.library.brown.edu/studio/collections/dissertation/">Brown Digital Repository</a> for more Theses/Dissertations, particularly more recent ones since 2008.'
+      end
+    end
+    content_tag(:span, content.html_safe)
+  end
+
   def availability_service_url
     ENV['AVAILABILITY_SERVICE']
   end

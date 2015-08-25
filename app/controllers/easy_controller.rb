@@ -5,12 +5,13 @@ class EasyController < ApplicationController
   include Blacklight::BlacklightHelperBehavior
   def home
     @easy_search = true
-    query = params[:q]
-    if query.blank?
+    @query = params[:q]
+    if @query.blank?
       @has_query = false
+      @query = ''
     else
       @has_query = true
-      @best_bet = get_best_bet(query)
+      @best_bet = get_best_bet(@query)
     end
   end
 
