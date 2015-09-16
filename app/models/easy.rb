@@ -45,11 +45,13 @@ class Easy
     # results are different.
     query.gsub!(' or ', ' OR ')
     query.gsub!(' and ', ' AND ')
+    solr_q = query.gsub(':', '\\:')
+    solr_q.gsub!('-', '\\-')
 
     qp = {
         :wt=>:json,
         "fl"=>"id:pid, title:primary_title, nonsort: nonsort, thumb:thumbnail, author:creator, year:dateIssued_year_ssim, genre:genre_local",
-        "q"=>"#{query}",
+        "q"=>"#{solr_q}",
         "qt" => 'search',
         "fq"=>"discover:BDR_PUBLIC",
         "rows"=>5
@@ -167,7 +169,7 @@ class Easy
         "group"=>true,
         "group.limit"=>5,
         "fl"=>"id, title_display, author_display, author_addl_display, pub_date, format, online:online_b",
-        "q"=>"#{q}",
+        "q"=>"#{q.gsub('--', '\\-\\-')}",
         "qt" => 'search',
         :spellcheck => false,
     }
