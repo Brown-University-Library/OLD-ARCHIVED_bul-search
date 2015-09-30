@@ -81,4 +81,14 @@ class SolrDocument
     end
     ctx_obj.kev
   end
+
+  def has_toc?
+    if self.key?('toc_display')
+      true
+    elsif self.key?('toc_970_display')
+      true
+    else
+      false
+    end
+  end
 end
