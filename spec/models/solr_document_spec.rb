@@ -1,4 +1,5 @@
 require "spec_helper"
+require "json"
 
 describe SolrDocument do
 
@@ -27,6 +28,37 @@ describe SolrDocument do
     it "handles both kinds of toc" do
       solrdoc = SolrDocument.new(source_doc={"toc_display" => ["test 505 toc"], "toc_970_display" => ["test 970 toc"]})
       expect(solrdoc.has_toc?).to be true
+    end
+
+  end
+
+  describe "#get_toc" do
+
+      it "returns TableOfContents object" do
+        solrdoc = SolrDocument.new(source_doc={"toc_970_display" => [JSON.generate([])]})
+        expect(solrdoc.get_toc.chapters).to eq([])
+      end
+
+  end
+
+end
+
+describe TableOfContents do
+
+  describe "#chapters" do
+
+    it "knows its chapters" do
+      toc = TableOfContents.new([JSON.generate([{"title" => "test title"}])], nil)
+      expect(toc.chapters[0]["title"]).to eq("test title")
+    end
+
+    it "fills in missing keys as needed" do
+      toc = TableOfContents.new([JSON.generate([{}])], nil)
+      expect(toc.chapters[0]["label"]).to eq("")
+      expect(toc.chapters[0]["indent"]).to eq("")
+      expect(toc.chapters[0]["authors"]).to eq([])
+      expect(toc.chapters[0]["title"]).to eq("")
+      expect(toc.chapters[0]["page"]).to eq("")
     end
 
   end

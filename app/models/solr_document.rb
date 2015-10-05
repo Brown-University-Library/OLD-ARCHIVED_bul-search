@@ -1,5 +1,31 @@
 # -*- encoding : utf-8 -*-
 require 'bulmarc'
+require 'json'
+
+class TableOfContents
+
+  def initialize toc_970_display, toc_display
+    @toc_970_info = JSON.parse(toc_970_display[0]) unless toc_970_display.nil?
+    @chapters = make_chapters
+  end
+
+  def make_chapters
+    chapters = []
+    @toc_970_info.each do |chapter|
+      ['label', 'indent', 'title', 'page'].each do |key|
+        chapter[key] = "" if chapter[key].nil?
+      end
+      chapter['authors'] = [] if chapter['authors'].nil?
+      chapters << chapter
+    end
+    chapters
+  end
+
+  def chapters
+    @chapters
+  end
+
+end
 
 class SolrDocument
 
@@ -90,5 +116,19 @@ class SolrDocument
     else
       false
     end
+  end
+
+  def get_toc
+    toc_display = if self.key?('toc_display')
+                      self.fetch('toc_display')
+                  else
+                      nil
+                  end
+    toc_970_display = if self.key?('toc_970_display')
+                          self.fetch('toc_970_display')
+                      else
+                          nil
+                      end
+    TableOfContents.new toc_970_display, toc_display
   end
 end
