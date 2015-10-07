@@ -102,7 +102,7 @@
       <td style="padding-left:10px; padding-right:10px"><%= chapter['title'] %></td>
       <td style="padding-left:10px; padding-right:10px">
       <% chapter['authors'].each do |author| %>
-          <a href="<%= url_for(:controller => 'catalog', :action => 'index', :q => author, :search_field => 'author') %>"><%= author %></a>
+          <a href="<%= url_for(:controller => 'catalog', :action => 'index', :q => author, :search_field => 'author') %>"><%= author %></a><%= ', ' unless author == chapter['authors'].last %>
       <% end %>
       </td>
       <td style="padding-left:10px; padding-right:10px"><%= chapter['page'] %></td>
