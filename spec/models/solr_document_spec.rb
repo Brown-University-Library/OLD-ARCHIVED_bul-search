@@ -61,6 +61,11 @@ describe TableOfContents do
       expect(toc.chapters[0]["page"]).to eq("")
     end
 
+    it "handles 505 data" do
+      toc = TableOfContents.new(nil, [JSON.generate([{"title" => "test title"}])])
+      expect(toc.chapters[0]["title"]).to eq("test title")
+    end
+
   end
 
 end
