@@ -66,6 +66,11 @@ describe TableOfContents do
       expect(toc.chapters[0]["title"]).to eq("test title")
     end
 
+    it "defaults to 970 instead of 505" do
+      toc = TableOfContents.new([JSON.generate([{"title" => "970 title"}])], [JSON.generate([{"title" => "505 title"}])])
+      expect(toc.chapters[0]["title"]).to eq("970 title")
+    end
+
   end
 
 end
