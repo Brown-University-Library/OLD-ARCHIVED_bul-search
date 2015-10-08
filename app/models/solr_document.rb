@@ -119,16 +119,8 @@ class SolrDocument
   end
 
   def get_toc
-    toc_display = if self.key?('toc_display')
-                      self.fetch('toc_display')
-                  else
-                      nil
-                  end
-    toc_970_display = if self.key?('toc_970_display')
-                          self.fetch('toc_970_display')
-                      else
-                          nil
-                      end
+    toc_display = self.fetch('toc_display', nil)
+    toc_970_display = self.fetch('toc_970_display', nil)
     TableOfContents.new toc_970_display, toc_display
   end
 end

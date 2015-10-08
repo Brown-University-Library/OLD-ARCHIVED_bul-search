@@ -34,9 +34,14 @@ describe SolrDocument do
 
   describe "#get_toc" do
 
-      it "returns TableOfContents object" do
-        solrdoc = SolrDocument.new(source_doc={"toc_970_display" => [JSON.generate([])]})
-        expect(solrdoc.get_toc.chapters).to eq([])
+      it "returns TableOfContents object with 970 info" do
+        solrdoc = SolrDocument.new(source_doc={"toc_970_display" => [JSON.generate([{"title" => "970"}])]})
+        expect(solrdoc.get_toc.chapters[0]["title"]).to eq("970")
+      end
+
+      it "returns TableOfContents object with 505 info" do
+        solrdoc = SolrDocument.new(source_doc={"toc_display" => [JSON.generate([{"title" => "505"}])]})
+        expect(solrdoc.get_toc.chapters[0]["title"]).to eq("505")
       end
 
   end
