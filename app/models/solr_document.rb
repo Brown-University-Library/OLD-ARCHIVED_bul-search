@@ -115,13 +115,7 @@ class SolrDocument
   end
 
   def has_toc?
-    if self.key?('toc_display')
-      true
-    elsif self.key?('toc_970_display')
-      true
-    else
-      false
-    end
+    self.key?('toc_display') || self.key?('toc_970_display')
   end
 
   def get_toc
