@@ -3,6 +3,15 @@ require "json"
 
 describe SolrDocument do
 
+  describe "#to_sms_text" do
+
+    it "creates sms text" do
+      solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"], "callnumber_t" => ["AB12 .C3"]})
+      expect(solrdoc.to_sms_text).to eq("test title\nAB12 .C3")
+    end
+
+  end
+
   describe "#has_toc?" do
 
     it "handles empty solr data" do
