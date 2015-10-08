@@ -1,5 +1,37 @@
 # -*- encoding : utf-8 -*-
 require 'bulmarc'
+require 'json'
+
+class TableOfContents
+
+  def initialize toc_970_display, toc_display
+    if !toc_970_display.nil?
+      @toc_info = JSON.parse(toc_970_display[0])
+    elsif !toc_display.nil?
+      @toc_info = JSON.parse(toc_display[0])
+    else
+      raise Exception.new('no TableOfContents info')
+    end
+    @chapters = make_chapters
+  end
+
+  def make_chapters
+    chapters = []
+    @toc_info.each do |chapter|
+      ['label', 'indent', 'title', 'page'].each do |key|
+        chapter[key] = "" if chapter[key].nil?
+      end
+      chapter['authors'] = [] if chapter['authors'].nil?
+      chapters << chapter
+    end
+    chapters
+  end
+
+  def chapters
+    @chapters
+  end
+
+end
 
 class SolrDocument
 
@@ -80,5 +112,15 @@ class SolrDocument
       ctx_obj.referent.set_metadata('publisher', self.fetch('published_display').join(' ')) if self.key?('published_display')
     end
     ctx_obj.kev
+  end
+
+  def has_toc?
+    self.key?('toc_display') || self.key?('toc_970_display')
+  end
+
+  def get_toc
+    toc_display = self.fetch('toc_display', nil)
+    toc_970_display = self.fetch('toc_970_display', nil)
+    TableOfContents.new toc_970_display, toc_display
   end
 end

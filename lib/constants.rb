@@ -75,7 +75,6 @@ module Constants
       {label: "Note", tag: "500"},
       {label: "Dissertation information", tag: "502"},
       {label: "Bibliography", tag: "504"},
-      {label: "Table of Contents", tag: "505"},
       {label: "Restrictions", tag: "506"},
       {label: "Scale of Material", tag: "507"},
       {label: "Other Formats", tag: "530"},

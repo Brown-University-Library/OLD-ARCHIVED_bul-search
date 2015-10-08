@@ -33,7 +33,6 @@
 
 <hr/>
 <h4>Details</h4>
-<%= toc_link_display(document) %>
 <dl class="dl-horizontal  dl-invert record-page">
   <% document_show_fields(document).each do |solr_fname, field| -%>
     <% if should_render_show_field? document, field %>
@@ -74,5 +73,40 @@
   <%= render_record_notes document %>
 </dl>
 
-
-
+<% if document.has_toc? %>
+  <table>
+    <tr><th colspan="7" style="text-align:center">Table of Contents</th></tr>
+  <% document.get_toc.chapters.each do |chapter|  %>
+    <tr>
+      <% if chapter['indent'] == "1" %>
+        <td style="padding-left:10px; padding-right:10px"><strong><%= chapter['label'] %></strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      <% elsif chapter['indent'] == "2" %>
+        <td>&nbsp;</td>
+        <td style="padding-left:10px; padding-right:10px"><strong><%= chapter['label'] %></strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      <% elsif chapter['indent'] == "3" %>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td style="padding-left:10px; padding-right:10px"><strong><%= chapter['label'] %></strong></td>
+        <td>&nbsp;</td>
+      <% else %>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td style="padding-left:10px; padding-right:10px"><strong><%= chapter['label'] %></strong></td>
+      <% end %>
+      <td style="padding-left:10px; padding-right:10px"><%= chapter['title'] %></td>
+      <td style="padding-left:10px; padding-right:10px">
+      <% chapter['authors'].each do |author| %>
+          <a href="<%= url_for(:controller => 'catalog', :action => 'index', :q => author, :search_field => 'author') %>"><%= author %></a><%= ', ' unless author == chapter['authors'].last %>
+      <% end %>
+      </td>
+      <td style="padding-left:10px; padding-right:10px"><%= chapter['page'] %></td>
+    </tr>
+  <% end  %>
+  </table>
+<% end %>
