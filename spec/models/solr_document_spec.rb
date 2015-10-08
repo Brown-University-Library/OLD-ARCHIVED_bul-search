@@ -5,11 +5,49 @@ describe SolrDocument do
 
   describe "#to_sms_text" do
 
-    it "creates sms text" do
+    def stub_get_location_text_nil
+      SolrDocument.class_eval do
+        def get_location_text
+        end
+      end
+    end
+
+    it "knows the url to hit for location" do
+      solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
+      expect(solrdoc.location_data_url).to end_with("bibutils/bib/b123456")
+    end
+
+    it "can parse the location text from an availability response" do
+      solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
+      response = JSON.generate({})
+      expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
+      response = JSON.generate({"items" => [{"location" => "ROCK"}]})
+      expect(solrdoc.parse_location_text_from_availability_response(response)).to eq("Location: ROCK")
+      response = JSON.generate({"items" => [{"location" => "ROCK", "shelf" => {"aisle" => "27A", "floor" => "4"}}]})
+      expect(solrdoc.parse_location_text_from_availability_response(response)).to eq("Location: ROCK -- Level 4, Aisle 27A")
+    end
+
+    it "creates basic sms text" do
+      stub_get_location_text_nil
+      solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"]})
+      expect(solrdoc.to_sms_text).to eq("test title")
+    end
+
+    it "creates sms text with callnumber" do
+      stub_get_location_text_nil
       solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"], "callnumber_t" => ["AB12 .C3"]})
       expect(solrdoc.to_sms_text).to eq("test title\nAB12 .C3")
     end
 
+    it "creates sms text with location info" do
+      SolrDocument.class_eval do
+        def get_location_text
+          "Location: Rock"
+        end
+      end
+      solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"]})
+      expect(solrdoc.to_sms_text).to eq("test title\nLocation: Rock")
+    end
   end
 
   describe "#has_toc?" do

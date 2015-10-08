@@ -8,6 +8,8 @@ module Blacklight::Document::Sms
     body << I18n.t('blacklight.sms.text.title', value: semantics[:title].first) unless semantics[:title].blank?
     body << I18n.t('blacklight.sms.text.author', value: semantics[:author].first) unless semantics[:author].blank?
     body << "\n#{self.fetch('callnumber_t')[0]}" if self.key?('callnumber_t')
+    location = self.get_location_text
+    body << "\n#{location}" unless location.nil?
     return body.join unless body.empty?
   end
 
