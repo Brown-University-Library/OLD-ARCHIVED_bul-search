@@ -53,13 +53,12 @@ function hasItems(availabilityResponse) {
   }
 }
 
-function addEasyScanLink(item, format, bib, title) {
-  var loc = ['annex']
-  var formats = ['book', 'periodical title']
-  if ((loc.indexOf(item['location'].toLowerCase()) > -1) && (formats.indexOf(format.toLowerCase()) > -1)) {
-    return item['scan'] + '&title=' + title + '&bibnum=' + bib;
-  }
-  return null;
+function addEasyScanLink(item, bib, title) {
+  return item['scan'] + '&title=' + title + '&bibnum=' + bib;
+}
+
+function addItemRequestUrl(item, bib) {
+  return "https://library.brown.edu/easyrequest/login/?bibnum=" + bib + "&barcode=" + item['barcode'];
 }
 
 function addAvailability(availabilityResponse) {
@@ -75,10 +74,15 @@ function addAvailability(availabilityResponse) {
     // add title to map link.
     _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
   }
-  //add easyScan link for appropriate locations and formats
+  //add easyScan link & item request for appropriate locations and formats
   if (hasItems(availabilityResponse)) {
     _.each(context['items'], function(item) {
-      item['scan'] = addEasyScanLink(item, format, bib, title)
+      var loc = ['annex']
+      var formats = ['book', 'periodical title']
+      if ((loc.indexOf(item['location'].toLowerCase()) > -1) && (formats.indexOf(format.toLowerCase()) > -1)) {
+        item['scan'] = addEasyScanLink(item, bib, title);
+        item['item_request_url'] = addItemRequestUrl(item, bib);
+      }
     });
   }
   //console.debug(context);

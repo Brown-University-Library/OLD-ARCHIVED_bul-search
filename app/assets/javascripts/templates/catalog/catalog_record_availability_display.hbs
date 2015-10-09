@@ -33,7 +33,7 @@
         <tr>
           <td id="{{item_id}}"><span class="location">{{ location }}</span>{{#if shelf}} -- <a href="{{ map }}" class="stack-map-link">Level {{ shelf.floor }}, Aisle {{ shelf.aisle }}</a>{{/if}}</td>
           <td>{{ callnumber }}</td>
-          <td>{{ status }} {{#if scan}} <a href="{{scan}}" class="scan">scan</a>{{/if}}</td>
+          <td>{{ status }} {{#if scan}} <a href="{{scan}}" class="scan">scan</a> | <a href="{{item_request_url}}">item</a>{{/if}}</td>
         </tr>
       {{/each}}
     </tbody>
