@@ -19,6 +19,10 @@ describe SolrDocument do
 
     it "can parse the location text from an availability response" do
       solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
+      response = ""
+      expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
+      response = nil
+      expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
       response = JSON.generate({})
       expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
       response = JSON.generate({"items" => [{"location" => "ROCK"}]})

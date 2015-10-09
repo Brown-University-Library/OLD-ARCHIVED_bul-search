@@ -66,12 +66,13 @@ class SolrDocument
       resp = open(url, 'rb')
       resp.read
     rescue
-      ""
+      nil
     end
   end
 
   def parse_location_text_from_availability_response response
     location_text = nil
+    return nil if (response.nil? || response.empty?)
     location_data = JSON.parse(response)
     if location_data['items']
       item_data = location_data['items'][0]
