@@ -65,7 +65,10 @@ class SolrDocument
     begin
       resp = open(url, 'rb')
       resp.read
-    rescue
+      raise Exception.new("test exception")
+    rescue => e
+      logger.error e.message
+      logger.error e.backtrace.join("\n")
       nil
     end
   end
