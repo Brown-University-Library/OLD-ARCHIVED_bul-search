@@ -58,7 +58,7 @@ class SolrDocument
   SolrDocument.use_extension( Blacklight::Document::Sms )
 
   def location_data_url
-    "#{ENV['AVAILABILITY_SERVICE']}#{self.fetch('id')}"
+    "https:#{ENV['AVAILABILITY_SERVICE']}#{self.fetch('id')}"
   end
 
   def make_http_call url
