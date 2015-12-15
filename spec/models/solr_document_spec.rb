@@ -3,14 +3,7 @@ require "json"
 
 describe SolrDocument do
 
-  describe "#to_sms_text" do
-
-    def stub_get_location_text_nil
-      SolrDocument.class_eval do
-        def get_location_text
-        end
-      end
-    end
+  describe "#get_availibility_info" do
 
     it "knows the url to hit for location" do
       solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
@@ -18,40 +11,72 @@ describe SolrDocument do
       expect(solrdoc.location_data_url).to end_with("bibutils/bib/b123456")
     end
 
-    it "can parse the location text from an availability response" do
+    it "returns nil availability_info if http call is nil" do
+      SolrDocument.class_eval do
+        def make_http_call url
+          nil
+        end
+      end
       solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
-      response = ""
-      expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
-      response = nil
-      expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
-      response = JSON.generate({})
-      expect(solrdoc.parse_location_text_from_availability_response(response)).to be nil
-      response = JSON.generate({"items" => [{"location" => "ROCK"}]})
-      expect(solrdoc.parse_location_text_from_availability_response(response)).to eq("Location: ROCK")
-      response = JSON.generate({"items" => [{"location" => "ROCK", "shelf" => {"aisle" => "27A", "floor" => "4"}}]})
-      expect(solrdoc.parse_location_text_from_availability_response(response)).to eq("Location: ROCK -- Level 4, Aisle 27A")
+      expect(solrdoc.get_availability_info).to be nil
+    end
+
+    it "parses JSON availability_info" do
+      SolrDocument.class_eval do
+        def make_http_call url
+          JSON.generate({"items" => [{"location" => "ROCK"}]})
+        end
+      end
+      solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
+      expect(solrdoc.get_availability_info["items"]).to eq [{"location" => "ROCK"}]
+    end
+
+  end
+
+  describe "#to_sms_text" do
+
+    def stub_get_availability_info_nil
+      SolrDocument.class_eval do
+        def get_availability_info
+          nil
+        end
+      end
     end
 
     it "creates basic sms text" do
-      stub_get_location_text_nil
+      stub_get_availability_info_nil
       solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"]})
       expect(solrdoc.to_sms_text).to eq("test title")
     end
 
     it "creates sms text with callnumber" do
-      stub_get_location_text_nil
-      solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"], "callnumber_t" => ["AB12 .C3"]})
+      SolrDocument.class_eval do
+        def get_availability_info
+          {"items" => [{"callnumber" => "AB12 .C3"}]}
+        end
+      end
+      solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"]})
       expect(solrdoc.to_sms_text).to eq("test title\nAB12 .C3")
     end
 
     it "creates sms text with location info" do
       SolrDocument.class_eval do
-        def get_location_text
-          "Location: Rock"
+        def get_availability_info
+          {"items" => [{"location" => "ROCK"}]}
         end
       end
       solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"]})
-      expect(solrdoc.to_sms_text).to eq("test title\nLocation: Rock")
+      expect(solrdoc.to_sms_text).to eq("test title\nLocation: ROCK")
+    end
+
+    it "creates sms text with call number and location" do
+      SolrDocument.class_eval do
+        def get_availability_info
+          {"items" => [{"callnumber" => "AB12 .C3", "location" => "ROCK"}]}
+        end
+      end
+      solrdoc = SolrDocument.new(source_doc={"title_display" => ["test title"]})
+      expect(solrdoc.to_sms_text).to eq("test title\nAB12 .C3\nLocation: ROCK")
     end
   end
 
