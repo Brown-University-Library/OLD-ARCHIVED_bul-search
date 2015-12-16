@@ -72,26 +72,11 @@ class SolrDocument
     end
   end
 
-  def parse_location_text_from_availability_response response
-    location_text = nil
-    return nil if (response.nil? || response.empty?)
-    location_data = JSON.parse(response)
-    if location_data['items']
-      item_data = location_data['items'][0]
-      if item_data['location']
-        location_text = "Location: #{item_data['location']}"
-        if item_data['shelf']
-          location_text += " -- Level #{item_data['shelf']['floor']}, Aisle #{item_data['shelf']['aisle']}"
-        end
-      end
-    end
-    location_text
-  end
-
-  def get_location_text
+  def get_availability_info
     url = location_data_url
-    availability_response = make_http_call(url)
-    parse_location_text_from_availability_response(availability_response)
+    availability_response = make_http_call url
+    return nil if (availability_response.nil? || availability_response.empty?)
+    JSON.parse(availability_response)
   end
 
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
