@@ -125,6 +125,8 @@ class CatalogController < ApplicationController
     config.add_show_field 'isbn_t', :label => 'ISBN'
     config.add_show_field 'issn_t', :label => 'ISSN'
     config.add_show_field 'oclc_t', :label => 'OCLC'
+    config.add_show_field 'uniform_title_display', :label => 'Uniform Title', :linked_fielded_search => 'uniform_title_search_facet', :multi => true
+    config.add_show_field 'uniform_related_title_display', :label => 'Related Work', :linked_fielded_search => 'uniform_title_search_facet', :multi => true
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -172,6 +174,8 @@ class CatalogController < ApplicationController
         :pf => '$author_pf'
       }
     end
+
+    config.add_search_field('uniform_title_search_facet', :label => 'Uniform Title')
 
     # Specifying a :qt only to show it's possible, and so our internal automated
     # tests can test it. In this case it's the same as
