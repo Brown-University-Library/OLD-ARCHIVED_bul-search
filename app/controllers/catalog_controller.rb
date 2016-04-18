@@ -8,6 +8,7 @@ class CatalogController < ApplicationController
   include Blacklight::BlacklightHelperBehavior  # gives us document_partial_name(), used in ourl_service()
 
   before_filter :set_easy_search
+  before_filter :add_uniform_title_handling, only: :index
 
   configure_blacklight do |config|
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
@@ -175,7 +176,11 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('uniform_title_search_facet', :label => 'Uniform Title')
+    config.add_search_field('uniform_title_search_facet', :label => 'Uniform Title') do |field|
+      field.solr_parameters = {
+        :qf => 'uniform_title_search_facet',
+      }
+    end
 
     # Specifying a :qt only to show it's possible, and so our internal automated
     # tests can test it. In this case it's the same as
@@ -231,6 +236,20 @@ class CatalogController < ApplicationController
   def set_easy_search
     if params[:action] == 'index'
         session[:last_easy_search] = nil
+    end
+  end
+
+  def add_uniform_title_handling
+    self.solr_search_params_logic << :uniform_title_handling
+  end
+
+  def uniform_title_handling(solr_params, user_params)
+    if solr_params.include? 'qf'
+      if solr_params['qf'] == 'uniform_title_search_facet'
+        if ! solr_params['q'].start_with? '"'
+          solr_params['q'] = "\"#{solr_params['q']}\""
+        end
+      end
     end
   end
 
