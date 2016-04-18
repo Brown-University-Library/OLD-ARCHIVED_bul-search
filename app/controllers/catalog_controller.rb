@@ -246,8 +246,10 @@ class CatalogController < ApplicationController
   def uniform_title_handling(solr_params, user_params)
     if solr_params.include? 'qf'
       if solr_params['qf'] == 'uniform_title_search_facet'
-        if ! solr_params['q'].start_with? '"'
-          solr_params['q'] = "\"#{solr_params['q']}\""
+        if ! solr_params['q'].nil?
+          if ! solr_params['q'].start_with? '"'
+            solr_params['q'] = "\"#{solr_params['q']}\""
+          end
         end
       end
     end
