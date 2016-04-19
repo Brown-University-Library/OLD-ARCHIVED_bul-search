@@ -58,6 +58,19 @@ describe MarcHelper do
     end
   end
 
+  describe "quote_string_if_needed" do
+    it "works" do
+      val = helper.quote_string_if_needed("test")
+      expect(val).to eq("\"test\"")
+      val = helper.quote_string_if_needed("\"test\"")
+      expect(val).to eq("\"test\"")
+      val = helper.quote_string_if_needed("")
+      expect(val).to eq("")
+      val = helper.quote_string_if_needed(nil)
+      expect(val).to eq(nil)
+    end
+  end
+
   describe "#render_record_notes" do
     it "renders the right note partial with the expected locals" do
       note_display = [{:label => "Note", :values => ["Photos of Moore"]}]

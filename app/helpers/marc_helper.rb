@@ -16,13 +16,17 @@ module MarcHelper
     link_to(query, link_url)
   end
 
-  def quoted_fielded_search(query, field)
-    search_query = query.dup
-    if ! query.empty?
-      if ! query.start_with? '"'
-        search_query = "\"#{query}\""
+  def quote_string_if_needed(str)
+    if ! str.nil? && ! str.empty?
+      if ! str.start_with? '"'
+        str = "\"#{str}\""
       end
     end
+    str
+  end
+
+  def quoted_fielded_search(query, field)
+    search_query = quote_string_if_needed(query.dup)
     #Remove > for links and replace with blank.
     params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> search_query.gsub(/>|--/, '')}
     link_url = search_action_path(params)
@@ -32,9 +36,7 @@ module MarcHelper
   def uniform_title_author_search(query, author)
     #Remove > for links and replace with blank.
     q = query.gsub(/>|--/, '')
-    if ! q.start_with? '"'
-      q = "\"#{q}\""
-    end
+    q = quote_string_if_needed(q)
     params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
     params['uniform_title_search_facet'] = q
     params['author'] = author
@@ -46,7 +48,7 @@ module MarcHelper
     link_text = "#{info['author']} #{info['title']}"
     params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
     if ! info['title'].empty?
-      params['uniform_title_search_facet'] = "\"#{info['title']}\""
+      params['uniform_title_search_facet'] = quote_string_if_needed(info['title'])
     end
     if ! info['author'].empty?
       params['author'] = info['author']
