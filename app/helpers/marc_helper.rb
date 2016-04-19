@@ -29,6 +29,19 @@ module MarcHelper
     link_to(query, link_url)
   end
 
+  def uniform_related_title_author_search(info)
+    link_text = "#{info['author']} #{info['title']}"
+    params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
+    if ! info['title'].empty?
+      params['uniform_title_search_facet'] = "\"#{info['title']}\""
+    end
+    if ! info['author'].empty?
+      params['author'] = info['author']
+    end
+    link_url = search_action_path(params)
+    link_to(link_text, link_url)
+  end
+
   def hot_link(terms, index)
     out = []
     terms.each do |term|
