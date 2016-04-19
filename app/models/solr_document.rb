@@ -146,4 +146,12 @@ class SolrDocument
     toc_970_display = self.fetch('toc_970_display', nil)
     TableOfContents.new toc_970_display, toc_display
   end
+
+  def get_uniform_7xx_info
+    uniform_7xx_records = []
+    if self.key?('uniform_related_title_author_display')
+      uniform_7xx_records = JSON.parse(self['uniform_related_title_author_display'][0])
+    end
+    uniform_7xx_records
+  end
 end
