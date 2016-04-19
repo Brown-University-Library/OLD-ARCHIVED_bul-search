@@ -58,6 +58,34 @@ describe MarcHelper do
     end
   end
 
+  describe "quote_string_if_needed" do
+    it "works" do
+      val = helper.quote_string_if_needed("test")
+      expect(val).to eq("\"test\"")
+      val = helper.quote_string_if_needed("\"test\"")
+      expect(val).to eq("\"test\"")
+      val = helper.quote_string_if_needed("")
+      expect(val).to eq("")
+      val = helper.quote_string_if_needed(nil)
+      expect(val).to eq(nil)
+    end
+  end
+
+  describe "get_search_params" do
+    it "gets correct search params" do
+      params = helper.get_search_params("title", "title query")
+      expect(params).to eq({:controller=>"catalog", :action=>"index", :search_field=>"title", :q=>"title query"})
+    end
+  end
+
+  describe "get_advanced_search_uniform_title_params" do
+    it "get correct params" do
+      params = helper.get_advanced_search_uniform_title_params("title query", "author query")
+      expect(params).to eq({:controller=>"catalog", :action=>"index", :search_field=>"advanced",
+                            :uniform_title_search_facet=>"\"title query\"", :author=>"author query"})
+    end
+  end
+
   describe "#render_record_notes" do
     it "renders the right note partial with the expected locals" do
       note_display = [{:label => "Note", :values => ["Photos of Moore"]}]
