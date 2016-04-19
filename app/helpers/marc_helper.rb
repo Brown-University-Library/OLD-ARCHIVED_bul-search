@@ -16,6 +16,19 @@ module MarcHelper
     link_to(query, link_url)
   end
 
+  def quoted_fielded_search(query, field)
+    search_query = query.dup
+    if ! query.empty?
+      if ! query.start_with? '"'
+        search_query = "\"#{query}\""
+      end
+    end
+    #Remove > for links and replace with blank.
+    params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> search_query.gsub(/>|--/, '')}
+    link_url = search_action_path(params)
+    link_to(query, link_url)
+  end
+
   def uniform_title_author_search(query, author)
     #Remove > for links and replace with blank.
     q = query.gsub(/>|--/, '')
