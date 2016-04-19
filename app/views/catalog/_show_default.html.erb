@@ -72,6 +72,20 @@
   exist or fetching for MARC fails -%>
   <%= render_record_notes document %>
 
+  <% if document.has_key? 'uniform_title_display' %>
+    <dt class="blacklight-uniform_title_display">Uniform Title</dt>
+      <% document['uniform_title_display'].each do |fvalue| %>
+        <dd class="blacklight-uniform_title_display"><%= fielded_search(fvalue, 'uniform_title_search_facet') %></dd>
+      <% end %>
+  <% end %>
+
+  <% if document.has_key? 'uniform_related_title_display' %>
+    <dt class="blacklight-uniform_related_title_display">Related Work</dt>
+      <% document['uniform_related_title_display'].each do |fvalue| %>
+        <dd class="blacklight-uniform_related_title_display"><%= fielded_search(fvalue, 'uniform_title_search_facet') %></dd>
+      <% end %>
+  <% end %>
+
   <% if document.has_key? 'uniform_title_author_display' %>
     <dt class="blacklight-uniform_title_author_display">Uniform Title</dt>
       <% document['uniform_title_author_display'].each do |fvalue| %>

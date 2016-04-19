@@ -126,8 +126,6 @@ class CatalogController < ApplicationController
     config.add_show_field 'isbn_t', :label => 'ISBN'
     config.add_show_field 'issn_t', :label => 'ISSN'
     config.add_show_field 'oclc_t', :label => 'OCLC'
-    config.add_show_field 'uniform_title_display', :label => 'Uniform Title', :linked_fielded_search => 'uniform_title_search_facet', :multi => true
-    config.add_show_field 'uniform_related_title_display', :label => 'Related Work', :linked_fielded_search => 'uniform_title_search_facet', :multi => true
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
