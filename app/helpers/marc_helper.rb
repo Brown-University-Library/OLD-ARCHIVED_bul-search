@@ -9,9 +9,25 @@ module MarcHelper
     document.marc_tag(number, exclude=exclude)
   end
 
-  def fielded_search(query, field)
+  def get_search_params(field, query)
     #Remove > for links and replace with blank.
-    params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> query.gsub(/>|--/, '')}
+    {:controller => "catalog", :action => 'index', :search_field => field, :q=> query.gsub(/>|--/, '')}
+  end
+
+  def get_advanced_search_uniform_title_params(title_q, author_q)
+    params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
+    if ! title_q.empty?
+      title_q = title_q.gsub(/>|--/, '') #remove > for links and replace with blank.
+      params[:uniform_title_search_facet] = quote_string_if_needed(title_q)
+    end
+    if ! author_q.empty?
+      params[:author] = author_q
+    end
+    params
+  end
+
+  def fielded_search(query, field)
+    params = get_search_params(field, query)
     link_url = search_action_path(params)
     link_to(query, link_url)
   end
@@ -27,34 +43,21 @@ module MarcHelper
 
   def quoted_fielded_search(query, field)
     search_query = quote_string_if_needed(query.dup)
-    #Remove > for links and replace with blank.
-    params = {:controller => "catalog", :action => 'index', :search_field => field, :q=> search_query.gsub(/>|--/, '')}
+    params = get_search_params(field, search_query)
     link_url = search_action_path(params)
     link_to(query, link_url)
   end
 
   def uniform_title_author_search(query, author)
-    #Remove > for links and replace with blank.
-    q = query.gsub(/>|--/, '')
-    q = quote_string_if_needed(q)
-    params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
-    params['uniform_title_search_facet'] = q
-    params['author'] = author
+    params = get_advanced_search_uniform_title_params(q, author)
     link_url = search_action_path(params)
     link_to(query, link_url)
   end
 
   def uniform_related_title_author_search(info)
-    link_text = "#{info['author']} #{info['title']}"
-    params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
-    if ! info['title'].empty?
-      params['uniform_title_search_facet'] = quote_string_if_needed(info['title'])
-    end
-    if ! info['author'].empty?
-      params['author'] = info['author']
-    end
+    params = get_advanced_search_uniform_title_params(info['title'], info['author'])
     link_url = search_action_path(params)
-    link_to(link_text, link_url)
+    link_to("#{info['author']} #{info['title']}", link_url)
   end
 
   def hot_link(terms, index)
