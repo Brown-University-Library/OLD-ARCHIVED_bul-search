@@ -177,6 +177,7 @@ class CatalogController < ApplicationController
       field.solr_parameters = {
         :qf => 'uniform_title_search_facet',
       }
+      field.include_in_simple_select = false
     end
 
     # Specifying a :qt only to show it's possible, and so our internal automated

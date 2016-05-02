@@ -71,6 +71,15 @@ describe MarcHelper do
     end
   end
 
+  describe "get_link_text" do
+    it "works" do
+      val = helper.get_link_text({'author' => ' author 1', 'title' => 'title 1 '})
+      expect(val).to eq('author 1. title 1')
+      val = helper.get_link_text({'title' => 'title 1'})
+      expect(val).to eq('title 1')
+    end
+  end
+
   describe "get_search_params" do
     it "gets correct search params" do
       params = helper.get_search_params("title", "title query")
