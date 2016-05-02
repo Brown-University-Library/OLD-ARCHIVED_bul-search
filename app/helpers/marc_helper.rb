@@ -57,7 +57,14 @@ module MarcHelper
   def uniform_related_title_author_search(info)
     params = get_advanced_search_uniform_title_params(info['title'], info['author'])
     link_url = search_action_path(params)
-    link_to("#{info['author']} #{info['title']}", link_url)
+    link_text = ""
+    if ! info['author'].empty?
+      link_text += "#{info['author']}."
+    end
+    if ! info['title'].empty?
+      link_text += " #{info['title']}."
+    end
+    link_to(link_text.strip, link_url)
   end
 
   def hot_link(terms, index)
