@@ -19,16 +19,18 @@ module EasyHelper
   end
 
   def worldcat_search(query)
+    query = escape_query(query)
     return "http://worldcat.org.revproxy.brown.edu/search?&q=#{query}"
   end
 
   def summon_search(query)
+    query = escape_query(query)
     return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
   end
 
   def bdr_search(query)
-    eq = escape_query(query)
-    return ENV["BDR_SEARCH_URL"] + "?q=#{eq}"
+    query = escape_query(query)
+    return ENV["BDR_SEARCH_URL"] + "?q=#{query}"
   end
 
   def render_format_info_text(format)
