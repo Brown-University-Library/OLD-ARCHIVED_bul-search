@@ -49,7 +49,7 @@ module MarcHelper
   end
 
   def uniform_title_author_search(query, author)
-    params = get_advanced_search_uniform_title_params(q, author)
+    params = get_advanced_search_uniform_title_params(query, author)
     link_url = search_action_path(params)
     link_to(query, link_url)
   end
