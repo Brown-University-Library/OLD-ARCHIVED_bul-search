@@ -18,7 +18,7 @@ module MarcHelper
     params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
     if ! title_q.empty?
       title_q = title_q.gsub(/>|--/, '') #remove > for links and replace with blank.
-      params[:uniform_title_search_facet] = quote_string_if_needed(title_q)
+      params[:title] = title_q
     end
     if ! author_q.empty?
       params[:author] = author_q
