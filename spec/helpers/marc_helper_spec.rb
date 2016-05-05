@@ -91,7 +91,7 @@ describe MarcHelper do
     it "get correct params" do
       params = helper.get_advanced_search_uniform_title_params("title query", "author query")
       expect(params).to eq({:controller=>"catalog", :action=>"index", :search_field=>"advanced",
-                            :uniform_title_search_facet=>"\"title query\"", :author=>"author query"})
+                            :title=>"title query", :author=>"author query"})
     end
   end
 
