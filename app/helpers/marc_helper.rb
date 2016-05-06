@@ -32,22 +32,6 @@ module MarcHelper
     link_to(query, link_url)
   end
 
-  def quote_string_if_needed(str)
-    if ! str.nil? && ! str.empty?
-      if ! str.start_with? '"'
-        str = "\"#{str}\""
-      end
-    end
-    str
-  end
-
-  def quoted_fielded_search(query, field)
-    search_query = quote_string_if_needed(query.dup)
-    params = get_search_params(field, search_query)
-    link_url = search_action_path(params)
-    link_to(query, link_url)
-  end
-
   def uniform_title_author_search(query, author)
     params = get_advanced_search_uniform_title_params(query, author)
     link_url = search_action_path(params)
