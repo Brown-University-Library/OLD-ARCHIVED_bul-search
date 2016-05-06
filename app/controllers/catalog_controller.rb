@@ -173,13 +173,6 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('uniform_title_search_facet', :label => 'Uniform Title') do |field|
-      field.solr_parameters = {
-        :qf => 'uniform_title_search_facet',
-      }
-      field.include_in_simple_select = false
-    end
-
     # Specifying a :qt only to show it's possible, and so our internal automated
     # tests can test it. In this case it's the same as
     # config[:default_solr_parameters][:qt], so isn't actually neccesary.
