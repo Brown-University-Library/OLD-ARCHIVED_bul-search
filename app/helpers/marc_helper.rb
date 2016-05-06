@@ -18,7 +18,7 @@ module MarcHelper
     params = {:controller => "catalog", :action => 'index', :search_field => 'advanced'}
     if ! title_q.empty?
       title_q = title_q.gsub(/>|--/, '') #remove > for links and replace with blank.
-      params[:uniform_title_search_facet] = quote_string_if_needed(title_q)
+      params[:title] = title_q
     end
     if ! author_q.empty?
       params[:author] = author_q
@@ -28,22 +28,6 @@ module MarcHelper
 
   def fielded_search(query, field)
     params = get_search_params(field, query)
-    link_url = search_action_path(params)
-    link_to(query, link_url)
-  end
-
-  def quote_string_if_needed(str)
-    if ! str.nil? && ! str.empty?
-      if ! str.start_with? '"'
-        str = "\"#{str}\""
-      end
-    end
-    str
-  end
-
-  def quoted_fielded_search(query, field)
-    search_query = quote_string_if_needed(query.dup)
-    params = get_search_params(field, search_query)
     link_url = search_action_path(params)
     link_to(query, link_url)
   end

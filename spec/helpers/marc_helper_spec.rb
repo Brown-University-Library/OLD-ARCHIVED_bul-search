@@ -58,19 +58,6 @@ describe MarcHelper do
     end
   end
 
-  describe "quote_string_if_needed" do
-    it "works" do
-      val = helper.quote_string_if_needed("test")
-      expect(val).to eq("\"test\"")
-      val = helper.quote_string_if_needed("\"test\"")
-      expect(val).to eq("\"test\"")
-      val = helper.quote_string_if_needed("")
-      expect(val).to eq("")
-      val = helper.quote_string_if_needed(nil)
-      expect(val).to eq(nil)
-    end
-  end
-
   describe "get_link_text" do
     it "works" do
       val = helper.get_link_text({'author' => ' author 1', 'title' => 'title 1 '})
@@ -91,7 +78,7 @@ describe MarcHelper do
     it "get correct params" do
       params = helper.get_advanced_search_uniform_title_params("title query", "author query")
       expect(params).to eq({:controller=>"catalog", :action=>"index", :search_field=>"advanced",
-                            :uniform_title_search_facet=>"\"title query\"", :author=>"author query"})
+                            :title=>"title query", :author=>"author query"})
     end
   end
 
