@@ -77,8 +77,9 @@
       <% document.get_uniform_titles.each do |uniform_title| %>
         <dd class="blacklight-uniform_titles">
           <% uniform_title['title'].each do |subfield| %>
-            <%= uniform_title_author_display_search(subfield['query'], uniform_title['author'], subfield['display']) %></dd>
+            <%= uniform_title_author_display_search(subfield['query'], uniform_title['author'], subfield['display']) %>
           <% end %>
+        </dd>
       <% end %>
   <% end %>
 
