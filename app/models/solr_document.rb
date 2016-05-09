@@ -147,6 +147,34 @@ class SolrDocument
     TableOfContents.new toc_970_display, toc_display
   end
 
+  def has_uniform_titles?
+    self.key?('uniform_titles_display') || self.key?('new_uniform_title_author_display') || self.key?('uniform_related_works_display')
+  end
+
+  def get_uniform_titles
+    uniform_titles = []
+    if self.key?('uniform_titles_display')
+      titles = JSON.parse(self['uniform_titles_display'][0])
+      titles.each do |title|
+        uniform_titles << title
+      end
+    end
+    if self.key?('new_uniform_title_author_display')
+      titles = JSON.parse(self['new_uniform_title_author_display'][0])
+      titles.each do |title|
+        title['author'] = self['author_display']
+        uniform_titles << title
+      end
+    end
+    if self.key?('uniform_related_works_display')
+      titles = JSON.parse(self['uniform_related_works_display'][0])
+      titles.each do |title|
+        uniform_titles << title
+      end
+    end
+    uniform_titles
+  end
+
   def get_uniform_7xx_info
     uniform_7xx_records = []
     if self.key?('uniform_related_title_author_display')
