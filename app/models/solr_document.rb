@@ -148,7 +148,11 @@ class SolrDocument
   end
 
   def has_uniform_titles?
-    self.key?('uniform_titles_display') || self.key?('new_uniform_title_author_display') || self.key?('uniform_related_works_display')
+    self.key?('uniform_titles_display') || self.key?('new_uniform_title_author_display')
+  end
+
+  def has_related_works?
+    self.key?('uniform_related_works_display')
   end
 
   def get_uniform_titles
@@ -166,13 +170,18 @@ class SolrDocument
         uniform_titles << title
       end
     end
+    uniform_titles
+  end
+
+  def get_related_works
+    related_works = []
     if self.key?('uniform_related_works_display')
       titles = JSON.parse(self['uniform_related_works_display'][0])
       titles.each do |title|
-        uniform_titles << title
+        related_works << title
       end
     end
-    uniform_titles
+    related_works
   end
 
   def get_uniform_7xx_info

@@ -135,8 +135,20 @@ describe SolrDocument do
       expect(solrdoc.has_uniform_titles?).to be true
       solrdoc = SolrDocument.new(source_doc={"new_uniform_title_author_display" => [JSON.generate([{"title" => [{"query" => "", "display" => ""}]}])]})
       expect(solrdoc.has_uniform_titles?).to be true
+    end
+
+  end
+
+  describe "has_related_works?" do
+
+    it "handles empty solr doc" do
+      solrdoc = SolrDocument.new(source_doc={})
+      expect(solrdoc.has_related_works?).to be false
+    end
+
+    it "checks for related works solr fields" do
       solrdoc = SolrDocument.new(source_doc={"uniform_related_works_display" => [JSON.generate([{"title" => [{"query" => "", "display" => ""}]}])]})
-      expect(solrdoc.has_uniform_titles?).to be true
+      expect(solrdoc.has_related_works?).to be true
     end
 
   end
@@ -159,8 +171,24 @@ describe SolrDocument do
       solrdoc = SolrDocument.new(source_doc=src_doc)
       expected_titles = [{"title" => [{"query" => "q", "display" => "d"}]}]
       expected_titles << {"title" => [{"query" => "q2", "display" => "d2"}], "author" => "doc_author"}
-      expected_titles << {"title" => [{"query" => "q3", "display" => "d3"}], "author" => "title_author"}
       expect(solrdoc.get_uniform_titles).to eq(expected_titles)
+    end
+
+  end
+
+  describe "get_related_works" do
+
+    it "handles empty solr doc" do
+      solrdoc = SolrDocument.new(source_doc={})
+      expect(solrdoc.get_related_works).to eq([])
+    end
+
+    it "gets related works" do
+      uniform_related_works_display = [JSON.generate([{"title" => [{"query" => "q3", "display" => "d3"}], "author" => "title_author"}])]
+      src_doc = {"uniform_related_works_display" => uniform_related_works_display}
+      solrdoc = SolrDocument.new(source_doc=src_doc)
+      related_works = [{"title" => [{"query" => "q3", "display" => "d3"}], "author" => "title_author"}]
+      expect(solrdoc.get_related_works).to eq(related_works)
     end
 
   end
