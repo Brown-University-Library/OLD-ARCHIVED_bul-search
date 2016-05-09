@@ -85,7 +85,7 @@
 
   <% if document.has_related_works? %>
     <dt class="blacklight-uniform_title_display">Related Work</dt>
-      <% document.get_related_work.each do |related_work| %>
+      <% document.get_related_works.each do |related_work| %>
         <dd class="blacklight-uniform_titles">
           <% related_work['title'].each do |subfield| %>
             <%= uniform_title_author_display_search(subfield['query'], related_work['author'], subfield['display']) %>
