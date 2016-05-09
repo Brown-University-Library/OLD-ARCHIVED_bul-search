@@ -75,10 +75,16 @@ describe MarcHelper do
   end
 
   describe "get_advanced_search_uniform_title_params" do
-    it "get correct params" do
+    it "gets correct params" do
       params = helper.get_advanced_search_uniform_title_params("title query", "author query")
       expect(params).to eq({:controller=>"catalog", :action=>"index", :search_field=>"advanced",
                             :title=>"title query", :author=>"author query"})
+    end
+
+    it "handles nil author" do
+      params = helper.get_advanced_search_uniform_title_params("title query", nil)
+      expect(params).to eq({:controller=>"catalog", :action=>"index", :search_field=>"advanced",
+                            :title=>"title query"})
     end
   end
 

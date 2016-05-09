@@ -72,33 +72,16 @@
   exist or fetching for MARC fails -%>
   <%= render_record_notes document %>
 
-  <% if document.has_key? 'uniform_title_display' %>
+  <% if document.has_uniform_titles? %>
     <dt class="blacklight-uniform_title_display">Uniform Title</dt>
-      <% document['uniform_title_display'].each do |fvalue| %>
-        <dd class="blacklight-uniform_title_display"><%= fielded_search(fvalue, 'title') %></dd>
+      <% document.get_uniform_titles.each do |uniform_title| %>
+        <dd class="blacklight-uniform_titles">
+          <% uniform_title['title'].each do |subfield| %>
+            <%= uniform_title_author_display_search(subfield['query'], uniform_title['author'], subfield['display']) %></dd>
+          <% end %>
       <% end %>
   <% end %>
 
-  <% if document.has_key? 'uniform_related_title_display' %>
-    <dt class="blacklight-uniform_related_title_display">Related Work</dt>
-      <% document['uniform_related_title_display'].each do |fvalue| %>
-        <dd class="blacklight-uniform_related_title_display"><%= fielded_search(fvalue, 'title') %></dd>
-      <% end %>
-  <% end %>
-
-  <% if document.has_key? 'uniform_title_author_display' %>
-    <dt class="blacklight-uniform_title_author_display">Uniform Title</dt>
-      <% document['uniform_title_author_display'].each do |fvalue| %>
-        <dd class="blacklight-uniform_title_author_display"><%= uniform_title_author_search(fvalue, document['author_display']) %></dd>
-      <% end %>
-  <% end %>
-
-  <% if document.has_key? 'uniform_related_title_author_display' %>
-    <dt class="blacklight-uniform_related_title_author_display">Related Work</dt>
-      <% document.get_uniform_7xx_info.each do |info| %>
-        <dd class="blacklight-uniform_related_title_author_display"><%= uniform_related_title_author_search(info) %></dd>
-      <% end %>
-  <% end %>
 </dl>
 
 <% if document.has_toc? %>
