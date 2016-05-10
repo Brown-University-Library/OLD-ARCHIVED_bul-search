@@ -73,7 +73,7 @@
   <%= render_record_notes document %>
 
   <% if document.has_uniform_titles? %>
-    <dt class="blacklight-uniform_title_display">Uniform Title</dt>
+    <dt class="blacklight-uniform_title_display">Uniform Title:</dt>
       <% document.get_uniform_titles.each do |uniform_title| %>
         <dd class="blacklight-uniform_titles">
           <ul class="biglink">
@@ -86,7 +86,7 @@
   <% end %>
 
   <% if document.has_related_works? %>
-    <dt class="blacklight-related_works_display">Related Work</dt>
+    <dt class="blacklight-related_works_display">Related Work:</dt>
       <% document.get_related_works.each do |related_work| %>
         <dd class="blacklight-related_works">
           <ul class="biglink">
