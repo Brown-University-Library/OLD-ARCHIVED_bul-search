@@ -91,7 +91,7 @@
         <dd class="blacklight-related_works">
           <ul class="biglink">
           <% if related_work['author'] && !related_work['author'].empty? %>
-              <li><%= uniform_title_author_display_search(related_work['title'][0]['query'], related_work['author'], "#{related_work['author']}.") %></li>
+              <% related_work['title'][0]['display'] = "#{related_work['author']}. #{related_work['title'][0]['display']}" %>
           <% end %>
           <% related_work['title'].each do |subfield| %>
               <li><%= uniform_title_author_display_search(subfield['query'], related_work['author'], subfield['display']) %></li>
