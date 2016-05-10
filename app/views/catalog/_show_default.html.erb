@@ -76,23 +76,27 @@
     <dt class="blacklight-uniform_title_display">Uniform Title</dt>
       <% document.get_uniform_titles.each do |uniform_title| %>
         <dd class="blacklight-uniform_titles">
+          <ul class="biglink">
           <% uniform_title['title'].each do |subfield| %>
-            <%= uniform_title_author_display_search(subfield['query'], uniform_title['author'], subfield['display']) %>
+              <li><%= uniform_title_author_display_search(subfield['query'], uniform_title['author'], subfield['display']) %></li>
           <% end %>
+          </ul>
         </dd>
       <% end %>
   <% end %>
 
   <% if document.has_related_works? %>
-    <dt class="blacklight-uniform_title_display">Related Work</dt>
+    <dt class="blacklight-related_works_display">Related Work</dt>
       <% document.get_related_works.each do |related_work| %>
-        <dd class="blacklight-uniform_titles">
+        <dd class="blacklight-related_works">
+          <ul class="biglink">
           <% if related_work['author'] && !related_work['author'].empty? %>
-              <%= uniform_title_author_display_search(related_work['title'][0]['query'], related_work['author'], "#{related_work['author']}.") %>
+              <li><%= uniform_title_author_display_search(related_work['title'][0]['query'], related_work['author'], "#{related_work['author']}.") %></li>
           <% end %>
           <% related_work['title'].each do |subfield| %>
-            <%= uniform_title_author_display_search(subfield['query'], related_work['author'], subfield['display']) %>
+              <li><%= uniform_title_author_display_search(subfield['query'], related_work['author'], subfield['display']) %></li>
           <% end %>
+          </ul>
         </dd>
       <% end %>
   <% end %>
@@ -136,3 +140,13 @@
   <% end  %>
   </table>
 <% end %>
+
+<script type="text/javascript">
+$(".biglink li").hover(function() {
+  $(this).prevAll().addClass("progressive-link");
+  $(this).addClass("progressive-link");
+}, function() {
+  $(this).prevAll().removeClass("progressive-link");
+  $(this).removeClass("progressive-link");
+});
+</script>
