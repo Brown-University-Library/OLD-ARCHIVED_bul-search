@@ -116,3 +116,16 @@ a.scan {
 .bookmark {
   margin-top: 1em;
 }
+
+.biglink li {
+  display:inline;
+}
+
+.biglink {
+  padding: 0;
+  margin: 0;
+}
+
+.progressive-link {
+  text-decoration: underline;
+}

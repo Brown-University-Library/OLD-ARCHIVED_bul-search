@@ -20,7 +20,7 @@ module MarcHelper
       title_q = title_q.gsub(/>|--/, '') #remove > for links and replace with blank.
       params[:title] = title_q
     end
-    if ! author_q.empty?
+    if !author_q.nil? && !author_q.empty?
       params[:author] = author_q
     end
     params
@@ -36,6 +36,12 @@ module MarcHelper
     params = get_advanced_search_uniform_title_params(query, author)
     link_url = search_action_path(params)
     link_to(query, link_url)
+  end
+
+  def uniform_title_author_display_search(query, author, display)
+    params = get_advanced_search_uniform_title_params(query, author)
+    link_url = search_action_path(params)
+    link_to(display, link_url)
   end
 
   def get_link_text(info)

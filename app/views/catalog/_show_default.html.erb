@@ -72,33 +72,35 @@
   exist or fetching for MARC fails -%>
   <%= render_record_notes document %>
 
-  <% if document.has_key? 'uniform_title_display' %>
-    <dt class="blacklight-uniform_title_display">Uniform Title</dt>
-      <% document['uniform_title_display'].each do |fvalue| %>
-        <dd class="blacklight-uniform_title_display"><%= fielded_search(fvalue, 'title') %></dd>
+  <% if document.has_uniform_titles? %>
+    <dt class="blacklight-uniform_title_display">Uniform Title:</dt>
+      <% document.get_uniform_titles.each do |uniform_title| %>
+        <dd class="blacklight-uniform_titles">
+          <ul class="biglink">
+          <% uniform_title['title'].each do |subfield| %>
+              <li><%= uniform_title_author_display_search(subfield['query'], uniform_title['author'], subfield['display']) %></li>
+          <% end %>
+          </ul>
+        </dd>
       <% end %>
   <% end %>
 
-  <% if document.has_key? 'uniform_related_title_display' %>
-    <dt class="blacklight-uniform_related_title_display">Related Work</dt>
-      <% document['uniform_related_title_display'].each do |fvalue| %>
-        <dd class="blacklight-uniform_related_title_display"><%= fielded_search(fvalue, 'title') %></dd>
+  <% if document.has_related_works? %>
+    <dt class="blacklight-related_works_display">Related Work:</dt>
+      <% document.get_related_works.each do |related_work| %>
+        <dd class="blacklight-related_works">
+          <ul class="biglink">
+          <% if related_work['author'] && !related_work['author'].empty? %>
+              <% related_work['title'][0]['display'] = "#{related_work['author']}. #{related_work['title'][0]['display']}" %>
+          <% end %>
+          <% related_work['title'].each do |subfield| %>
+              <li><%= uniform_title_author_display_search(subfield['query'], related_work['author'], subfield['display']) %></li>
+          <% end %>
+          </ul>
+        </dd>
       <% end %>
   <% end %>
 
-  <% if document.has_key? 'uniform_title_author_display' %>
-    <dt class="blacklight-uniform_title_author_display">Uniform Title</dt>
-      <% document['uniform_title_author_display'].each do |fvalue| %>
-        <dd class="blacklight-uniform_title_author_display"><%= uniform_title_author_search(fvalue, document['author_display']) %></dd>
-      <% end %>
-  <% end %>
-
-  <% if document.has_key? 'uniform_related_title_author_display' %>
-    <dt class="blacklight-uniform_related_title_author_display">Related Work</dt>
-      <% document.get_uniform_7xx_info.each do |info| %>
-        <dd class="blacklight-uniform_related_title_author_display"><%= uniform_related_title_author_search(info) %></dd>
-      <% end %>
-  <% end %>
 </dl>
 
 <% if document.has_toc? %>
@@ -138,3 +140,13 @@
   <% end  %>
   </table>
 <% end %>
+
+<script type="text/javascript">
+$(".biglink li").hover(function() {
+  $(this).prevAll().addClass("progressive-link");
+  $(this).addClass("progressive-link");
+}, function() {
+  $(this).prevAll().removeClass("progressive-link");
+  $(this).removeClass("progressive-link");
+});
+</script>
