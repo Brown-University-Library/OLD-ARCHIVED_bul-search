@@ -181,36 +181,4 @@ class BookmarksController < CatalogController
   def bookmarks_param
     params.permit('bookmarks' => ['document_id', 'document_type'])
   end
-
-  def bdr_solr_config
-    {url: ENV['BDR_SEARCH_API_URL']}
-  end
-
-  def bdr_get_solr_response_for_document_ids(ids=[], extra_solr_params = {})
-    bdr_get_solr_response_for_field_values(:pid, ids, extra_solr_params)
-  end
-
-  def bdr_get_solr_response_for_field_values(field, values, extra_solr_params = {})
-    q = if Array(values).empty?
-      "NOT *:*"
-    else
-      "#{field}:(#{ Array(values).map { |x| solr_param_quote(x)}.join(" OR ")})"
-    end
-
-    solr_params = {
-      :defType => "lucene",   # need boolean for OR
-      :q => q,
-      # not sure why fl * is neccesary, why isn't default solr_search_params
-      # sufficient, like it is for any other search results solr request?
-      # But tests fail without this. I think because some functionality requires
-      # this to actually get solr_doc_params, not solr_search_params. Confused
-      # semantics again.
-      :fl => "*",
-      :facet => 'false',
-      :spellcheck => 'false'
-    }.merge(extra_solr_params)
-
-    solr_response = find(solr_params)
-    [solr_response, solr_response.documents]
-  end
 end
