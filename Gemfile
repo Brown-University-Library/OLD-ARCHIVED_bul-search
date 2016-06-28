@@ -59,7 +59,11 @@ gem "summon", "~> 2.0.5"
 gem 'dotenv-rails', :groups => [:development, :test, :devbox]
 gem "font-awesome-rails"
 
-gem 'byebug', :groups => [:devbox]
+group :development do
+  gem "byebug"                # debugger
+  gem "better_errors"         # web page for errors
+  gem "binding_of_caller"     # allows inspecting values in web error page
+end
 
 gem 'handlebars_assets', "= 0.17"
 
