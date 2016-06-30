@@ -9,11 +9,14 @@ development:
   pool: 5
   timeout: 5000
 
-devbox:
-  adapter: sqlite3
-  database: db/development.sqlite3
+development_mysql_sample:
+  adapter: mysql2
+  database: bul_search_dev
+  encoding: utf8
   pool: 5
-  timeout: 5000
+  username: root
+  password:
+  socket: /tmp/mysql.sock
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
