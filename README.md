@@ -2,7 +2,9 @@ Brown implementation of Blacklight.
 
 ## Installation
 
-Read the [Blacklight Quickstart](https://github.com/projectblacklight/blacklight/wiki/Quickstart) to become familar with the project.  You might want to follow the steps locally and install a default Blacklight instance as a test project.
+Read the [Blacklight Quickstart](https://github.com/projectblacklight/blacklight/wiki/Quickstart)
+to become familar with the project.  You might want to follow the steps locally
+and install a default Blacklight instance as a test project.
 
 To install the Brown Blacklight code locally:
 
@@ -11,11 +13,29 @@ To install the Brown Blacklight code locally:
  * cd into the code and run `bundle install`.
  * `rake db:migrate` to configure the db.
  * `rake jetty:clean` to download Jetty and Solr.
- * `rake jetty:start` to start Jetty and Solr.  Note the Solr port.  This needs to match the solr port in `config/jetty.yml`. Also see below about setting up your environment using a `.env` file.  The SOLR_URL can be set there.
- * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc` to index sample Brown records.
+ * `rake jetty:start` to start Jetty and Solr.  Note the Solr port.  This needs
+ to match the solr port in `config/jetty.yml`. Also see below about setting up
+ your environment using a `.env` file.  The SOLR_URL can be set there.
+ * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc` to index sample
+ Brown records.
  * `rails server` to start rails in development mode
  * If all goes correctly: visit the catalog at http://localhost:3000/catalog.
- * A sample search of `atom` will return results from the sample set of MARC records.
+ * A sample search of `atom` will return results from the sample set of MARC
+ records.
+
+## schema.rb
+By default the development environment in your local box uses SQLite as the
+database. In production we use MySQL. Because you are using a different
+database your local box you will see a few changes in `schema.rb` once you've
+run `rake db:migrate`. You should discard those changes  with
+`git checkout -- schema.rb` so that you don't accidentally commit them to
+the repository.
+
+If you want to use MySQL in your local box you could update the `development`
+section on `config/database.yml` to use the values indicated under
+`development_mysql_sample` and re-run `rake db:migrate` to create the database
+in MySQL.
+
 
 ## Without running a local Solr index.
 If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://dblightcit.services.brown.edu:8081/solr`.  This will allow you to search the remote index.  You will need to be on the Brown network (in the SciLi?) or connected via VPN to connect to this index.
@@ -74,7 +94,7 @@ The dev server for this project is `dblightcit.services.brown.edu`.  Contact Joe
 
 The `bul-search` source code is checkout out to `/opt/local/bul-search-src`.  The Rails app is running at `http://dblightcit.services.brown.edu/find/`.  
 
-To update the source run the refresh.sh script as the `blacklight` user
+To update the source run the `refresh.sh` script as the `blacklight` user
 
 ```
 su - blacklight
