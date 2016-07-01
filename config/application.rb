@@ -1,8 +1,5 @@
 require File.expand_path('../boot', __FILE__)
-
 require 'rails/all'
-
-# BT test change for new branch
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -22,6 +19,11 @@ module BulSearch
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-    config.secret_key_base = ENV['ESEARCH_KEY']
+
+    if Rails.env.production?
+      config.secret_key_base = ENV['ESEARCH_KEY']
+    else
+      config.secret_key_base = '4c6ca96a55bc7dd6e00265ece6bdc52a979355784da9b0f3668fd53e130741ebe0c68240b669912684be4c9cff3f4d6424dee2453cf0f4115c20c7cef81cd216'
+    end
   end
 end
