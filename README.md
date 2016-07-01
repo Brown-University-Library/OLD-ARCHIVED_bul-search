@@ -11,7 +11,7 @@ To install the Brown Blacklight code locally:
  * verify that you have the dependencies listed in the Quickstart.
  * check out the code.
  * cd into the code and run `bundle install`.
- * `rake db:migrate` to configure the db.
+ * `rake db:create db:migrate` to create the database.
  * `rake jetty:clean` to download Jetty and Solr.
  * `rake jetty:start` to start Jetty and Solr.  Note the Solr port.  This needs
  to match the solr port in `config/jetty.yml`. Also see below about setting up
