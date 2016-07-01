@@ -33,8 +33,9 @@ the repository.
 
 If you want to use MySQL in your local box you could update the `development`
 section on `config/database.yml` to use the values indicated under
-`development_mysql_sample` and re-run `rake db:migrate` to create the database
-in MySQL.
+`development_mysql_sample` and re-run `rake db:create db:migrate` to recreate
+the database in MySQL. The `schema.db` produced at this point should match the
+one on the Git repo.
 
 
 ## Without running a local Solr index.
