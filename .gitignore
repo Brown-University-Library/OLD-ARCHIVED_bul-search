@@ -25,6 +25,9 @@ Gemfile.lock
 
 /jetty/
 
+# Mac specific
+.DS_Store
+
 #From - https://github.com/github/gitignore/blob/master/Rails.gitignore
 *.rbc
 capybara-*.html
