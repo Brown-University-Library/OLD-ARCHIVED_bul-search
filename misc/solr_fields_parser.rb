@@ -6,7 +6,7 @@
 #   curl "http://localhost:8081/solr/blacklight-core/admin/luke?numTerms=0&wt=json" > solr_fields.json
 #
 # then run it through this program via:
-#   ruby solr_fields_parser.js solr_fields.json > solr_fields.csv
+#   ruby solr_fields_parser.rb solr_fields.json > solr_fields.csv
 #
 
 require "json"
