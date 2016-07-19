@@ -17,10 +17,10 @@ To install the Brown Blacklight code locally:
  to match the solr port in `config/jetty.yml`. Also see below about setting up
  your environment using a `.env` file.  The SOLR_URL can be set there.
  * `rake solr:marc:index MARC_FILE=data/bul_sample.mrc` to index sample
- Brown records.
+ Brown records. Although this is a quick way to load data into Solr keep in mind that **this is not the way** we import data in production and will give you a different set of fields in Solr from that we really use. See the Sample Records section below to import data using the same mechanism as we do in production.
  * `rails server` to start rails in development mode
  * If all goes correctly: visit the catalog at http://localhost:3000/catalog.
- * A sample search of `atom` will return results from the sample set of MARC
+ * A sample search of `gender` will return results from the sample set of MARC
  records.
 
 ## schema.rb
@@ -37,6 +37,25 @@ section on `config/database.yml` to use the values indicated under
 the database in MySQL. The `schema.db` produced at this point should match the
 one on the Git repo.
 
+## Sample Records
+In production we use `traject` to import data into Solr. You can mimic this setup by using `traject` in your local environment as follows:
+
+```
+# Get the code for our `traject` project
+git clone git@github.com:Brown-University-Library/bul-traject.git
+cd bul-traject
+
+# Import a sample file
+traject -c config.rb -u http://localhost:8081/solr/blacklight-core /path/to/marc/file/bul_sample.mrc
+
+# Commit the data to Solr
+curl "http://localhost:8081/solr/blacklight-core/update?commit=true"
+
+# Check it out
+curl "http://localhost:8081/solr/blacklight-core/select?fq=*%3A*&wt=json&indent=true"
+```
+
+You can pass the `--debug-mode` flag to Traject if you just want to see what will be imported but not import it to Solr.
 
 ## Without running a local Solr index.
 If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://dblightcit.services.brown.edu:8081/solr`.  This will allow you to search the remote index.  You will need to be on the Brown network (in the SciLi?) or connected via VPN to connect to this index.
