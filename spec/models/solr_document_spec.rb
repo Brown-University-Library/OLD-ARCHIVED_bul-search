@@ -6,6 +6,7 @@ describe SolrDocument do
   describe "#get_availibility_info" do
 
     it "knows the url to hit for location" do
+      ENV['AVAILABILITY_SERVICE'] = "//apps.whatever.test.edu/bibutils/bib/"
       solrdoc = SolrDocument.new(source_doc={"id" => "b123456"})
       expect(solrdoc.location_data_url).to start_with("https://apps")
       expect(solrdoc.location_data_url).to end_with("bibutils/bib/b123456")
