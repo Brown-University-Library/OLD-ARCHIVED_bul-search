@@ -34,6 +34,7 @@ module EasyHelper
 
   def bdr_search(query)
     return nil unless bdr_configured?
+    query = escape_query(query)
     ENV["BDR_SEARCH_URL"] + "?q=#{query}"
   end
 
