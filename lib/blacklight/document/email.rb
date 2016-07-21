@@ -1,15 +1,14 @@
 # -*- encoding : utf-8 -*-
-# This module provides the body of an email export based on the document's semantic values
-
-class BookmarkEMailInfo
-  attr_accessor :title, :author, :format, :language,
-                :url, :online_url_label, :online_url,
-                :locations, :callnumbers
-end
+# [Blacklight Override]
+# This class was overriden to add new fields that
+# we want to include in the e-mail.
+require "./lib/blacklight/document/bookmark_email_info"
 
 module Blacklight::Document::Email
 
   # Return a text string that will be the body of the email
+  # We don't use this method, but we leave it here in case
+  # Blacklight does.
   def to_email_text
     semantics = self.to_semantic_values
     body = []
@@ -20,9 +19,11 @@ module Blacklight::Document::Email
     return body.join("\n") unless body.empty?
   end
 
+  # Returns an object with the information to be used in the
+  # e-mail. This is what we use.
   def to_email_info
     semantics = self.to_semantic_values
-    info = BookmarkEMailInfo.new
+    info = BookmarkEmailInfo.new
     info.title = semantics[:title].join(" ")
     info.author = semantics[:author].join(" ")
     info.format = semantics[:format].join(" ")
