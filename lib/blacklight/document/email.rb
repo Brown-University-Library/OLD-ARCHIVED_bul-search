@@ -31,7 +31,7 @@ module Blacklight::Document::Email
     info.online_url = self[:url_fulltext_display].first if self[:url_fulltext_display]
     info.online_url_label = self[:url_suppl_display].first if self[:url_suppl_display]
     info.locations = self.location_names
-    info.callnumbers = self[:callnumber_t]
+    info.callnumbers = self[:callnumber_t] || []
     info
   end
 end
