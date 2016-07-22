@@ -230,4 +230,23 @@ class CatalogController < ApplicationController
     end
   end
 
+  def index
+    relax_max_per_page if api_call?
+    ret_val = super
+    restore_max_per_page if api_call?
+    ret_val
+  end
+
+  def api_call?
+    format = params[:format]
+    return format == "xml" || format == "json"
+  end
+
+  def relax_max_per_page
+    blacklight_config.max_per_page = 1000
+  end
+
+  def restore_max_per_page
+    blacklight_config.max_per_page = 100
+  end
 end
