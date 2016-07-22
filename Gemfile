@@ -81,3 +81,6 @@ gem "http_logger", :group => [:development]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 gem 'openurl', '~> 1.0.0'
+
+# Needed for rails console in Ubuntu
+gem "rb-readline"
