@@ -198,7 +198,9 @@ class SolrDocument
     values = []
     fields = marc_field(field)
     fields.each do |value|
-      values << value.strip
+      if value != nil
+        values << value.strip
+      end
     end
   end
 
@@ -210,7 +212,9 @@ class SolrDocument
       marc_field["subfields"].each do |marc_subfield|
         if marc_subfield.keys.first == subfield
           marc_subfield.values.each do |value|
-            values << value.strip
+            if value != nil
+              values << value.strip
+            end
           end
         end
       end
@@ -229,9 +233,14 @@ class SolrDocument
     locations = []
     values = marc_subfield_values("945", "l")
     values.uniq.each do |code|
+      next if code == nil
       location = Location.find_by_code(code)
       if location != nil
         locations << location.name
+      else
+        # Must be a new location not in the database,
+        # use the code.
+        locations << "[#{code}]"
       end
     end
     locations
@@ -246,7 +255,7 @@ class SolrDocument
     def marc_field(field)
       values = []
       marc_display_json["fields"].each do |marc_field|
-        if marc_field.keys.first == field
+        if marc_field.keys.first == field && marc_field[field] != nil
           values << marc_field[field]
         end
       end
