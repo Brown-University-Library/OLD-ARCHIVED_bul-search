@@ -191,4 +191,69 @@ class SolrDocument
     end
     uniform_7xx_records
   end
+
+
+  # Returns an array with the string values for a field.
+  def marc_field_values(field)
+    values = []
+    fields = marc_field(field)
+    fields.each do |value|
+      values << value.strip
+    end
+  end
+
+  # Returns an array with the string values for a field/subfield
+  def marc_subfield_values(field, subfield)
+    values = []
+    fields = marc_field(field)
+    fields.each do |marc_field|
+      marc_field["subfields"].each do |marc_subfield|
+        if marc_subfield.keys.first == subfield
+          marc_subfield.values.each do |value|
+            values << value.strip
+          end
+        end
+      end
+    end
+    values
+  end
+
+  # def callnumbers_yxz
+  #   values = marc_subfield_values("945", "x")
+  #   if values.empty?
+  #     values = marc_subfield_values("090", "a")
+  #   end
+  # end
+
+  def location_names
+    locations = []
+    values = marc_subfield_values("945", "l")
+    values.uniq.each do |code|
+      location = Location.find_by_code(code)
+      if location != nil
+        locations << location.name
+      end
+    end
+    locations
+  end
+
+  private
+
+    # Returns the values for a MARC field.
+    # For some fields this is an array of string (e.g. 001)
+    # whereas for others (e.g. 015) is an array of Hash objects
+    # with subfield definitions.
+    def marc_field(field)
+      values = []
+      marc_display_json["fields"].each do |marc_field|
+        if marc_field.keys.first == field
+          values << marc_field[field]
+        end
+      end
+      values
+    end
+
+    def marc_display_json
+      @marc_display_json ||= JSON.parse(self["marc_display"])
+    end
 end

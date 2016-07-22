@@ -1,0 +1,654 @@
+{
+  "leader": "02318cam a22005294a 4500",
+  "fields": [
+    {
+      "001": "ocm41445649"
+    },
+    {
+      "003": "OCoLC"
+    },
+    {
+      "005": "20141205034001.6"
+    },
+    {
+      "008": "990520s2000    enk      b    001 0 eng  "
+    },
+    {
+      "010": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "99016161"
+          }
+        ]
+      }
+    },
+    {
+      "015": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "GBA010982"
+          },
+          {
+            "2": "bnb"
+          }
+        ]
+      }
+    },
+    {
+      "015": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "GB99U9731"
+          },
+          {
+            "2": "bnb"
+          }
+        ]
+      }
+    },
+    {
+      "020": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "0335200230"
+          }
+        ]
+      }
+    },
+    {
+      "020": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "9780335200238"
+          }
+        ]
+      }
+    },
+    {
+      "020": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "0335200222"
+          },
+          {
+            "q": "(pbk.)"
+          }
+        ]
+      }
+    },
+    {
+      "020": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "9780335200221"
+          },
+          {
+            "q": "(pbk.)"
+          }
+        ]
+      }
+    },
+    {
+      "035": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "(OCoLC)41445649"
+          },
+          {
+            "z": "(OCoLC)42834673"
+          },
+          {
+            "z": "(OCoLC)43418442"
+          },
+          {
+            "z": "(OCoLC)779903358"
+          }
+        ]
+      }
+    },
+    {
+      "040": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "DLC"
+          },
+          {
+            "b": "eng"
+          },
+          {
+            "c": "DLC"
+          },
+          {
+            "d": "C#P"
+          },
+          {
+            "d": "UKM"
+          },
+          {
+            "d": "LVB"
+          },
+          {
+            "d": "BAKER"
+          },
+          {
+            "d": "BTCTA"
+          },
+          {
+            "d": "YDXCP"
+          },
+          {
+            "d": "OCLCG"
+          },
+          {
+            "d": "IG#"
+          },
+          {
+            "d": "U5D"
+          },
+          {
+            "d": "GEBAY"
+          },
+          {
+            "d": "OCLCQ"
+          },
+          {
+            "d": "S3O"
+          },
+          {
+            "d": "TULIB"
+          },
+          {
+            "d": "OCLCO"
+          },
+          {
+            "d": "OCLCF"
+          },
+          {
+            "d": "OCLCQ"
+          }
+        ]
+      }
+    },
+    {
+      "042": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "pcc"
+          }
+        ]
+      }
+    },
+    {
+      "043": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "e-sw---"
+          }
+        ]
+      }
+    },
+    {
+      "049": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "RBNN"
+          }
+        ]
+      }
+    },
+    {
+      "050": {
+        "ind1": "0",
+        "ind2": "0",
+        "subfields": [
+          {
+            "a": "HQ1075.5.S8"
+          },
+          {
+            "b": "B47 2000"
+          }
+        ]
+      }
+    },
+    {
+      "090": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "HQ1075.5.S8"
+          },
+          {
+            "b": "B47 2000"
+          }
+        ]
+      }
+    },
+    {
+      "100": {
+        "ind1": "1",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "Berge, Britt-Marie,"
+          },
+          {
+            "d": "1948-"
+          }
+        ]
+      }
+    },
+    {
+      "245": {
+        "ind1": "1",
+        "ind2": "0",
+        "subfields": [
+          {
+            "a": "Action research for gender equity /"
+          },
+          {
+            "c": "Britt-Marie Berge with Hildur Ve."
+          }
+        ]
+      }
+    },
+    {
+      "260": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "Buckingham ;"
+          },
+          {
+            "a": "Philadelphia :"
+          },
+          {
+            "b": "Open University Press,"
+          },
+          {
+            "c": "©2000."
+          }
+        ]
+      }
+    },
+    {
+      "300": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "x, 157 pages ;"
+          },
+          {
+            "c": "23 cm."
+          }
+        ]
+      }
+    },
+    {
+      "336": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "text"
+          },
+          {
+            "b": "txt"
+          },
+          {
+            "2": "rdacontent."
+          }
+        ]
+      }
+    },
+    {
+      "337": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "unmediated"
+          },
+          {
+            "b": "n"
+          },
+          {
+            "2": "rdamedia."
+          }
+        ]
+      }
+    },
+    {
+      "338": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "volume"
+          },
+          {
+            "b": "nc"
+          },
+          {
+            "2": "rdacarrier."
+          }
+        ]
+      }
+    },
+    {
+      "490": {
+        "ind1": "1",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "Feminist educational thinking."
+          }
+        ]
+      }
+    },
+    {
+      "520": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "This text is about action research as a method for change and as a means of taking up feminist research in education. It looks at concerns with aspects of dominant discourses and provides a story of an attempt to change the practices of nine teachers."
+          }
+        ]
+      }
+    },
+    {
+      "504": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "Includes bibliographical references (pages 149-153 and index."
+          }
+        ]
+      }
+    },
+    {
+      "650": {
+        "ind1": " ",
+        "ind2": "0",
+        "subfields": [
+          {
+            "a": "Sex role"
+          },
+          {
+            "x": "Study and teaching (Elementary)"
+          },
+          {
+            "z": "Sweden."
+          }
+        ]
+      }
+    },
+    {
+      "650": {
+        "ind1": " ",
+        "ind2": "0",
+        "subfields": [
+          {
+            "a": "Action research in education"
+          },
+          {
+            "z": "Sweden."
+          }
+        ]
+      }
+    },
+    {
+      "700": {
+        "ind1": "1",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "Ve, Hildur."
+          }
+        ]
+      }
+    },
+    {
+      "776": {
+        "ind1": "1",
+        "ind2": " ",
+        "subfields": [
+          {
+            "i": "Online version:"
+          },
+          {
+            "a": "Berge, Britt-Marie, 1948-"
+          },
+          {
+            "t": "Action research for gender equity."
+          },
+          {
+            "d": "Buckingham ; Philadelphia : Open University Press, ©2000"
+          },
+          {
+            "w": "(OCoLC)648271059."
+          }
+        ]
+      }
+    },
+    {
+      "830": {
+        "ind1": " ",
+        "ind2": "0",
+        "subfields": [
+          {
+            "a": "Feminist educational thinking."
+          }
+        ]
+      }
+    },
+    {
+      "907": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": ".b30364152"
+          },
+          {
+            "b": "06-17-15"
+          },
+          {
+            "c": "06-19-00"
+          }
+        ]
+      }
+    },
+    {
+      "998": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "r0001"
+          },
+          {
+            "b": "06-28-00"
+          },
+          {
+            "c": "m"
+          },
+          {
+            "d": "a"
+          },
+          {
+            "e": "-"
+          },
+          {
+            "f": "eng"
+          },
+          {
+            "g": "enk"
+          },
+          {
+            "h": "0"
+          },
+          {
+            "i": "0"
+          }
+        ]
+      }
+    },
+    {
+      "910": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "OCLC BibNote"
+          },
+          {
+            "b": "Master record variable field(s) change: 776"
+          }
+        ]
+      }
+    },
+    {
+      "910": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "OCLC BibNote"
+          },
+          {
+            "b": "Master record variable field(s) change: 650"
+          }
+        ]
+      }
+    },
+    {
+      "910": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "promptcat"
+          }
+        ]
+      }
+    },
+    {
+      "910": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "Hathi Trust report SPM"
+          }
+        ]
+      }
+    },
+    {
+      "995": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "jct"
+          }
+        ]
+      }
+    },
+    {
+      "993": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "ftp080100"
+          }
+        ]
+      }
+    },
+    {
+      "945": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "g": "1"
+          },
+          {
+            "i": "3 1236 01565 2350"
+          },
+          {
+            "j": "0"
+          },
+          {
+            "l": "rock "
+          },
+          {
+            "o": "-"
+          },
+          {
+            "p": "$0.00"
+          },
+          {
+            "q": " "
+          },
+          {
+            "r": " "
+          },
+          {
+            "s": "-"
+          },
+          {
+            "t": "0"
+          },
+          {
+            "u": "2"
+          },
+          {
+            "v": "0"
+          },
+          {
+            "w": "0"
+          },
+          {
+            "x": "0"
+          },
+          {
+            "y": ".i123436928"
+          },
+          {
+            "z": "06-19-00"
+          }
+        ]
+      }
+    }
+  ]
+}

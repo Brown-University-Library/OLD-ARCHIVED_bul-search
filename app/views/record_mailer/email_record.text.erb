@@ -1,0 +1,11 @@
+<%= @message %>
+
+<% @documents.each do |document| %>
+  <% info = document.to_email_info %>
+  ======
+  <%= "Title: #{info.title}" %>
+  <%= "Author: #{info.author}" %>
+  <%= "Format: #{info.format}" %>
+  <%= "Language: #{info.language}" %>
+  Bookmark: <%= polymorphic_url(document, @url_gen_params) %>
+<% end %>

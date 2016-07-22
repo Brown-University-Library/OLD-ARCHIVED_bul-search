@@ -1,0 +1,36 @@
+<p>
+<%= @message %>
+</p>
+<% @documents.each do |document| %>
+  <p>
+  <% info = document.to_email_info %>
+  <%= html_title_line("Title", info.title) %>
+  <%= html_title_line("Author", info.author) %>
+  <%= html_title_line("Format", info.format) %>
+  <%= html_title_line("Language", info.language) %>
+
+  <% loc_count = info.locations.count %>
+  <% cb_count = info.callnumbers.count %>
+
+  <% if loc_count == 0 && cb_count == 0 %>
+    <% # nothing to print %>
+  <% elsif loc_count == 1 && cb_count == 1 %>
+    Location: <%= info.locations.first %><br/>
+    Call Number: <%= info.callnumbers.first %><br/>
+  <% elsif loc_count == 0 && cb_count > 0 %>
+    Call Numbers: <%= info.callnumbers.join(", ") %><br/>
+  <% elsif loc_count == 1 %>
+    Location: <%= info.locations.first %><br/>
+  <% else %>
+    <% # Ignore call numbers because we cannot cross-reference
+       # them with locations %>
+    Locations: <%= info.locations.join(", ") %><br/>
+  <% end %>
+
+  Bookmark: <%= polymorphic_url(document, @url_gen_params) %><br/>
+  <% if info.online_url && info.online_url_label %>
+    <a href="<%= info.online_url %>"><%= info.online_url_label %></a><br/>
+  <% end %>
+
+  </p>
+<% end %>
