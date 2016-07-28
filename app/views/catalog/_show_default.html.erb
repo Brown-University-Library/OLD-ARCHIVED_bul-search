@@ -4,10 +4,27 @@
 <%= item_subheading marc_display(document, 'statement_of_responsibility') %>
 <%= item_subheading marc_display(document, 'imprint') %>
 
-<% if document['abstract_display'] %>
+<% if document.full_abstract.count > 0 %>
     <div class="abstract">
-        <%= document['abstract_display'][0] %>
-    </div>
+      <%= document.full_abstract[0] %>
+      <% if document.full_abstract.count > 1 %>
+        <a id="abstract_show_more" href="">...more</a>
+        <div id="abstract_more" class="hidden">
+        <% document.full_abstract[1..-1].each do |abstract| %>
+          <br/>
+          <%= abstract %>
+        <% end %>
+        </div>
+
+        <script>
+        $("#abstract_show_more").on("click", function(e) {
+          e.preventDefault();
+          $(this).addClass("hidden");
+          $("#abstract_more").removeClass("hidden");
+        });
+        </script>
+      <% end %>
+    </div> <!-- abstract -->
 <% end %>
 
 

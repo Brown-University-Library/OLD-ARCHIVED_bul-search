@@ -222,13 +222,6 @@ class SolrDocument
     values
   end
 
-  # def callnumbers_yxz
-  #   values = marc_subfield_values("945", "x")
-  #   if values.empty?
-  #     values = marc_subfield_values("090", "a")
-  #   end
-  # end
-
   def location_names
     locations = []
     values = marc_subfield_values("945", "l")
@@ -244,6 +237,23 @@ class SolrDocument
       end
     end
     locations
+  end
+
+  def full_abstract
+    @full_abstract ||= begin
+      marc_abstract = marc_subfield_values('520','a')
+      if marc_abstract.count > 0
+        marc_abstract
+      else
+        # Default to the value indexed in Solr, not sure
+        # this will help, but at least it will preserve
+        # the value that we used to display before.
+        self['abstract_display'] || []
+      end
+    rescue
+      Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}"
+      []
+    end
   end
 
   private
