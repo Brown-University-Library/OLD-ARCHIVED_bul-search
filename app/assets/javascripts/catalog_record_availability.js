@@ -53,14 +53,6 @@ function hasItems(availabilityResponse) {
   }
 }
 
-function addEasyScanLink(item, bib, title) {
-  return item['scan'] + '&title=' + title + '&bibnum=' + bib;
-}
-
-function addItemRequestUrl(item, bib) {
-  return "https://library.brown.edu/easyrequest/login/?bibnum=" + bib + "&barcode=" + item['barcode'];
-}
-
 function addAvailability(availabilityResponse) {
   var title = getTitle();
   var bib = getBibId();
@@ -80,8 +72,8 @@ function addAvailability(availabilityResponse) {
       var loc = ['annex']
       var formats = ['book', 'periodical title']
       if ((loc.indexOf(item['location'].toLowerCase()) > -1) && (formats.indexOf(format.toLowerCase()) > -1)) {
-        item['scan'] = addEasyScanLink(item, bib, title);
-        item['item_request_url'] = addItemRequestUrl(item, bib);
+        item['scan'] = easyScanFullLink(item['scan'], bib, title);
+        item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
       }
     });
   }

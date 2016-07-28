@@ -41,3 +41,34 @@
 // this:
 //= require 'blacklight_range_limit'
 
+
+// ------------------------------
+// Functions used to display the option to Scan an
+// item or request it.
+
+// Only items from the Annex that are books and periodical
+// titles can be requested.
+// I think we might need to add a check on "status" since
+// only Available items can be requested.
+// See https://github.com/Brown-University-Library/easyscan/blob/391cbef95f4731894a0b0b30cf15f062263fd77e/easyscan_app/lib/josiah_easyscan.js#L214-L224
+function canScanItem(location, format) {
+  var location = (location || "").toLowerCase();
+  var format = (format || "").toLowerCase();
+  if (location != "annex") {
+    return false;
+  }
+  if ((format != "book") && (format != "periodical title")) {
+    return false;
+  }
+  return true;
+}
+
+
+function easyScanFullLink(scanLink, bib, title) {
+  return scanLink + '&title=' + title + '&bibnum=' + bib;
+}
+
+
+function itemRequestFullLink(barCode, bib) {
+  return "https://library.brown.edu/easyrequest/login/?bibnum=" + bib + "&barcode=" + barCode;
+}
