@@ -69,11 +69,12 @@ function addAvailability(availabilityResponse) {
   //add easyScan link & item request for appropriate locations and formats
   if (hasItems(availabilityResponse)) {
     _.each(context['items'], function(item) {
-      var loc = ['annex']
-      var formats = ['book', 'periodical title']
-      if ((loc.indexOf(item['location'].toLowerCase()) > -1) && (formats.indexOf(format.toLowerCase()) > -1)) {
+      if (canScanItem(item['location'], format)) {
         item['scan'] = easyScanFullLink(item['scan'], bib, title);
         item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
+      } else {
+        item['scan'] = null;
+        item['item_request_url'] = null;
       }
     });
   }
