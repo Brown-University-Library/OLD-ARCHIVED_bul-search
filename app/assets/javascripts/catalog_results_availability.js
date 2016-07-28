@@ -22,8 +22,10 @@ function collectBibs() {
   getAvailability(bibs);
 }
 
-function getTitle(bib) {
-  return $('[data-id="' + bib + '"] a').text();
+function getItemData(bib) {
+    var element = $('[data-id="' + bib + '"]');
+    var title = element.find('a').text();
+    return {title: title, format: element.data('format')};
 }
 
 //POST the list of bis to the service.
@@ -32,18 +34,28 @@ function getAvailability(bibs) {
         type: "POST",
         //url: 'https://apps.library.brown.edu/bibutils/bib/',
         url: availabilityService,
-        //dataType: 'json',
-        //contentType: "application/json",
         data: JSON.stringify(bibs),
         success: function (data) {
             $.each(data, function(bib, context){
               if (context) {
                 context['results'] = true;
-                //context.items = _.filter(context['items'], function(item){ return (item['location'] != 'ONLINE BOOK') && (item['location'] != 'ONLINE SERIAL')})
-                context['items'] = _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle(bib)});
+
                 if (context['has_more'] == true) {
                   context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
                 };
+
+                _.each(context['items'], function(item) {
+                  var itemData = getItemData(bib);
+                  item['map'] = item['map'] + '&title=' + itemData.title;
+                  if (canScanItem(item['location'], itemData.format)) {
+                    item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
+                    item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
+                  } else {
+                    item['scan'] = null;
+                    item['item_request_url'] = null;
+                  }
+                });
+
                 var elem = $('[data-availability="' + bib + '"]');
                 html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
                 $(elem).append(html);
