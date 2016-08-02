@@ -266,7 +266,7 @@ class SolrDocument
         item = ItemData.new
         marc_field["subfields"].each do |marc_subfield|
           if marc_subfield.keys.first == 'i'
-            item.barcode = marc_subfield.values.first
+            item.barcode = marc_subfield.values.first.gsub(" ", "")
           end
           if marc_subfield.keys.first == 'f'
             item.bookplate_code = marc_subfield.values.first
@@ -280,8 +280,8 @@ class SolrDocument
         end
       end
       values
-    rescue
-      Rails.logger.error "Error parsing item_data for ID: #{self.fetch('id', nil)}"
+    rescue => e
+      Rails.logger.error "Error parsing item_data for ID: #{self.fetch('id', nil)} #{e.message}"
       []
     end
   end
