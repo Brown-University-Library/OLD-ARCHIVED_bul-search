@@ -223,6 +223,8 @@ class SolrDocument
   end
 
   def location_names
+    # Once the location_code_t field is in Solr we shouldn't
+    # need to parse it out of the marc_display value.
     locations = []
     values = marc_subfield_values("945", "l")
     values.uniq.each do |code|
@@ -252,6 +254,34 @@ class SolrDocument
       end
     rescue
       Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}"
+      []
+    end
+  end
+
+  def item_data
+    @item_data ||= begin
+      values = []
+      fields = marc_field('945')
+      fields.each do |marc_field|
+        item = ItemData.new
+        marc_field["subfields"].each do |marc_subfield|
+          if marc_subfield.keys.first == 'i'
+            item.barcode = marc_subfield.values.first
+          end
+          if marc_subfield.keys.first == 'f'
+            item.bookplate_code = marc_subfield.values.first
+          end
+          if marc_subfield.keys.first == 'l'
+            item.location_code = marc_subfield.values.first
+          end
+        end
+        if item.has_data?
+          values << item
+        end
+      end
+      values
+    rescue
+      Rails.logger.error "Error parsing item_data for ID: #{self.fetch('id', nil)}"
       []
     end
   end

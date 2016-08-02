@@ -47,6 +47,18 @@
     <!-- Populated by `catalog_record_availability` <script> above. -->
 </div>
 
+<script>
+      // Called after retrieving availability information
+      // to link up availability data with bookplates.
+      function bookplate_info(barcode) {
+        <% @document.item_data.select{|x| x.bookplate_code != nil }.each do |item| %>
+          if (barcode === "<%= item.barcode %>") {
+            return {url: "<%= item.bookplate_url %>", display: "<%= item.bookplate_display %>"};
+          }
+        <% end %>
+        return null;
+      }
+</script>
 
 <hr/>
 <h4>Details</h4>
