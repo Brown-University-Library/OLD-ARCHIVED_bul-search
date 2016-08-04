@@ -64,8 +64,8 @@ function addAvailability(availabilityResponse) {
       item['map'] = item['map'] + '&title=' + title;
 
       // add bookplate information
-      // bookplate_info() is defined in _show_default.html.erb
-      var bookplate = bookplate_info(item['barcode'])
+      // item_info() is defined in _show_default.html.erb
+      var bookplate = item_info(item['barcode'])
       if (bookplate != null) {
         item['bookplate_url'] = bookplate.url;
         item['bookplate_display'] = bookplate.display;

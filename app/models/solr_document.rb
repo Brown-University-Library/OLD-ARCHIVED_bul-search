@@ -274,24 +274,23 @@ class SolrDocument
         barcode = subfield_value(f_945, "i")
 
         bookplate_code = subfield_value(f_945, "f")
-        if bookplate_code != nil
-          # bookplate URL and display text are on the next 996
-          i = index + 1
-          while i < marc_fields.count
-            if marc_fields[i].keys.first == "945"
-              # ran into a new 945, no bookplate info found.
-              break
-            end
 
-            if marc_fields[i].keys.first == "996"
-              f_996 = marc_fields[i]["996"]
-              bookplate_url = subfield_value(f_996, "u")
-              bookplate_display = subfield_value(f_996, "z")
-              # parsed a 996, we should be done.
-              break
-            end
-            i += 1
+        # bookplate URL and display text are on the next 996
+        i = index + 1
+        while i < marc_fields.count
+          if marc_fields[i].keys.first == "945"
+            # ran into a new 945, no bookplate info found.
+            break
           end
+
+          if marc_fields[i].keys.first == "996"
+            f_996 = marc_fields[i]["996"]
+            bookplate_url = subfield_value(f_996, "u")
+            bookplate_display = subfield_value(f_996, "z")
+            # parsed a 996, we should be done.
+            break
+          end
+          i += 1
         end
 
         item = ItemData.new(barcode)
