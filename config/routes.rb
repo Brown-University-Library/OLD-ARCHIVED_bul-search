@@ -18,8 +18,8 @@ BulSearch::Application.routes.draw do
   get 'libweb/' => 'libweb#search', as: :lib_web
 
   # Stub controller to test the Availability Service
-  get 'availability/fake_one' => 'availability#fake_one'
-  post 'availability/fake_many' => 'availability#fake_many'
+  get 'availability/fake/:id' => 'availability#fake_one'
+  post 'availability/fake/' => 'availability#fake_many'
   get 'availability/forward/:id' => 'availability#forward_one'
   post 'availability/forward/' => 'availability#forward_many'
 end

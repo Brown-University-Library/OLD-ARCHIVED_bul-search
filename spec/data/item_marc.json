@@ -488,6 +488,51 @@
       }
     },
     {
+      "945": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "x": "xxx"
+          },
+          {
+            "y": "yyy"
+          },
+          {
+            "z": "zzz"
+          }
+        ]
+      }
+    },
+    {
+      "945": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "f": "bookplate1"
+          },
+          {
+            "i": "barcode1"
+          }
+        ]
+      }
+    },
+    {
+      "996": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "u": "http://bookplate1"
+          },
+          {
+            "z": "Gift of barcode1"
+          }
+        ]
+      }
+    },
+    {
       "998": {
         "ind1": " ",
         "ind2": " ",

@@ -1,24 +1,25 @@
 class ItemData
-  attr_accessor :barcode, :location_code, :bookplate_code
+  attr_reader :barcode
+  attr_accessor :location_code, :bookplate_code
+  attr_writer :bookplate_url, :bookplate_display
 
-  def has_data?
-    @barcode != nil || @loc_code != nil || @bookplate_code != nil
+  def initialize(barcode)
+    if barcode == nil
+      @barcode = nil
+    else
+      @barcode = barcode.gsub(" ", "")
+    end
+  end
+
+  def bookplate_url
+    @bookplate_url || ""
+  end
+
+  def bookplate_display
+    @bookplate_display || ""
   end
 
   def to_s
     "#{@barcode}, #{@location_code}, #{@bookplate_code}"
   end
-
-  def bookplate_url
-    return nil if @bookplate_code == nil
-    # TODO: Get url from database
-    "http://library.brown.edu/bookplates/fund.php?account=#{@bookplate_code}"
-  end
-
-  def bookplate_display
-    # TODO: Get display from database
-    return nil if @bookplate_code == nil
-    "#{@bookplate_code}"
-  end
-
 end

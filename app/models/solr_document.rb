@@ -252,36 +252,58 @@ class SolrDocument
         # the value that we used to display before.
         self['abstract_display'] || []
       end
-    rescue
-      Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}"
+    rescue StandardError => e
+      Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}, #{e.message}"
       []
     end
   end
 
+  # Fetches the item data for the bibliographic (BIB)
+  # record. Notice that there could be more than one
+  # item for a given BIB record.
   def item_data
     @item_data ||= begin
       values = []
-      fields = marc_field('945')
-      fields.each do |marc_field|
-        item = ItemData.new
-        marc_field["subfields"].each do |marc_subfield|
-          if marc_subfield.keys.first == 'i'
-            item.barcode = marc_subfield.values.first.gsub(" ", "")
-          end
-          if marc_subfield.keys.first == 'f'
-            item.bookplate_code = marc_subfield.values.first
-          end
-          if marc_subfield.keys.first == 'l'
-            item.location_code = marc_subfield.values.first
+
+      # Item data is on the 945 fields.
+      marc_fields.each_with_index do |marc_field, index|
+        next if marc_field.keys.first != "945"
+
+        f_945 = marc_field["945"]
+        location_code = subfield_value(f_945, "l")
+        barcode = subfield_value(f_945, "i")
+
+        bookplate_code = subfield_value(f_945, "f")
+        if bookplate_code != nil
+          # bookplate URL and display text are on the next 996
+          i = index + 1
+          while i < marc_fields.count
+            if marc_fields[i].keys.first == "945"
+              # ran into a new 945, no bookplate info found.
+              break
+            end
+
+            if marc_fields[i].keys.first == "996"
+              f_996 = marc_fields[i]["996"]
+              bookplate_url = subfield_value(f_996, "u")
+              bookplate_display = subfield_value(f_996, "z")
+              # parsed a 996, we should be done.
+              break
+            end
+            i += 1
           end
         end
-        if item.has_data?
-          values << item
-        end
+
+        item = ItemData.new(barcode)
+        item.location_code = location_code
+        item.bookplate_code = bookplate_code
+        item.bookplate_url = bookplate_url
+        item.bookplate_display = bookplate_display
+        values << item
       end
       values
-    rescue => e
-      Rails.logger.error "Error parsing item_data for ID: #{self.fetch('id', nil)} #{e.message}"
+    rescue StandardError => e
+      Rails.logger.error "Error parsing item_data for ID: #{self.fetch('id', nil)}, #{e.message}"
       []
     end
   end
@@ -292,17 +314,34 @@ class SolrDocument
     # For some fields this is an array of string (e.g. 001)
     # whereas for others (e.g. 015) is an array of Hash objects
     # with subfield definitions.
-    def marc_field(field)
+    def marc_field(code)
       values = []
-      marc_display_json["fields"].each do |marc_field|
-        if marc_field.keys.first == field && marc_field[field] != nil
-          values << marc_field[field]
+      marc_fields.each do |marc_field|
+        if marc_field.keys.first == code && marc_field[code] != nil
+          values << marc_field[code]
         end
       end
       values
     end
 
+    def subfield_value(field, subfield_code)
+      field["subfields"].each do |subfield|
+        if subfield.keys.first == subfield_code
+          # Could there be many values???
+          value = subfield.values.first
+          value = value.strip if value != nil
+          return value
+        end
+      end
+      nil
+    end
+
     def marc_display_json
       @marc_display_json ||= JSON.parse(self["marc_display"])
     end
+
+    def marc_fields
+      marc_display_json["fields"]
+    end
+
 end

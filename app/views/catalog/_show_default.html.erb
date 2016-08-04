@@ -49,11 +49,11 @@
 
 <script>
       // Called after retrieving availability information
-      // to link up availability data with bookplates.
+      // to link up each item with their bookplate.
       function bookplate_info(barcode) {
         <% @document.item_data.select{|x| x.bookplate_code != nil }.each do |item| %>
           if (barcode === "<%= item.barcode %>") {
-            return {url: "<%= item.bookplate_url %>", display: "<%= item.bookplate_display %>"};
+            return {url: "<%= item.bookplate_url %>", display: "<%= item.bookplate_display.gsub('"', '\"').html_safe %>"};
           }
         <% end %>
         return null;
