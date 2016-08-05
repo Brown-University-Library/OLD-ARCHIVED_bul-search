@@ -20,12 +20,14 @@
   <% end -%>
 
 
-  <%# Check for access urls.  -%>
+  <%# Check for online access urls.
+    # Notice that this code is different from the one
+    # in the show page because we don't have the MARC
+    # data on this page. %>
   <% if has_access_urls(document) == true %>
     <div class="index-online">
         <ul class="list-unstyled">
         <% access_urls(document).each do |access| -%>
-            <%= access['url'] %>
             <li><span class="label label-info">Online</span><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
         <% end -%>
         </ul>

@@ -32,14 +32,33 @@ module BlacklightHelper
     return !document['url_fulltext_display'].nil?
   end
 
-  #Get links and labels for 856s from the MARC record
+  # Returns a hash with links and label text.
   #
-  #Returns a hash with links and label text.
+  # Solr fields url_fulltext_display and url_suppl_display
+  # have been populated with MARC 856 u and z respectively.
+  #
+  # This code is similar to SolrDocument#online_availability()
+  # The difference is that SolrDocument#online_availability()
+  # reads the MARC data to build the mapping between labels
+  # and URLs where as this code does not have access to the
+  # MARC data and relies only on the values stored in Solr.
   def access_urls document
-    url_value = document['url_fulltext_display']
-    url_label = document['url_suppl_display'] ||= ["Available online"]
-    unless url_value.nil?
-        return url_label.zip(url_value).map{|l, u| {:label => l, :url => u} }
+    urls = document['url_fulltext_display'] || []
+    labels = document['url_suppl_display'] || []
+    if urls.count != labels.count
+      # Set all the labels to "avail online" since
+      # we cannot guarantee which ones go with the URLs.
+      #
+      # In reality we cannot guarantee this even when
+      # the counts match and we will need to handle this
+      # at some point.
+      labels = []
+      urls.count.times do |u|
+        labels << "Available online"
+      end
+    end
+    urls.zip(labels).map do |u, l|
+      {:label => l, :url => u}
     end
   end
 

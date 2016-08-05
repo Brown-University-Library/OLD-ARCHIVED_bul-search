@@ -28,16 +28,14 @@
 <% end %>
 
 
-<%# Check for access urls.  -%>
-<% if has_access_urls(document) == true %>
-    <hr/>
-    <h4>Availability</h4>
-        <ul>
-        <% access_urls(document).each do |access| -%>
-            <%= access['url'] %>
-            <li><a href="<%= access[:url] %>"><%= access[:label] %></a></li>
-        <% end -%>
-        </ul>
+<% if @document.online_availability.count > 0 %>
+  <hr/>
+  <h4>Availability</h4>
+  <ul>
+  <% @document.online_availability.each do |online| -%>
+      <li><a href="<%= online.url %>"><%= online.label %></a></li>
+  <% end -%>
+  </ul>
 <% end %>
 
 <div id="availability">

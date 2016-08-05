@@ -258,6 +258,29 @@ class SolrDocument
     end
   end
 
+  def online_availability
+    @online_availability ||= begin
+      values = []
+
+      # Online availability info is on fields 856.
+      marc_fields.each do |marc_field|
+        next if marc_field.keys.first != "856"
+
+        f_856 = marc_field["856"]
+        url = subfield_value(f_856, "u")
+        note = subfield_value(f_856, "z")
+        materials = subfield_value(f_856, "3")
+
+        online_avail = OnlineAvailData.new(url, note, materials)
+        values << online_avail
+      end
+      values
+    rescue StandardError => e
+      Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
+      []
+    end
+  end
+
   # Fetches the item data for the bibliographic (BIB)
   # record. Notice that there could be more than one
   # item for a given BIB record.
