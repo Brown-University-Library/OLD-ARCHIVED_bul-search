@@ -28,40 +28,6 @@ module BlacklightHelper
     ENV['AVAILABILITY_SERVICE']
   end
 
-  def has_access_urls document
-    return !document['url_fulltext_display'].nil?
-  end
-
-  # Returns a hash with links and label text.
-  #
-  # Solr fields url_fulltext_display and url_suppl_display
-  # have been populated with MARC 856 u and z respectively.
-  #
-  # This code is similar to SolrDocument#online_availability()
-  # The difference is that SolrDocument#online_availability()
-  # reads the MARC data to build the mapping between labels
-  # and URLs where as this code does not have access to the
-  # MARC data and relies only on the values stored in Solr.
-  def access_urls document
-    urls = document['url_fulltext_display'] || []
-    labels = document['url_suppl_display'] || []
-    if urls.count != labels.count
-      # Set all the labels to "avail online" since
-      # we cannot guarantee which ones go with the URLs.
-      #
-      # In reality we cannot guarantee this even when
-      # the counts match and we will need to handle this
-      # at some point.
-      labels = []
-      urls.count.times do |u|
-        labels << "Available online"
-      end
-    end
-    urls.zip(labels).map do |u, l|
-      {:label => l, :url => u}
-    end
-  end
-
   def render_show_doc_actions(document=@document, options={})
     wrapping_class = options.delete(:wrapping_class) || "documentFunctions"
 

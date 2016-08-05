@@ -260,21 +260,11 @@ class SolrDocument
 
   def online_availability
     @online_availability ||= begin
-      values = []
-
-      # Online availability info is on fields 856.
-      marc_fields.each do |marc_field|
-        next if marc_field.keys.first != "856"
-
-        f_856 = marc_field["856"]
-        url = subfield_value(f_856, "u")
-        note = subfield_value(f_856, "z")
-        materials = subfield_value(f_856, "3")
-
-        online_avail = OnlineAvailData.new(url, note, materials)
-        values << online_avail
+      if has_marc_data?
+        online_availability_from_marc
+      else
+        online_availability_from_solr
       end
-      values
     rescue StandardError => e
       Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
       []
@@ -358,6 +348,10 @@ class SolrDocument
       nil
     end
 
+    def has_marc_data?
+      self["marc_display"] != nil
+    end
+
     def marc_display_json
       @marc_display_json ||= JSON.parse(self["marc_display"])
     end
@@ -366,4 +360,41 @@ class SolrDocument
       marc_display_json["fields"]
     end
 
+    def online_availability_from_solr
+      urls = self['url_fulltext_display'] || []
+      labels = self['url_suppl_display'] || []
+      if urls.count != labels.count
+        # Set all the labels to "avail online" since
+        # we cannot guarantee which ones go with the URLs.
+        #
+        # In reality we cannot guarantee this even when
+        # the counts match and we will need to handle this
+        # at some point.
+        labels = []
+        urls.count.times do |url|
+          labels << "Available online"
+        end
+      end
+      urls.zip(labels).map do |url, label|
+        OnlineAvailData.new(url, label, nil)
+      end
+    end
+
+    def online_availability_from_marc
+      values = []
+
+      # Online availability info is on fields 856.
+      marc_fields.each do |marc_field|
+        next if marc_field.keys.first != "856"
+
+        f_856 = marc_field["856"]
+        url = subfield_value(f_856, "u")
+        note = subfield_value(f_856, "z")
+        materials = subfield_value(f_856, "3")
+
+        online_avail = OnlineAvailData.new(url, note, materials)
+        values << online_avail
+      end
+      values
+    end
 end
