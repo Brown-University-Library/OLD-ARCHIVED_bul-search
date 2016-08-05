@@ -203,6 +203,28 @@ describe SolrDocument do
     end
   end
 
+
+  describe "item data" do
+    it "extracts item data" do
+      marc_display_string = File.read("./spec/data/item_marc.json")
+      solr_doc = SolrDocument.new({"marc_display" => marc_display_string})
+      item_data = solr_doc.item_data
+
+      bookplate1 = item_data.select do |i|
+        i.barcode == "barcode1" &&
+        i.bookplate_code = "bookplate1" &&
+        i.bookplate_url = "http://bookplate1" &&
+        i.bookplate_display = "Gift of barcode1"
+      end
+      expect(bookplate1.count).to eq(1)
+
+      nodata = item_data.select {|i| i.barcode.nil? && i.location_code.nil?}
+      expect(nodata.count).to eq(1)
+
+      rock = item_data.select {|i| i.location_code == "rock"}
+      expect(rock.count).to eq(1)
+    end
+  end
 end
 
 describe TableOfContents do

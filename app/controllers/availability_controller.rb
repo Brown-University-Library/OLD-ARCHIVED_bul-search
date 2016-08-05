@@ -19,7 +19,12 @@ class AvailabilityController < ApplicationController
 
   # Returns a fake response for a single hard coded id.
   def fake_one
-    render :json => one_record_stub
+    if params[:callback]
+      json_response = params[:callback]+ "(" + one_record_stub + ")"
+    else
+      json_response = one_record_stub
+    end
+    render :json => json_response
   end
 
   # Returns a fake response for 10 coded ids.
@@ -80,11 +85,27 @@ class AvailabilityController < ApplicationController
     def one_record_stub
       json_response = <<-eos
         {
-          "b1150584": {
             "has_more": false,
             "items": [
               {
-                "barcode": "31236001611295",
+                "barcode": "31236073447396",
+                "callnumber": "PN1998.A3 D5854",
+                "location": "ROCK",
+                "scan": "https://library.brown.edu/easyscan/request/?callnumber=BX4700.F33+S32&barcode=31236080139671",
+                "item_request_url": "http://hectorwashere/",
+                "map": "https://apps.library.brown.edu/bibutils/map/?loc=rock&call=PN1998.A3%20D5854",
+                "shelf": {
+                  "aisle": "27B",
+                  "display_aisle": "27",
+                  "floor": "B",
+                  "located": true,
+                  "location": "rock",
+                  "side": "B"
+                },
+                "status": "AVAILABLE"
+              },
+              {
+                "barcode": "31236074492201",
                 "callnumber": "PN1998.A3 D5854",
                 "location": "ROCK",
                 "scan": "https://library.brown.edu/easyscan/request/?callnumber=BX4700.F33+S32&barcode=31236080139671",
@@ -104,7 +125,6 @@ class AvailabilityController < ApplicationController
             "more_link": "?limit=false",
             "requestable": true,
             "summary": []
-          }
         }
         eos
     end

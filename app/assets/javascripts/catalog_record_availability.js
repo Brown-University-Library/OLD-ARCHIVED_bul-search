@@ -46,11 +46,7 @@ function processItems(availabilityResponse) {
 }
 
 function hasItems(availabilityResponse) {
-  if (availabilityResponse.items.length === 0) {
-    return false;
-  } else {
-    return true;
-  }
+  return (availabilityResponse.items.length > 0);
 }
 
 function addAvailability(availabilityResponse) {
@@ -61,14 +57,21 @@ function addAvailability(availabilityResponse) {
   addRequestButton(availabilityResponse)
   //do realtime holdings
   context = availabilityResponse;
-  context['book_title'] = getTitle();
-  if (hasItems(availabilityResponse)) {
-    // add title to map link.
-    _.each(context['items'], function(item) {item['map'] = item['map'] + '&title=' + getTitle()});
-  }
-  //add easyScan link & item request for appropriate locations and formats
+  context['book_title'] = title;
   if (hasItems(availabilityResponse)) {
     _.each(context['items'], function(item) {
+      // add title to map link.
+      item['map'] = item['map'] + '&title=' + title;
+
+      // add bookplate information
+      // item_info() is defined in _show_default.html.erb
+      var bookplate = item_info(item['barcode'])
+      if (bookplate != null) {
+        item['bookplate_url'] = bookplate.url;
+        item['bookplate_display'] = bookplate.display;
+      }
+
+      //add easyScan link & item request
       if (canScanItem(item['location'], format)) {
         item['scan'] = easyScanFullLink(item['scan'], bib, title);
         item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
@@ -78,7 +81,7 @@ function addAvailability(availabilityResponse) {
       }
     });
   }
-  //console.debug(context);
+
   if (context['has_more'] == true) {
     context['more_link'] = window.location.href + '?limit=false';
   }
