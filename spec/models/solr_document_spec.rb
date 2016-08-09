@@ -195,17 +195,13 @@ describe SolrDocument do
   end
 
   describe "marc extraction methods" do
-    it "extracts field and subfield values" do
+    it "abstract" do
       marc_display_string = File.read("./spec/data/item_marc.json")
       solr_doc = SolrDocument.new({"marc_display" => marc_display_string})
-      expect(solr_doc.marc_field_values("001")).to eq ["ocm41445649"]
-      expect(solr_doc.marc_subfield_values("015", "a")).to eq ["GBA010982", "GB99U9731"]
+      expect(solr_doc.full_abstract).to eq ["abstract1", "abstract2"]
     end
-  end
 
-
-  describe "item data" do
-    it "extracts item data" do
+    it "item data" do
       marc_display_string = File.read("./spec/data/item_marc.json")
       solr_doc = SolrDocument.new({"marc_display" => marc_display_string})
       item_data = solr_doc.item_data

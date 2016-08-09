@@ -378,7 +378,18 @@
         "ind2": " ",
         "subfields": [
           {
-            "a": "This text is about action research as a method for change and as a means of taking up feminist research in education. It looks at concerns with aspects of dominant discourses and provides a story of an attempt to change the practices of nine teachers."
+            "a": "abstract1"
+          }
+        ]
+      }
+    },
+    {
+      "520": {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "a": "abstract2"
           }
         ]
       }

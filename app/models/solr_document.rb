@@ -192,36 +192,6 @@ class SolrDocument
     uniform_7xx_records
   end
 
-
-  # Returns an array with the string values for a field.
-  def marc_field_values(field)
-    values = []
-    fields = marc_field(field)
-    fields.each do |value|
-      if value != nil
-        values << value.strip
-      end
-    end
-  end
-
-  # Returns an array with the string values for a field/subfield
-  def marc_subfield_values(field, subfield)
-    values = []
-    fields = marc_field(field)
-    fields.each do |marc_field|
-      marc_field["subfields"].each do |marc_subfield|
-        if marc_subfield.keys.first == subfield
-          marc_subfield.values.each do |value|
-            if value != nil
-              values << value.strip
-            end
-          end
-        end
-      end
-    end
-    values
-  end
-
   def location_names
     # Once the location_code_t field is in Solr we shouldn't
     # need to parse it out of the marc_display value.
@@ -331,6 +301,25 @@ class SolrDocument
       marc_fields.each do |marc_field|
         if marc_field.keys.first == code && marc_field[code] != nil
           values << marc_field[code]
+        end
+      end
+      values
+    end
+
+    # Returns an array with the string values
+    # for a field/subfield
+    def marc_subfield_values(field_code, subfield_code)
+      values = []
+      fields = marc_field(field_code)
+      fields.each do |field|
+        field["subfields"].each do |subfield|
+          if subfield.keys.first == subfield_code
+            subfield.values.each do |value|
+              if value != nil
+                values << value.strip
+              end
+            end
+          end
         end
       end
       values
