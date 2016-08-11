@@ -8,13 +8,13 @@
 
 $(document).ready(
   function(){
-    bib_id = getBibId();
-    api_url = availabilityService + bib_id + "/?callback=?";
+    var bib_id = getBibId();
+    var api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
     if (limit == "false") {
       api_url = api_url + "&limit=false"
     }
-    $.getJSON( api_url, addAvailability );
+    $.getJSON(api_url, addAvailability);
   }
 );
 
@@ -53,6 +53,7 @@ function addAvailability(availabilityResponse) {
   var title = getTitle();
   var bib = getBibId();
   var format = getFormat();
+  var callnumber = null;
   //check for request button
   addRequestButton(availabilityResponse)
   //do realtime holdings
@@ -60,6 +61,14 @@ function addAvailability(availabilityResponse) {
   context['book_title'] = title;
   if (hasItems(availabilityResponse)) {
     _.each(context['items'], function(item) {
+
+      if ((callnumber == null) && (item.callnumber != null)) {
+        // For now, pick the first call number only.
+        // This might be OK long term since very likely
+        // they will all have the same class/subclass.
+        callnumber = item.callnumber;
+      }
+
       // add title to map link.
       item['map'] = item['map'] + '&title=' + title;
 
@@ -93,6 +102,43 @@ function addAvailability(availabilityResponse) {
   //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append(html);
+
+  if (location.search.indexOf("nearby") > -1) {
+    if (callnumber != null) {
+      findNearbyItems(callnumber);
+    }
+  }
+}
+
+function findNearbyItems(callnumber) {
+  $.ajax({
+      type: "GET",
+      url: "/catalog.json?per_page=100&browse_shelve_for=" + callnumber,
+      success: function(data) {
+        var the_div = $("#nearby_div");
+        $(the_div).removeClass("hidden");
+        $(the_div).append("<p>(items near call number " + callnumber + ")</p>");
+        $.each(data.response.docs, function(i, bib){
+          var i, callnumbers, callnumber_count;
+          if (bib) {
+            link = '<a href="/catalog/' + bib.id + '?nearby">' + bib.title_display + '</a>';
+            author = bib.author_display ? (" by " + bib.author_display) : "";
+            callnumbers = "";
+            if(bib.callnumber_t) {
+              callnumbers = " (";
+              callnumber_count = bib.callnumber_t.length;
+              for(i=0; i < callnumber_count; i++) {
+                callnumbers += bib.callnumber_t[i];
+                callnumbers += (i < (callnumber_count-1)) ? ", " : "";
+              }
+              callnumbers += ")";
+            }
+            html = "<p>" + link + author + callnumbers + "</p>";
+            $(the_div).append(html);
+          };
+        });
+      }
+  });
 }
 
 function requestLink() {
