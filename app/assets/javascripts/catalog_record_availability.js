@@ -112,7 +112,7 @@ function addAvailability(availabilityResponse) {
 
 function browseShelveUri(callnumber) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
-  return josiahRootUrl + "catalog.json?per_page=100&browse_shelve_for=" + callnumber;
+  return josiahRootUrl + "api/items/nearby?per_page=100&callnumber=" + callnumber;
 }
 
 function findNearbyItems(callnumber) {
@@ -123,7 +123,7 @@ function findNearbyItems(callnumber) {
         var the_div = $("#nearby_div");
         $(the_div).removeClass("hidden");
         $(the_div).append("<p>(items near call number " + callnumber + ")</p>");
-        $.each(data.response.docs, function(i, bib){
+        $.each(data, function(i, bib){
           var i, callnumbers, callnumber_count;
           if (bib) {
             link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title_display + '</a>';

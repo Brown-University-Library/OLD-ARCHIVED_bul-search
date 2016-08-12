@@ -22,4 +22,7 @@ BulSearch::Application.routes.draw do
   post 'availability/fake/' => 'availability#fake_many'
   get 'availability/forward/:id' => 'availability#forward_one'
   post 'availability/forward/' => 'availability#forward_many'
+
+  get 'api/items/by_location' => 'api#items_by_location'
+  get 'api/items/nearby' => 'api#items_nearby'
 end

@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
-  # Adds a few additional behaviors into the application controller 
+  # Adds a few additional behaviors into the application controller
    include Blacklight::Controller
-  # Please be sure to impelement current_user and user_session. Blacklight depends on 
-  # these methods in order to perform user specific actions. 
+  # Please be sure to impelement current_user and user_session. Blacklight depends on
+  # these methods in order to perform user specific actions.
 
   layout 'blacklight'
 
@@ -17,5 +17,14 @@ class ApplicationController < ActionController::Base
     else
       catalog_index_url *args
     end
+  end
+
+  def int_param(symbol, default, max = nil)
+    value = params[symbol]
+    return default if value == nil
+    if max != nil
+      return [value.to_i, max].min
+    end
+    value.to_i
   end
 end
