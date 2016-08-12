@@ -110,10 +110,15 @@ function addAvailability(availabilityResponse) {
   }
 }
 
+function browseShelveUri(callnumber) {
+  // josiahRootUrl is defined in shared/_header_navbar.html.erb
+  return josiahRootUrl + "catalog.json?per_page=100&browse_shelve_for=" + callnumber;
+}
+
 function findNearbyItems(callnumber) {
   $.ajax({
       type: "GET",
-      url: "/catalog.json?per_page=100&browse_shelve_for=" + callnumber,
+      url: browseShelveUri(callnumber),
       success: function(data) {
         var the_div = $("#nearby_div");
         $(the_div).removeClass("hidden");
@@ -121,7 +126,7 @@ function findNearbyItems(callnumber) {
         $.each(data.response.docs, function(i, bib){
           var i, callnumbers, callnumber_count;
           if (bib) {
-            link = '<a href="/catalog/' + bib.id + '?nearby">' + bib.title_display + '</a>';
+            link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title_display + '</a>';
             author = bib.author_display ? (" by " + bib.author_display) : "";
             callnumbers = "";
             if(bib.callnumber_t) {
