@@ -34,8 +34,8 @@ class ApiController < ApplicationController
     end
     shelve = Shelve.new(blacklight_config)
     callnumber = UserInput::Cleaner.clean(callnumber)
-    response = shelve.nearby_items(callnumber, page, per_page)
-    render :json => response.documents
+    documents = shelve.nearby_items(callnumber)
+    render :json => documents
   end
 
   private

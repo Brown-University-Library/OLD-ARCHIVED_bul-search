@@ -126,19 +126,23 @@ function findNearbyItems(callnumber) {
         $.each(data, function(i, bib){
           var i, callnumbers, callnumber_count;
           if (bib) {
-            link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title_display + '</a>';
-            author = bib.author_display ? (" by " + bib.author_display) : "";
+            link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title + '</a>';
+            author = bib.author ? (" by " + bib.author) : "";
             callnumbers = "";
-            if(bib.callnumber_t) {
+            if(bib.callnumbers) {
               callnumbers = " (";
-              callnumber_count = bib.callnumber_t.length;
+              callnumber_count = bib.callnumbers.length;
               for(i=0; i < callnumber_count; i++) {
-                callnumbers += bib.callnumber_t[i];
+                callnumbers += bib.callnumbers[i];
                 callnumbers += (i < (callnumber_count-1)) ? ", " : "";
               }
               callnumbers += ")";
             }
-            html = "<p>" + link + author + callnumbers + "</p>";
+            if (bib.highlight) {
+              html = "<p><b>" + link + author + callnumbers + "</b></p>";
+            } else {
+              html = "<p>" + link + author + callnumbers + "</p>";
+            }
             $(the_div).append(html);
           };
         });
