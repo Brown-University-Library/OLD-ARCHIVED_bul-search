@@ -1,5 +1,9 @@
 class LocClassRange
 
+  def initialize
+    @ranges = hard_coded_ranges()
+  end
+
   def find_ranges(code)
     ranges.select {|r| code >= r[:begin] && code <= r[:end] }
   end

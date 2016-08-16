@@ -105,25 +105,29 @@ function addAvailability(availabilityResponse) {
 
   if (location.search.indexOf("nearby") > -1) {
     if (callnumber != null) {
-      findNearbyItems(callnumber);
+      findNearbyItems(callnumber, bib);
     }
   }
 }
 
-function browseShelveUri(callnumber) {
+function browseShelveUri(callnumber, id) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
-  return josiahRootUrl + "api/items/nearby?per_page=100&callnumber=" + callnumber;
+  return josiahRootUrl + "api/items/nearby?id=" + id + "&callnumber=" + callnumber;
 }
 
-function findNearbyItems(callnumber) {
+function findNearbyItems(callnumber, id) {
   $.ajax({
       type: "GET",
-      url: browseShelveUri(callnumber),
+      url: browseShelveUri(callnumber, id),
       success: function(data) {
         var the_div = $("#nearby_div");
         $(the_div).removeClass("hidden");
         $(the_div).append("<p>(items near call number " + callnumber + ")</p>");
-        $.each(data, function(i, bib){
+        $(the_div).append("<p>subclass: " + data.lc_subclass + "</p>");
+        $(the_div).append("<p>previous: " + data.prev_subclass + "</p>");
+        $(the_div).append("<p>next: " + data.next_subclass + "</p>");
+
+        $.each(data.documents, function(i, bib){
           var i, callnumbers, callnumber_count;
           if (bib) {
             link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title + '</a>';

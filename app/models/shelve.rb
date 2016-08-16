@@ -2,11 +2,13 @@ class ShelveSearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   attr_reader :blacklight_config
 
-  def initialize(blacklight_config, search_token, page, per_page)
+  def initialize(blacklight_config, begin_range, end_range)
     @blacklight_config = blacklight_config
-    @search_token = search_token
-    @page = page
-    @per_page = per_page
+    @begin_range = begin_range
+    @end_range = end_range
+    # TODO: this is pretty dangerous, we are fetching 10K items !!!
+    @page = 1
+    @per_page = 10000
     processor_chain = [:search_by_callnumber]
     scope = nil
     super(processor_chain, scope)
@@ -14,7 +16,7 @@ class ShelveSearchBuilder < Blacklight::SearchBuilder
 
   def search_by_callnumber(solr_parameters)
     solr_parameters[:fq] ||= []
-    solr_parameters[:fq] << "callnumber_t:#{@search_token}*"
+    solr_parameters[:fq] << "callnumber_t:[#{@begin_range} TO #{@end_range}]"
     solr_parameters[:fl] ||= []
     solr_parameters[:fl] << "id"
     solr_parameters[:fl] << "callnumber_t"
@@ -48,19 +50,21 @@ end
 
 
 class Shelve
+  attr_reader :target_subclass
+  attr_reader :prev_subclass_begin, :prev_subclass_end
+  attr_reader :next_subclass_begin, :next_subclass_end
+
   def initialize(blacklight_config)
     @blacklight_config = blacklight_config
   end
 
-  def nearby_items(callnumber)
+  def nearby_items(callnumber, id)
     lc_subclass = Callnumber.new(callnumber).lc_subclass
-    puts "==> Fetching this class #{lc_subclass}"
-    items_in_subclass = nearby_by_subclass(lc_subclass)
-    puts "    #{items_in_subclass.count} items found"
+    @target_subclass = lc_subclass
+    items_in_subclass = nearby_by_subclass(lc_subclass, lc_subclass)
     before_items = []
     after_items = []
-
-    index = index_for_callnumber(items_in_subclass, callnumber)
+    index = index_for_id(items_in_subclass, id)
     if index == -1
       # TODO: not sure what to do here.
       # Are there too many items for this lc_subclass that
@@ -99,24 +103,17 @@ class Shelve
     items << items_in_subclass[index]
     after_items.each { |item| items << item }
 
-    items.each do |item|
-      if item.callnumbers.include?(callnumber)
-        item.highlight = true
-      end
-    end
+    items.each { |item| item.highlight = true if item.id == id }
     items
   end
 
   private
 
-    def nearby_by_subclass(lc_subclass)
-      page = 1
-      # TODO: this is pretty dangerous, we are fetching 10K items !!!
-      per_page = 10000
-      builder = ShelveSearchBuilder.new(@blacklight_config, lc_subclass, page, per_page)
+    def nearby_by_subclass(begin_subclass, end_subclass)
+      builder = ShelveSearchBuilder.new(@blacklight_config, begin_subclass, end_subclass)
       repository = Blacklight::SolrRepository.new(@blacklight_config)
       response = repository.search(builder)
-      docs = filter_by_subclass(lc_subclass, response.documents)
+      docs = filter_by_subclass(begin_subclass, end_subclass, response.documents)
       items = to_shelve_items(docs)
       sort_items(items)
     end
@@ -131,12 +128,13 @@ class Shelve
     # those documents where their call number subclass matches the one
     # that we want. We should be able to get rid of this code once we
     # update the way we index our call numbers in Solr.
-    def filter_by_subclass(lc_subclass, documents)
+    def filter_by_subclass(begin_subclass, end_subclass, documents)
       valid_docs = []
       documents.each do |doc|
         valid = false
         doc["callnumber_t"].each do |callnumber|
-          if Callnumber.new(callnumber).lc_subclass == lc_subclass
+          lc_subclass = Callnumber.new(callnumber).lc_subclass
+          if lc_subclass >= begin_subclass && lc_subclass <= end_subclass
             valid = true
           end
         end
@@ -169,32 +167,36 @@ class Shelve
       sorted
     end
 
-    def index_for_callnumber(items, callnumber)
+    def index_for_id(items, id)
       items.each_with_index do |item, index|
-        item.callnumbers.each do |number|
-          return index if number == callnumber
-        end
+        return index if item.id == id
       end
       -1
     end
 
     def fetch_prev_subclass(lc_subclass)
+      # TODO: recurse call if no documents fetch
       loc_range = LocClassRange.new
       range = loc_range.find_next(lc_subclass)
-      prev_subclass = range[:begin]
-      puts "==> Fetching previous class #{prev_subclass}"
-      documents = nearby_by_subclass(prev_subclass)
-      puts "    #{documents.count} items found"
+      return [] if range == nil
+      subclass_begin = range[:begin]
+      subclass_end = range[:end]
+      @prev_subclass_begin = subclass_begin
+      @prev_subclass_end = subclass_end
+      documents = nearby_by_subclass(subclass_begin, subclass_end)
       documents
     end
 
     def fetch_next_subclass(lc_subclass)
+      # TODO: recurse call if no documents fetch
       loc_range = LocClassRange.new
       range = loc_range.find_next(lc_subclass)
-      next_subclass = range[:end]
-      puts "==> Fetching next class #{next_subclass}"
-      documents = nearby_by_subclass(next_subclass)
-      puts "    #{documents.count} items found"
+      return [] if range == nil
+      subclass_begin = range[:begin]
+      subclass_end = range[:end]
+      @next_subclass_begin = subclass_begin
+      @next_subclass_end = subclass_end
+      documents = nearby_by_subclass(subclass_begin, subclass_end)
       documents
     end
 end
