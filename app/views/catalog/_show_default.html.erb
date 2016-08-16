@@ -30,7 +30,7 @@
 
 <% if @document.online_availability.count > 0 %>
   <hr/>
-  <h4>Availability</h4>
+  <h4>Online Resources</h4>
   <ul>
   <% @document.online_availability.each do |online| -%>
       <li><a href="<%= online.url %>"><%= online.label %></a></li>
