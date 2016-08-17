@@ -40,9 +40,7 @@ class ShelveItemData
     @title = title
     if callnumbers.count > 0
       # Pick the class/subclass from the first call number
-      cn = Callnumber.new(callnumbers[0])
-      @lc_class = cn.lc_class
-      @lc_subclass = cn.lc_subclass
+      @lc_class, @lc_subclass = Callnumber.loc_class(callnumbers[0])
     end
     @highlight = false
   end
@@ -59,7 +57,8 @@ class Shelve
   end
 
   def nearby_items(callnumber, id)
-    lc_subclass = Callnumber.new(callnumber).lc_subclass
+    Callnumber.
+    _, lc_subclass = Callnumber.loc_class(callnumber)
     @target_subclass = lc_subclass
     items_in_subclass = nearby_by_subclass(lc_subclass, lc_subclass)
     before_items = []
@@ -133,7 +132,7 @@ class Shelve
       documents.each do |doc|
         valid = false
         doc["callnumber_t"].each do |callnumber|
-          lc_subclass = Callnumber.new(callnumber).lc_subclass
+          _, lc_subclass = Callnumber.loc_class(callnumber)
           if lc_subclass >= begin_subclass && lc_subclass <= end_subclass
             valid = true
           end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160720182528) do
+ActiveRecord::Schema.define(version: 20160817123430) do
 
   create_table "bookmarks", force: true do |t|
     t.integer  "user_id",       null: false
@@ -23,7 +23,19 @@ ActiveRecord::Schema.define(version: 20160720182528) do
     t.string   "document_type"
   end
 
-  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id", using: :btree
+  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id"
+
+  create_table "callnumbers", force: true do |t|
+    t.string   "original",   limit: 30
+    t.string   "normalized", limit: 50
+    t.string   "bib",        limit: 10
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "callnumbers", ["bib"], name: "index_callnumbers_on_bib"
+  add_index "callnumbers", ["normalized"], name: "index_callnumbers_on_normalized"
+  add_index "callnumbers", ["original"], name: "index_callnumbers_on_original"
 
   create_table "locations", force: true do |t|
     t.string   "code"
@@ -40,7 +52,7 @@ ActiveRecord::Schema.define(version: 20160720182528) do
     t.datetime "updated_at"
   end
 
-  add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
+  add_index "searches", ["user_id"], name: "index_searches_on_user_id"
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "",    null: false
@@ -60,7 +72,7 @@ ActiveRecord::Schema.define(version: 20160720182528) do
     t.string   "uid"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
 end
