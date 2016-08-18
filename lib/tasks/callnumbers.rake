@@ -27,7 +27,7 @@ namespace :josiah do
       end
       bib = tokens[3]
       insert_sql = <<-END_SQL.gsub(/\n/, '')
-        INSERT INTO callnumbers2(id, original, normalized, bib, created_at, updated_at)
+        INSERT INTO callnumbers(id, original, normalized, bib, created_at, updated_at)
         VALUES (#{id}, "#{original}", #{normalized}, "#{bib}", "#{created_at}", "#{created_at}");
       END_SQL
       puts insert_sql
