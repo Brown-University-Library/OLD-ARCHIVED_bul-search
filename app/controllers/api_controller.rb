@@ -28,23 +28,13 @@ class ApiController < ApplicationController
   end
 
   def items_nearby
-    callnumber = params[:callnumber] || ""
-    id = params[:id] || ""
-    if callnumber.empty? || id.empty?
-      return render_error("No call number (callnumber) or id provided.")
+    id = UserInput::Cleaner.clean_id(params[:id])
+    if id.empty?
+      return render_error("No id provided.")
     end
     shelve = Shelve.new(blacklight_config)
-    callnumber = UserInput::Cleaner.clean(callnumber)
-    documents = shelve.nearby_items(callnumber, id)
-
-    nearby_response = {
-      id: id,
-      callnumber: callnumber,
-      lc_subclass: shelve.target_subclass,
-      prev_subclass: "#{shelve.prev_subclass_begin} - #{shelve.prev_subclass_end}",
-      next_subclass: "#{shelve.next_subclass_begin} - #{shelve.next_subclass_end}",
-      documents: documents
-    }
+    documents = shelve.nearby_items(id)
+    nearby_response = { id: id, documents: documents }
     render :json => nearby_response
   end
 

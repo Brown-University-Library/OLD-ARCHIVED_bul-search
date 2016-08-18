@@ -53,7 +53,6 @@ function addAvailability(availabilityResponse) {
   var title = getTitle();
   var bib = getBibId();
   var format = getFormat();
-  var callnumber = null;
   //check for request button
   addRequestButton(availabilityResponse)
   //do realtime holdings
@@ -61,13 +60,6 @@ function addAvailability(availabilityResponse) {
   context['book_title'] = title;
   if (hasItems(availabilityResponse)) {
     _.each(context['items'], function(item) {
-
-      if ((callnumber == null) && (item.callnumber != null)) {
-        // For now, pick the first call number only.
-        // This might be OK long term since very likely
-        // they will all have the same class/subclass.
-        callnumber = item.callnumber;
-      }
 
       // add title to map link.
       item['map'] = item['map'] + '&title=' + title;
@@ -104,44 +96,44 @@ function addAvailability(availabilityResponse) {
   $("#availability").append(html);
 
   if (location.search.indexOf("nearby") > -1) {
-    if (callnumber != null) {
-      findNearbyItems(callnumber, bib);
-    }
+    findNearbyItems(bib);
   }
 }
 
-function browseShelveUri(callnumber, id) {
+function browseShelveUri(id) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
-  return josiahRootUrl + "api/items/nearby?id=" + id + "&callnumber=" + callnumber;
+  return josiahRootUrl + "api/items/nearby?id=" + id;
 }
 
-function findNearbyItems(callnumber, id) {
+function callnumbers_text(callnumbers) {
+  if (!callnumbers) {
+    return "";
+  }
+  var text = " (";
+  var count = count = callnumbers.length;
+  var i;
+  for(i=0; i < count; i++) {
+    text += callnumbers[i];
+    text += (i < (count-1)) ? ", " : "";
+  }
+  text += ")";
+  return text;
+}
+
+function findNearbyItems(id) {
   $.ajax({
       type: "GET",
-      url: browseShelveUri(callnumber, id),
+      url: browseShelveUri(id),
       success: function(data) {
         var the_div = $("#nearby_div");
         $(the_div).removeClass("hidden");
-        $(the_div).append("<p>(items near call number " + callnumber + ")</p>");
-        $(the_div).append("<p>subclass: " + data.lc_subclass + "</p>");
-        $(the_div).append("<p>previous: " + data.prev_subclass + "</p>");
-        $(the_div).append("<p>next: " + data.next_subclass + "</p>");
 
         $.each(data.documents, function(i, bib){
-          var i, callnumbers, callnumber_count;
+          var link, author, callnumbers, html;
           if (bib) {
             link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title + '</a>';
             author = bib.author ? (" by " + bib.author) : "";
-            callnumbers = "";
-            if(bib.callnumbers) {
-              callnumbers = " (";
-              callnumber_count = bib.callnumbers.length;
-              for(i=0; i < callnumber_count; i++) {
-                callnumbers += bib.callnumbers[i];
-                callnumbers += (i < (callnumber_count-1)) ? ", " : "";
-              }
-              callnumbers += ")";
-            }
+            callnumbers = callnumbers_text(bib.callnumbers);
             if (bib.highlight) {
               html = "<p><b>" + link + author + callnumbers + "</b></p>";
             } else {

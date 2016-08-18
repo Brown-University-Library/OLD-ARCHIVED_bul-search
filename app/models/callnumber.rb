@@ -1,117 +1,124 @@
 class Callnumber < ActiveRecord::Base
 
+  NEARBY_BATCH_SIZE = 10            # num. records before/after to fetch
+  NORMALIZE_API_THROTTLE = 0.20     # seconds
+  NORMALIZE_API_BATCH_SIZE = 100    # max number of callnumbers to pass at once
+  SOLR_BATCH_SIZE = 100             # max number of record to fetch at once
+
+  # Saves to the callnumber table all the BIB id
+  # and original call numbers found in Solr.
+  # Notice that we don't normalize the call numbers
+  # here, see normalize_all_pending for that.
+  def self.cache_all_bib_ids(blacklight_config)
+    page = 1
+    page_size = SOLR_BATCH_SIZE
+    while true
+      solr_docs = self.fetch_solr_ids(blacklight_config, page, page_size)
+      solr_docs.each do |solr_doc|
+        Callnumber.transaction do
+          callnumbers = solr_doc["callnumber_t"] || []
+          callnumbers.each do |callnumber|
+            record = Callnumber.find_by_original(callnumber)
+            if record == nil
+              record = Callnumber.new
+              record.original = callnumber
+              record.bib = solr_doc["id"]
+              record.save!
+            end
+          end
+        end
+      end
+      last_page = solr_docs.count < page_size
+      break if last_page
+      page += 1
+    end
+  end
+
+  # Calculates the normalized call number for all
+  # records that don't have one.
+  def self.normalize_all_pending
+    next_id = 0
+    while true
+      puts "Processing after ID #{next_id}"
+      sql = <<-END_SQL.gsub(/\n/, '')
+        select id, original
+        from callnumbers
+        where normalized is null and id is not null and id > #{next_id}
+        limit #{NORMALIZE_API_BATCH_SIZE};
+      END_SQL
+      pending_rows = ActiveRecord::Base.connection.execute(sql)
+      break if pending_rows.count == 0
+      callnumbers = pending_rows.map { |row| row["original"] }
+      self.normalize_many(callnumbers)
+      next_id = pending_rows.last["id"]
+    end
+  end
+
+  # Returns an array with items with call numbers that
+  # are near to the bib_id provided.
   def self.nearby_ids(bib_id)
     callnumber = Callnumber.find_by_bib(bib_id)
     return [] if callnumber == nil
 
-    # items on the shelf _before_ this bib_id
-    sql = <<-END_SQL
+    # Items with call numbers _before_ this bib_id.
+    sql = <<-END_SQL.gsub(/\n/, '')
       select bib
       from callnumbers
       where normalized < "#{callnumber.normalized}"
       order by normalized desc
-      limit 10;
+      limit #{NEARBY_BATCH_SIZE};
     END_SQL
     before_rows = ActiveRecord::Base.connection.execute(sql)
-    before_ids = []
-    before_rows.each do |r|
-      before_ids << r["bib"]
-    end
 
-    # items on the shelf _after_ this bib_id
+    # Items with call numbers _after_ this bib_id.
     sql = <<-END_SQL.gsub(/\n/, '')
       select bib
       from callnumbers
       where normalized > "#{callnumber.normalized}"
-      order by normalized limit 10;
+      order by normalized
+      limit #{NEARBY_BATCH_SIZE};
     END_SQL
     after_rows = ActiveRecord::Base.connection.execute(sql)
 
-    byebug
-    ids = before_ids.reverse()
+    # Join before and after rows.
+    #
+    # Notice that we revert the _before items_ first
+    # so they show correctly (lower on top).
+    ids = []
+    before_rows.reverse.each { |r| ids << r["bib"] }
     ids << bib_id
-    after_rows.each do |r|
-      ids << r["bib"]
-    end
+    after_rows.each { |r| ids << r["bib"] }
     ids
   end
 
-  def self.find_bib_id(callnumber)
-    record = Callnumber.find_by_original(callnumber)
-    record == nil ? nil : record.bib
-  end
+  def self.normalize_many(callnumbers)
+    normalized = CallnumberNormalizer.normalize_many(callnumbers)
+    sleep(NORMALIZE_API_THROTTLE) if NORMALIZE_API_THROTTLE > 0
 
-  # Calculates the normalized call number for a given call number.
-  #
-  # Notice that we store the normalized version along with the
-  # BIB record id so that we can fetch the individual BIB record
-  # from Solr regardless of the call number. This is needed because
-  # call numbers are stored in more than one format (e.g. the
-  # availability service includes the 1-SIZE token but we don't
-  # store them like that in Millennium or in Solr). Having the BIB
-  # record ID allows us to find the correct BIB record in Solr
-  # without any extra guessing.
-  def self.normalize_one(bib_id, callnumber)
-    record = Callnumber.find_by_original(callnumber)
-    if record == nil || record.normalized == nil
-      record = Callnumber.new
-      record.original = callnumber
-      record.bib = bib_id
-      record.normalized = CallnumberNormalizer.normalize_one(callnumber)
-      record.save!
-    else
-      # already normalized
+    callnumbers.each do |callnumber|
+      record = Callnumber.find_by_original(callnumber)
+      if record == nil
+        # This shouldn't happen given that the callnumbers
+        # should have been picked up from the database.
+        raise "Normalized callnumber #{callnumber} not in database"
+      end
+      result = normalized.find {|n| n.callnumber == callnumber }
+      if result
+        if result.normalized != nil
+          record.normalized = result.normalized
+          record.save!
+        else
+          puts "\tcallnumber #{callnumber} was not normalized"
+        end
+      end
     end
   end
 
-  # Returns the Library of Congress Class and Subclass
-  # for a given callnumber. For example:
-  #
-  # a, b = loc_class("AB133 .M56 2016")
-  # => ["AB", "AB133"]
-  def self.loc_class(callnumber)
-    matches = /(\d\d\d\d\s*)*(\d\-SIZE\s*)*([A-Z]*)([\d]*)/.match(callnumber)
-    year = matches[1] # ignore
-    size = matches[2] # ignore
-    lc_class = matches[3]
-    lc_subclass = matches[3] + matches[4]
-    [lc_class, lc_subclass]
-  end
+  private
+    def self.fetch_solr_ids(blacklight_config, page, page_size)
+      builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
+      repository = Blacklight::SolrRepository.new(blacklight_config)
+      response = repository.search(builder)
+      response.documents
+    end
 end
-
-# General notes on call numbers:
-#
-# 050 is LOC call number
-# 090 is our LOC call number
-#
-# Other schemes are in other fields,
-# for example, we use 091 for non-LOC
-# call numbers.
-#
-# For the browse feature we should prefer
-# 050 over 091.
-#
-#
-# Sometimes we have a call number in field 945a
-# (when we have call number in the item record)
-#
-#
-#
-#
-# Beyond words by McFerrin, Bobby (M1366.M238 B49x 2002)
-# M1366.M238    -> M1366.M0238
-# M1366.M24     -> M1366.M024
-#
-# These two are the same
-# M1366 .A398x 2000z
-# M1366.A398x 2000z
-#   Cutter number: .A398x
-#
-#
-# M1366 .398x 2000z
-# M1366.398x 2000z
-#
-# Ordering
-# M1366.M238 B49x 2002
-# M1366.N123 B49x 2002
-# M1366 .Z398x 2000z
