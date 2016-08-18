@@ -44,6 +44,7 @@ class Callnumber < ActiveRecord::Base
         select id, original
         from callnumbers
         where normalized is null and id is not null and id > #{next_id}
+        order by id
         limit #{NORMALIZE_API_BATCH_SIZE};
       END_SQL
       pending_rows = ActiveRecord::Base.connection.execute(sql)
@@ -54,7 +55,7 @@ class Callnumber < ActiveRecord::Base
     end
   end
 
-  # Returns an array with items with call numbers that
+  # Returns an array of items with call numbers that
   # are near to the bib_id provided.
   def self.nearby_ids(bib_id)
     callnumber = Callnumber.find_by_bib(bib_id)
@@ -99,8 +100,9 @@ class Callnumber < ActiveRecord::Base
       record = Callnumber.find_by_original(callnumber)
       if record == nil
         # This shouldn't happen given that the callnumbers
-        # should have been picked up from the database.
-        raise "Normalized callnumber #{callnumber} not in database"
+        # that we are trying to normalize should have been
+        # picked up from the database (see normalize_all_pending).
+        raise "Call number to normalize (#{callnumber}) not in the database."
       end
       result = normalized.find {|n| n.callnumber == callnumber }
       if result
