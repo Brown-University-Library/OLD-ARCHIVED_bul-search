@@ -69,7 +69,7 @@ class Callnumber < ActiveRecord::Base
       order by normalized desc
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
-    before_rows = ActiveRecord::Base.connection.execute(sql)
+    before_rows = ActiveRecord::Base.connection.exec_query(sql).rows
 
     # Items with call numbers _after_ this bib_id.
     sql = <<-END_SQL.gsub(/\n/, '')
@@ -79,16 +79,16 @@ class Callnumber < ActiveRecord::Base
       order by normalized
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
-    after_rows = ActiveRecord::Base.connection.execute(sql)
+    after_rows = ActiveRecord::Base.connection.exec_query(sql).rows
 
     # Join before and after rows.
     #
     # Notice that we revert the _before items_ first
     # so they show correctly (lower on top).
     ids = []
-    before_rows.reverse.each { |r| ids << r["bib"] }
+    before_rows.reverse.each { |r| ids << r[0] }
     ids << bib_id
-    after_rows.each { |r| ids << r["bib"] }
+    after_rows.each { |r| ids << r[0] }
     ids
   end
 
