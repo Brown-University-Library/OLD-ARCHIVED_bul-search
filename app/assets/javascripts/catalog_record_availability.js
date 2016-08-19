@@ -15,6 +15,10 @@ $(document).ready(
       api_url = api_url + "&limit=false"
     }
     $.getJSON(api_url, addAvailability);
+
+    if (location.search.indexOf("nearby") > -1) {
+      findNearbyItems(bib_id);
+    }
   }
 );
 
@@ -94,10 +98,6 @@ function addAvailability(availabilityResponse) {
   //context['openurl'] = openurl
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append(html);
-
-  if (location.search.indexOf("nearby") > -1) {
-    findNearbyItems(bib);
-  }
 }
 
 function browseShelveUri(id) {
