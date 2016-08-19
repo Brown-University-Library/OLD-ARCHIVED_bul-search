@@ -58,7 +58,20 @@ class Callnumber < ActiveRecord::Base
   # Returns an array of items with call numbers that
   # are near to the bib_id provided.
   def self.nearby_ids(bib_id)
-    callnumber = Callnumber.find_by_bib(bib_id)
+    # find_by returns only one record
+    #   callnumber = Callnumber.find_by(bib: bib_id)
+    #   callnumber[0]
+    #   => #<CallNumber...>
+    #
+    # where() returns all records (as an ActiveRecord::Relation)
+    #   callnumber = Callnumber.where(bib: bib_id)
+    #   callnumber[0]
+    #   => #<CallNumber...>
+    #
+    # How should we handle if there are more than one
+    # call number and they have different LOC classifications?
+    # (see BIB b3093842)
+    callnumber = Callnumber.find_by(bib: bib_id)
     return [] if callnumber == nil
 
     # Items with call numbers _before_ this bib_id.
