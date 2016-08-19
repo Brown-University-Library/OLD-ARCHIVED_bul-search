@@ -100,7 +100,7 @@ function addAvailability(availabilityResponse) {
   $("#availability").append(html);
 }
 
-function browseShelveUri(id) {
+function browseShelfUri(id) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
   return josiahRootUrl + "api/items/nearby?id=" + id;
 }
@@ -123,7 +123,7 @@ function callnumbers_text(callnumbers) {
 function findNearbyItems(id) {
   $.ajax({
       type: "GET",
-      url: browseShelveUri(id),
+      url: browseShelfUri(id),
       success: function(data) {
         var the_div = $("#nearby_div");
         $(the_div).removeClass("hidden");

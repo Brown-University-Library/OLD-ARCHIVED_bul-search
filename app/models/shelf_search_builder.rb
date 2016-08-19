@@ -1,4 +1,4 @@
-class ShelveSearchBuilder < Blacklight::SearchBuilder
+class ShelfSearchBuilder < Blacklight::SearchBuilder
   include Blacklight::Solr::SearchBuilderBehavior
   attr_reader :blacklight_config
 

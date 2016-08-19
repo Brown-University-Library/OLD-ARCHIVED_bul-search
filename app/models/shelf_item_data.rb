@@ -1,4 +1,4 @@
-class ShelveItemData
+class ShelfItemData
   attr_reader :id, :callnumbers, :author, :title
   attr_accessor :highlight
 

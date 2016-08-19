@@ -32,8 +32,8 @@ class ApiController < ApplicationController
     if id.empty?
       return render_error("No id provided.")
     end
-    shelve = Shelve.new(blacklight_config)
-    documents = shelve.nearby_items(id)
+    shelf = Shelf.new(blacklight_config)
+    documents = shelf.nearby_items(id)
     nearby_response = { id: id, documents: documents }
     render :json => nearby_response
   end
