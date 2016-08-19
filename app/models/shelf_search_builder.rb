@@ -18,6 +18,8 @@ class ShelfSearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:fl] << "callnumber_t"
     solr_parameters[:fl] << "title_display"
     solr_parameters[:fl] << "author_display"
+    solr_parameters[:fl] << "pub_date"
+    solr_parameters[:fl] << "physical_display"
     solr_parameters[:start] = 0
     solr_parameters[:rows] = @ids.count
   end

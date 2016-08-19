@@ -29,6 +29,9 @@ class Shelf
       ShelfItemData.new(solr_doc["id"],
           solr_doc["callnumber_t"],
           solr_doc["author_display"],
-          solr_doc["title_display"])
+          solr_doc["title_display"],
+          solr_doc["pub_date"],
+          solr_doc["physical_display"],
+          )
     end
 end

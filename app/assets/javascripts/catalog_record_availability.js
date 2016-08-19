@@ -125,25 +125,37 @@ function findNearbyItems(id) {
       type: "GET",
       url: browseShelfUri(id),
       success: function(data) {
-        var the_div = $("#nearby_div");
-        $(the_div).removeClass("hidden");
-
-        $.each(data.documents, function(i, bib){
-          var link, author, callnumbers, html;
-          if (bib) {
-            link = '<a href="' + josiahRootUrl + 'catalog/' + bib.id + '?nearby">' + bib.title + '</a>';
-            author = bib.author ? (" by " + bib.author) : "";
-            callnumbers = callnumbers_text(bib.callnumbers);
-            if (bib.highlight) {
-              html = "<p><b>" + link + author + callnumbers + "</b></p>";
-            } else {
-              html = "<p>" + link + author + callnumbers + "</p>";
-            }
-            $(the_div).append(html);
-          };
-        });
+        renderNearbyItems(data.documents);
       }
   });
+}
+
+function renderNearbyItems(items) {
+  var i, doc, link;
+  var docs = [];
+  for(i = 0; i < items.length; i++) {
+    link = josiahRootUrl + "catalog/" + items[i].id + "?nearby";
+    doc = {
+      title: items[i].title,
+      creator: [items[i].author],
+      measurement_page_numeric: items[i].pages,
+      measurement_height_numeric: items[i].height,
+      shelfrank: 13,
+      pub_date: items[i].year,
+      link: link
+    };
+    docs.push(doc);
+  }
+
+  var data = {
+    "start": "-1",
+    "limit": "0",
+    "num_found": docs.length,
+    "docs":docs
+  };
+
+  $('#basic-stack').stackView({data: data});
+
 }
 
 function requestLink() {

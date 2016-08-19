@@ -42,6 +42,10 @@
 //= require 'blacklight_range_limit'
 
 
+// Shelf-Browse
+//= require 'jquery.stackview.min.js'
+
+
 // ------------------------------
 // Functions used to display the option to Scan an
 // item or request it.
