@@ -8,7 +8,7 @@ class ShelfItemData
   attr_reader :id, :callnumbers, :author, :title
   attr_accessor :highlight
 
-  def initialize(id, callnumbers, author, title, pub_date, physical_display)
+  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns)
     @id = id
     @callnumbers = callnumbers || []
     @author = author || ""
@@ -17,6 +17,7 @@ class ShelfItemData
     @pages = get_pages(physical_display)
     @height = get_height(physical_display)
     @year = get_year(pub_date)
+    @isbn = (isbns || []).first()
   end
 
   private

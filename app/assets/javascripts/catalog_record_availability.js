@@ -140,22 +140,51 @@ function renderNearbyItems(items) {
       creator: [items[i].author],
       measurement_page_numeric: items[i].pages,
       measurement_height_numeric: items[i].height,
-      shelfrank: 13,
+      shelfrank: items[i].highlight ? 50 : 15,
       pub_date: items[i].year,
-      link: link
+      link: link,
+      isbn: items[i].isbn
     };
     docs.push(doc);
   }
 
+  if (location.search.indexOf("nearbycovers") > -1) {
+    renderGalleryView(docs);
+  } else {
+    renderStackView(docs);
+  }
+}
+
+function renderGalleryView(docs) {
+  var i, isbn, doc, link, docDiv;
+  var rootEl = $("#documents");
+  var isbns = "";
+  for(i = 0; i < docs.length; i++) {
+    doc = docs[i];
+    isbn = "ISBN" + doc.isbn;
+    link = '<a href="' + doc.link + '">' + doc.title + '</a>';
+    isbns += isbn;
+    if (i < (docs.length-1)) {
+      isbns += ",";
+    }
+    docDiv = '<div class="document col-xs-6 col-md-3">';
+    docDiv += link
+    docDiv += '<img id="' + isbn + '" class="cover-image " src="/assets/sampleCover.png" height="189" width="128" src="" data-isbn="' + isbn + '">';
+    docDiv += '<span id="PLACEHOLDER_' + isbn + '"></span>';
+    docDiv += '</div>';
+    $(rootEl).append(docDiv)
+  }
+  requestBookcovers(isbns);
+}
+
+function renderStackView(docs) {
   var data = {
     "start": "-1",
     "limit": "0",
     "num_found": docs.length,
     "docs":docs
   };
-
-  $('#basic-stack').stackView({data: data});
-
+  $('#basic-stack').stackView({data: data, ribbon: null});
 }
 
 function requestLink() {
@@ -186,4 +215,32 @@ function getUrlParameter(sParam)
             return sParameterName[1];
         }
     }
+}
+
+function requestBookcovers(isbns) {
+  var booksApiUrl = '//books.google.com/books?jscmd=viewapi&bibkeys=' + isbns;
+
+  $.ajax({
+    type: 'GET',
+    url: booksApiUrl,
+    async: false,
+    contentType: "application/json",
+    dataType: 'jsonp',
+
+    success: function(json) {
+      $.each(json, function(id, data) {
+        if (data.thumbnail_url != undefined) {
+          var thumbUrl = data.thumbnail_url;
+          thumbUrl = thumbUrl.replace(/zoom=5/, 'zoom=1');
+          thumbUrl = thumbUrl.replace(/&?edge=curl/, '');
+          var imgEl = $("#" + id);
+          imgEl.attr('src', thumbUrl);
+        }
+      });
+    },
+    error: function(e) {
+      console.log(e);
+    }
+  });
+
 }

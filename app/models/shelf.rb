@@ -32,6 +32,7 @@ class Shelf
           solr_doc["title_display"],
           solr_doc["pub_date"],
           solr_doc["physical_display"],
+          solr_doc["isbn_t"]
           )
     end
 end
