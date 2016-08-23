@@ -133,8 +133,10 @@ function findNearbyItems(id) {
 function renderNearbyItems(items) {
   var i, doc, link;
   var docs = [];
+  var useCovers = location.search.indexOf("nearbycovers") > -1;
   for(i = 0; i < items.length; i++) {
-    link = josiahRootUrl + "catalog/" + items[i].id + "?nearby";
+    link = josiahRootUrl + "catalog/" + items[i].id;
+    link += useCovers ? "?nearbycovers" : "?nearby";
     doc = {
       title: items[i].title,
       creator: [items[i].author],
@@ -148,7 +150,7 @@ function renderNearbyItems(items) {
     docs.push(doc);
   }
 
-  if (location.search.indexOf("nearbycovers") > -1) {
+  if (useCovers) {
     renderGalleryView(docs);
   } else {
     renderStackView(docs);
