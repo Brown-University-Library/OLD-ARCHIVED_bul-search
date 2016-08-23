@@ -1,10 +1,5 @@
-/*
-- Displays availability status of all items for given bib.
-  - Grabs bib_id from dom.
-  - Hits availability api.
-  - Builds html & inserts it into dom.
-- Loaded by `app/views/catalog/show.html.erb`.
-*/
+// JavaScript functions for individual catalog records.
+// Loaded by `app/views/catalog/show.html.erb`.
 
 $(document).ready(
   function(){
