@@ -145,7 +145,8 @@ function renderNearbyItems(items) {
       shelfrank: items[i].highlight ? 50 : 15,
       pub_date: items[i].year,
       link: link,
-      isbn: items[i].isbn
+      isbn: items[i].isbn,
+      highlight: items[i].highlight
     };
     docs.push(doc);
   }
@@ -164,15 +165,16 @@ function renderGalleryView(docs) {
   for(i = 0; i < docs.length; i++) {
     doc = docs[i];
     isbn = "ISBN" + doc.isbn;
-    link = '<a href="' + doc.link + '">' + doc.title + '</a>';
     isbns += isbn;
     if (i < (docs.length-1)) {
       isbns += ",";
     }
     docDiv = '<div class="document col-xs-6 col-md-3">';
-    docDiv += link
+    docDiv += doc.highlight ? "<b>" : "";
+    docDiv += '<a href="' + doc.link + '">' + doc.title;
     docDiv += '<img id="' + isbn + '" class="cover-image " src="/assets/sampleCover.png" height="189" width="128" src="" data-isbn="' + isbn + '">';
-    docDiv += '<span id="PLACEHOLDER_' + isbn + '"></span>';
+    docDiv += '</a>';
+    docDiv += doc.highlight ? "</b>" : "";
     docDiv += '</div>';
     $(rootEl).append(docDiv)
   }
