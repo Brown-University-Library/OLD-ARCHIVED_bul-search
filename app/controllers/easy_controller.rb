@@ -11,7 +11,7 @@ class EasyController < ApplicationController
       @query = ''
     else
       @has_query = true
-      @best_bet = get_best_bet(@query)
+      @best_bet = Easy.get_best_bet(@query)
     end
   end
 
@@ -22,7 +22,12 @@ class EasyController < ApplicationController
     add_to_search_history(s)
     #Set session variable with this query.
     set_last_easy_search(params[:q])
+    @search_result = empty_set() if @search_result == nil
     render json: @search_result.to_json
+  rescue StandardError => e
+    Rails.logger.error e.message
+    Rails.logger.error e.backtrace.join("\n")
+    render json: empty_set().to_json
   end
 
   def search_action_url
@@ -33,30 +38,7 @@ class EasyController < ApplicationController
     session[:last_easy_search] = query
   end
 
-  #
-  # Get a best bet for the given query.
-  # Return hash with keys expected by partial
-  #
-  def get_best_bet query
-    solr_url = ENV['BEST_BETS_SOLR_URL']
-    solr = RSolr.connect :url => solr_url
-
-    qp = {
-        :wt=>"json",
-        "q"=>"\"#{query}\"",
-        "qt" => 'search',
-    }
-
-    response = solr.get 'search', :params => qp
-    #Always take the first doc.
-    response[:response][:docs].each do |doc|
-      return {
-        :name => doc[:name_display],
-        :url => doc[:url_display][0],
-        :description => doc.fetch(:description_display, [nil])[0]
-      }
-    end
-    return nil
+  def empty_set
+    {docs: []}
   end
-
 end

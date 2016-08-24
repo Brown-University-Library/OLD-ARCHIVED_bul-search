@@ -9,17 +9,15 @@ class Easy
   include BlacklightHelper
 
   def initialize source, query
-      if source == 'summon'
-        summon_rsp = get_summon query
-        @results = summon_rsp['response']
-      elsif source == 'newspaper_articles'
-        summon_rsp = get_summon_newspaper query
-        @results = summon_rsp['response']
-      elsif source == 'bdr'
-        @results = get_bdr query
-      else
-        @results = get_catalog query
-      end
+    if source == 'summon'
+      @results = get_summon(query)
+    elsif source == 'newspaper_articles'
+      @results = get_summon_newspaper(query)
+    elsif source == 'bdr'
+      @results = get_bdr(query)
+    else
+      @results = get_catalog(query)
+    end
   end
 
   def to_json
@@ -38,6 +36,11 @@ class Easy
 
   def get_bdr query
     solr_url = ENV['BDR_SEARCH_API_URL']
+    if solr_url == nil
+      Rails.logger.warn "Skipped BRD search (no BRD Solr URL available)"
+      return nil
+    end
+
     solr = RSolr.connect :url => solr_url
 
     # Clean up query booleans if present
@@ -153,8 +156,8 @@ class Easy
   end
 
   def get_catalog query
-    solr_url = ENV['SOLR_URL']
-
+    # Should match solr.yml for development
+    solr_url = ENV['SOLR_URL'] || "http://127.0.0.1:8081/solr"
     solr = RSolr.connect :url => solr_url
 
     if query == '*'
@@ -233,6 +236,10 @@ class Easy
   def get_summon query
     aid = ENV['SUMMON_ID']
     akey = ENV['SUMMON_KEY']
+    if aid == nil || akey == nil
+      Rails.logger.warn "Skipped Summon search (no SUMMON_KEY available)"
+      return nil
+    end
 
     @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
     search = @service.search(
@@ -269,13 +276,17 @@ class Easy
     results['response']['all'] = summon_url(query, false)
     results['response']['docs'] = results_docs
     results['response']['numFound'] = search.record_count
-    return results
+    return results['response']
   end
 
 
   def get_summon_newspaper query
     aid = ENV['SUMMON_ID']
     akey = ENV['SUMMON_KEY']
+    if aid == nil || akey == nil
+      Rails.logger.warn "Skipped Newspaper search (no SUMMON_KEY available)"
+      return nil
+    end
 
     @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
     search = @service.search(
@@ -292,7 +303,41 @@ class Easy
     more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Newspaper%20Article,f&l=en&q=#{eq}"
     results['response']['more'] = more
     results['response']['numFound'] = search.record_count
-    return results
-end
+    return results['response']
+  end
 
+  #
+  # Get a best bet for the given query.
+  # Return hash with keys expected by partial
+  #
+  def self.get_best_bet query
+    solr_url = ENV['BEST_BETS_SOLR_URL']
+    if solr_url == nil
+      Rails.logger.warn "Skipped BestBet search (no BestBet Solr URL available)"
+      return nil
+    end
+
+    solr = RSolr.connect :url => solr_url
+
+    qp = {
+        :wt=>"json",
+        "q"=>"\"#{query}\"",
+        "qt" => 'search',
+    }
+
+    response = solr.get 'search', :params => qp
+    #Always take the first doc.
+    response[:response][:docs].each do |doc|
+      return {
+        :name => doc[:name_display],
+        :url => doc[:url_display][0],
+        :description => doc.fetch(:description_display, [nil])[0]
+      }
+    end
+    nil
+  rescue StandardError => e
+    Rails.logger.error e.message
+    Rails.logger.error e.backtrace.join("\n")
+    nil
+  end
 end
