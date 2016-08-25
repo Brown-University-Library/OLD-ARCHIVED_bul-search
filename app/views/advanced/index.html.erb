@@ -1,0 +1,52 @@
+<% # [BlacklightOverride] from Blacklight-advanced-search %>
+<% # To place Sort and Search at the top of the page %>
+<% @page_title = "More Search Options - #{application_name}" %>
+
+<div class="advanced-search-form col-sm-12">
+  <div>
+    <span style="font-size:36px;"> <!-- same as h1 -->
+      <%= t('blacklight_advanced_search.form.title') %>
+    </span>
+    <div class="submit-buttons pull-right">
+      <%= label_tag(:sort, t('blacklight_advanced_search.form.sort_label'), :class => "control-label") %>
+      <%= select_tag(:sort, options_for_select(sort_fields, h(params[:sort])), :class => "form-control sort-select", :id => "advanced-search-sort-top") %>
+      <%= link_to t('blacklight_advanced_search.form.start_over'), advanced_search_path, :class =>"btn btn-default advanced-search-start-over" %>
+      <%= link_to t('blacklight_advanced_search.form.search_btn'), advanced_search_path, :class =>"btn btn-danger advanced-search-submit", :id => "advanced-search-submit-top" %>
+    </div>
+  </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <%= render 'advanced_search_form' %>
+        </div>
+        <div class="col-md-4">
+            <%= render "advanced_search_help" %>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Wire the Search button at the top to push the one at the bottom.
+  $("#advanced-search-submit-top").on('click', function(event) {
+    event.preventDefault();
+    $("#advanced-search-submit").click();
+  });
+
+  // Wire the Sort dropdown list at the top to synch the one at the bottom.
+  $("#advanced-search-sort-top").on('change', function(event) {
+    var newValue = $(this).val();
+    if ($("#sort").val() != newValue) {
+      $("#sort").val(newValue);
+    }
+  });
+
+  // Wire the Sort dropdown list at the bottom to synch the one at the top.
+  $("#sort").on('change', function(event) {
+    var newValue = $(this).val();
+    if ($("#advanced-search-sort-top").val() != newValue) {
+      $("#advanced-search-sort-top").val(newValue);
+    }
+  });
+});
+</script>
