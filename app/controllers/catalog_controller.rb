@@ -206,11 +206,17 @@ class CatalogController < ApplicationController
       }
     }
     #Add pub date for advanced search only.
-    config.add_search_field("Publication date") do |field|
+    config.add_search_field("publication_date") do |field|
       field.include_in_simple_select = false
       field.solr_parameters = { :qf => "pub_date" }
     end
 
+    # Location code for custom searches
+    config.add_search_field("location_code") do |field|
+      field.include_in_simple_select = true
+      field.include_in_advanced_search = false
+      field.solr_parameters = { :qf => "location_code_t" }
+    end
   end  # end of `configure_blacklight do |config|`
 
   def ourl_service
