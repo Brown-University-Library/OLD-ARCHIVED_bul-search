@@ -8,7 +8,7 @@
     <div class="abstract">
       <%= document.full_abstract[0] %>
       <% if document.full_abstract.count > 1 %>
-        <a id="abstract_show_more" href="">...more</a>
+        <a id="abstract_show_more" href="" class="label label-info">more</a>
         <div id="abstract_more" class="hidden">
         <% document.full_abstract[1..-1].each do |abstract| %>
           <br/>
