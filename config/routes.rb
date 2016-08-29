@@ -9,6 +9,9 @@ BulSearch::Application.routes.draw do
   devise_for :users, :controllers => {omniauth_callbacks: 'omniauth_callbacks'},
       :skip => [:sessions]
 
+  # bookplate_list
+  get 'catalog/bookplate/:bookplate_code' => 'catalog#index'
+
   #easySearch
   get "easy/search"
   get 'easy/' => 'easy#home', as: :easyS
@@ -23,6 +26,7 @@ BulSearch::Application.routes.draw do
   get 'availability/forward/:id' => 'availability#forward_one'
   post 'availability/forward/' => 'availability#forward_many'
 
+  # API controller
   get 'api/items/by_location' => 'api#items_by_location'
   get 'api/items/nearby' => 'api#items_nearby'
 end

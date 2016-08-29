@@ -217,6 +217,13 @@ class CatalogController < ApplicationController
       field.include_in_advanced_search = false
       field.solr_parameters = { :qf => "location_code_t" }
     end
+
+    # Bookplate code for custom searches
+    config.add_search_field("bookplate_code") do |field|
+      field.include_in_simple_select = true
+      field.include_in_advanced_search = false
+      field.solr_parameters = { :qf => "bookplate_code_unstem_search" }
+    end
   end  # end of `configure_blacklight do |config|`
 
   def ourl_service
@@ -237,6 +244,11 @@ class CatalogController < ApplicationController
   end
 
   def index
+    if params[:bookplate_code] != nil
+      # emulate an advanced search by bookplate_code
+      params[:search_field] = "advanced"
+      params[:commit] = "Search"
+    end
     relax_max_per_page if api_call?
     ret_val = super
     restore_max_per_page if api_call?
