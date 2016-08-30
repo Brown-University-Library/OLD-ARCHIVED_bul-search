@@ -222,7 +222,7 @@ class CatalogController < ApplicationController
     config.add_search_field("bookplate_code") do |field|
       field.include_in_simple_select = true
       field.include_in_advanced_search = false
-      field.solr_parameters = { :qf => "bookplate_code_unstem_search" }
+      field.solr_parameters = { :qf => "bookplate_code_facet" }
     end
   end  # end of `configure_blacklight do |config|`
 
@@ -244,11 +244,6 @@ class CatalogController < ApplicationController
   end
 
   def index
-    if params[:bookplate_code] != nil
-      # emulate an advanced search by bookplate_code
-      params[:search_field] = "advanced"
-      params[:commit] = "Search"
-    end
     relax_max_per_page if api_call?
     ret_val = super
     restore_max_per_page if api_call?
@@ -266,5 +261,17 @@ class CatalogController < ApplicationController
 
   def restore_max_per_page
     blacklight_config.max_per_page = 100
+  end
+
+  def bookplate
+    per_page = int_param(:per_page, 10, 100)
+    page = int_param(:page, 1)
+    bookplate = Bookplate.new(blacklight_config)
+    @response, @document_list = bookplate.items_by_code(params[:bookplate_code], per_page, page)
+    # Prevent facets from showing up since we don't
+    # support faceting over the result from the bookplate
+    # code search.
+    @hide_facets = true
+    render
   end
 end

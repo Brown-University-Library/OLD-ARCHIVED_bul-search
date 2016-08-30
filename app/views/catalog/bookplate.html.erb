@@ -1,0 +1,12 @@
+<div id="sidebar" class="col-md-3 col-sm-4">
+  <%= render 'search_sidebar' %>
+</div>
+
+<div id="content" class="col-md-9 col-sm-8">
+  <p>Items purchased with <b>[book plate name goes here]</b></h1>
+  <%= render 'search_results' %>
+</div>
+
+<script>
+    var availabilityService = '<%= availability_service_url %>';
+</script>

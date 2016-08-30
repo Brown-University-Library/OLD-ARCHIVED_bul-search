@@ -10,7 +10,7 @@ BulSearch::Application.routes.draw do
       :skip => [:sessions]
 
   # bookplate_list
-  get 'catalog/bookplate/:bookplate_code' => 'catalog#index'
+  get 'catalog/bookplate/:bookplate_code' => 'catalog#bookplate'
 
   #easySearch
   get "easy/search"
