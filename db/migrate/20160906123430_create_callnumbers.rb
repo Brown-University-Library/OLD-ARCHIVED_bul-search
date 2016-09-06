@@ -1,8 +1,8 @@
 class CreateCallnumbers < ActiveRecord::Migration
   def change
     create_table :callnumbers do |t|
-      t.string :original, limit: 30
-      t.string :normalized, limit: 50
+      t.string :original, limit: 50
+      t.string :normalized, limit: 75
       t.string :bib, limit: 10
 
       t.timestamps
