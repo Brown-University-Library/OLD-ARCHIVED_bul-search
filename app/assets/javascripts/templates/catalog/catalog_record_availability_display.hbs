@@ -20,15 +20,19 @@
         {{#if request_link }}<a class="btn request-this-link" href="{{ request_link }}" target="_blank">Request this</a>{{/if}}
       </h4>
     {{else}}
-      <h4>
-        Availability
-      </h4>
-      <div>
-        We don't currently have availability information for this item.
-        <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
-          Contact the library staff<a/>
-        for assistance with this item.
-      </div>
+      {{#if online_resource}}
+        {{! nothing to render }}
+      {{ else }}
+        <h4>
+          Availability
+        </h4>
+        <div>
+          We don't currently have availability information for this item.
+          <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
+            Contact the library staff<a/>
+          for assistance with this item.
+        </div>
+      {{/if}}
     {{/if}}
   {{/unless}}
   {{#if items}}

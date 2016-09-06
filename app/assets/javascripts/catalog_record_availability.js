@@ -57,6 +57,7 @@ function addAvailability(availabilityResponse) {
   //do realtime holdings
   context = availabilityResponse;
   context['book_title'] = title;
+  context['online_resource'] = $("#online_resources").length == 1
   if (hasItems(availabilityResponse)) {
     _.each(context['items'], function(item) {
 

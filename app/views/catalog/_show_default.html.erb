@@ -29,13 +29,14 @@
 
 
 <% if @document.online_availability.count > 0 %>
-  <hr/>
-  <h4>Online Resources</h4>
-  <ul>
-  <% @document.online_availability.each do |online| -%>
-      <li><a href="<%= online.url %>"><%= online.label %></a></li>
-  <% end -%>
-  </ul>
+  <div id="online_resources">
+    <h4>Online Resources</h4>
+    <ul>
+    <% @document.online_availability.each do |online| -%>
+        <li><a href="<%= online.url %>"><%= online.label %></a></li>
+    <% end -%>
+    </ul>
+    </div>
 <% end %>
 
 <div id="availability">
