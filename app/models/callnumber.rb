@@ -69,11 +69,11 @@ class Callnumber < ActiveRecord::Base
         order by id
         limit #{NORMALIZE_API_BATCH_SIZE};
       END_SQL
-      pending_rows = ActiveRecord::Base.connection.execute(sql)
+      pending_rows = ActiveRecord::Base.connection.exec_query(sql).rows
       break if pending_rows.count == 0
-      callnumbers = pending_rows.map { |row| row["original"] }
+      callnumbers = pending_rows.map { |row| row[1] }
       self.normalize_many(callnumbers)
-      next_id = pending_rows.last["id"]
+      next_id = pending_rows.last[0]
     end
   end
 
