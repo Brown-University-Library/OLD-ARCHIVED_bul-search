@@ -5,6 +5,26 @@ class Callnumber < ActiveRecord::Base
   NORMALIZE_API_BATCH_SIZE = 100    # max number of callnumbers to pass at once
   SOLR_BATCH_SIZE = 100             # max number of record to fetch at once
 
+  def self.normalize_one(blacklight_config, id)
+    solr_docs = self.fetch_some_solr_ids(blacklight_config, [id])
+    solr_docs.each do |solr_doc|
+      callnumbers = solr_doc["callnumber_t"] || []
+      callnumbers.each do |callnumber|
+        # Make sure the call numbers exists in the DB...
+        record = Callnumber.find_by_original(callnumber)
+        if record == nil
+          record = Callnumber.new
+          record.original = callnumber
+          record.bib = solr_doc["id"]
+          record.save!
+        end
+      end
+      # ...and then normalize them
+      self.normalize_many(callnumbers)
+    end
+  end
+
+
   # Saves to the callnumber table all the BIB id
   # and original call numbers found in Solr.
   # Notice that we don't normalize the call numbers
@@ -13,7 +33,7 @@ class Callnumber < ActiveRecord::Base
     page = 1
     page_size = SOLR_BATCH_SIZE
     while true
-      solr_docs = self.fetch_solr_ids(blacklight_config, page, page_size)
+      solr_docs = self.fetch_all_solr_ids(blacklight_config, page, page_size)
       solr_docs.each do |solr_doc|
         Callnumber.transaction do
           callnumbers = solr_doc["callnumber_t"] || []
@@ -130,8 +150,15 @@ class Callnumber < ActiveRecord::Base
   end
 
   private
-    def self.fetch_solr_ids(blacklight_config, page, page_size)
+    def self.fetch_all_solr_ids(blacklight_config, page, page_size)
       builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
+      repository = Blacklight::SolrRepository.new(blacklight_config)
+      response = repository.search(builder)
+      response.documents
+    end
+
+    def self.fetch_some_solr_ids(blacklight_config, ids)
+      builder = SomeIdsSearchBuilder.new(blacklight_config, ids)
       repository = Blacklight::SolrRepository.new(blacklight_config)
       response = repository.search(builder)
       response.documents
