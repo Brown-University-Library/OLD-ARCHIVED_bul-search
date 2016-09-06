@@ -10,12 +10,12 @@ class Callnumber < ActiveRecord::Base
     solr_docs.each do |solr_doc|
       callnumbers = solr_doc["callnumber_t"] || []
       callnumbers.each do |callnumber|
-        # Make sure the call numbers exists in the DB...
-        record = Callnumber.find_by_original(callnumber)
-        if record == nil
+        # Make sure this BIB/call_number exists in the DB...
+        records = Callnumber.where(bib: id, original: callnumber)
+        if records.count == 0
           record = Callnumber.new
           record.original = callnumber
-          record.bib = solr_doc["id"]
+          record.bib = id
           record.save!
         end
       end
@@ -30,16 +30,18 @@ class Callnumber < ActiveRecord::Base
   # Notice that we don't normalize the call numbers
   # here, see normalize_all_pending for that.
   def self.cache_all_bib_ids(blacklight_config)
+    puts "Cacheing all BIB record IDs..."
     page = 1
     page_size = SOLR_BATCH_SIZE
     while true
+      puts "\tprocessing page #{page}"
       solr_docs = self.fetch_all_solr_ids(blacklight_config, page, page_size)
       solr_docs.each do |solr_doc|
         Callnumber.transaction do
           callnumbers = solr_doc["callnumber_t"] || []
           callnumbers.each do |callnumber|
-            record = Callnumber.find_by_original(callnumber)
-            if record == nil
+            records = Callnumber.where(bib: solr_doc["id"], original: callnumber)
+            if records.count == 0
               record = Callnumber.new
               record.original = callnumber
               record.bib = solr_doc["id"]
@@ -126,30 +128,48 @@ class Callnumber < ActiveRecord::Base
   end
 
   def self.normalize_many(callnumbers)
-    normalized = CallnumberNormalizer.normalize_many(callnumbers)
+    normalized_list = CallnumberNormalizer.normalize_many(callnumbers)
     sleep(NORMALIZE_API_THROTTLE) if NORMALIZE_API_THROTTLE > 0
 
-    callnumbers.each do |callnumber|
-      record = Callnumber.find_by_original(callnumber)
-      if record == nil
-        # This shouldn't happen given that the callnumbers
-        # that we are trying to normalize should have been
-        # picked up from the database (see normalize_all_pending).
+    matches = match_callnumbers(callnumbers, normalized_list)
+    matches.each do |match|
+
+      records = Callnumber.where(original: match[:callnumber])
+      if records.count == 0
+        # We expect them to already be in the DB. See normalize_all_pending
+        # and normalize_many. This should be refactored to remove that
+        # dependency.
         raise "Call number to normalize (#{callnumber}) not in the database."
       end
-      result = normalized.find {|n| n.callnumber == callnumber }
-      if result
-        if result.normalized != nil
-          record.normalized = result.normalized
-          record.save!
-        else
-          puts "\tcallnumber #{callnumber} was not normalized"
-        end
+
+      # Notice that is possible to get multiple matches because
+      # sometimes more than one BIB record has the same call number.
+      # This is particularly true when we only have LOC call numbers
+      # and not Brown call numbers.
+      records.each do |record|
+        record.normalized = match[:normalized]
+        record.save!
+        puts "#{match[:callnumber]} -> #{match[:normalized]} for bid #{record.bib} (#{record.id})"
       end
+
     end
   end
 
   private
+
+    def self.match_callnumbers(callnumbers, normalized_list)
+      matches = []
+      callnumbers.each do |callnumber|
+        result = normalized_list.find {|n| n.callnumber == callnumber }
+        if result && result.normalized != nil
+          matches << {callnumber: callnumber, normalized: result.normalized}
+        else
+          puts "\tcallnumber #{callnumber} was not normalized"
+        end
+      end
+      matches
+    end
+
     def self.fetch_all_solr_ids(blacklight_config, page, page_size)
       builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
       repository = Blacklight::SolrRepository.new(blacklight_config)

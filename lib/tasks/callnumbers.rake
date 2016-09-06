@@ -3,13 +3,13 @@ require "./lib/http_json"
 namespace :josiah do
 
   # Caches all the Solr IDs into our SQL database.
-  task "cache_all_bib_ids", :environment do
+  task "cache_all_bib_ids" => :environment do |_cmd, args|
     Callnumber.cache_all_bib_ids(blacklight_config)
   end
 
   # Normalizes all the call numbers in our SQL database
   # that have not been normalized.
-  task "callnumbers_normalize_all_pending", :environment do
+  task "callnumbers_normalize_all_pending" => :environment do |_cmd, args|
     Callnumber.normalize_all_pending
   end
 
@@ -24,7 +24,7 @@ namespace :josiah do
     end
   end
 
-  task "callnumbers_export", :environment do
+  task "callnumbers_export" => :environment do |_cmd, args|
     created_at = "2016-08-17 15:58:20.357007"
     File.open("callnumbers.txt", "r").each_line do |line|
       tokens = line.strip.split("|")

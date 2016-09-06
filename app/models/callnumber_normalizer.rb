@@ -27,7 +27,7 @@ class CallnumberNormalizer
     numbers = callnumbers.map { |c| self.clean_callnumber(c)}.compact
     normalized = []
     url = NORMALIZE_API_URL + "/?callnumber=#{numbers.join(',')}"
-    response = HttpUtil::HttpJson.get(url)
+    response = HttpUtil::HttpJson.get(URI.encode(url))
     response["result"]["items"].each do |item|
       normalized << OpenStruct.new(
         :callnumber => item["call_number"],
