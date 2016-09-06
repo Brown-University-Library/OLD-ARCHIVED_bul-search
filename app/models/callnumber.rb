@@ -34,7 +34,7 @@ class Callnumber < ActiveRecord::Base
     page = 1
     page_size = SOLR_BATCH_SIZE
     while true
-      puts "\tprocessing page #{page}"
+      added = 0
       solr_docs = self.fetch_all_solr_ids(blacklight_config, page, page_size)
       solr_docs.each do |solr_doc|
         Callnumber.transaction do
@@ -46,10 +46,12 @@ class Callnumber < ActiveRecord::Base
               record.original = callnumber
               record.bib = solr_doc["id"]
               record.save!
+              added += 1
             end
           end
         end
       end
+      puts "\tpage #{page}, added #{added} rows"
       last_page = solr_docs.count < page_size
       break if last_page
       page += 1

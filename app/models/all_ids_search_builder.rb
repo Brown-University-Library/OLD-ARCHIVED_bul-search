@@ -13,7 +13,7 @@ class AllIdsSearchBuilder < Blacklight::SearchBuilder
 
   def fetch_ids(solr_parameters)
     solr_parameters[:fq] ||= []
-    solr_parameters[:fq] << "id:*"
+    solr_parameters[:fq] << "callnumber_t:[* TO *]"
     solr_parameters[:fl] ||= []
     solr_parameters[:fl] << "id"
     solr_parameters[:fl] << "callnumber_t"
