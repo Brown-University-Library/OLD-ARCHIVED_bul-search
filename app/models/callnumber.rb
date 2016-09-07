@@ -29,9 +29,8 @@ class Callnumber < ActiveRecord::Base
   # and original call numbers found in Solr.
   # Notice that we don't normalize the call numbers
   # here, see normalize_all_pending for that.
-  def self.cache_all_bib_ids(blacklight_config)
+  def self.cache_all_bib_ids(blacklight_config, page = 1)
     puts "Cacheing all BIB record IDs..."
-    page = 1
     page_size = SOLR_BATCH_SIZE
     while true
       added = 0
@@ -40,6 +39,8 @@ class Callnumber < ActiveRecord::Base
         Callnumber.transaction do
           callnumbers = solr_doc["callnumber_t"] || []
           callnumbers.each do |callnumber|
+            # TODO: handle longer call numbers
+            next if callnumber.length > 50
             records = Callnumber.where(bib: solr_doc["id"], original: callnumber)
             if records.count == 0
               record = Callnumber.new

@@ -3,8 +3,9 @@ require "./lib/http_json"
 namespace :josiah do
 
   # Caches all the Solr IDs into our SQL database.
-  task "cache_all_bib_ids" => :environment do |_cmd, args|
-    Callnumber.cache_all_bib_ids(blacklight_config)
+  task "cache_all_bib_ids", [:page]  => :environment do |_cmd, args|
+    page = (args[:page] || "1").to_i
+    Callnumber.cache_all_bib_ids(blacklight_config, page)
   end
 
   # Normalizes all the call numbers in our SQL database
