@@ -79,30 +79,22 @@ class Callnumber < ActiveRecord::Base
     end
   end
 
-  # Returns an array of items with call numbers that
-  # are near to the bib_id provided.
+  # Returns an array of BIB record IDs with call numbers
+  # that are near to the bib_id provided.
   def self.nearby_ids(bib_id)
-    # find_by returns only one record
-    #   callnumber = Callnumber.find_by(bib: bib_id)
-    #   callnumber[0]
-    #   => #<CallNumber...>
+    # How should we handle if have more than one call number
+    # for a given BIB record and they have different LOC
+    # classifications? (see BIB b3093842 and b7777507)
     #
-    # where() returns all records (as an ActiveRecord::Relation)
-    #   callnumber = Callnumber.where(bib: bib_id)
-    #   callnumber[0]
-    #   => #<CallNumber...>
-    #
-    # How should we handle if there are more than one
-    # call number and they have different LOC classifications?
-    # (see BIB b3093842)
+    # For now, we just fetch the first one.
     callnumber = Callnumber.find_by(bib: bib_id)
     return [] if callnumber == nil
 
-    # Items with call numbers _before_ this bib_id.
+    # Items with call numbers _before_ or equal to this BIB.
     sql = <<-END_SQL.gsub(/\n/, '')
       select bib
       from callnumbers
-      where normalized < "#{callnumber.normalized}"
+      where normalized <= "#{callnumber.normalized}"
       order by normalized desc
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
@@ -120,11 +112,18 @@ class Callnumber < ActiveRecord::Base
 
     # Join before and after rows.
     #
-    # Notice that we revert the _before items_ first
+    # Notice that we reverse the _before items_ first
     # so they show correctly (lower on top).
     ids = []
     before_rows.reverse.each { |r| ids << r[0] }
-    ids << bib_id
+
+    if ids.find {|id| id == bib_id} == nil
+      # If the current BIB was not in the list we force it
+      # to be on the list. This could happen when we have
+      # too many items with the same call number.
+      ids << bib_id
+    end
+
     after_rows.each { |r| ids << r[0] }
     ids
   end
