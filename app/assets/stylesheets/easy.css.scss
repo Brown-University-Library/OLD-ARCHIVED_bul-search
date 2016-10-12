@@ -57,7 +57,7 @@ button.info-box {
 }
 
 #best-bet {
-    background-color: #f7f6f2;
+    background-color : #FFC72C ;
     margin-left: 2%;
     padding: 1em;
     margin-bottom: 1em;
@@ -66,6 +66,11 @@ button.info-box {
 #best-bet h5 {
     display: inline;
     clear: left;
+}
+
+#best-bet h5 a {
+    font-size : 1.4em ;
+    text-decoration : underline ;
 }
 
 #best-bet .branding {
@@ -100,4 +105,3 @@ button.info-box {
 .label-info[href]:hover, .label-info[href]:focus {
     background-color: #7bab54;
 }
-
