@@ -8,9 +8,7 @@
 .env
 .env.*
 search_summon.rb
-Gemfile
-Gemfile.lock
-
+.byebug_history
 
 # Ignore bundler config.
 /.bundle
