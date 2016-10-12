@@ -2,10 +2,10 @@
 #
 class CatalogController < ApplicationController
   include Blacklight::Marc::Catalog
-
   include Blacklight::Catalog
-
   include Blacklight::BlacklightHelperBehavior  # gives us document_partial_name(), used in ourl_service()
+
+  include ApplicationHelper
 
   before_filter :set_easy_search
 
@@ -273,5 +273,52 @@ class CatalogController < ApplicationController
     # code search.
     @hide_facets = true
     render
+  end
+
+  # Blacklight override
+  # Email Action (this will render the appropriate view on GET requests and process the form and send the email on POST requests)
+  def email_action documents
+    # TODO: render HTTP error status code
+    return if spam_attempt?
+    mail = RecordMailer.email_record(documents, {:to => params[:to], :message => params[:message]}, url_options)
+    if mail.respond_to? :deliver_now
+      mail.deliver_now
+    else
+      mail.deliver
+    end
+  end
+
+  # Blacklight override
+  def validate_email_params
+    case
+    when params[:to].blank?
+      flash[:error] = I18n.t('blacklight.email.errors.to.blank')
+    when !params[:to].match(defined?(Devise) ? Devise.email_regexp : /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/)
+      flash[:error] = I18n.t('blacklight.email.errors.to.invalid', :to => params[:to])
+    when params[:agreement].blank?
+      flash[:error] = "Must confirm that you are not a robot, please check the checkbox"
+    end
+    flash[:error].blank?
+  end
+
+  def spam_attempt?
+    case
+    when params[:t1] == nil
+      Rails.logger.info( "E-mail not sent, missing token 1.")
+      return true
+    when params[:t2] == nil
+      Rails.logger.info( "E-mail not sent, missing token 2.")
+      return true
+    when params[:t1] != params[:t2]
+      Rails.logger.info( "E-mail not sent, request token mismatch (t1: #{params[:t1]}, t2: #{params[:t2]})")
+      return true
+    when params[:agreement] != daily_token()
+      Rails.logger.info( "E-mail not sent, daily token mismatch (expected: #{daily_token()}, got: #{params[:agreement]})")
+      return true
+    when params[:to].to_s.downcase.include?("qq.com")
+      Rails.logger.info( "E-mail not sent, qq.com email (#{params[:to]})")
+      return true
+    end
+    return false
   end
 end
