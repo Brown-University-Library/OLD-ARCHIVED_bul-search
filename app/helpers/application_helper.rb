@@ -20,6 +20,6 @@ module ApplicationHelper
   end
 
   def spam_check?
-    ENV["SPAM_CHECK"] != "yes"
+    ENV["SPAM_CHECK"] == "yes"
   end
 end
