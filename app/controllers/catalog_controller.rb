@@ -295,13 +295,14 @@ class CatalogController < ApplicationController
       flash[:error] = I18n.t('blacklight.email.errors.to.blank')
     when !params[:to].match(defined?(Devise) ? Devise.email_regexp : /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/)
       flash[:error] = I18n.t('blacklight.email.errors.to.invalid', :to => params[:to])
-    when params[:agreement].blank?
+    when spam_check? && params[:agreement].blank?
       flash[:error] = "Must confirm that you are not a robot, please check the checkbox"
     end
     flash[:error].blank?
   end
 
   def spam_attempt?
+    return false if spam_check? == false
     case
     when params[:t1] == nil
       Rails.logger.info( "E-mail not sent, missing token 1.")

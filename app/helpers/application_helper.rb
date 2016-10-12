@@ -18,4 +18,8 @@ module ApplicationHelper
   def request_token
     (Random.new.rand * 10000).to_i.to_s
   end
+
+  def spam_check?
+    ENV["SPAM_CHECK"] != nil
+  end
 end
