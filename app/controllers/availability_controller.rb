@@ -14,6 +14,7 @@
 # development environment and test the code before we deploy
 # to production.
 class AvailabilityController < ApplicationController
+  include ApplicationHelper
 
   BROWN_AVAILABILITY_SERVICE_URL = "https://apps.library.brown.edu/bibutils/bib"
 
