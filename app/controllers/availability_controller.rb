@@ -17,6 +17,19 @@ class AvailabilityController < ApplicationController
 
   BROWN_AVAILABILITY_SERVICE_URL = "https://apps.library.brown.edu/bibutils/bib"
 
+  def test_auth
+    # require "byebug"
+    # byebug
+    ip = request.remote_ip
+    if trusted_ip?(ip)
+      message = "[IP_TEST] valid (#{ip}) #{params[:token]}"
+    else
+      message = "[IP_TEST] not valid (#{ip}) #{params[:token]}"
+    end
+    Rails.logger.info message
+    render :text => message
+  end
+
   # Returns a fake response for a single hard coded id.
   def fake_one
     if params[:callback]

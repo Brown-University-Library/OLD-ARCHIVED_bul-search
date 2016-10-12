@@ -27,4 +27,15 @@ class ApplicationController < ActionController::Base
     end
     value.to_i
   end
+
+  def trusted_ips
+    (ENV["TRUSTED_IPS"] || "").chomp.split(",")
+  end
+
+  def trusted_ip?(ip)
+    trusted_ips.each do |trusted_value|
+      return true if ip.start_with?(trusted_value)
+    end
+    false
+  end
 end

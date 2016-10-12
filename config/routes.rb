@@ -21,6 +21,7 @@ BulSearch::Application.routes.draw do
   get 'libweb/' => 'libweb#search', as: :lib_web
 
   # Stub controller to test the Availability Service
+  get 'availability/test_auth' => 'availability#test_auth'
   get 'availability/fake/:id' => 'availability#fake_one'
   post 'availability/fake/' => 'availability#fake_many'
   get 'availability/forward/:id' => 'availability#forward_one'
