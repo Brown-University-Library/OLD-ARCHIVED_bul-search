@@ -24,18 +24,12 @@ To install the Brown Blacklight code locally:
  records.
 
 ## schema.rb
-By default the development environment in your local box uses SQLite as the
-database. In production we use MySQL. Because you are using a different
-database your local box you will see a few changes in `schema.rb` once you've
-run `rake db:migrate`. You should discard those changes  with
-`git checkout -- schema.rb` so that you don't accidentally commit them to
-the repository.
-
-If you want to use MySQL in your local box you could update the `development`
-section on `config/database.yml` to use the values indicated under
-`development_mysql_sample` and re-run `rake db:create db:migrate` to recreate
-the database in MySQL. The `schema.db` produced at this point should match the
-one on the Git repo.
+By default the development environment uses MySQL so that it matches with what
+we use in production. If you switch to SQLite for development (by updating
+`config/database.yml`) beware that you might get a slightly different
+`schema.rb` file after running `rake db:migrate`. You should discard those
+changes  with `git checkout -- schema.rb` so that you don't accidentally
+commit them to the repository.
 
 ## Sample Records
 In production we use `traject` to import data into Solr. You can mimic this setup by using `traject` in your local environment as follows:
