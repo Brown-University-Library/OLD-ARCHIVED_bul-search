@@ -1,4 +1,27 @@
 <!-- blacklight override -->
+
+<style>
+.loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 15px;
+  height: 15px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
 <% req_token = request_token() %>
 <%= form_tag url_for(:controller => controller_name, :action => "email",
   :t1 => req_token), :id => 'email_form', :class => "form-horizontal ajax_form",
@@ -26,9 +49,11 @@
 
     <% if spam_check? %>
       <div class="form-group">
-        <div class="col-sm-10">
+        <div id="loader_wrap" class="col-sm-2">Loading...</div>
+        <div id="loader" class="loader col-sm-2"></div>
+        <div id="the_box" class="col-sm-10 hide" >
           <b>Check the box (so we know you are not a robot) &#x2192;</b>
-          <%= check_box_tag(:agreement, value = daily_token(), checked = false, options = {}) %>
+          <%= check_box_tag(:agreement, value = daily_token(), checked = false, options = {class: ""}) %>
         </div>
       </div>
     <% end %>
@@ -48,3 +73,15 @@
   <button type="submit" class="btn btn-primary"> <%= t('blacklight.sms.form.submit') %></button>
   </div>
 <% end %>
+
+<script>
+$(document).ready(
+  function(){
+    setTimeout(function() {
+      $("#loader").addClass("hide");
+      $("#loader_wrap").addClass("hide");
+      $("#the_box").removeClass("hide");
+    }, 3000);
+  }
+);
+</script>
