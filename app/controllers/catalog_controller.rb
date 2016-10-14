@@ -297,6 +297,7 @@ class CatalogController < ApplicationController
       flash[:error] = I18n.t('blacklight.email.errors.to.invalid', :to => params[:to])
     when spam_check? && !trusted_ip?(request.remote_ip) && params[:agreement].blank?
       flash[:error] = "Must confirm that you are not a robot, please check the checkbox"
+      Rails.logger.info( "E-mail not sent, user might be a bot")
     end
     flash[:error].blank?
   end
