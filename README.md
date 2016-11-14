@@ -122,3 +122,5 @@ The `blacklight` user is registered as a "deployment user" in BitBucket and has 
 ## Fort stats
 
  * All formats `facet.field=format&fact.sort=count&facet=true&rows=0&facet.limit=50&facet.mincount=1`
+
+...
