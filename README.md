@@ -103,5 +103,3 @@ The model code is in `app/models/easy.rb` and the JavaScript for now is in `app/
 ## Fort stats
 
  * All formats `facet.field=format&fact.sort=count&facet=true&rows=0&facet.limit=50&facet.mincount=1`
-
-..
