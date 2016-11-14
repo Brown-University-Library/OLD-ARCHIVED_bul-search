@@ -2,7 +2,7 @@ require "./lib/http_json"
 
 class CallnumberNormalizer
 
-  NORMALIZE_API_URL = "http://worfdev.services.brown.edu/services/call_number/v1"
+  NORMALIZE_API_URL = "http://server.name.brown.edu/services/call_number/v1"
 
   def self.normalize_one(callnumber)
     number = self.clean_callnumber(callnumber)

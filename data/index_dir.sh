@@ -2,8 +2,8 @@
 set -e
 
 #run as
-#time ./data/index_dir.sh /dock/josiahdata/data/ http://dblightcit.services.brown.edu:8081/solr/ rec_[0-9].mrc
-#time ./data/index_dir.sh /dock/josiahdata/data/ http://dblightcit.services.brown.edu:8081/solr/ rec_[0-9][0-9].mrc
+#time ./data/index_dir.sh /dock/josiahdata/data/ http://server.name.brown.edu:8081/solr/ rec_[0-9].mrc
+#time ./data/index_dir.sh /dock/josiahdata/data/ http://server.name.brown.edu:8081/solr/ rec_[0-9][0-9].mrc
 
 
 HOME=$1

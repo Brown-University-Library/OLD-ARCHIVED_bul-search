@@ -17,8 +17,8 @@
 -->
 
 <!--
- This is a stripped down config file used for a simple example...  
- It is *not* a good example to work from. 
+ This is a stripped down config file used for a simple example...
+ It is *not* a good example to work from.
 -->
 <config>
   <luceneMatchVersion>LUCENE_40</luceneMatchVersion>
@@ -31,16 +31,16 @@
   <lib dir="../lib/contrib/analysis-extras/lucene-libs" />
 
   <dataDir>${solr.blacklight-core.data.dir:}</dataDir>
-  
+
   <requestDispatcher handleSelect="true" >
     <requestParsers enableRemoteStreaming="false" multipartUploadLimitInKB="2048" />
   </requestDispatcher>
-  
+
   <requestHandler name="standard" class="solr.StandardRequestHandler" />
   <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
   <requestHandler name="/update" class="solr.UpdateRequestHandler"  />
   <requestHandler name="/admin/" class="org.apache.solr.handler.admin.AdminHandlers" />
-     
+
   <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
     <lst name="invariants">
       <str name="q">solrpingquery</str>
@@ -49,8 +49,8 @@
       <str name="echoParams">all</str>
     </lst>
   </requestHandler>
-   
-  <!-- config for the admin interface --> 
+
+  <!-- config for the admin interface -->
   <admin>
     <defaultQuery>solr</defaultQuery>
   </admin>
@@ -79,7 +79,7 @@
 
        <!-- this qf and pf are used by default, if not otherwise specified by
             client. The default blacklight_config will use these for the
-            "keywords" search. See the author_qf/author_pf, title_qf, etc 
+            "keywords" search. See the author_qf/author_pf, title_qf, etc
             below, which the default blacklight_config will specify for
             those searches. You may also be interested in:
             http://wiki.apache.org/solr/LocalParams
@@ -156,22 +156,22 @@
          subject_unstem_search^1250
          subject_t^1000
        </str>
-       
+
        <int name="ps">3</int>
        <float name="tie">0.01</float>
 
        <!-- NOT using marc_display because it is large and will slow things down for search results -->
        <str name="fl">
-         id, 
+         id,
          score,
          author_display,
-         author_vern_display, 
+         author_vern_display,
          author_addl_display,
-         format, 
-         isbn_t, 
-         language_facet, 
+         format,
+         isbn_t,
+         language_facet,
          lc_callnum_display,
-         material_type_display, 
+         material_type_display,
          published_display,
          published_vern_display,
          pub_date,
@@ -193,7 +193,7 @@
        <str name="facet.field">subject_era_facet</str>
        <str name="facet.field">subject_geo_facet</str>
        <str name="facet.field">subject_topic_facet</str>
-       
+
 <!--        <str name="spellcheck">true</str>
        <str name="spellcheck.dictionary">default</str>
        <str name="spellcheck.onlyMorePopular">true</str>
@@ -257,9 +257,9 @@
     <arr name="last-components">
       <str>spellcheck</str>
     </arr>
-      
+
   </requestHandler>
-  
+
 
   <!-- for requests to get a single document; use id=666 instead of q=id:666 -->
   <requestHandler name="document" class="solr.SearchHandler" >
@@ -276,16 +276,16 @@
     <lst name="defaults">
       <str name="defType">lucene</str>
       <str name="echoParams">explicit</str>
-      <str name="sort">score desc, pub_date_sort desc, title_sort asc</str>   
-      <str name="df">text</str> 
-      <str name="q.op">AND</str> 
+      <str name="sort">score desc, pub_date_sort desc, title_sort asc</str>
+      <str name="df">text</str>
+      <str name="q.op">AND</str>
       <str name="qs">1</str>
 
       <!-- used for dismax query parser -->
-      <str name="mm">1</str> 
-      <str name="ps">3</str> 
+      <str name="mm">1</str>
+      <str name="ps">3</str>
       <float name="tie">0.01</float>
-      
+
       <!-- for user query terms in author text box -->
       <str name="qf_author">
         author_unstem_search^200
@@ -299,7 +299,7 @@
         author_t^200
         author_addl_t^10
       </str>
-      
+
       <!-- for user query terms in title text box -->
       <str name="qf_title">
         title_other_unstem_search^1000
@@ -315,7 +315,7 @@
         title_series_unstem_search^5
         title_series_t
       </str>
-      
+
       <!-- for user query terms in subject text box -->
       <str name="qf_subject">
         subject_unstem_search^125
@@ -325,25 +325,25 @@
         subject_unstem_search^1250
         subject_t^1000
       </str>
-      
+
       <!-- for user query terms in number text box -->
       <str name="qf_number">isbn_t</str>
-      
+
       <!-- for user query terms in keyword text box -->
       <str name="qf_keyword">text</str>
       <str name="pf_keyword">text^10</str>
-      
+
       <!-- NOT using marc_display because it is large and will slow things down for search results -->
       <str name="fl">
-        id, 
+        id,
         score,
         author_display,
-        author_vern_display, 
-        format, 
-        isbn_t, 
-        language_facet, 
+        author_vern_display,
+        format,
+        isbn_t,
+        language_facet,
         lc_callnum_display,
-        material_type_display, 
+        material_type_display,
         published_display,
         published_vern_display,
         pub_date,
@@ -354,7 +354,7 @@
         url_fulltext_display,
         url_suppl_display,
       </str>
-      
+
       <str name="facet">true</str>
       <str name="facet.mincount">1</str>
       <str name="facet.limit">10</str>
@@ -364,7 +364,7 @@
       <str name="facet.field">lc_b4cutter_facet</str>
       <str name="facet.field">language_facet</str>
       <str name="facet.field">pub_date</str>
-      
+
       <str name="spellcheck">true</str>
       <str name="spellcheck.dictionary">subject</str>
       <str name="spellcheck.onlyMorePopular">true</str>
@@ -379,7 +379,7 @@
 <!-- Spell Check
 
         The spell check component can return a list of alternative spelling
-        suggestions.  
+        suggestions.
 
         http://wiki.apache.org/solr/SpellCheckComponent
      -->
@@ -434,7 +434,7 @@
        </lst>
      -->
 
-    <!-- a spellchecker that use an alternate comparator 
+    <!-- a spellchecker that use an alternate comparator
 
          comparatorClass be one of:
           1. score (default)
@@ -464,20 +464,19 @@
 
 <requestHandler name="/replication" class="solr.ReplicationHandler" >
     <lst name="slave">
- 
+
         <!--fully qualified url for the replication handler of master. It is possible to pass on this as
             a request param for the fetchindex command-->
- 
-        <str name="masterUrl">http://tuvok.services.brown.edu:8080/solr/blacklight-core/replication</str>
- 
+
+        <str name="masterUrl">http://server.name.brown.edu:8080/solr/blacklight-core/replication</str>
+
         <!--Interval in which the slave should poll master .Format is HH:mm:ss . If this is absent slave does not
             poll automatically.
- 
+
          But a fetchindex can be triggered from the admin or the http API -->
- 
+
         <str name="pollInterval">01:00:00</str>
      </lst>
-</requestHandler>  
+</requestHandler>
 
 </config>
-
