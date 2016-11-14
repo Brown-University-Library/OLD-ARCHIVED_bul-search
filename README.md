@@ -74,9 +74,7 @@ For Repository links You will need to set BDR_ITEM_URL.  No trailing slash.
 //server.name.brown.edu/studio/item
 
 
-## Indexing data
-
-## Adding documents
+## Indexing data (adding documents)
 We have customized `config/SolrMarc/index.properties` to use a record id of `id = 907a[1-8], first`.  This is because Brown's library system stores the unique bibliographic record number in the 907 field.
 
 This means that the sample MARC records distributed with Blacklight won't load with the default schema.
@@ -102,11 +100,6 @@ At present, the Bento Box queries Summon and the local Solr index for data.
 
 The model code is in `app/models/easy.rb` and the JavaScript for now is in `app/views/easy/home.html.erb`.
 
-
-## Solr queries
-
 ## Fort stats
 
  * All formats `facet.field=format&fact.sort=count&facet=true&rows=0&facet.limit=50&facet.mincount=1`
-
-...
