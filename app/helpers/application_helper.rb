@@ -12,7 +12,11 @@ module ApplicationHelper
   # per request basis rather than on a daily basis but this would
   # do for now.
   def daily_token
-    (Math.tan(500-Date.today.yday).abs * 10000000).to_i.to_s[1..-1]
+    if ENV["DAILY_TOKEN"]
+      eval(ENV["DAILY_TOKEN"])
+    else
+      (Math.tan(500-Date.today.yday).abs * 10000000).to_i.to_s[1..-1]
+    end
   end
 
   def request_token
@@ -32,5 +36,5 @@ module ApplicationHelper
       return true if ip.start_with?(trusted_value)
     end
     false
-  end  
+  end
 end
