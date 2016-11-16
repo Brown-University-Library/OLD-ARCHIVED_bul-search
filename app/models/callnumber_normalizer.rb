@@ -1,20 +1,10 @@
 require "./lib/http_json"
 
 class CallnumberNormalizer
-
-  NORMALIZE_API_URL = "http://server.name.brown.edu/services/call_number/v1"
-
   def self.normalize_one(callnumber)
-    number = self.clean_callnumber(callnumber)
-    return nil if number == nil
-    url = NORMALIZE_API_URL + "/?callnumber=#{number}"
-    response = HttpUtil::HttpJson.get(url)
-    response["result"]["items"].each do |item|
-      if item["call_number"] == callnumber
-        return item["normalized_call_number"]
-      end
-    end
-    nil
+    normalized = self.normalize_many([callnumber])
+    return nil if normalized.count == 0
+    normalized[0][:normalized]
   end
 
   # Returns an array of objects with the original callnumber
@@ -26,7 +16,7 @@ class CallnumberNormalizer
   def self.normalize_many(callnumbers)
     numbers = callnumbers.map { |c| self.clean_callnumber(c)}.compact
     normalized = []
-    url = NORMALIZE_API_URL + "/?callnumber=#{numbers.join(',')}"
+    url = ENV["NORMALIZE_API_URL"] + "/?callnumber=#{numbers.join(',')}"
     response = HttpUtil::HttpJson.get(URI.encode(url))
     response["result"]["items"].each do |item|
       normalized << OpenStruct.new(
