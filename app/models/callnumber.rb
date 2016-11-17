@@ -6,31 +6,45 @@ class Callnumber < ActiveRecord::Base
   # and original call numbers found in Solr.
   # Notice that we don't normalize the call numbers
   # here, see normalize_all_pending for that.
-  def self.cache_all_bib_ids(blacklight_config, page = 1)
+  def self.cache_bib_ids_to_table(blacklight_config, page = 1)
     puts "Cacheing all BIB record IDs..."
-    page_size = SOLR_BATCH_SIZE
     while true
-      added = 0
-      solr_docs = self.fetch_all_solr_ids(blacklight_config, page, page_size)
-      Callnumber.transaction do
-        solr_docs.each do |solr_doc|
-          callnumbers = solr_doc["callnumber_t"] || []
-          callnumbers.each do |callnumber|
-            # TODO: handle longer call numbers
-            next if callnumber.length > 50
-            records = Callnumber.where(bib: solr_doc["id"], original: callnumber)
-            if records.count == 0
-              record = Callnumber.new
-              record.original = callnumber
-              record.bib = solr_doc["id"]
-              record.save!
-              added += 1
-            end
-          end
-        end
+      ActiveRecord::Base.connection.execute("START TRANSACTION")
+      batch = self.get_batch(blacklight_config, page)
+      batch.each do |row|
+        sql = <<-END_SQL.gsub(/\n/, '')
+          INSERT IGNORE INTO callnumbers(bib, original)
+          VALUES("#{row[:bib]}","#{row[:original]}")
+        END_SQL
+        ActiveRecord::Base.connection.execute(sql)
       end
-      puts "\tpage #{page}, added #{added} rows"
-      last_page = solr_docs.count < page_size
+      ActiveRecord::Base.connection.execute("COMMIT")
+      last_page = batch.count < SOLR_BATCH_SIZE
+      break if last_page
+      page += 1
+    end
+  end
+
+  # Saves to a file on disk the SQL INSERT statementes to
+  # add cache all the BIB id and original call numbers found in Solr.
+  # This file can be submitted to MySQL with from the command
+  # line with: mysql < callnumbers_upsert.sql
+  def self.cache_bib_ids_to_file(blacklight_config, page = 1)
+    filename = "callnumbers_upsert.sql"
+    IO.write(filename, "", mode: "w")
+    while true
+      sql_tx = "START TRANSACTION;\r\n"
+      batch = self.get_batch(blacklight_config, page)
+      batch.each do |row|
+        sql = <<-END_SQL.gsub(/\n/, '')
+          INSERT IGNORE INTO callnumbers(bib, original)
+          VALUES("#{row[:bib]}","#{row[:original]}")
+        END_SQL
+        sql_tx += sql + ";\r\n"
+      end
+      sql_tx += "COMMIT;\r\n"
+      IO.write(filename, sql_tx, mode: "a")
+      last_page = batch.count < SOLR_BATCH_SIZE
       break if last_page
       page += 1
     end
@@ -127,5 +141,23 @@ class Callnumber < ActiveRecord::Base
       repository = Blacklight::SolrRepository.new(blacklight_config)
       response = repository.search(builder)
       response.documents
+    end
+
+    def self.get_batch(blacklight_config, page)
+      batch = []
+      solr_docs = self.fetch_all_solr_ids(blacklight_config, page, SOLR_BATCH_SIZE)
+      solr_docs.each do |solr_doc|
+        callnumbers = solr_doc["callnumber_t"] || []
+        callnumbers.uniq { |c| c.upcase }.each do |callnumber|
+          if callnumber.length > 100
+            puts "Ignored call number [#{callnumber}] (greater than 100 characters)"
+            next
+          end
+          bib = solr_doc["id"].gsub('"', '')
+          original = callnumber.upcase.gsub('"', '')
+          batch << {bib: bib, original: original}
+        end
+      end
+      batch
     end
 end

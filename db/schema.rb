@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160817123430) do
+ActiveRecord::Schema.define(version: 20160906123430) do
 
   create_table "bookmarks", force: true do |t|
     t.integer  "user_id",       null: false
@@ -26,13 +26,14 @@ ActiveRecord::Schema.define(version: 20160817123430) do
   add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id", using: :btree
 
   create_table "callnumbers", force: true do |t|
-    t.string   "original",   limit: 30
-    t.string   "normalized", limit: 50
+    t.string   "original",   limit: 100
+    t.string   "normalized", limit: 100
     t.string   "bib",        limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "callnumbers", ["bib", "original"], name: "index_callnumbers_on_bib_and_original", unique: true, using: :btree
   add_index "callnumbers", ["bib"], name: "index_callnumbers_on_bib", using: :btree
   add_index "callnumbers", ["normalized"], name: "index_callnumbers_on_normalized", using: :btree
   add_index "callnumbers", ["original"], name: "index_callnumbers_on_original", using: :btree

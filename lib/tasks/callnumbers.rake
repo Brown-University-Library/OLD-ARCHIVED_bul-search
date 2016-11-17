@@ -2,15 +2,17 @@ require "./lib/http_json"
 
 namespace :josiah do
 
-  # Caches all the Solr BIB ID and their call numbers into our SQL database.
-  # (but it does not normalizes them)
-  task "cache_all_bib_ids", [:page]  => :environment do |_cmd, args|
-    page = (args[:page] || "1").to_i
-    Callnumber.cache_all_bib_ids(blacklight_config, page)
+  desc "Saves to the callnumbers table all the BIB + callnumbers"
+  task "cache_bib_ids_to_table" => :environment do |_cmd, args|
+    Callnumber.cache_bib_ids_to_table(blacklight_config)
   end
 
-  # Normalizes call numbers for a single BIB record
-  # (this uses the call number normalization API)
+  desc "Saves to a file SQL INSERT statements to cache BIB + callnumbers"
+  task "cache_bib_ids_to_file" => :environment do |_cmd, args|
+    Callnumber.cache_bib_ids_to_file(blacklight_config)
+  end
+
+  desc "Normalizes (via API) the call numbers for a single BIB record"
   task "callnumbers_normalize_one", [:bib] => :environment do |_cmd, args|
     if args[:bib]
       bib = args[:bib]
