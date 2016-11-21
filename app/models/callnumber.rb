@@ -149,12 +149,12 @@ class Callnumber < ActiveRecord::Base
       solr_docs.each do |solr_doc|
         callnumbers = solr_doc["callnumber_t"] || []
         callnumbers.uniq { |c| c.upcase }.each do |callnumber|
+          bib = solr_doc["id"].gsub('"', '')
           if callnumber.length > 100
-            puts "Ignored call number [#{callnumber}] (greater than 100 characters)"
+            puts "Ignored BIB: #{bib}, call number too long [#{callnumber}]"
             next
           end
-          bib = solr_doc["id"].gsub('"', '')
-          original = callnumber.upcase.gsub('"', '')
+          original = callnumber.upcase.gsub('"', '').gsub('\\', '')
           batch << {bib: bib, original: original}
         end
       end
