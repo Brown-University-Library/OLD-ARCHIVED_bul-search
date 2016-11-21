@@ -1,5 +1,5 @@
 class Callnumber < ActiveRecord::Base
-  NEARBY_BATCH_SIZE = 10            # num. records before/after to fetch
+  NEARBY_BATCH_SIZE = 5             # num. records before/after to fetch
   SOLR_BATCH_SIZE = 1000            # max number of record to fetch at once
 
   # Saves to the callnumber table all the BIB id
