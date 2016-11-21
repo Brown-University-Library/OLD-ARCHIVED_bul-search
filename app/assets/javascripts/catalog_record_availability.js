@@ -3,6 +3,11 @@
 
 $(document).ready(
   function(){
+
+    // Add Virtual Shelf option to tools section
+    link = '<li><a onclick="loadNearbyItems(); return false;" href="#">Virtual Shelf</a>';
+    $("div.panel-body>ul.nav").append(link);
+
     var bib_id = getBibId();
     var api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
@@ -116,6 +121,11 @@ function callnumbers_text(callnumbers) {
   return text;
 }
 
+function loadNearbyItems() {
+  id = getBibId();
+  findNearbyItems(id);
+}
+
 function findNearbyItems(id) {
   $.ajax({
       type: "GET",
@@ -147,29 +157,6 @@ function renderNearbyItems(items) {
   renderStackView(docs);
 }
 
-function renderGalleryView(docs) {
-  var i, isbn, doc, link, docDiv;
-  var rootEl = $("#documents");
-  var isbns = "";
-  for(i = 0; i < docs.length; i++) {
-    doc = docs[i];
-    isbn = "ISBN" + doc.isbn;
-    isbns += isbn;
-    if (i < (docs.length-1)) {
-      isbns += ",";
-    }
-    docDiv = '<div class="document col-xs-6 col-md-3">';
-    docDiv += doc.highlight ? "<b>" : "";
-    docDiv += '<a href="' + doc.link + '">' + doc.title;
-    docDiv += '<img id="' + isbn + '" class="cover-image " src="/assets/sampleCover.png" height="189" width="128" src="" data-isbn="' + isbn + '">';
-    docDiv += '</a>';
-    docDiv += doc.highlight ? "</b>" : "";
-    docDiv += '</div>';
-    $(rootEl).append(docDiv)
-  }
-  requestBookcovers(isbns);
-}
-
 function renderStackView(docs) {
   var data = {
     "start": "-1",
@@ -178,6 +165,9 @@ function renderStackView(docs) {
     "docs":docs
   };
   $('#basic-stack').stackView({data: data, ribbon: null});
+  // scroll to bottom of the page
+  // http://stackoverflow.com/a/10503637/446681
+  $("html, body").animate({ scrollTop: $(document).height() }, 1000);
 }
 
 function requestLink() {
