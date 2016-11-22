@@ -169,21 +169,21 @@ function renderNearbyItems(items, scrollPage) {
 function renderStackView(docs, scrollPage) {
   if (docs.length == 0) {
     $('#basic-stack').addClass("hidden");
-    $("#also-on-shelf").addClass("hidden");
-    return;
+    $("#also-on-shelf").removeClass("hidden");
+    $('#also-on-shelf-none').removeClass("hidden");
+  } else {
+    var data = {
+      "start": "-1",
+      "limit": "0",
+      "num_found": docs.length,
+      "docs":docs
+    };
+    $("#basic-stack").removeClass("hidden");
+    $("#also-on-shelf").removeClass("hidden");
+    $('#also-on-shelf-none').addClass("hidden");
+    $('#basic-stack').stackView({data: data, ribbon: ""});
   }
 
-  var data = {
-    "start": "-1",
-    "limit": "0",
-    "num_found": docs.length,
-    "docs":docs
-  };
-
-  $("#basic-stack").removeClass("hidden");
-  $("#also-on-shelf").removeClass("hidden");
-
-  $('#basic-stack').stackView({data: data, ribbon: ""});
   if (scrollPage) {
     // scroll to bottom of the page
     // http://stackoverflow.com/a/10503637/446681
