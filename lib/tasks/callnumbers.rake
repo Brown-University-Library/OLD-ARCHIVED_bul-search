@@ -3,13 +3,15 @@ require "./lib/http_json"
 namespace :josiah do
 
   desc "Saves to the callnumbers table all the BIB + callnumbers"
-  task "cache_bib_ids_to_table" => :environment do |_cmd, args|
-    Callnumber.cache_bib_ids_to_table(blacklight_config)
+  task "cache_bib_ids_to_table", [:page]  => :environment do |_cmd, args|
+    page = (args[:page] || "1").to_i
+    Callnumber.cache_bib_ids_to_table(blacklight_config, page)
   end
 
   desc "Saves to a file SQL INSERT statements to cache BIB + callnumbers"
-  task "cache_bib_ids_to_file" => :environment do |_cmd, args|
-    Callnumber.cache_bib_ids_to_file(blacklight_config)
+  task "cache_bib_ids_to_file", [:page] => :environment do |_cmd, args|
+    page = (args[:page] || "1").to_i
+    Callnumber.cache_bib_ids_to_file(blacklight_config, page)
   end
 
   desc "Normalizes (via API) the call numbers for a single BIB record"

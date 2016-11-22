@@ -1,16 +1,20 @@
 class Callnumber < ActiveRecord::Base
-  NEARBY_BATCH_SIZE = 5             # num. records before/after to fetch
-  SOLR_BATCH_SIZE = 1000            # max number of record to fetch at once
+
+  # Number of books on the shelf to show before/after the current book.
+  NEARBY_BATCH_SIZE = 5
+
+  # Max number of records to fetch at once when cacheing BIBs/call numbers.
+  SOLR_BATCH_SIZE = 1000
 
   # Saves to the callnumber table all the BIB id
   # and original call numbers found in Solr.
   # Notice that we don't normalize the call numbers
   # here, see normalize_all_pending for that.
   def self.cache_bib_ids_to_table(blacklight_config, page = 1)
-    puts "Cacheing all BIB record IDs..."
+    puts "Cacheing BIB record IDs (starting on page #{page})..."
     while true
       ActiveRecord::Base.connection.execute("START TRANSACTION")
-      batch = self.get_batch(blacklight_config, page)
+      batch, total_docs = self.get_batch(blacklight_config, page)
       batch.each do |row|
         sql = <<-END_SQL.gsub(/\n/, '')
           INSERT IGNORE INTO callnumbers(bib, original)
@@ -33,16 +37,17 @@ class Callnumber < ActiveRecord::Base
     filename = "callnumbers_upsert.sql"
     IO.write(filename, "", mode: "w")
     while true
-      sql_tx = "START TRANSACTION;\r\n"
-      batch = self.get_batch(blacklight_config, page)
+      batch, total_docs = self.get_batch(blacklight_config, page)
+      sql_tx = "SELECT #{page}, #{page_count(total_docs)};\r\n"
+      sql_tx << "START TRANSACTION;\r\n"
       batch.each do |row|
         sql = <<-END_SQL.gsub(/\n/, '')
           INSERT IGNORE INTO callnumbers(bib, original)
           VALUES("#{row[:bib]}","#{row[:original]}")
         END_SQL
-        sql_tx += sql + ";\r\n"
+        sql_tx << sql + ";\r\n"
       end
-      sql_tx += "COMMIT;\r\n"
+      sql_tx << "COMMIT;\r\n"
       IO.write(filename, sql_tx, mode: "a")
       last_page = batch.count < SOLR_BATCH_SIZE
       break if last_page
@@ -133,7 +138,7 @@ class Callnumber < ActiveRecord::Base
       builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
       repository = Blacklight::SolrRepository.new(blacklight_config)
       response = repository.search(builder)
-      response.documents
+      return response.documents, response["response"]["numFound"]
     end
 
     def self.fetch_some_solr_ids(blacklight_config, ids)
@@ -145,7 +150,7 @@ class Callnumber < ActiveRecord::Base
 
     def self.get_batch(blacklight_config, page)
       batch = []
-      solr_docs = self.fetch_all_solr_ids(blacklight_config, page, SOLR_BATCH_SIZE)
+      solr_docs, total_docs = self.fetch_all_solr_ids(blacklight_config, page, SOLR_BATCH_SIZE)
       solr_docs.each do |solr_doc|
         callnumbers = solr_doc["callnumber_t"] || []
         callnumbers.uniq { |c| c.upcase }.each do |callnumber|
@@ -158,6 +163,14 @@ class Callnumber < ActiveRecord::Base
           batch << {bib: bib, original: original}
         end
       end
-      batch
+      return batch, total_docs
+    end
+
+    def self.page_count(total_docs)
+      count = (total_docs / SOLR_BATCH_SIZE).to_i
+      if (total_docs % SOLR_BATCH_SIZE) > 0
+        count += 1
+      end
+      count
     end
 end

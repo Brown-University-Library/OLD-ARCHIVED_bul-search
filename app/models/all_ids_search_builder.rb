@@ -17,6 +17,7 @@ class AllIdsSearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:fl] ||= []
     solr_parameters[:fl] << "id"
     solr_parameters[:fl] << "callnumber_t"
+    solr_parameters[:sort] = "id asc"
     solr_parameters[:start] = (@page-1) * @page_size
     solr_parameters[:rows] = @page_size
   end
