@@ -167,13 +167,23 @@ function renderNearbyItems(items, scrollPage) {
 
 
 function renderStackView(docs, scrollPage) {
+  if (docs.length == 0) {
+    $('#basic-stack').addClass("hidden");
+    $("#also-on-shelf").addClass("hidden");
+    return;
+  }
+
   var data = {
     "start": "-1",
     "limit": "0",
     "num_found": docs.length,
     "docs":docs
   };
-  $('#basic-stack').stackView({data: data, ribbon: null});
+
+  $("#basic-stack").removeClass("hidden");
+  $("#also-on-shelf").removeClass("hidden");
+
+  $('#basic-stack').stackView({data: data, ribbon: ""});
   if (scrollPage) {
     // scroll to bottom of the page
     // http://stackoverflow.com/a/10503637/446681
