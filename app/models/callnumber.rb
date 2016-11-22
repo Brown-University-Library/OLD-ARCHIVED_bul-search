@@ -8,8 +8,9 @@ class Callnumber < ActiveRecord::Base
 
   # Saves to the callnumber table all the BIB id
   # and original call numbers found in Solr.
-  # Notice that we don't normalize the call numbers
-  # here, see normalize_all_pending for that.
+  #
+  # Notice that we are not normalizing the call numbers here. We use
+  # an external Python program for that. (See misc/callnumber_norm/)
   def self.cache_bib_ids_to_table(blacklight_config, page = 1)
     puts "Cacheing BIB record IDs (starting on page #{page})..."
     while true
@@ -33,6 +34,9 @@ class Callnumber < ActiveRecord::Base
   # add cache all the BIB id and original call numbers found in Solr.
   # This file can be submitted to MySQL with from the command
   # line with: mysql < callnumbers_upsert.sql
+  #
+  # Notice that we are not normalizing the call numbers here. We use
+  # an external Python program for that. (See misc/callnumber_norm/)
   def self.cache_bib_ids_to_file(blacklight_config, page = 1)
     filename = "callnumbers_upsert.sql"
     IO.write(filename, "", mode: "w")

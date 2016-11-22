@@ -53,3 +53,10 @@ config/secrets.yml
 
 ## Ignore precompiled assets
 /public/assets
+
+# Python utility to normalize call numbers
+/misc/callnumber_norm/bin
+/misc/callnumber_norm/include
+/misc/callnumber_norm/lib
+/misc/callnumber_norm/.Python
+/misc/callnumber_norm/pip-selfcheck.json
