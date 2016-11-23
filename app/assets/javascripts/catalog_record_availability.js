@@ -107,7 +107,7 @@ function addAvailability(availabilityResponse) {
 
 function browseShelfUri(id) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
-  return josiahRootUrl + "api/items/nearby?id=" + id;
+  return josiahRootUrl + "api/items/nearby2?id=" + id;
 }
 
 
@@ -129,60 +129,13 @@ function callnumbers_text(callnumbers) {
 
 function loadNearbyItems() {
   id = getBibId();
-  findNearbyItems(id, true);
+  renderStackView(id, true);
 }
 
 
-function findNearbyItems(id, scrollPage) {
-  $.ajax({
-      type: "GET",
-      url: browseShelfUri(id),
-      success: function(data) {
-        renderNearbyItems(data.documents, scrollPage);
-      }
-  });
-}
-
-
-function renderNearbyItems(items, scrollPage) {
-  var i, doc, link;
-  var docs = [];
-  for(i = 0; i < items.length; i++) {
-    link = josiahRootUrl + "catalog/" + items[i].id + "?nearby";
-    doc = {
-      title: items[i].title,
-      creator: [items[i].author],
-      measurement_page_numeric: items[i].pages,
-      measurement_height_numeric: items[i].height,
-      shelfrank: items[i].highlight ? 50 : 15,
-      pub_date: items[i].year,
-      link: link,
-      isbn: items[i].isbn,
-      highlight: items[i].highlight
-    };
-    docs.push(doc);
-  }
-  renderStackView(docs, scrollPage);
-}
-
-
-function renderStackView(docs, scrollPage) {
-  if (docs.length == 0) {
-    $('#basic-stack').addClass("hidden");
-    $("#also-on-shelf").removeClass("hidden");
-    $('#also-on-shelf-none').removeClass("hidden");
-  } else {
-    var data = {
-      "start": "-1",
-      "limit": "0",
-      "num_found": docs.length,
-      "docs":docs
-    };
-    $("#basic-stack").removeClass("hidden");
-    $("#also-on-shelf").removeClass("hidden");
-    $('#also-on-shelf-none').addClass("hidden");
-    $('#basic-stack').stackView({data: data, ribbon: ""});
-  }
+function renderStackView(id, scrollPage) {
+  url = browseShelfUri(id)
+  $('#basic-stack').stackView({url: url, query: "test book", ribbon: ""});
 
   if (scrollPage) {
     // scroll to bottom of the page

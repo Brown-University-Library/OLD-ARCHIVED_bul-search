@@ -29,5 +29,6 @@ BulSearch::Application.routes.draw do
 
   # API controller
   get 'api/items/by_location' => 'api#items_by_location'
+  get 'api/items/nearby2' => 'api#items_nearby2'
   get 'api/items/nearby' => 'api#items_nearby'
 end

@@ -6,6 +6,7 @@ class ShelfItemData
   MAX_HEIGHT = 100    # cm
 
   attr_reader :id, :callnumbers, :author, :title
+  attr_reader :pages, :height, :year, :isbn
   attr_accessor :highlight
 
   def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns)
