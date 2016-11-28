@@ -5,20 +5,28 @@ class ShelfItemData
   MIN_HEIGHT = 15     # cm
   MAX_HEIGHT = 100    # cm
 
-  attr_reader :id, :callnumbers, :author, :title
-  attr_reader :pages, :height, :year, :isbn
-  attr_accessor :highlight
+  attr_reader :id, :callnumbers, :creator, :title,
+    :measurement_page_numeric, :measurement_height_numeric,
+    :shelfrank, :pub_date, :isbn, :highlight, :link
+  attr_accessor :link
 
   def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns)
     @id = id
     @callnumbers = callnumbers || []
-    @author = author || ""
     @title = title || ""
+    @creator = [author || ""]
+    @measurement_page_numeric = get_pages(physical_display)
+    @measurement_height_numeric = get_height(physical_display)
+    @shelfrank = 15
+    @pub_date = get_year(pub_date)
+    @link = ""
     @highlight = false
-    @pages = get_pages(physical_display)
-    @height = get_height(physical_display)
-    @year = get_year(pub_date)
     @isbn = (isbns || []).first()
+  end
+
+  def highlight=(value)
+    @shelfrank = value ? 50 : 15
+    @highlight = value
   end
 
   private

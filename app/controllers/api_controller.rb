@@ -34,36 +34,16 @@ class ApiController < ApplicationController
     end
     shelf = Shelf.new(blacklight_config)
     documents = shelf.nearby_items(id)
-    nearby_response = { id: id, documents: documents }
-    render :json => nearby_response
-  end
+    documents.each do |d|
+      d.link = "#{catalog_url(d.id)}?nearby"
+      d.highlight = (d.id == id)
+    end
 
-  def items_nearby2
-    id = UserInput::Cleaner.clean_id(params[:id])
-    if id.empty?
-      return render_error("No id provided.")
-    end
-    shelf = Shelf.new(blacklight_config)
-    documents = shelf.nearby_items(id)
-    byebug
-    json_docs = documents.map do |d|
-      {
-        title: d.title,
-        creator: [d.author],
-        measurement_page_numeric: d.pages,
-        measurement_height_numeric: d.height,
-        shelfrank: d.highlight ? 50 : 15,
-        pub_date: d.year,
-        link: "#{catalog_url(d.id)}?nearby",
-        isbn: d.isbn,
-        highlight: d.highlight
-      }
-    end
     nearby_response = {
       start: "-1",
       num_found: "0",
       limit: "0",
-      docs: json_docs
+      docs: documents
     }
     render :json => nearby_response
   end

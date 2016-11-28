@@ -6,7 +6,6 @@ class Shelf
   def nearby_items(id)
     ids = Callnumber.nearby_ids(id)
     items = fetch_ids_from_solr(ids)
-    items.each { |item| item.highlight = true if item.id == id }
     items
   end
 

@@ -16,7 +16,7 @@ $(document).ready(
     $.getJSON(api_url, addAvailability);
 
     if (location.search.indexOf("nearby") > -1) {
-      findNearbyItems(bib_id, false);
+      renderStackView(bib_id, false);
     }
   }
 );
@@ -107,7 +107,7 @@ function addAvailability(availabilityResponse) {
 
 function browseShelfUri(id) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
-  return josiahRootUrl + "api/items/nearby2?id=" + id;
+  return josiahRootUrl + "api/items/nearby?id=" + id;
 }
 
 
