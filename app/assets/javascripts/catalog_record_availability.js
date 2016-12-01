@@ -16,7 +16,7 @@ $(document).ready(
     $.getJSON(api_url, addAvailability);
 
     if (location.search.indexOf("nearby") > -1) {
-      renderStackView(bib_id, false);
+      loadNearbyItems();
     }
   }
 );
@@ -127,20 +127,64 @@ function callnumbers_text(callnumbers) {
 }
 
 
-function loadNearbyItems() {
-  id = getBibId();
-  renderStackView(id, true);
+function scrollToBottomOfPage() {
+  // scroll to bottom of the page
+  // http://stackoverflow.com/a/10503637/446681
+  $("html, body").animate({ scrollTop: $(document).height() }, 1000);
 }
 
 
-function renderStackView(id, scrollPage) {
-  url = browseShelfUri(id)
-  $('#basic-stack').stackView({url: url, query: "test book", ribbon: ""});
+function loadNearbyItems() {
+  var id = getBibId();
+  var url = browseShelfUri(id);
+  $.getJSON(url, function(data) {
+    var i;
+    for(i = 0; i < data.docs.length; i++) {
+      data.docs[i].shelfrank = data.docs[i].id == id ? 50 : 15;
+    }
+    window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
+    scrollToBottomOfPage();
+    updateNearbyBounds(data.docs, true, true);
+    $(".upstream").on("click", function() { loadPrevNearbyItems(); });
+    $(".downstream").on("click", function() { loadNextNearbyItems(); });
+    $("#downagain").on("click", function() { loadNextNearbyItems(); });
+  });
+}
 
-  if (scrollPage) {
-    // scroll to bottom of the page
-    // http://stackoverflow.com/a/10503637/446681
-    $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+
+function loadPrevNearbyItems() {
+  var id = $("#firstBook").text();
+  var url = browseShelfUri(id); // + "&block=prev";
+  $.getJSON(url, function(data) {
+    var i;
+    for(i = 0; i < data.docs.length; i++) {
+      window.theStackViewObject.add(i, data.docs[i]);
+    }
+    updateNearbyBounds(data.docs, true, false);
+  });
+}
+
+
+function loadNextNearbyItems() {
+  var id = $("#lastBook").text();
+  var url = browseShelfUri(id); // + "&block=next";
+  $.getJSON(url, function(data) {
+    var i;
+    for(i = 0; i < data.docs.length; i++) {
+      window.theStackViewObject.add(data.docs[i]);
+    }
+    scrollToBottomOfPage();
+    updateNearbyBounds(data.docs, false, true);
+  });
+}
+
+
+function updateNearbyBounds(docs, prev, next) {
+  if (prev) {
+    $("#firstBook").text(docs[0].id);
+  }
+  if (next) {
+    $("#lastBook").text(docs[docs.length-1].id);
   }
 }
 
@@ -162,16 +206,13 @@ function addRequestButton(availabilityResponse) {
 }
 
 
-function getUrlParameter(sParam)
-{
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++)
-    {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam)
-        {
-            return sParameterName[1];
-        }
+function getUrlParameter(sParam) {
+  var sPageURL = window.location.search.substring(1);
+  var sURLVariables = sPageURL.split('&');
+  for (var i = 0; i < sURLVariables.length; i++) {
+    var sParameterName = sURLVariables[i].split('=');
+    if (sParameterName[0] == sParam) {
+      return sParameterName[1];
     }
+  }
 }

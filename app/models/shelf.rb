@@ -9,6 +9,18 @@ class Shelf
     items
   end
 
+  def nearby_items_prev(id, normalized)
+    ids = Callnumber.nearby_ids_prev(id, normalized)
+    items = fetch_ids_from_solr(ids)
+    items
+  end
+
+  def nearby_items_next(id, normalized)
+    ids = Callnumber.nearby_ids_next(id, normalized)
+    items = fetch_ids_from_solr(ids)
+    items
+  end
+
   private
     def fetch_ids_from_solr(ids)
       builder = ShelfSearchBuilder.new(@blacklight_config, ids)

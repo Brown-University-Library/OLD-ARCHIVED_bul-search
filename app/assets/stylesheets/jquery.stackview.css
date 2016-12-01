@@ -671,9 +671,9 @@
   bottom: 0;
   background: #f5f2e8;
   border-radius: 3px 0 0 3px / 20px 0 0 20px;
-  border-width: 2px 1px 2px 0px;
-  border-style: solid;
-  border-color: #aaa #e5e5e5 #007acc #ddd;
+  border-width: 3px 1px 2px 0px;
+  border-style: solid dotted solid solid;
+  border-color: #aaa #e0d7b9 #ccc #ccc;
 }
 
 .stack-cover {
@@ -714,7 +714,7 @@
   left: 15px;
   top: 0;
   bottom: 0;
-  width: 200px;
+  width: 185px;
 }
 .stack-serial .spine-title {
   height: 39px;
@@ -781,6 +781,7 @@
 }
 .stack-soundrecording .spine-text {
   left: 35px;
+  right: 35px;
 }
 .stack-soundrecording .spine-title {
   height: 25px;

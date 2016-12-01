@@ -13,7 +13,7 @@ class ShelfItemData
   def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns)
     @id = id
     @callnumbers = callnumbers || []
-    @title = title || ""
+    @title = "#{id}-#{title}" || ""
     @creator = [author || ""]
     @measurement_page_numeric = get_pages(physical_display)
     @measurement_height_numeric = get_height(physical_display)

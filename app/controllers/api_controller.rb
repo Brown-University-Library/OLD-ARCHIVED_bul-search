@@ -33,15 +33,24 @@ class ApiController < ApplicationController
       return render_error("No id provided.")
     end
     shelf = Shelf.new(blacklight_config)
-    documents = shelf.nearby_items(id)
+    # byebug
+    case params[:block]
+    when "next"
+      normalized = UserInput::Cleaner.clean_id(params[:normalized])
+      documents = shelf.nearby_items_next(id, normalized)
+    when "prev"
+      normalized = UserInput::Cleaner.clean_id(params[:normalized])
+      documents = shelf.nearby_items_prev(id, normalized)
+    else
+      documents = shelf.nearby_items(id)
+    end
     documents.each do |d|
       d.link = "#{catalog_url(d.id)}?nearby"
-      d.highlight = (d.id == id)
     end
 
     nearby_response = {
       start: "-1",
-      num_found: "0",
+      num_found: documents.count.to_s,
       limit: "0",
       docs: documents
     }

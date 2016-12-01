@@ -137,6 +137,58 @@ class Callnumber < ActiveRecord::Base
     ids
   end
 
+  # Returns an array of BIB record IDs with call numbers
+  # that are BEFORE to the bib_id provided.
+  def self.nearby_ids_prev(bib_id, normalized)
+    # How should we handle if have more than one call number
+    # for a given BIB record and they have different LOC
+    # classifications? (see BIB b3093842 and b7777507)
+    #
+    # For now, we just fetch the first one.
+    callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
+    return [] if callnumber == nil
+
+    # Items with call numbers _before_ or equal to this BIB.
+    sql = <<-END_SQL.gsub(/\n/, '')
+      select bib
+      from callnumbers
+      where normalized <= "#{callnumber.normalized}"
+      order by normalized desc
+      limit #{NEARBY_BATCH_SIZE};
+    END_SQL
+    before_rows = ActiveRecord::Base.connection.exec_query(sql).rows
+
+    ids = []
+    before_rows.reverse.each { |r| ids << r[0] }
+    ids
+  end
+
+  # Returns an array of BIB record IDs with call numbers
+  # that are AFTER to the bib_id provided.
+  def self.nearby_ids_next(bib_id, normalized)
+    # How should we handle if have more than one call number
+    # for a given BIB record and they have different LOC
+    # classifications? (see BIB b3093842 and b7777507)
+    #
+    # For now, we just fetch the first one.
+    callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
+    return [] if callnumber == nil
+
+    # Items with call numbers _after_ this bib_id.
+    sql = <<-END_SQL.gsub(/\n/, '')
+      select bib
+      from callnumbers
+      where normalized > "#{callnumber.normalized}"
+      order by normalized
+      limit #{NEARBY_BATCH_SIZE};
+    END_SQL
+    after_rows = ActiveRecord::Base.connection.exec_query(sql).rows
+
+    ids = []
+    after_rows.each { |r| ids << r[0] }
+    ids
+  end
+
   private
     def self.fetch_all_solr_ids(blacklight_config, page, page_size)
       builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
