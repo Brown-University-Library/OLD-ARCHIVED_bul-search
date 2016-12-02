@@ -33,13 +33,12 @@ class ApiController < ApplicationController
       return render_error("No id provided.")
     end
     shelf = Shelf.new(blacklight_config)
-    # byebug
     case params[:block]
     when "next"
-      normalized = UserInput::Cleaner.clean_id(params[:normalized])
+      normalized = UserInput::Cleaner.clean(params[:normalized])
       documents = shelf.nearby_items_next(id, normalized)
     when "prev"
-      normalized = UserInput::Cleaner.clean_id(params[:normalized])
+      normalized = UserInput::Cleaner.clean(params[:normalized])
       documents = shelf.nearby_items_prev(id, normalized)
     else
       documents = shelf.nearby_items(id)

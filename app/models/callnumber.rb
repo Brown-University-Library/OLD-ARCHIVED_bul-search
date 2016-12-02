@@ -101,7 +101,7 @@ class Callnumber < ActiveRecord::Base
 
     # Items with call numbers _before_ or equal to this BIB.
     sql = <<-END_SQL.gsub(/\n/, '')
-      select bib
+      select bib, normalized
       from callnumbers
       where normalized <= "#{callnumber.normalized}"
       order by normalized desc
@@ -111,7 +111,7 @@ class Callnumber < ActiveRecord::Base
 
     # Items with call numbers _after_ this bib_id.
     sql = <<-END_SQL.gsub(/\n/, '')
-      select bib
+      select bib, normalized
       from callnumbers
       where normalized > "#{callnumber.normalized}"
       order by normalized
@@ -124,7 +124,8 @@ class Callnumber < ActiveRecord::Base
     # Notice that we reverse the _before items_ first
     # so they show correctly (lower on top).
     ids = []
-    before_rows.reverse.each { |r| ids << r[0] }
+    before_rows.reverse!
+    before_rows.each { |r| ids << r[0] }
 
     if ids.find {|id| id == bib_id} == nil
       # If the current BIB was not in the list we force it
@@ -134,59 +135,48 @@ class Callnumber < ActiveRecord::Base
     end
 
     after_rows.each { |r| ids << r[0] }
-    ids
+
+    return {ids: ids, bounds: boundaries(before_rows, after_rows)}
   end
+
 
   # Returns an array of BIB record IDs with call numbers
   # that are BEFORE to the bib_id provided.
   def self.nearby_ids_prev(bib_id, normalized)
-    # How should we handle if have more than one call number
-    # for a given BIB record and they have different LOC
-    # classifications? (see BIB b3093842 and b7777507)
-    #
-    # For now, we just fetch the first one.
     callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
     return [] if callnumber == nil
 
     # Items with call numbers _before_ or equal to this BIB.
     sql = <<-END_SQL.gsub(/\n/, '')
-      select bib
+      select bib, normalized
       from callnumbers
       where normalized <= "#{callnumber.normalized}"
       order by normalized desc
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
     before_rows = ActiveRecord::Base.connection.exec_query(sql).rows
-
-    ids = []
-    before_rows.reverse.each { |r| ids << r[0] }
-    ids
+    before_rows.reverse!
+    ids = before_rows.map { |r| r[0] }
+    return {ids: ids, bounds: boundaries(before_rows, nil)}
   end
 
   # Returns an array of BIB record IDs with call numbers
   # that are AFTER to the bib_id provided.
   def self.nearby_ids_next(bib_id, normalized)
-    # How should we handle if have more than one call number
-    # for a given BIB record and they have different LOC
-    # classifications? (see BIB b3093842 and b7777507)
-    #
-    # For now, we just fetch the first one.
     callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
     return [] if callnumber == nil
 
     # Items with call numbers _after_ this bib_id.
     sql = <<-END_SQL.gsub(/\n/, '')
-      select bib
+      select bib, normalized
       from callnumbers
       where normalized > "#{callnumber.normalized}"
       order by normalized
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
     after_rows = ActiveRecord::Base.connection.exec_query(sql).rows
-
-    ids = []
-    after_rows.each { |r| ids << r[0] }
-    ids
+    ids = after_rows.map { |r| r[0] }
+    return {ids: ids, bounds: boundaries(nil, after_rows)}
   end
 
   private
@@ -228,5 +218,17 @@ class Callnumber < ActiveRecord::Base
         count += 1
       end
       count
+    end
+
+    def self.boundaries(top_rows, bottom_rows)
+      top = nil
+      bottom = nil
+      if top_rows && top_rows.count > 0
+        top = top_rows.first[1]
+      end
+      if bottom_rows && bottom_rows.count > 0
+        bottom = bottom_rows.last[1]
+      end
+      return {top: top, bottom: bottom}
     end
 end

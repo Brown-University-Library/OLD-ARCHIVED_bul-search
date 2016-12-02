@@ -7,13 +7,14 @@ class ShelfItemData
 
   attr_reader :id, :callnumbers, :creator, :title,
     :measurement_page_numeric, :measurement_height_numeric,
-    :shelfrank, :pub_date, :isbn, :highlight, :link
+    :shelfrank, :pub_date, :isbn, :highlight, :link,
+    :normalized
   attr_accessor :link
 
-  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns)
+  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized)
     @id = id
     @callnumbers = callnumbers || []
-    @title = "#{id}-#{title}" || ""
+    @title = title || ""
     @creator = [author || ""]
     @measurement_page_numeric = get_pages(physical_display)
     @measurement_height_numeric = get_height(physical_display)
@@ -22,6 +23,7 @@ class ShelfItemData
     @link = ""
     @highlight = false
     @isbn = (isbns || []).first()
+    @normalized = normalized
   end
 
   def highlight=(value)

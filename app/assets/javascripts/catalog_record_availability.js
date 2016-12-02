@@ -3,8 +3,8 @@
 $(document).ready(
   function(){
 
-    // Add Virtual Shelf option to tools section
-    link = '<li><a onclick="loadNearbyItems(); return false;" href="#">Virtual Shelf</a>';
+    // Add More Like This option to tools section
+    link = '<li><a onclick="loadNearbyItems(true); return false;" href="#">More Like This</a>';
     $("div.panel-body>ul.nav").append(link);
 
     var bib_id = getBibId();
@@ -16,7 +16,7 @@ $(document).ready(
     $.getJSON(api_url, addAvailability);
 
     if (location.search.indexOf("nearby") > -1) {
-      loadNearbyItems();
+      loadNearbyItems(false);
     }
   }
 );
@@ -105,90 +105,6 @@ function addAvailability(availabilityResponse) {
 }
 
 
-function browseShelfUri(id) {
-  // josiahRootUrl is defined in shared/_header_navbar.html.erb
-  return josiahRootUrl + "api/items/nearby?id=" + id;
-}
-
-
-function callnumbers_text(callnumbers) {
-  if (!callnumbers) {
-    return "";
-  }
-  var text = " (";
-  var count = count = callnumbers.length;
-  var i;
-  for(i=0; i < count; i++) {
-    text += callnumbers[i];
-    text += (i < (count-1)) ? ", " : "";
-  }
-  text += ")";
-  return text;
-}
-
-
-function scrollToBottomOfPage() {
-  // scroll to bottom of the page
-  // http://stackoverflow.com/a/10503637/446681
-  $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-}
-
-
-function loadNearbyItems() {
-  var id = getBibId();
-  var url = browseShelfUri(id);
-  $.getJSON(url, function(data) {
-    var i;
-    for(i = 0; i < data.docs.length; i++) {
-      data.docs[i].shelfrank = data.docs[i].id == id ? 50 : 15;
-    }
-    window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
-    scrollToBottomOfPage();
-    updateNearbyBounds(data.docs, true, true);
-    $(".upstream").on("click", function() { loadPrevNearbyItems(); });
-    $(".downstream").on("click", function() { loadNextNearbyItems(); });
-    $("#downagain").on("click", function() { loadNextNearbyItems(); });
-  });
-}
-
-
-function loadPrevNearbyItems() {
-  var id = $("#firstBook").text();
-  var url = browseShelfUri(id); // + "&block=prev";
-  $.getJSON(url, function(data) {
-    var i;
-    for(i = 0; i < data.docs.length; i++) {
-      window.theStackViewObject.add(i, data.docs[i]);
-    }
-    updateNearbyBounds(data.docs, true, false);
-  });
-}
-
-
-function loadNextNearbyItems() {
-  var id = $("#lastBook").text();
-  var url = browseShelfUri(id); // + "&block=next";
-  $.getJSON(url, function(data) {
-    var i;
-    for(i = 0; i < data.docs.length; i++) {
-      window.theStackViewObject.add(data.docs[i]);
-    }
-    scrollToBottomOfPage();
-    updateNearbyBounds(data.docs, false, true);
-  });
-}
-
-
-function updateNearbyBounds(docs, prev, next) {
-  if (prev) {
-    $("#firstBook").text(docs[0].id);
-  }
-  if (next) {
-    $("#lastBook").text(docs[docs.length-1].id);
-  }
-}
-
-
 function requestLink() {
   var bib = getBibId();
   return 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
@@ -214,5 +130,114 @@ function getUrlParameter(sParam) {
     if (sParameterName[0] == sParam) {
       return sParameterName[1];
     }
+  }
+}
+
+
+// =============================================
+//
+// Virtual Shelf functions
+//
+// =============================================
+function browseShelfUri(id, block, norm) {
+  // josiahRootUrl is defined in shared/_header_navbar.html.erb
+  url = josiahRootUrl + "api/items/nearby?id=" + id;
+  if (block) {
+    url += "&block=" + block;
+  }
+  if (norm) {
+    url += "&normalized=" + norm;
+  }
+  return url;
+}
+
+
+function scrollToBottomOfPage() {
+  // scroll to bottom of the page
+  // http://stackoverflow.com/a/10503637/446681
+  $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+}
+
+
+function loadNearbyItems(scroll) {
+  var id = getBibId();
+  var url = browseShelfUri(id, null, null);
+  $.getJSON(url, function(data) {
+    addDebugInfoToDocs(data.docs);
+    var i;
+    for(i = 0; i < data.docs.length; i++) {
+      data.docs[i].shelfrank = data.docs[i].id == id ? 50 : 15;
+    }
+    // Make a global object available for use as the user loads more data.
+    // I don't like that I am referencing the internals of the stackviewObject
+    // but this would do for now while I figure out a better way to load
+    // data on demand.
+    window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
+    if (scroll) {
+      scrollToBottomOfPage();
+    }
+    updateNearbyBounds(data.docs, true, true);
+    $(".upstream").on("click", function() { loadPrevNearbyItems(); });
+    $(".downstream").on("click", function() { loadNextNearbyItems(); });
+    $("#downButton").on("click", function() { loadNextNearbyItems(); });
+    $("#downButton").removeClass("hidden");
+  });
+}
+
+
+function loadPrevNearbyItems() {
+  var id = $("#firstBook").text();
+  var norm = $("#firstBookNorm").text();
+  var url = browseShelfUri(id, "prev", norm);
+  $.getJSON(url, function(data) {
+    addDebugInfoToDocs(data.docs);
+    var i;
+    for(i = 0; i < data.docs.length; i++) {
+      window.theStackViewObject.add(i, data.docs[i]);
+    }
+    updateNearbyBounds(data.docs, true, false);
+  });
+}
+
+
+function loadNextNearbyItems() {
+  var id = $("#lastBook").text();
+  var norm = $("#lastBookNorm").text();
+  var url = browseShelfUri(id, "next", norm);
+  $.getJSON(url, function(data) {
+    addDebugInfoToDocs(data.docs);
+    var i;
+    for(i = 0; i < data.docs.length; i++) {
+      window.theStackViewObject.add(data.docs[i]);
+    }
+    scrollToBottomOfPage();
+    updateNearbyBounds(data.docs, false, true);
+  });
+}
+
+
+// Save the Id and normalized call number at the top and/or bottom
+// of the stack. We use these values as our starting point when the
+// users wants to continue fetching records.
+function updateNearbyBounds(docs, prev, next) {
+  if (prev) {
+    $("#firstBook").text(docs[0].id);
+    $("#firstBookNorm").text(docs[0].normalized);
+  }
+  if (next) {
+    $("#lastBook").text(docs[docs.length-1].id);
+    $("#lastBookNorm").text(docs[docs.length-1].normalized);
+  }
+}
+
+
+function addDebugInfoToDocs(docs) {
+  if (location.search.indexOf("verbose") == -1) {
+    return;
+  }
+  var i, j;
+  for(i = 0; i < docs.length; i++) {
+    doc = docs[i];
+    doc.title = doc.title + "<br/>" + doc.id + ": " + doc.callnumbers.toString();
   }
 }
