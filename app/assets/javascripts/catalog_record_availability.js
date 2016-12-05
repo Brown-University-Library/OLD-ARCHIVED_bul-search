@@ -180,7 +180,9 @@ function loadNearbyItems(scroll) {
     $(".upstream").on("click", function() { loadPrevNearbyItems(); });
     $(".downstream").on("click", function() { loadNextNearbyItems(); });
     $("#downButton").on("click", function() { loadNextNearbyItems(); });
-    $("#downButton").removeClass("hidden");
+    if (!loadInPlace()) {
+      $("#downButton").removeClass("hidden");
+    }
   });
 }
 
@@ -191,11 +193,20 @@ function loadPrevNearbyItems() {
   var url = browseShelfUri(id, "prev", norm);
   $.getJSON(url, function(data) {
     addDebugInfoToDocs(data.docs);
+    highlightCurrent(data.docs);
+    var lastIndex = window.theStackViewObject.options.data.docs.length - 1;
     var i;
     for(i = 0; i < data.docs.length; i++) {
+      if (loadInPlace()) {
+        window.theStackViewObject.remove(lastIndex);
+      }
       window.theStackViewObject.add(i, data.docs[i]);
     }
-    updateNearbyBounds(data.docs, true, false);
+    if (loadInPlace()) {
+      updateNearbyBounds(data.docs, true, true);
+    } else {
+      updateNearbyBounds(data.docs, true, false);
+    }
   });
 }
 
@@ -206,12 +217,20 @@ function loadNextNearbyItems() {
   var url = browseShelfUri(id, "next", norm);
   $.getJSON(url, function(data) {
     addDebugInfoToDocs(data.docs);
+    highlightCurrent(data.docs);
     var i;
     for(i = 0; i < data.docs.length; i++) {
+      if (loadInPlace()) {
+        window.theStackViewObject.remove(0);
+      }
       window.theStackViewObject.add(data.docs[i]);
     }
-    scrollToBottomOfPage();
-    updateNearbyBounds(data.docs, false, true);
+    if (loadInPlace()) {
+      updateNearbyBounds(data.docs, true, true);
+    } else {
+      updateNearbyBounds(data.docs, false, true);
+      scrollToBottomOfPage();
+    }
   });
 }
 
@@ -231,6 +250,18 @@ function updateNearbyBounds(docs, prev, next) {
 }
 
 
+function highlightCurrent(docs) {
+  var currentId = getBibId();
+  var i;
+  for(i = 0; i < docs.length; i++) {
+    if (docs[i].id == currentId) {
+      docs[i].shelfrank = 50;
+      break;
+    }
+  }
+}
+
+
 function addDebugInfoToDocs(docs) {
   if (location.search.indexOf("verbose") == -1) {
     return;
@@ -240,4 +271,9 @@ function addDebugInfoToDocs(docs) {
     doc = docs[i];
     doc.title = doc.title + "<br/>" + doc.id + ": " + doc.callnumbers.toString();
   }
+}
+
+
+function loadInPlace() {
+  return (location.search.indexOf("inplace") > -1);
 }

@@ -23,21 +23,15 @@ class Shelf
 
   private
     def fetch_ids_from_solr(nearby)
-      builder = ShelfSearchBuilder.new(@blacklight_config, nearby[:ids])
+      ids = nearby[:ids].map {|x| x[:id]}
+      builder = ShelfSearchBuilder.new(@blacklight_config, ids)
       repository = Blacklight::SolrRepository.new(@blacklight_config)
       response = repository.search(builder)
       items = []
-      nearby[:ids].each_with_index do |id, index|
-        solr_doc = response.documents.find {|x| x[:id] == id }
+      nearby[:ids].each do |item|
+        solr_doc = response.documents.find {|x| x[:id] == item[:id]}
         if solr_doc != nil
-          normalized = nil
-          if index == 0
-            normalized = nearby[:bounds][:top]
-          end
-          if index == nearby[:ids].count-1
-            normalized = nearby[:bounds][:bottom]
-          end
-          shelf_item = to_shelf_item(solr_doc, normalized)
+          shelf_item = to_shelf_item(solr_doc, item[:normalized])
           items << shelf_item
         end
       end

@@ -125,16 +125,20 @@ class Callnumber < ActiveRecord::Base
     # so they show correctly (lower on top).
     ids = []
     before_rows.reverse!
-    before_rows.each { |r| ids << r[0] }
+    before_rows.each do |r|
+      ids << {id: r[0], normalized: r[1]}
+    end
 
     if ids.find {|id| id == bib_id} == nil
       # If the current BIB was not in the list we force it
       # to be on the list. This could happen when we have
       # too many items with the same call number.
-      ids << bib_id
+      ids << {id: bib_id, normalized: callnumber.normalized}
     end
 
-    after_rows.each { |r| ids << r[0] }
+    after_rows.each do |r|
+      ids << {id: r[0], normalized: r[1]}
+    end
 
     return {ids: ids, bounds: boundaries(before_rows, after_rows)}
   end
@@ -145,18 +149,22 @@ class Callnumber < ActiveRecord::Base
   def self.nearby_ids_prev(bib_id, normalized)
     callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
     return [] if callnumber == nil
+    # puts "BEFORE: #{bib_id}, #{normalized}"
+    # byebug
 
     # Items with call numbers _before_ or equal to this BIB.
     sql = <<-END_SQL.gsub(/\n/, '')
       select bib, normalized
       from callnumbers
-      where normalized <= "#{callnumber.normalized}"
+      where normalized <= "#{callnumber.normalized}" and bib <> "#{bib_id}"
       order by normalized desc
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
     before_rows = ActiveRecord::Base.connection.exec_query(sql).rows
     before_rows.reverse!
-    ids = before_rows.map { |r| r[0] }
+    ids = before_rows.map do |r|
+      {id: r[0], normalized: r[1]}
+    end
     return {ids: ids, bounds: boundaries(before_rows, nil)}
   end
 
@@ -165,6 +173,8 @@ class Callnumber < ActiveRecord::Base
   def self.nearby_ids_next(bib_id, normalized)
     callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
     return [] if callnumber == nil
+    # puts "AFTER: #{bib_id}, #{normalized}"
+    # byebug
 
     # Items with call numbers _after_ this bib_id.
     sql = <<-END_SQL.gsub(/\n/, '')
@@ -175,7 +185,9 @@ class Callnumber < ActiveRecord::Base
       limit #{NEARBY_BATCH_SIZE};
     END_SQL
     after_rows = ActiveRecord::Base.connection.exec_query(sql).rows
-    ids = after_rows.map { |r| r[0] }
+    ids = after_rows.map do |r|
+      {id: r[0], normalized: r[1]}
+    end
     return {ids: ids, bounds: boundaries(nil, after_rows)}
   end
 
@@ -223,6 +235,7 @@ class Callnumber < ActiveRecord::Base
     def self.boundaries(top_rows, bottom_rows)
       top = nil
       bottom = nil
+      return {top: top, bottom: bottom}
       if top_rows && top_rows.count > 0
         top = top_rows.first[1]
       end
