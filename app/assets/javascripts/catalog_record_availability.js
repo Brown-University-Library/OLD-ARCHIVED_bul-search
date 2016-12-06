@@ -172,7 +172,19 @@ function loadNearbyItems(scroll) {
     // I don't like that I am referencing the internals of the stackviewObject
     // but this would do for now while I figure out a better way to load
     // data on demand.
-    window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
+    if (window.theStackViewObject == undefined) {
+      window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
+    } else {
+      // debugger;
+      var i;
+      for(i = 0; i < data.docs.length; i++) {
+        window.theStackViewObject.add(i, data.docs[i]);
+      }
+      var numItemsAdded = data.docs.length;
+      for(i = 0; i < numItemsAdded; i++) {
+        window.theStackViewObject.remove(numItemsAdded);
+      }
+    }
     if (scroll) {
       scrollToBottomOfPage();
     }
@@ -183,6 +195,7 @@ function loadNearbyItems(scroll) {
     if (!loadInPlace()) {
       $("#downButton").removeClass("hidden");
     }
+    clearResetButton();
   });
 }
 
@@ -203,6 +216,7 @@ function loadPrevNearbyItems() {
       window.theStackViewObject.add(i, data.docs[i]);
     }
     if (loadInPlace()) {
+      showResetButton();
       updateNearbyBounds(data.docs, true, true);
     } else {
       updateNearbyBounds(data.docs, true, false);
@@ -226,6 +240,7 @@ function loadNextNearbyItems() {
       window.theStackViewObject.add(data.docs[i]);
     }
     if (loadInPlace()) {
+      showResetButton();
       updateNearbyBounds(data.docs, true, true);
     } else {
       updateNearbyBounds(data.docs, false, true);
@@ -276,4 +291,17 @@ function addDebugInfoToDocs(docs) {
 
 function loadInPlace() {
   return (location.search.indexOf("inplace") > -1);
+}
+
+function showResetButton() {
+  var href = '<a onClick="loadNearbyItems(); return false;" ' +
+    'href="#" ' +
+    'title="Show me to the inital stack of books">reset</a>';
+  var html = "<span>" + href + "</span>";
+  $(".num-found").html(html);
+}
+
+function clearResetButton() {
+  var html = '<span>&nbsp;</span>';
+  $(".num-found").html(html);
 }
