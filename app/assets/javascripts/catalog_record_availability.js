@@ -3,15 +3,7 @@
 $(document).ready(
   function(){
     var bib_id = getBibId();
-
-    // Add "More Like This" option to tools section
-    var link1 = '<li><a onclick="loadNearbyItems(true); return false;" href="#">More Like This</a>';
-    $("div.panel-body>ul.nav").append(link1);
-
-    // Add "Browse the stacks" option to tools section
-    var link2 = '<li><a href="' + browseStack(bib_id) + '">Browse the Stacks</a>';
-    $("div.panel-body>ul.nav").append(link2);
-
+    addVirtualShelfLinks(bib_id);
     var api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
     if (limit == "false") {
@@ -156,10 +148,11 @@ function browseShelfUri(id, block, norm) {
 }
 
 
-function browseStack(id) {
+function browseStackUri(id) {
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
   return josiahRootUrl + "browse/" + id;
 }
+
 
 function scrollToBottomOfPage() {
   // scroll to bottom of the page
@@ -184,7 +177,6 @@ function loadNearbyItems(scroll) {
     if (window.theStackViewObject == undefined) {
       window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
     } else {
-      // debugger;
       var i;
       for(i = 0; i < data.docs.length; i++) {
         window.theStackViewObject.add(i, data.docs[i]);
@@ -200,10 +192,6 @@ function loadNearbyItems(scroll) {
     updateNearbyBounds(data.docs, true, true);
     $(".upstream").on("click", function() { loadPrevNearbyItems(); });
     $(".downstream").on("click", function() { loadNextNearbyItems(); });
-    $("#downButton").on("click", function() { loadNextNearbyItems(); });
-    if (!loadInPlace()) {
-      $("#downButton").removeClass("hidden");
-    }
     clearResetButton();
   });
 }
@@ -219,17 +207,11 @@ function loadPrevNearbyItems() {
     var lastIndex = window.theStackViewObject.options.data.docs.length - 1;
     var i;
     for(i = 0; i < data.docs.length; i++) {
-      if (loadInPlace()) {
-        window.theStackViewObject.remove(lastIndex);
-      }
+      window.theStackViewObject.remove(lastIndex);
       window.theStackViewObject.add(i, data.docs[i]);
     }
-    if (loadInPlace()) {
-      showResetButton();
-      updateNearbyBounds(data.docs, true, true);
-    } else {
-      updateNearbyBounds(data.docs, true, false);
-    }
+    showResetButton();
+    updateNearbyBounds(data.docs, true, true);
   });
 }
 
@@ -243,18 +225,11 @@ function loadNextNearbyItems() {
     highlightCurrent(data.docs);
     var i;
     for(i = 0; i < data.docs.length; i++) {
-      if (loadInPlace()) {
-        window.theStackViewObject.remove(0);
-      }
+      window.theStackViewObject.remove(0);
       window.theStackViewObject.add(data.docs[i]);
     }
-    if (loadInPlace()) {
-      showResetButton();
-      updateNearbyBounds(data.docs, true, true);
-    } else {
-      updateNearbyBounds(data.docs, false, true);
-      scrollToBottomOfPage();
-    }
+    showResetButton();
+    updateNearbyBounds(data.docs, true, true);
   });
 }
 
@@ -290,7 +265,7 @@ function addDebugInfoToDocs(docs) {
   if (location.search.indexOf("verbose") == -1) {
     return;
   }
-  var i, j;
+  var i;
   for(i = 0; i < docs.length; i++) {
     doc = docs[i];
     doc.title = doc.title + "<br/>" + doc.id + ": " + doc.callnumbers.toString();
@@ -298,19 +273,25 @@ function addDebugInfoToDocs(docs) {
 }
 
 
-function loadInPlace() {
-  return (location.search.indexOf("inplace") > -1);
-}
-
 function showResetButton() {
-  var href = '<a onClick="loadNearbyItems(); return false;" ' +
-    'href="#" ' +
-    'title="Show me to the inital stack of books">reset</a>';
+  var href = '<a onClick="loadNearbyItems(false); return false;" ' +
+    'href="#" title="Show me the inital stack of books">reset</a>';
   var html = "<span>" + href + "</span>";
   $(".num-found").html(html);
 }
 
+
 function clearResetButton() {
   var html = '<span>&nbsp;</span>';
   $(".num-found").html(html);
+}
+
+function addVirtualShelfLinks(bib_id) {
+  // Add "More Like This" option to tools section
+  var link1 = '<li><a onclick="loadNearbyItems(true); return false;" href="#">More Like This</a>';
+  $("div.panel-body>ul.nav").append(link1);
+
+  // Add "Browse the stacks" option to tools section
+  var link2 = '<li><a href="' + browseStackUri(bib_id) + '">Browse the Stacks</a>';
+  $("div.panel-body>ul.nav").append(link2);
 }
