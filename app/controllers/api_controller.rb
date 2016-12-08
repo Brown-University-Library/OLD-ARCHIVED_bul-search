@@ -48,8 +48,38 @@ class ApiController < ApplicationController
     end
 
     nearby_response = {
-      start: "-1",
+      start: "0",
       num_found: documents.count.to_s,
+      limit: "0",
+      docs: documents
+    }
+    render :json => nearby_response
+  end
+
+  def shelf_items
+    id = UserInput::Cleaner.clean_id(params[:id])
+    if id.empty?
+      return render_error("No id provided.")
+    end
+
+    start = (UserInput::Cleaner.clean(params[:start]) || "0").to_i
+    if start > 0
+      id = Callnumber.next_id(id, start)
+    end
+    limit = (UserInput::Cleaner.clean(params[:limit]) || "10").to_i
+    verbose = params.has_key?("verbose") ? "verbose" : nil
+    shelf = Shelf.new(blacklight_config)
+    documents = shelf.nearby_items(id)
+    documents.each do |d|
+      if verbose != nil
+        d.title = d.title + "<br/>" + d.id + ": " + d.callnumbers.join(",")
+      end
+      d.link = "#{catalog_url(d.id)}?nearby&#{verbose}"
+    end
+
+    nearby_response = {
+      start: "0",
+      num_found: (documents.count*100).to_s,
       limit: "0",
       docs: documents
     }

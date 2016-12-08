@@ -144,6 +144,23 @@ class Callnumber < ActiveRecord::Base
   end
 
 
+  def self.next_id(bib_id, skip_count)
+    callnumber = Callnumber.find_by(bib: bib_id)
+    return [] if callnumber == nil
+
+    if skip_count > 0
+      sql = <<-END_SQL.gsub(/\n/, '')
+        select bib, normalized
+        from callnumbers
+        where normalized >= "#{callnumber.normalized}"
+        order by normalized
+        limit #{skip_count};
+      END_SQL
+      rows = ActiveRecord::Base.connection.exec_query(sql).rows
+      return rows.last[0]
+    end
+  end
+
   # Returns an array of BIB record IDs with call numbers
   # that are BEFORE to the bib_id provided.
   def self.nearby_ids_prev(bib_id, normalized)

@@ -2,12 +2,16 @@
 // Loaded by `app/views/catalog/show.html.erb`.
 $(document).ready(
   function(){
-
-    // Add More Like This option to tools section
-    link = '<li><a onclick="loadNearbyItems(true); return false;" href="#">More Like This</a>';
-    $("div.panel-body>ul.nav").append(link);
-
     var bib_id = getBibId();
+
+    // Add "More Like This" option to tools section
+    var link1 = '<li><a onclick="loadNearbyItems(true); return false;" href="#">More Like This</a>';
+    $("div.panel-body>ul.nav").append(link1);
+
+    // Add "Browse the stacks" option to tools section
+    var link2 = '<li><a href="' + browseStack(bib_id) + '">Browse the Stacks</a>';
+    $("div.panel-body>ul.nav").append(link2);
+
     var api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
     if (limit == "false") {
@@ -151,6 +155,11 @@ function browseShelfUri(id, block, norm) {
   return url;
 }
 
+
+function browseStack(id) {
+  // josiahRootUrl is defined in shared/_header_navbar.html.erb
+  return josiahRootUrl + "browse/" + id;
+}
 
 function scrollToBottomOfPage() {
   // scroll to bottom of the page

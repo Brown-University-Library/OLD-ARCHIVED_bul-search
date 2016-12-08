@@ -9,7 +9,7 @@ class ShelfItemData
     :measurement_page_numeric, :measurement_height_numeric,
     :shelfrank, :pub_date, :isbn, :highlight, :link,
     :normalized
-  attr_accessor :link
+  attr_accessor :link, :title
 
   def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized)
     @id = id

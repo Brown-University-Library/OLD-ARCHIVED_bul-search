@@ -20,6 +20,10 @@ BulSearch::Application.routes.draw do
   #libweb
   get 'libweb/' => 'libweb#search', as: :lib_web
 
+  # Browse (aka Virtual Shelf)
+  get 'browse/' => 'browse#random'
+  get 'browse/:id' => 'browse#from_item'
+
   # Stub controller to test the Availability Service
   get 'availability/test_auth' => 'availability#test_auth'
   get 'availability/fake/:id' => 'availability#fake_one'
@@ -30,4 +34,5 @@ BulSearch::Application.routes.draw do
   # API controller
   get 'api/items/by_location' => 'api#items_by_location'
   get 'api/items/nearby' => 'api#items_nearby'
+  get 'api/items/shelf_items' => 'api#shelf_items'
 end
