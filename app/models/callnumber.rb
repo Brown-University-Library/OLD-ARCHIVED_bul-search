@@ -152,12 +152,27 @@ class Callnumber < ActiveRecord::Base
       sql = <<-END_SQL.gsub(/\n/, '')
         select bib, normalized
         from callnumbers
-        where normalized >= "#{callnumber.normalized}"
+        where normalized >= "#{callnumber.normalized}" and bib <> "#{bib_id}"
         order by normalized
         limit #{skip_count};
       END_SQL
       rows = ActiveRecord::Base.connection.exec_query(sql).rows
+      return nil if rows.count == 0
       return rows.last[0]
+    elsif skip_count < 0
+      sql = <<-END_SQL.gsub(/\n/, '')
+        select bib, normalized
+        from callnumbers
+        where normalized <= "#{callnumber.normalized}" and bib <> "#{bib_id}"
+        order by normalized desc
+        limit #{skip_count.abs};
+      END_SQL
+      rows = ActiveRecord::Base.connection.exec_query(sql).rows
+      return nil if rows.count == 0
+      return rows.last[0]
+    else
+      # bib_id or nil?
+      return bib_id
     end
   end
 

@@ -56,30 +56,40 @@ class ApiController < ApplicationController
     render :json => nearby_response
   end
 
+  # We expect range_str to be in the form "[n TO m]"
+  # where n and m are integers (positive or negative)
+  def get_start_skip(range_str)
+    return 0 if range_str == nil
+    reg_ex = /\[(-?(\d)*)\s/
+    matches = reg_ex.match(range_str)
+    return 0 if matches == nil || matches.length < 2
+    matches[1].to_i
+  end
+
   def shelf_items
     id = UserInput::Cleaner.clean_id(params[:id])
     if id.empty?
       return render_error("No id provided.")
     end
-
-    start = (UserInput::Cleaner.clean(params[:start]) || "0").to_i
-    if start > 0
-      id = Callnumber.next_id(id, start)
-    end
-    limit = (UserInput::Cleaner.clean(params[:limit]) || "10").to_i
-    verbose = params.has_key?("verbose") ? "verbose" : nil
-    shelf = Shelf.new(blacklight_config)
-    documents = shelf.nearby_items(id)
-    documents.each do |d|
-      if verbose != nil
-        d.title = d.title + "<br/>" + d.id + ": " + d.callnumbers.join(",")
+    start = get_start_skip(params[:query])
+    init_id = Callnumber.next_id(id, start)
+    if init_id == nil
+      documents = []
+    else
+      verbose = params.has_key?("verbose") ? "verbose" : nil
+      shelf = Shelf.new(blacklight_config)
+      documents = shelf.nearby_items(init_id)
+      documents.each do |d|
+        if verbose != nil
+          d.title = d.title + "<br/>" + d.id + ": " + d.callnumbers.join(",")
+        end
+        d.link = "#{catalog_url(d.id)}?nearby&#{verbose}"
+        d.highlight = (d.id == id)
       end
-      d.link = "#{catalog_url(d.id)}?nearby&#{verbose}"
     end
-
     nearby_response = {
       start: "0",
-      num_found: (documents.count*100).to_s,
+      num_found: (documents.count*100).to_s,   # TODO: adjust this number
       limit: "0",
       docs: documents
     }

@@ -13,7 +13,7 @@ $(document).ready(function(){
 
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
   var url = josiahRootUrl + "api/items/shelf_items?id=" + id + verbose;
-  var options = {url: url, query: "", ribbon: ""};
+  var options = {url: url, search_type: "loc_sort_order", ribbon: ""};
   window.theStackViewObject = $('#basic-stack').stackView(options).data().stackviewObject;
 
   $('#basic-stack').css('height', stackheight);
