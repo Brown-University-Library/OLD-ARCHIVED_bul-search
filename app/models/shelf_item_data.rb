@@ -2,8 +2,9 @@ class ShelfItemData
 
   MIN_PAGES = 20
   MAX_PAGES = 1500
-  MIN_HEIGHT = 15     # cm
-  MAX_HEIGHT = 100    # cm
+  MIN_HEIGHT = 15           # cm
+  MIN_HEIGHT_SERIAL = 75    # cm
+  MAX_HEIGHT = 100          # cm
 
   attr_reader :id, :callnumbers, :creator, :title,
     :measurement_page_numeric, :measurement_height_numeric,
@@ -16,6 +17,7 @@ class ShelfItemData
     @callnumbers = callnumbers || []
     @title = title || ""
     @creator = [author || ""]
+    @format = get_stack_format(format) # calculate before the measurements
     @measurement_page_numeric = get_pages(physical_display)
     @measurement_height_numeric = get_height(physical_display)
     @shelfrank = 15
@@ -24,7 +26,6 @@ class ShelfItemData
     @highlight = false
     @isbn = (isbns || []).first()
     @normalized = normalized
-    @format = get_stack_format(format)
   end
 
   def highlight=(value)
@@ -63,6 +64,9 @@ class ShelfItemData
             return height
           end
         end
+      end
+      if format == "Serial"
+        return MIN_HEIGHT_SERIAL
       end
       MIN_HEIGHT
     end
