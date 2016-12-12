@@ -9,7 +9,7 @@ class ShelfItemData
   attr_reader :id, :callnumbers, :creator, :title,
     :measurement_page_numeric, :measurement_height_numeric,
     :shelfrank, :pub_date, :isbn, :highlight, :link,
-    :normalized, :format
+    :normalized
   attr_accessor :link, :title
 
   def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized, format)
@@ -17,7 +17,7 @@ class ShelfItemData
     @callnumbers = callnumbers || []
     @title = title || ""
     @creator = [author || ""]
-    @format = get_stack_format(format) # calculate before the measurements
+    # @format = get_stack_format(format) # calculate before the measurements
     @measurement_page_numeric = get_pages(physical_display)
     @measurement_height_numeric = get_height(physical_display)
     @shelfrank = 15
@@ -65,9 +65,9 @@ class ShelfItemData
           end
         end
       end
-      if @format == "Serial"
-        return MIN_HEIGHT_SERIAL
-      end
+      # if @format == "Serial"
+      #   return MIN_HEIGHT_SERIAL
+      # end
       MIN_HEIGHT
     end
 
