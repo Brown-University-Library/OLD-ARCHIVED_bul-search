@@ -56,16 +56,6 @@ class ApiController < ApplicationController
     render :json => nearby_response
   end
 
-  # We expect range_str to be in the form "[n TO m]"
-  # where n and m are integers (positive or negative)
-  def get_start_skip(range_str)
-    return 0 if range_str == nil
-    reg_ex = /\[(-?(\d)*)\s/
-    matches = reg_ex.match(range_str)
-    return 0 if matches == nil || matches.length < 2
-    matches[1].to_i
-  end
-
   def shelf_items
     id = UserInput::Cleaner.clean_id(params[:id])
     if id.empty?
@@ -89,7 +79,7 @@ class ApiController < ApplicationController
     end
     nearby_response = {
       start: "0",
-      num_found: (documents.count*100).to_s,   # TODO: adjust this number
+      num_found: (documents.count).to_s,   # TODO: adjust this number
       limit: "0",
       docs: documents
     }
@@ -107,5 +97,15 @@ class ApiController < ApplicationController
 
     def render_error(message)
       render status: 400, :json => "{\"error\": \"#{message}\"}"
+    end
+
+    # We expect range_str to be in the form "[n TO m]"
+    # where n and m are integers (positive or negative)
+    def get_start_skip(range_str)
+      return 0 if range_str == nil
+      reg_ex = /\[(-?(\d)*)\s/
+      matches = reg_ex.match(range_str)
+      return 0 if matches == nil || matches.length < 2
+      matches[1].to_i
     end
 end

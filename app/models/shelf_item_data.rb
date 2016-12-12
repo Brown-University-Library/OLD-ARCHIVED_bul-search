@@ -8,10 +8,10 @@ class ShelfItemData
   attr_reader :id, :callnumbers, :creator, :title,
     :measurement_page_numeric, :measurement_height_numeric,
     :shelfrank, :pub_date, :isbn, :highlight, :link,
-    :normalized
+    :normalized, :format
   attr_accessor :link, :title
 
-  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized)
+  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized, format)
     @id = id
     @callnumbers = callnumbers || []
     @title = title || ""
@@ -24,6 +24,7 @@ class ShelfItemData
     @highlight = false
     @isbn = (isbns || []).first()
     @normalized = normalized
+    @format = get_stack_format(format)
   end
 
   def highlight=(value)
@@ -69,5 +70,26 @@ class ShelfItemData
     def get_year(pub_date)
       return "" if pub_date == nil || pub_date.count == 0
       pub_date.first
+    end
+
+    def get_stack_format(format)
+      # VALUES IN SOLR        STACKLIFE VALUES
+      # --------------------  ----------------
+      # Book                  book
+      # Periodical Title      Serial  ???
+      # Sound Recording       Sound Recording
+      # Musical Score
+      # Video                 Video/Film
+      # Map
+      # Thesis/Dissertation
+      # Computer File         webpage
+      # Archives/Manuscripts
+      # Visual Material
+      return "Book" if format == nil
+      return "Serial" if format == "Periodical Title"
+      return "Sound Recording" if format == "Sound Recording"
+      return "Video/Film" if format == "Video"
+      return "webpage" if format == "Computer File"
+      "Book"
     end
 end

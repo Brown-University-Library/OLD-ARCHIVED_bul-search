@@ -46,6 +46,7 @@ class Shelf
           solr_doc["pub_date"],
           solr_doc["physical_display"],
           solr_doc["isbn_t"],
-          normalized)
+          normalized,
+          solr_doc["format"])
     end
 end

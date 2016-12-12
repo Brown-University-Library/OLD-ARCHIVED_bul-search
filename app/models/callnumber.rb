@@ -97,7 +97,7 @@ class Callnumber < ActiveRecord::Base
     #
     # For now, we just fetch the first one.
     callnumber = Callnumber.find_by(bib: bib_id)
-    return [] if callnumber == nil
+    return {ids: [], bounds: boundaries(nil, nil)} if callnumber == nil
 
     # Items with call numbers _before_ or equal to this BIB.
     sql = <<-END_SQL.gsub(/\n/, '')
@@ -146,7 +146,7 @@ class Callnumber < ActiveRecord::Base
 
   def self.next_id(bib_id, skip_count)
     callnumber = Callnumber.find_by(bib: bib_id)
-    return [] if callnumber == nil
+    return {ids: [], bounds: boundaries(nil, nil)} if callnumber == nil
 
     if skip_count > 0
       sql = <<-END_SQL.gsub(/\n/, '')
@@ -180,9 +180,7 @@ class Callnumber < ActiveRecord::Base
   # that are BEFORE to the bib_id provided.
   def self.nearby_ids_prev(bib_id, normalized)
     callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
-    return [] if callnumber == nil
-    # puts "BEFORE: #{bib_id}, #{normalized}"
-    # byebug
+    return {ids: [], bounds: boundaries(nil, nil)} if callnumber == nil
 
     # Items with call numbers _before_ or equal to this BIB.
     sql = <<-END_SQL.gsub(/\n/, '')
@@ -204,9 +202,7 @@ class Callnumber < ActiveRecord::Base
   # that are AFTER to the bib_id provided.
   def self.nearby_ids_next(bib_id, normalized)
     callnumber = Callnumber.find_by(bib: bib_id, normalized: normalized)
-    return [] if callnumber == nil
-    # puts "AFTER: #{bib_id}, #{normalized}"
-    # byebug
+    return {ids: [], bounds: boundaries(nil, nil)} if callnumber == nil
 
     # Items with call numbers _after_ this bib_id.
     sql = <<-END_SQL.gsub(/\n/, '')
