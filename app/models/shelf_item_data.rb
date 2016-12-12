@@ -65,7 +65,7 @@ class ShelfItemData
           end
         end
       end
-      if format == "Serial"
+      if @format == "Serial"
         return MIN_HEIGHT_SERIAL
       end
       MIN_HEIGHT
