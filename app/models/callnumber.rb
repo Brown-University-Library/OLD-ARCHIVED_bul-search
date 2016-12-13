@@ -146,7 +146,7 @@ class Callnumber < ActiveRecord::Base
 
   def self.next_id(bib_id, skip_count)
     callnumber = Callnumber.find_by(bib: bib_id)
-    return {ids: [], bounds: boundaries(nil, nil)} if callnumber == nil
+    return nil if callnumber == nil
 
     if skip_count > 0
       sql = <<-END_SQL.gsub(/\n/, '')

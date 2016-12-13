@@ -190,14 +190,15 @@ function loadNearbyItems(scroll) {
           window.theStackViewObject.remove(numItemsAdded);
         }
       }
-      if (scroll) {
-        scrollToBottomOfPage();
-      }
       updateNearbyBounds(data.docs, true, true);
       $("#also-on-shelf").removeClass("hidden");
       $(".upstream").on("click", function() { loadPrevNearbyItems(); });
       $(".downstream").on("click", function() { loadNextNearbyItems(); });
       clearResetButton();
+    }
+
+    if (scroll) {
+      scrollToBottomOfPage();
     }
   });
 }
@@ -309,6 +310,6 @@ function addVirtualShelfLinks(bib_id) {
   $("div.panel-body>ul.nav").append(link1);
 
   // Add "Browse the stacks" option to tools section
-  var link2 = '<li><a href="' + browseStackUri(bib_id) + '">Browse the Stacks</a>';
+  var link2 = '<li><a href="' + browseStackUri(bib_id) + '" target="_blank">Browse the Stacks</a>';
   $("div.panel-body>ul.nav").append(link2);
 }
