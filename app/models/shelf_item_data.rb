@@ -3,21 +3,20 @@ class ShelfItemData
   MIN_PAGES = 20
   MAX_PAGES = 1500
   MIN_HEIGHT = 15           # cm
-  MIN_HEIGHT_SERIAL = 75    # cm
   MAX_HEIGHT = 100          # cm
 
   attr_reader :id, :callnumbers, :creator, :title,
     :measurement_page_numeric, :measurement_height_numeric,
     :shelfrank, :pub_date, :isbn, :highlight, :link,
-    :normalized
+    :normalized, :format
   attr_accessor :link, :title
 
-  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized, format)
+  def initialize(id, callnumbers, author, title, pub_date, physical_display, isbns, normalized, the_format)
     @id = id
     @callnumbers = callnumbers || []
     @title = title || ""
     @creator = [author || ""]
-    # @format = get_stack_format(format) # calculate before the measurements
+    @format = get_stack_format(the_format)
     @measurement_page_numeric = get_pages(physical_display)
     @measurement_height_numeric = get_height(physical_display)
     @shelfrank = 15
@@ -64,10 +63,14 @@ class ShelfItemData
             return height
           end
         end
+        # Common sizes for sound recordings 
+        case
+        when physical_display.first.include?("4 3/4 in.")
+          return 12
+        when physical_display.first.include?("12 in.")
+          return 30
+        end
       end
-      # if @format == "Serial"
-      #   return MIN_HEIGHT_SERIAL
-      # end
       MIN_HEIGHT
     end
 
@@ -76,7 +79,7 @@ class ShelfItemData
       pub_date.first
     end
 
-    def get_stack_format(format)
+    def get_stack_format(the_format)
       # VALUES IN SOLR        STACKLIFE VALUES
       # --------------------  ----------------
       # Book                  book
@@ -89,11 +92,11 @@ class ShelfItemData
       # Computer File         webpage
       # Archives/Manuscripts
       # Visual Material
-      return "Book" if format == nil
-      return "Serial" if format == "Periodical Title"
-      return "Sound Recording" if format == "Sound Recording"
-      return "Video/Film" if format == "Video"
-      return "webpage" if format == "Computer File"
-      "Book"
+      return "book" if the_format == nil
+      return "Serial" if the_format == "Periodical Title"
+      return "Sound Recording" if the_format == "Sound Recording"
+      return "Video/Film" if the_format == "Video"
+      return "webpage" if the_format == "Computer File"
+      "book"
     end
 end
