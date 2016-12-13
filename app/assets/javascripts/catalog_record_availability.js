@@ -165,34 +165,40 @@ function loadNearbyItems(scroll) {
   var id = getBibId();
   var url = browseShelfUri(id, null, null);
   $.getJSON(url, function(data) {
-    addDebugInfoToDocs(data.docs);
-    var i;
-    for(i = 0; i < data.docs.length; i++) {
-      data.docs[i].shelfrank = data.docs[i].id == id ? 50 : 15;
-    }
-    // Make a global object available for use as the user loads more data.
-    // I don't like that I am referencing the internals of the stackviewObject
-    // but this would do for now while I figure out a better way to load
-    // data on demand.
-    if (window.theStackViewObject == undefined) {
-      window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
+    if (data.docs.length == 0) {
+      $("#also-on-shelf").removeClass("hidden");
+      $("#also-on-shelf-none").removeClass("hidden");
     } else {
+      addDebugInfoToDocs(data.docs);
       var i;
       for(i = 0; i < data.docs.length; i++) {
-        window.theStackViewObject.add(i, data.docs[i]);
+        data.docs[i].shelfrank = data.docs[i].id == id ? 50 : 15;
       }
-      var numItemsAdded = data.docs.length;
-      for(i = 0; i < numItemsAdded; i++) {
-        window.theStackViewObject.remove(numItemsAdded);
+      // Make a global object available for use as the user loads more data.
+      // I don't like that I am referencing the internals of the stackviewObject
+      // but this would do for now while I figure out a better way to load
+      // data on demand.
+      if (window.theStackViewObject == undefined) {
+        window.theStackViewObject = $('#basic-stack').stackView({data: data, query: "test book", ribbon: ""}).data().stackviewObject;
+      } else {
+        var i;
+        for(i = 0; i < data.docs.length; i++) {
+          window.theStackViewObject.add(i, data.docs[i]);
+        }
+        var numItemsAdded = data.docs.length;
+        for(i = 0; i < numItemsAdded; i++) {
+          window.theStackViewObject.remove(numItemsAdded);
+        }
       }
+      if (scroll) {
+        scrollToBottomOfPage();
+      }
+      updateNearbyBounds(data.docs, true, true);
+      $("#also-on-shelf").removeClass("hidden");
+      $(".upstream").on("click", function() { loadPrevNearbyItems(); });
+      $(".downstream").on("click", function() { loadNextNearbyItems(); });
+      clearResetButton();
     }
-    if (scroll) {
-      scrollToBottomOfPage();
-    }
-    updateNearbyBounds(data.docs, true, true);
-    $(".upstream").on("click", function() { loadPrevNearbyItems(); });
-    $(".downstream").on("click", function() { loadNextNearbyItems(); });
-    clearResetButton();
   });
 }
 
@@ -238,13 +244,24 @@ function loadNextNearbyItems() {
 // of the stack. We use these values as our starting point when the
 // users wants to continue fetching records.
 function updateNearbyBounds(docs, prev, next) {
-  if (prev) {
-    $("#firstBook").text(docs[0].id);
-    $("#firstBookNorm").text(docs[0].normalized);
-  }
-  if (next) {
-    $("#lastBook").text(docs[docs.length-1].id);
-    $("#lastBookNorm").text(docs[docs.length-1].normalized);
+  if (docs.length == 0) {
+    if (prev) {
+      $("#firstBook").text("");
+      $("#firstBookNorm").text("");
+    }
+    if (next) {
+      $("#lastBook").text("");
+      $("#lastBookNorm").text("");
+    }
+  } else {
+    if (prev) {
+      $("#firstBook").text(docs[0].id);
+      $("#firstBookNorm").text(docs[0].normalized);
+    }
+    if (next) {
+      $("#lastBook").text(docs[docs.length-1].id);
+      $("#lastBookNorm").text(docs[docs.length-1].normalized);
+    }
   }
 }
 
