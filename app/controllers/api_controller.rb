@@ -73,7 +73,7 @@ class ApiController < ApplicationController
         if verbose != nil
           d.title = d.title + "<br/>" + d.id + ": " + d.callnumbers.join(",")
         end
-        d.link = "#{catalog_url(d.id)}?nearby&#{verbose}"
+        d.link = "#{catalog_url(d.id)}"
         d.highlight = (d.id == id)
       end
     end

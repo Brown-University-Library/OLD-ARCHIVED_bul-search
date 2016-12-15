@@ -1,20 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-<%= javascript_include_tag "application", "data-turbolinks-track" => true %>
-<%= javascript_include_tag 'browse_index', 'data-turbolinks-track' => true %>
+<head>
+  <title>Browse the Stacks</title>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag 'browse_index', 'data-turbolinks-track' => true %>
 
-<style>
-  .stackview .ribbon {
-    position: absolute;
-    visibility:hidden;
-  }
-</style>
+  <style>
+    .stackview .ribbon {
+      position: absolute;
+      visibility:hidden;
+    }
+    .stackview {
+      overflow: hidden;
+    }
+    .active-item {
+      margin-left: 20px;
+    }
+  </style>
+</head>
 
-<div id="basic-stack"></div>
+<body>
+  <div class="row" style="overflow: hidden;">
+    <div class="col-md-2" style="overflow: hidden;">
+      <img src="https://www.brown.edu/sites/default/themes/pawtuxet/img/brown-logo.png"/>
+    </div>
+    <div class="col-md-6" style="overflow: hidden;">
+      <div id="basic-stack" style="overflow: hidden;"></div>
+    </div>
+    <div class="col-md-4" style="overflow: hidden;">
+      <div id="previewPanel" class="hidden">
+          <div id="viewerCanvas" style="width: 610px; height: 200; border: 1px;">
+          <div id="previewTitle">...</div>
+          <div id="previewAuthor">...</div>
+          <div><a id="previewGoTo" href=""></a></div>
+        </div>
+      </div> <!--end hidden viewerCanvas-->
+    </div>
 
-<span id="initialID" class="hidden"><%= id %></span>
+    <span id="initialID" class="hidden"><%= id %></span>
+  </div>
 
-<script>
-  var josiahRootUrl = '<%= root_url %>';
-</script>
+  <script>
+    var josiahRootUrl = '<%= root_url %>';
+  </script>
+
+</body>
