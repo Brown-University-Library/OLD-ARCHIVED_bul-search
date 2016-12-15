@@ -31,9 +31,15 @@
     <div class="col-md-4" style="overflow: hidden;">
       <div id="previewPanel" class="hidden">
           <div id="viewerCanvas" style="width: 610px; height: 200; border: 1px;">
-          <div id="previewTitle">...</div>
-          <div id="previewAuthor">...</div>
-          <div><a id="previewGoTo" href=""></a></div>
+          <h3 id="previewTitle"></h3>
+          <h5 id="previewAuthor"></h5>
+          <div>
+            <span id="previewPubDate"></span>
+            <span id="previewFormat"></span>
+          </div>
+          <div>Callnumbers: <span id="previewCallnumbers"></span></div>
+          <div><a id="previewLink" href="" target="_blank">View on the Catalog</a></div>
+          <div><a id="previewLinkImage" href="" target="_blank"><%= image_tag("sampleCover.png", {id: "previewImage"})%></a></div>
         </div>
       </div> <!--end hidden viewerCanvas-->
     </div>

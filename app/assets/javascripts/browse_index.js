@@ -35,8 +35,15 @@ $(document).ready(function(){
 });
 
 function showPreview(data) {
-  $("#previewTitle").html(data.response.document.id);
-  $("#previewAuthor").html("<p>the author</p>");
+  var doc = data.response.document;
+  var uri = josiahRootUrl + "catalog/" + doc.id;
+  $("#previewTitle").html(doc.title_display);
+  $("#previewAuthor").html(doc.author_display);
+  $("#previewPubDate").html(doc.pub_date[0]);
+  $("#previewFormat").html(doc.format);
+  $("#previewIsbn").html(doc.isbn_t.toString());
+  $("#previewCallnumbers").html(doc.callnumber_t.toString());
+  $("#previewLink").attr("href", uri);
+  $("#previewLinkImage").attr("href", uri);
   $("#previewPanel").removeClass("hidden");
-
 }
