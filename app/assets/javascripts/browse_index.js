@@ -71,6 +71,7 @@ function bookCoverKeys(isbn_t, oclt_t) {
 
 function loadBookCover(keys) {
   var booksApiUrl = "https://books.google.com/books?jscmd=viewapi&bibkeys=" + keys;
+  loadingBookCover();
   $.ajax({
     type: 'GET',
     url: booksApiUrl,
@@ -92,18 +93,24 @@ function loadBookCover(keys) {
         }
       }
       if (!found) {
-        resetBookCover();
+        noBookCover();
       }
     },
     error: function(e) {
       console.log(e);
-      resetBookCover();
+      noBookCover();
     }
   });
 }
 
-function resetBookCover() {
-  var noCover = $("#previewImageDefault").attr("src");
+function noBookCover() {
+  var image = $("#previewImageNone").attr("src");
   $("#previewImage").attr("alt", "No book cover available");
-  $("#previewImage").attr("src", noCover);
+  $("#previewImage").attr("src", image);
+}
+
+function loadingBookCover() {
+  var image = $("#previewImageLoading").attr("src");
+  $("#previewImage").attr("alt", "Loading book cover");
+  $("#previewImage").attr("src", image);
 }
