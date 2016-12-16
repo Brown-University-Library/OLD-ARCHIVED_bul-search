@@ -2,6 +2,7 @@
 
 <head>
   <title>Browse the Stacks</title>
+  <%= favicon_link_tag %>
   <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= javascript_include_tag 'browse_index', 'data-turbolinks-track' => true %>
@@ -45,6 +46,7 @@
     </div>
 
     <span id="initialID" class="hidden"><%= id %></span>
+    <%= image_tag("sampleCover.png", {id: "previewImageDefault", class: "hidden"})%>
   </div>
 
   <script>
