@@ -42,19 +42,19 @@ $(document).ready(function(){
 });
 
 function showPreview(data) {
-  // TODO: handle undefined properties
   var doc = data.response.document;
   var uri = josiahRootUrl + "catalog/" + doc.id;
   $("#previewTitle").html(doc.title_display);
   $("#previewAuthor").html(doc.author_display);
-  $("#previewPubDate").html(doc.pub_date[0]);
-  $("#previewFormat").html(doc.format);
-  // $("#previewIsbn").html(doc.isbn_t.toString());
-  // $("#previewCallnumbers").html(doc.callnumber_t.toString());
-  $("#previewPanel").removeClass("hidden");
+  if (doc.pub_date && doc.pub_date.length > 0) {
+    $("#previewPubDate").html(doc.pub_date[0]);
+  }
+  // $("#previewFormat").html(doc.format);
 
   $("#previewLink").attr("href", uri)
   $("#previewLinkImage").attr("href", uri)
+
+  $("#previewPanel").removeClass("hidden");
 
   var keys = bookCoverKeys(doc.isbn_t, doc.oclc_t);
   loadBookCover(keys);
@@ -86,15 +86,17 @@ function loadBookCover(keys) {
     contentType: "application/json",
     dataType: 'jsonp',
     success: function(json) {
-      var i, key, obj;
+      var i, key, obj, thumbUrl;
       var found = false;
       var keys = Object.keys(json);
       for(i = 0; i < keys.length; i++) {
         key = keys[i];
         obj = json[key];
         if (obj.thumbnail_url != undefined) {
+          thumbUrl = obj.thumbnail_url.replace(/zoom=5/, 'zoom=1');
+          thumbUrl = thumbUrl.replace(/&?edge=curl/, '');
           $("#previewImage").attr("alt", "Book cover");
-          $("#previewImage").attr("src", obj.thumbnail_url);
+          $("#previewImage").attr("src", thumbUrl);
           found = true;
           break;
         }

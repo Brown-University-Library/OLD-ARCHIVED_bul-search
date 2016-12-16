@@ -18,6 +18,13 @@
     .active-item {
       margin-left: 20px;
     }
+
+    .previewPanel {
+      margin: 24px 0px 20px;
+      padding: 5px 5px 5px;
+      border: 5px;
+      border-color: blue;
+    }
   </style>
 </head>
 
@@ -25,24 +32,28 @@
   <div class="row" style="overflow: hidden;">
     <div class="col-md-2" style="overflow: hidden;">
       <img src="https://www.brown.edu/sites/default/themes/pawtuxet/img/brown-logo.png"/>
+      <h2>StackLife</h2>
     </div>
     <div class="col-md-6" style="overflow: hidden;">
       <div id="basic-stack" style="overflow: hidden;"></div>
     </div>
     <div class="col-md-4" style="overflow: hidden;">
-      <div id="previewPanel" class="hidden">
-          <div id="viewerCanvas" style="width: 610px; height: 200; border: 1px;">
-          <h3 id="previewTitle"></h3>
-          <h5 id="previewAuthor"></h5>
-          <div>
-            <span id="previewPubDate"></span>
-            <span id="previewFormat"></span>
-          </div>
-          <div>Callnumbers: <span id="previewCallnumbers"></span></div>
-          <div><a id="previewLink" href="" target="_blank">View on the Catalog</a></div>
-          <div><a id="previewLinkImage" href="" target="_blank"><%= image_tag("sampleCover.png", {id: "previewImage"})%></a></div>
+      <div id="previewPanel" class="previewPanel hidden">
+        <h3 id="previewTitle"></h3>
+        <h4 id="previewAuthor"></h4>
+        <div>
+          <span id="previewPubDate"></span>
+          <span id="previewFormat"></span>
         </div>
-      </div> <!--end hidden viewerCanvas-->
+        <div><p>&nbsp;</p></div>
+        <div>
+          <a id="previewLinkImage" href="" target="_blank">
+            <%= image_tag("sampleCover.png", {id: "previewImage"})%>
+          </a>
+        </div>
+        <div><p>&nbsp;</p></div>
+        <div><a id="previewLink" href="" target="_blank">View on the Catalog</a></div>
+      </div>
     </div>
 
     <span id="initialID" class="hidden"><%= id %></span>
@@ -54,5 +65,4 @@
   <script>
     var josiahRootUrl = '<%= root_url %>';
   </script>
-
 </body>
