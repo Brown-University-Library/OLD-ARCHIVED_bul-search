@@ -8,7 +8,7 @@ $(document).ready(function(){
   // josiahRootUrl is defined in shared/_header_navbar.html.erb
   var url = josiahRootUrl + "api/items/shelf_items?id=" + id + verbose;
   var options = {url: url, search_type: "loc_sort_order", ribbon: ""};
-  window.theStackViewObject = $('#basic-stack').stackView(options).data().stackviewObject;
+  $('#basic-stack').stackView(options);
 
   // initial size
   stackheight = $(window).height();
@@ -22,8 +22,15 @@ $(document).ready(function(){
     $('#stack-view').css('height', stackheight);
 	});
 
-  // TODO: using (#stack-item + a) as the selector (instead of body + li>a)
-  // didn't work, I am not sure why.
+  // Load the details for the current item
+  var jsonUri = josiahRootUrl + "catalog/" + id + ".json";
+  $.getJSON(jsonUri, showPreview);
+
+  // Wire up the click event on all items to load the details
+  // (the default behavior is to go the item in the catalog)
+  //
+  // Note: using (#stack-item + a) as the selector
+  // (instead of body + li>a) didn't work, I am not sure why.
   $('body').on('click', 'li>a', function(e) {
     var _this = $(this);
     var jsonUri = _this.attr("href") + ".json";
