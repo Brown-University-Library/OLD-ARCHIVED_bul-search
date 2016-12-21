@@ -8,6 +8,15 @@
   <%= javascript_include_tag 'browse_index', 'data-turbolinks-track' => true %>
 
   <style>
+    .noscrollbars {
+      overflow: hidden;
+    }
+
+    .left-panel {
+      margin-top: 60px;
+      padding-left: 40px;
+    }
+
     .stackview .ribbon {
       position: absolute;
       visibility: hidden;
@@ -23,31 +32,50 @@
       border-width: 5px;
       border-style: solid;
       background-color: beige;
-      margin-top: 20px;
-      margin-right: 20px;
+      margin-top: 60px;
+      margin-right: 60px;
       padding-left: 20px;
       padding-right: 20px;
       padding-bottom: 20px;
     }
+
+    .banner {
+      font-size: 39px;
+	    font-family: Futura,Trebuchet MS,Arial,sans-serif;
+    }
+
+    .banner2 {
+      font-family: Futura,Trebuchet MS,Arial,sans-serif;
+      font-size: larger;
+    }
+
   </style>
 </head>
 
 <body>
-  <div class="row" style="overflow: hidden;">
+  <div class="row noscrollbars">
 
     <!-- left panel: general info -->
-    <div class="col-md-2" style="overflow: hidden;">
+    <div class="col-md-2 noscrollbars left-panel" style="height: 100%;">
       <img src="https://www.brown.edu/sites/default/themes/pawtuxet/img/brown-logo.png"/>
-      <h2>StackLife</h2>
+      <h2 class="banner">StackLife</h2>
+      <div class="banner2">
+        <p>Welcome to the stacks</p>
+        <p>Use this page to explore what other items (books, DVDs, serials) are
+          the shelf.</p>
+      </div>
+      <div style="position: fixed; bottom: 0;">
+        <p><%= link_to("Credits", browse_credits_path) %></p>
+      </div>
     </div>
 
     <!-- middle panel: virtual stack -->
-    <div class="col-md-6">
+    <div class="col-md-6 noscrollbars">
       <div id="basic-stack"></div>
     </div>
 
     <!-- right panel: book details -->
-    <div class="col-md-4" style="overflow: hidden;">
+    <div class="col-md-4 noscrollbars">
       <div id="previewPanel" class="previewPanel hidden">
         <h3 id="previewTitle"></h3>
         <h4 id="previewAuthor"></h4>

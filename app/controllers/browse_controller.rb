@@ -6,6 +6,9 @@ class BrowseController < ApplicationController
     from_item(id)
   end
 
+  def credits
+  end
+
   def from_item(id = nil)
     if id == nil
       id = UserInput::Cleaner.clean_id(params[:id])
