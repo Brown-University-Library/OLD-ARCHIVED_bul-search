@@ -10,16 +10,10 @@ $(document).ready(function(){
   $('#basic-stack').stackView(options);
 
   // initial size
-  var stackheight = $(window).height();
-  $('#basic-stack').css('height', stackheight);
-  $('#stack-view').css('height', stackheight);
+  resizeStack();
 
   // make sure it resizes as the window resizes
-  $(window).resize(function() {
-		var stackheight = $(window).height();
-		$('#basic-stack').css('height', stackheight);
-    $('#stack-view').css('height', stackheight);
-	});
+  $(window).resize(function() { resizeStack(); });
 
   // Load the details for the current item
   var jsonUri = josiahRootUrl + "catalog/" + id + ".json";
@@ -40,6 +34,21 @@ $(document).ready(function(){
   });
 });
 
+
+function resizeStack() {
+  var stackheight = $(window).height();
+  $('#basic-stack').css('height', stackheight);
+  // Set the stack-items width a tad narrower than the width of
+  // the basic-stack div so that the scroll bars are not visible.
+  //
+  // Setting "overflow: hidden" on stack-items does the same
+  // thing but has the disadvantage that it disables scrolling
+  // alltogether :(
+  var wrapperWidth = $('#basic-stack').width();
+  $('.stack-items').width(wrapperWidth-10);
+}
+
+
 function showPreview(data) {
   var doc = data.response.document;
   var uri = josiahRootUrl + "catalog/" + doc.id;
@@ -59,6 +68,7 @@ function showPreview(data) {
   loadBookCover(keys);
 }
 
+
 function bookCoverKeys(isbn_t, oclt_t) {
   var i;
   var keys = "";
@@ -74,6 +84,7 @@ function bookCoverKeys(isbn_t, oclt_t) {
   }
   return keys;
 }
+
 
 function loadBookCover(keys) {
   var booksApiUrl = "https://books.google.com/books?jscmd=viewapi&bibkeys=" + keys;
@@ -111,11 +122,13 @@ function loadBookCover(keys) {
   });
 }
 
+
 function noBookCover() {
   var image = $("#previewImageNone").attr("src");
   $("#previewImage").attr("alt", "No book cover available");
   $("#previewImage").attr("src", image);
 }
+
 
 function loadingBookCover() {
   var image = $("#previewImageLoading").attr("src");
