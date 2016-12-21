@@ -10,11 +10,9 @@
   <style>
     .stackview .ribbon {
       position: absolute;
-      visibility:hidden;
+      visibility: hidden;
     }
-    .stackview {
-      overflow: hidden;
-    }
+
     .active-item {
       margin-left: 20px;
     }
@@ -30,13 +28,19 @@
 
 <body>
   <div class="row" style="overflow: hidden;">
+
+    <!-- left panel: general info -->
     <div class="col-md-2" style="overflow: hidden;">
       <img src="https://www.brown.edu/sites/default/themes/pawtuxet/img/brown-logo.png"/>
       <h2>StackLife</h2>
     </div>
-    <div class="col-md-6" style="overflow: hidden;">
-      <div id="basic-stack" style="overflow: hidden;"></div>
+
+    <!-- middle panel: virtual stack -->
+    <div class="col-md-6">
+      <div id="basic-stack"></div>
     </div>
+
+    <!-- right panel: book details -->
     <div class="col-md-4" style="overflow: hidden;">
       <div id="previewPanel" class="previewPanel hidden">
         <h3 id="previewTitle"></h3>
