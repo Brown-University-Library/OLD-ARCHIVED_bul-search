@@ -60,22 +60,22 @@ function showPreview(doc) {
 
   $("#previewPanel").removeClass("hidden");
 
-  var keys = bookCoverKeys(doc.isbn_t, doc.oclc_t);
+  var keys = bookCoverKeys(doc.isbns, doc.oclcs);
   loadBookCover(keys);
 }
 
 
-function bookCoverKeys(isbn_t, oclt_t) {
+function bookCoverKeys(isbns, oclts) {
   var i;
   var keys = "";
-  if (isbn_t != undefined) {
-    for(i = 0; i < isbn_t.length; i++) {
-      keys += "ISBN" + isbn_t[i] + ",";
+  if (isbns != undefined) {
+    for(i = 0; i < isbns.length; i++) {
+      keys += "ISBN" + isbns[i] + ",";
     }
   }
-  if (oclt_t != undefined) {
-    for(i = 0; i < oclt_t.length; i++) {
-      keys += "OCLC" + oclt_t[i] + ",";
+  if (oclts != undefined) {
+    for(i = 0; i < oclts.length; i++) {
+      keys += "OCLC" + oclts[i] + ",";
     }
   }
   return keys;
