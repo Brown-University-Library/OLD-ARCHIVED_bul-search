@@ -2,11 +2,8 @@ require "./lib/user_input.rb"
 
 class BrowseController < ApplicationController
   def random
-    id = "b3040354"
+    id = "b3130393" # TODO: make this a random value
     from_item(id)
-  end
-
-  def credits
   end
 
   def from_item(id = nil)

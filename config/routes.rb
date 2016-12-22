@@ -21,9 +21,9 @@ BulSearch::Application.routes.draw do
   get 'libweb/' => 'libweb#search', as: :lib_web
 
   # Browse (aka Virtual Shelf)
-  get 'browse/' => 'browse#random'
-  get 'browse/credits' => 'browse#credits', as: :browse_credits
-  get 'browse/:id' => 'browse#from_item'
+  get 'browse/' => 'browse#random', as: :browse_random
+  get 'browse/about' => 'browse#about', as: :browse_about
+  get 'browse/:id' => 'browse#from_item', as: :browse_item
 
   # Stub controller to test the Availability Service
   get 'availability/test_auth' => 'availability#test_auth'
