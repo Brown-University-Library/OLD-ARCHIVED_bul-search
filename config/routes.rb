@@ -35,5 +35,6 @@ BulSearch::Application.routes.draw do
   # API controller
   get 'api/items/by_location' => 'api#items_by_location'
   get 'api/items/nearby' => 'api#items_nearby'
+  get 'api/items/shelf_item/:id' => 'api#shelf_item'
   get 'api/items/shelf_items' => 'api#shelf_items'
 end

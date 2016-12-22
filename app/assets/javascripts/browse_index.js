@@ -16,7 +16,7 @@ $(document).ready(function(){
   $(window).resize(function() { resizeStack(); });
 
   // Load the details for the current item
-  var jsonUri = josiahRootUrl + "catalog/" + id + ".json";
+  var jsonUri = josiahRootUrl + "api/items/shelf_item/" + id;
   $.getJSON(jsonUri, showPreview);
 
   // Wire up the click event on all items to load the details
@@ -26,7 +26,7 @@ $(document).ready(function(){
   // (instead of body + li>a) didn't work, I am not sure why.
   $('body').on('click', 'li>a', function(e) {
     var _this = $(this);
-    var jsonUri = _this.attr("href") + ".json";
+    var jsonUri = _this.attr("href").replace("/catalog/", "/api/items/shelf_item/");
     $('.active-item').removeClass('active-item');
     _this.parent().addClass('active-item');
     $.getJSON(jsonUri, showPreview);
@@ -49,15 +49,11 @@ function resizeStack() {
 }
 
 
-function showPreview(data) {
-  var doc = data.response.document;
+function showPreview(doc) {
   var uri = josiahRootUrl + "catalog/" + doc.id;
-  $("#previewTitle").html(doc.title_display);
-  $("#previewAuthor").html(doc.author_display);
-  if (doc.pub_date && doc.pub_date.length > 0) {
-    $("#previewPubDate").html(doc.pub_date[0]);
-  }
-  // $("#previewFormat").html(doc.format);
+  $("#previewTitle").html(doc.title);
+  $("#previewAuthor").html(doc.author);
+  $("#previewImprint").html(doc.imprint);
 
   $("#previewLink").attr("href", uri)
   $("#previewLinkImage").attr("href", uri)

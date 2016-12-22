@@ -86,6 +86,22 @@ class ApiController < ApplicationController
     render :json => nearby_response
   end
 
+  def shelf_item
+    id = UserInput::Cleaner.clean_id(params[:id])
+    if id.empty?
+      return render_error("No id provided.")
+    end
+    response, doc = fetch params[:id]
+    item = {
+      title: doc[:title_display] || "",
+      author: doc[:author_display] || "",
+      imprint: doc.marc_display_field("imprint"),
+      isbns: doc[:isbn_t] || [],
+      oclcs: doc[:oclc_t] || []
+    }
+    render :json => item
+  end
+
   private
     def page
       int_param(:page, 1)
