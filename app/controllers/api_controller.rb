@@ -93,6 +93,7 @@ class ApiController < ApplicationController
     end
     response, doc = fetch params[:id]
     item = {
+      id: doc[:id],
       title: doc[:title_display] || "",
       author: doc[:author_display] || "",
       imprint: doc.marc_display_field("imprint"),

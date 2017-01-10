@@ -1,35 +1,38 @@
 <style>
   p {font-size: larger}
+  li {font-size: larger}
 </style>
+
 <h1>About StackLife</h1>
 <p>The StackLife page is an attempt to give our users the ability to
   browse the stacks in a similar way to what people do when
-  they walk on the physical shelves at the library.</p>
+  they walk around the shelves at the library.</p>
 
-<p> For example, let's
-  say that you are looking at the book "Splendours of Morocco"
-  by Izza Genini and you want to see what other books would be next to this
-  if you were standing in front of it at the library shelves. Notice the
-  <i>More Like This</i> and <i>Browse the Stacks</i> links on the tools
-  section of the page.</p>
+<p> For example, let's say that you are looking at the book "Splendours of Morocco"
+  by Izza Genini and you want to see what other books would be next to it
+  if you were standing in front of it at the library.</p>
 
 <p style="text-align: center;">
   <%= image_tag("browse_about.png", style: "border-width: 1px; border-style: solid;") %>
+  <br/>
+  &nbsp;<br/>
 </p>
 
-<p><b>Browse the Stacks</b> will take you to a new page with the books that
-  are on the shelf next to "Splendours of Morocco".
-  <%= link_to("Try it out!", browse_item_path(id: "b3130393")) %></p>
+<p>Notice the links <b>More Like This</b> and <b>Browse the Stacks</b> on the
+  Tools section of the page.</p>
 
-<p><b>More Like This</b> provides similar functionality but in a smaller
+<ul>
+  <li><b>Browse the Stacks</b> will take you to a new page with the books that
+  are on the shelf next to "Splendours of Morocco".
+  <%= link_to("Try it out!", browse_item_path(id: "b3130393")) %>
+  <li><b>More Like This</b> provides similar functionality but in a smaller
   display. Instead of opening a new page, this link will display a small
-  stack at the bottom of the page.
-  <%= link_to("Try it out!", catalog_path(id: "b3130393")) %></p>
+  stack of books at the bottom of the page.
+  <%= link_to("Try it out!", catalog_path(id: "b3130393", nearby: "y")) %>
+</ul>
 
 <p>Depending on what kind of search you are doing you might enjoy a full page
   with the stack or the smaller version. They both provide the same information.</p>
-
-<p>&nbsp;</p>
 
 <h3>Limitations</h3>
 <p>TODO: document here that not all the items in the library have call numbers
@@ -41,3 +44,5 @@
   Lab. You can see the plug-in source code on this
   <a href="https://github.com/harvard-lil/stacklife">GitHub</a>
   repo.</p>
+
+<p>&nbsp;</p>
