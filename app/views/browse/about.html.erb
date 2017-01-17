@@ -4,13 +4,17 @@
 </style>
 
 <h1>About StackLife</h1>
-<p>The StackLife page is an attempt to give our users the ability to
-  browse the stacks in a similar way to what people do when
-  they walk around the shelves at the library.</p>
+<p>StackLife is a visualization of Brown Library holdings, both physical and
+  digital, in circulating and non-circulating libraries, arranged together by
+  <a target="_blank" href="http://www.bpl.org/general/callnumbers.htm">call number</a>
+  on a virtual shelf tipped at a 90° angle so that you can read the titles on
+  your screen. Since many items in the Library’s collections do not have Library
+  of Congress call numbers, this visualization does not include all titles that
+  the Library owns. </p>
 
-<p> For example, let's say that you are looking at the book "Splendours of Morocco"
-  by Izza Genini and you want to see what other books would be next to it
-  if you were standing in front of it at the library.</p>
+<p>For example, let's say that you are looking at the book "Splendours of Morocco"
+  by Izza Genini and you want to see what other books would be next to it if you
+  were standing in front of it at the library.</p>
 
 <p style="text-align: center;">
   <%= image_tag("browse_about.png", style: "border-width: 1px; border-style: solid;") %>
@@ -25,6 +29,7 @@
   <li><b>Browse the Stacks</b> will take you to a new page with the books that
   are on the shelf next to "Splendours of Morocco".
   <%= link_to("Try it out!", browse_item_path(id: "b3130393")) %>
+
   <li><b>More Like This</b> provides similar functionality but in a smaller
   display. Instead of opening a new page, this link will display a small
   stack of books at the bottom of the page.
@@ -35,14 +40,36 @@
   with the stack or the smaller version. They both provide the same information.</p>
 
 <h3>Limitations</h3>
-<p>TODO: document here that not all the items in the library have call numbers
-  and therefore only about 50% of our items are available on the StackLife
-  pages.</p>
+<p>For a variety of reasons, not all the items in the library have call numbers
+  and therefore only about 50% of our items are available on the StackLife pages.</p>
+
+<p>Items without call numbers and items in non-LC call number schemes are not
+  currently included. However, Annex materials and many digital items are
+  browsable alongside the circulating print collection.</p>
+
+<p>TODO: Indicate what we do if an item has more than one call number.</p>
+
+<h3>How Does It Work?</h3>
+<ul>
+  <li>Books are arranged by Library of Congress call numbers.
+  <li>Thickness of the book is based on page count.
+  <li>Length is proportionate to actual length.
+  <li>Serials are indicated by issues bound together (<a href="https://search.library.brown.edu/browse/b3491476">example</a>)
+  <li>DVDs and CDs are visualized in cases (<a href="https://search.library.brown.edu/browse/b5386010">example</a>)
+</ul>
+
+<h3>Future Development</h3>
+<ul>
+  <li>Navigation by subjects.
+  <li>Indicate circulation stats on items displayed on the shelf.
+  <li>What would you like to see?
+    <a target="_blank" href="https://docs.google.com/forms/d/1VFbkZQR_1EIqsZ8RgLv1mo_0nnKtIT6AIe-Ms_SY_1E/viewform">Let us know.</a>
+</ul>
 
 <h3>Credits</h3>
 <p>The StackLife page is based on a plug-in developed by the Harvard Innovation
   Lab. You can see the plug-in source code on this
-  <a href="https://github.com/harvard-lil/stacklife">GitHub</a>
+  <a target="_blank" href="https://github.com/harvard-lil/stackview/">GitHub</a>
   repo.</p>
 
 <p>&nbsp;</p>
