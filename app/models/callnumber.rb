@@ -1,92 +1,9 @@
+# Methods to browse through call numbers.
+# This class should be renamed to CallnumberBrowse
 class Callnumber < ActiveRecord::Base
 
   # Number of books on the shelf to show before/after the current book.
   NEARBY_BATCH_SIZE = 5
-
-  # Max number of records to fetch at once when cacheing BIBs/call numbers.
-  SOLR_BATCH_SIZE = 1000
-
-  # Saves to the callnumber table all the BIB id
-  # and original call numbers found in Solr.
-  #
-  # Notice that we are not normalizing the call numbers here. We use
-  # an external Python program for that. (See misc/callnumber_norm/)
-  def self.cache_bib_ids_to_table(blacklight_config, page = 1)
-    puts "Cacheing BIB record IDs (starting on page #{page})..."
-    while true
-      ActiveRecord::Base.connection.execute("START TRANSACTION")
-      batch, total_docs = self.get_batch(blacklight_config, page)
-      batch.each do |row|
-        sql = <<-END_SQL.gsub(/\n/, '')
-          INSERT IGNORE INTO callnumbers(bib, original)
-          VALUES("#{row[:bib]}","#{row[:original]}")
-        END_SQL
-        ActiveRecord::Base.connection.execute(sql)
-      end
-      ActiveRecord::Base.connection.execute("COMMIT")
-      last_page = batch.count < SOLR_BATCH_SIZE
-      break if last_page
-      page += 1
-    end
-  end
-
-  # Saves to a file on disk the SQL INSERT statementes to
-  # add cache all the BIB id and original call numbers found in Solr.
-  # This file can be submitted to MySQL with from the command
-  # line with: mysql < callnumbers_upsert.sql
-  #
-  # Notice that we are not normalizing the call numbers here. We use
-  # an external Python program for that. (See misc/callnumber_norm/)
-  def self.cache_bib_ids_to_file(blacklight_config, page = 1)
-    filename = "callnumbers_upsert.sql"
-    IO.write(filename, "", mode: "w")
-    while true
-      batch, total_docs = self.get_batch(blacklight_config, page)
-      sql_tx = "SELECT #{page}, #{page_count(total_docs)};\r\n"
-      sql_tx << "START TRANSACTION;\r\n"
-      batch.each do |row|
-        sql = <<-END_SQL.gsub(/\n/, '')
-          INSERT IGNORE INTO callnumbers(bib, original)
-          VALUES("#{row[:bib]}","#{row[:original]}")
-        END_SQL
-        sql_tx << sql + ";\r\n"
-      end
-      sql_tx << "COMMIT;\r\n"
-      IO.write(filename, sql_tx, mode: "a")
-      last_page = batch.count < SOLR_BATCH_SIZE
-      break if last_page
-      page += 1
-    end
-  end
-
-
-  def self.normalize_one(blacklight_config, id)
-    solr_docs = self.fetch_some_solr_ids(blacklight_config, [id])
-    raise "ID #{id} not found in Solr." if solr_docs.count == 0
-    raise "More than one BIB record found in Solr for ID: #{id}" if solr_docs.count > 1
-    # Process the callnumber for the BIB record...
-    callnumbers = solr_doc[0]["callnumber_t"] || []
-    callnumbers.each do |callnumber|
-      normalized = CallnumberNormalizer.normalize_one(callnumber)
-      records = Callnumber.where(bib: id, original: callnumber)
-      case records.count
-      when 0
-        # add the record to the DB
-        record = Callnumber.new
-        record.original = callnumber
-        record.bib = id
-        record.normalized = normalized
-        record.save!
-      when 1
-        # update the existing record
-        record[0].normalized = normalized
-        record[0].save!
-      else
-        raise "More than row found for #{id}/#{callnumber} in the database"
-      end
-    end
-  end
-
 
   # Returns an array of BIB record IDs with call numbers
   # that are near to the bib_id provided.
@@ -220,46 +137,6 @@ class Callnumber < ActiveRecord::Base
   end
 
   private
-    def self.fetch_all_solr_ids(blacklight_config, page, page_size)
-      builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
-      repository = Blacklight::SolrRepository.new(blacklight_config)
-      response = repository.search(builder)
-      return response.documents, response["response"]["numFound"]
-    end
-
-    def self.fetch_some_solr_ids(blacklight_config, ids)
-      builder = SomeIdsSearchBuilder.new(blacklight_config, ids)
-      repository = Blacklight::SolrRepository.new(blacklight_config)
-      response = repository.search(builder)
-      response.documents
-    end
-
-    def self.get_batch(blacklight_config, page)
-      batch = []
-      solr_docs, total_docs = self.fetch_all_solr_ids(blacklight_config, page, SOLR_BATCH_SIZE)
-      solr_docs.each do |solr_doc|
-        callnumbers = solr_doc["callnumber_t"] || []
-        callnumbers.uniq { |c| c.upcase }.each do |callnumber|
-          bib = solr_doc["id"].gsub('"', '')
-          if callnumber.length > 100
-            puts "Ignored BIB: #{bib}, call number too long [#{callnumber}]"
-            next
-          end
-          original = callnumber.upcase.gsub('"', '').gsub('\\', '')
-          batch << {bib: bib, original: original}
-        end
-      end
-      return batch, total_docs
-    end
-
-    def self.page_count(total_docs)
-      count = (total_docs / SOLR_BATCH_SIZE).to_i
-      if (total_docs % SOLR_BATCH_SIZE) > 0
-        count += 1
-      end
-      count
-    end
-
     def self.boundaries(top_rows, bottom_rows)
       top = nil
       bottom = nil

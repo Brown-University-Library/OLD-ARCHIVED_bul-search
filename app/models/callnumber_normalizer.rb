@@ -1,5 +1,6 @@
 require "./lib/http_json"
 
+# Calls the callnumber normalize API to normalize callnumbers.
 class CallnumberNormalizer
   def self.normalize_one(callnumber)
     normalized = self.normalize_many([callnumber])
