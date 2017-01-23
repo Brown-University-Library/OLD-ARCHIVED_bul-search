@@ -17,7 +17,9 @@ class CallnumberNormalizer
   def self.normalize_many(callnumbers)
     numbers = callnumbers.map { |c| self.clean_callnumber(c)}.compact
     normalized = []
-    url = ENV["NORMALIZE_API_URL"] + "/?callnumber=#{numbers.join(',')}"
+    api_url = ENV["NORMALIZE_API_URL"]
+    raise "NORMALIZE_API_URL is not defined" if api_url == nil
+    url = api_url + "/?callnumber=#{numbers.join(',')}"
     response = HttpUtil::HttpJson.get(URI.encode(url))
     response["result"]["items"].each do |item|
       normalized << OpenStruct.new(
