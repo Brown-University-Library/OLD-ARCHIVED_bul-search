@@ -89,7 +89,6 @@ class CallnumberCache < ActiveRecord::Base
     callnumbers = solr_docs[0]["callnumber_t"] || []
     callnumbers.each do |callnumber|
       puts "Normalizing #{id}/#{callnumber}"
-      byebug
       normalized = CallnumberNormalizer.normalize_one(callnumber)
       if normalized == nil
         normalized = "ERR"
@@ -109,6 +108,18 @@ class CallnumberCache < ActiveRecord::Base
         records[0].save!
       else
         raise "Skipped #{id}/#{callnumber}, more than one row found in the database"
+      end
+    end
+  end
+
+  def self.normalize_pending(blacklight_config)
+    puts "Fetching records to normalize..."
+    records = Callnumber.where(normalized: nil)
+    records.each do |record|
+      begin
+        normalize_one(blacklight_config, record.bib)
+      rescue StandardError => e
+        puts "#{e}, (continuing with the next one)"
       end
     end
   end
