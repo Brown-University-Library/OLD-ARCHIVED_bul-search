@@ -27,6 +27,9 @@ class CallnumberNormalizer
         :normalized => item["normalized_call_number"])
     end
     normalized
+  rescue => e
+    puts e
+    []
   end
 
   def self.clean_callnumber(callnumber)
