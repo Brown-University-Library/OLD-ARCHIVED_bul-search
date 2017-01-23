@@ -1,3 +1,6 @@
+require "./lib/solr_lite/solr.rb"
+require "./lib/solr_lite/search_params.rb"
+
 # Methods to store callnumbers and normalize them in the
 # callnumber SQL table.
 class CallnumberCache < ActiveRecord::Base

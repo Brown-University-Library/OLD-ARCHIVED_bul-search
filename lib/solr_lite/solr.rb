@@ -15,7 +15,7 @@ module SolrLite
       query_string = "#{q_field}=id:%22#{id}%22"
       query_string += "&fl=#{fl}"
       query_string += "&wt=json&indent=on"
-      url = "#{@solr_url}/select?#{query_string}"
+      url = URI.encode("#{@solr_url}/select?#{query_string}")
       solr_response = http_get(url)
       solr_response.solr_docs.first
     end
@@ -28,7 +28,7 @@ module SolrLite
       end
       query_string += "&wt=json&indent=on"
       query_string += "&" + params.to_solr_query_string()
-      url = "#{@solr_url}/select?#{query_string}"
+      url = URI.encode("#{@solr_url}/select?#{query_string}")
       http_get(url)
     end
 
