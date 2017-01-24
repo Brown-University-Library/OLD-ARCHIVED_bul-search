@@ -14,7 +14,7 @@ module MarcDisplay
 	end
 
 	def marc_subjects
-		return nil unless self.respond_to?(:to_marc)
+		return [] unless self.respond_to?(:to_marc)
 	  self.to_marc.subjects
 	end
 

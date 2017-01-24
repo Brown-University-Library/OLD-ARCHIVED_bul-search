@@ -5,6 +5,7 @@ require "./lib/solr_lite/search_results.rb"
 module SolrLite
   class Solr
     def initialize(solr_url)
+      raise "No solr_url was indicated" if solr_url == nil
       @solr_url = solr_url
       @verbose = ENV["SOLR_VERBOSE"] == "true"
       @logger = Rails::logger
@@ -12,7 +13,7 @@ module SolrLite
 
     # Fetches a Solr document by id. Returns the first document found.
     def get(id, q_field = "q", fl = "id,json_txt")
-      query_string = "#{q_field}=id:%22#{id}%22"
+      query_string = "#{q_field}=id:#{id}"
       query_string += "&fl=#{fl}"
       query_string += "&wt=json&indent=on"
       url = URI.encode("#{@solr_url}/select?#{query_string}")
@@ -63,7 +64,7 @@ module SolrLite
     end
 
     def commit()
-      commit_url = @solr_url + "/update?commit=true"
+      commit_url = @solr_url + "/update?commit=true&wt=json"
       http_get(commit_url)
     end
 
