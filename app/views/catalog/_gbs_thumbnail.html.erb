@@ -1,7 +1,13 @@
-<span class="gbs thumbnail pull-right hide">
-    <img class="cover-image center-block <%= css_class %> hide" alt="" data-isbn="<%= isbn %>" data-oclc="<%= oclc %>" data-lccn="<%= lccn %>">
-    <span class="preview-info">
-        <a href="#" class="hide"><%= image_tag "gbs_preview_button.gif", alt:"" %></a>
-    </span>
-
-</span>
+<% if document["id"] && document["id"].starts_with?("bdr:") %>
+  <span class="gbs thumbnail pull-right">
+      <img class="cover-image center-block <%= css_class %>" alt=""
+        src="https://repository.library.brown.edu/viewers/image/thumbnail/<%= document['id'] %>"/>
+  </span>
+<% else %>
+  <span class="gbs thumbnail pull-right hide">
+      <img class="cover-image center-block <%= css_class %> hide" alt="" data-isbn="<%= isbn %>" data-oclc="<%= oclc %>" data-lccn="<%= lccn %>">
+      <span class="preview-info">
+          <a href="#" class="hide"><%= image_tag "gbs_preview_button.gif", alt:"" %></a>
+      </span>
+  </span>
+<% end %>
