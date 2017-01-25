@@ -64,7 +64,7 @@ class EtdImport
       bib.author_t << etd["creator"] # TODO: figure out what we do in Traject
       bib.author_addl_t = []
 
-      bib.physical_display = [] # born digital
+      bib.physical_display = etd["mods_physicalDescription_extent_ssim"]
 
       bib.pub_date = etd["copyrightDate_year_ssim"] || []
       # bib.pub_date_sort is calculated
@@ -103,8 +103,19 @@ class EtdImport
     end
 
     def to_josiah_lang(bdr_lang)
-      if bdr_lang == "eng" || bdr_lang == "English" then
+      case bdr_lang
+      when "eng"
         "English"
+      when "por"
+        "Portuguese"
+      when "fre"
+        "French"
+      when "ita"
+        "Italian"
+      when "spa"
+        "Spanish"
+      when "ger"
+        "German"
       else
         nil
       end
