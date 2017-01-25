@@ -14,8 +14,13 @@ module MarcDisplay
 	end
 
 	def marc_subjects
-		return [] unless self.respond_to?(:to_marc)
-	  self.to_marc.subjects
+		if self.respond_to?(:to_marc)
+			return self.to_marc.subjects
+		elsif self["subject_t"] != nil
+			# TODO: implement a better way to handle BDR subjects
+			return self["subject_t"]
+		end
+		return []
 	end
 
 	#Can be a tag or array of tag numbers.

@@ -73,7 +73,7 @@ class EtdImport
       bib.language_facet = to_josiah_langs(etd["mods_language_code_ssim"])
       bib.format = "Thesis/Dissertation"
       bib.location_code_t = ["BDR"] # leave empty instead?
-      bib.subject_t = [] # etd["mods_subject_ssim"]
+      bib.subject_t = etd["mods_subject_ssim"]
 
       # I might need to dump some of the ETD fields to marc_display
       # so that the rest of the system picks them up. The show page
