@@ -11,6 +11,10 @@
             <span class="thumbnail pull-right hide">
                 <img class="cover-image hide ISBN<%= document['isbn_t'][0] %>" data-isbn="ISBN<%= document['isbn_t'][0] %>"/>
             </span>
+    <% elsif document['id'].start_with?("bdr:") %>
+      <span class="thumbnail pull-right">
+          <img class="cover-image" src="https://repository.library.brown.edu/viewers/image/thumbnail/<%= document['id'] %>"/>
+      </span>
     <% end %>
 
   <% index_fields(document).each do |solr_fname, field| -%>
