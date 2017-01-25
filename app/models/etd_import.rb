@@ -36,15 +36,13 @@ class EtdImport
 
   def one_from_bdr(id)
     api_url = ENV["BDR_ITEM_API_URL"]
+    # TODO: This enforces security which means I am not able to get the metadata
+    # for an embargoed item (whereas I can get it with the search API)
     raise "No value for BDR_ITEM_API_URL was found the environment" if api_url == nil
     url = "#{api_url}#{id}/"
     etd = HttpUtil::HttpJson.get(url)
-    if etd["_display_public_bsi"] == true
-      record = bib_record_from_etd(etd)
-      record.save
-    else
-      false
-    end
+    record = bib_record_from_etd(etd)
+    record.save
   end
 
   private
@@ -75,12 +73,15 @@ class EtdImport
       bib.language_facet = to_josiah_langs(etd["mods_language_code_ssim"])
       bib.format = "Thesis/Dissertation"
       bib.location_code_t = ["BDR"] # leave empty instead?
-      bib.subject_t = []
+      bib.subject_t = [] # etd["mods_subject_ssim"]
 
       # I might need to dump some of the ETD fields to marc_display
       # so that the rest of the system picks them up. The show page
       # picks stuff from the marc_display page, for example the abstract.
       bib.marc_display = nil
+
+      # new field
+      bib.abstract_display = etd["abstract"]
       bib
     end
 

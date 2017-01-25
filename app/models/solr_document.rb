@@ -213,14 +213,12 @@ class SolrDocument
 
   def full_abstract
     @full_abstract ||= begin
-      marc_abstract = marc_subfield_values('520','a')
-      if marc_abstract.count > 0
-        marc_abstract
+      if self["abstract_display"] != nil
+        # get the value straight from Solr
+        self["abstract_display"]
       else
-        # Default to the value indexed in Solr, not sure
-        # this will help, but at least it will preserve
-        # the value that we used to display before.
-        self['abstract_display'] || []
+        # parse the MARC data in Solr to get the abstract
+        marc_abstract = marc_subfield_values('520','a')
       end
     rescue StandardError => e
       Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}, #{e.message}"
