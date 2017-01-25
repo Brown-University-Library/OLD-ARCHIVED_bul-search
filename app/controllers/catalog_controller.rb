@@ -250,6 +250,12 @@ class CatalogController < ApplicationController
     ret_val
   end
 
+  # def show
+  #   ret_val = super
+  #   byebug
+  #   ret_val
+  # end
+
   def api_call?
     format = params[:format]
     return format == "xml" || format == "json"

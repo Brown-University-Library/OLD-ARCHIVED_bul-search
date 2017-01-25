@@ -9,7 +9,8 @@ class BibRecord
     :opensearch_display, :author_display, :author_addl_display,
     :author_t, :author_addl_t, :physical_display, :pub_date, :pub_date_sort,
     :online_b, :format, :language_facet, :location_code_t, :subject_t,
-    :marc_display, :abstract_display
+    :marc_display, :abstract_display,
+    :url_fulltext_display, :url_suppl_display
   attr_reader :timestamp
 
   def initialize

@@ -80,6 +80,11 @@ class EtdImport
       # picks stuff from the marc_display page, for example the abstract.
       bib.marc_display = nil
 
+      # TODO: handle empty ENV variable
+      item_url = ENV["BDR_ITEM_URL"] + bib.id
+      bib.url_fulltext_display = [item_url]
+      bib.url_suppl_display = ["Available online at the Brown Digital Repository"]
+
       # new field
       bib.abstract_display = etd["abstract"]
       bib
