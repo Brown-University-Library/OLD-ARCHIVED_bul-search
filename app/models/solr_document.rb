@@ -86,6 +86,19 @@ class SolrDocument
   # Recommendation: Use field names from Dublin Core
   use_extension( Blacklight::Document::DublinCore)
 
+  def record_source
+    return "MIL" if self["record_source_s"] == nil
+    self["record_source_s"]
+  end
+
+  def bdr_record?
+    record_source == "BDR"
+  end
+
+  def millenium_record?
+    record_source == "MIL"
+  end
+
   #Local overrides
   module BrownMarcDisplay
     include Blacklight::Solr::Document::Marc

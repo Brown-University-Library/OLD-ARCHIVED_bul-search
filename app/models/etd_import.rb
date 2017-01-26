@@ -48,21 +48,22 @@ class EtdImport
   private
     def bib_record_from_etd(etd)
       bib = BibRecord.new
+      bib.record_source_s = "BDR"
       bib.id = etd["pid"]
       bib.updated_dt = etd["fed_last_modified_dsi"]
       bib.oclc = [] # leave empty
 
-      # primary_title, mods_title_full_tsim, mods_title_full_primary_tsi, brief.title,
       bib.title_t << etd["primary_title"]
       bib.title_display = etd["primary_title"]
 
       bib.opensearch_display = []
 
-      # creator, creator_string
+      # TODO: figure out what we do in Traject with all the author fields
+      bib.author_t << etd["creator"]
       bib.author_display = etd["creator"]
-      bib.author_addl_display = [] # always empty?
-      bib.author_t << etd["creator"] # TODO: figure out what we do in Traject
-      bib.author_addl_t = []
+
+      bib.author_addl_display = etd["contributor"]
+      bib.author_addl_t = etd["contributor"]
 
       bib.physical_display = etd["mods_physicalDescription_extent_ssim"]
 
@@ -75,7 +76,7 @@ class EtdImport
       bib.location_code_t = ["BDR"] # leave empty instead?
 
       bib.subject_t = etd["mods_subject_ssim"]
-      bib.topic_facet = etd["mods_subject_ssim"]
+      bib.topic_facet = etd["mods_subject_fast_ssim"]
 
       # I might need to dump some of the ETD fields to marc_display
       # so that the rest of the system picks them up. The show page
@@ -87,8 +88,9 @@ class EtdImport
       bib.url_fulltext_display = [item_url]
       bib.url_suppl_display = ["Available online at the Brown Digital Repository"]
 
-      # new field
+      # new fields
       bib.abstract_display = etd["abstract"]
+      bib.bdr_notes_display = etd["note"]
       bib
     end
 

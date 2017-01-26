@@ -66,7 +66,12 @@
     <% if should_render_show_field? document, field %>
         <% if field.linked_fielded_search %>
             <dt class="blacklight-<%= solr_fname.parameterize %>">
-                <%= render_document_show_field_label document, :field => solr_fname %></dt>
+                <% if solr_fname == "author_addl_display" && document.bdr_record? %>
+                  Contributors:
+                <% else %>
+                  <%= render_document_show_field_label document, :field => solr_fname %>
+                <% end %>
+            </dt>
             <% if field.multi %>
                 <% document[field.field].each do |fvalue| %>
                     <dd class="blacklight-<%= solr_fname.parameterize %>"><%= fielded_search(fvalue, field.linked_fielded_search) %></dd>

@@ -89,6 +89,23 @@ module MarcHelper
 
   ##Notes
   def render_record_notes(document)
+    if document.bdr_record?
+      to_display = bdr_notes(document)
+    elsif document.millenium_record?
+      to_display = millenium_notes(document)
+    else
+      to_display = []
+    end
+    render partial: "catalog/record/notes", locals: {:note_display => to_display}
+  end
+
+  def bdr_notes(document)
+    return [] if document["bdr_notes_display"] == nil
+    note = {label: "Note", values: document["bdr_notes_display"]}
+    [note]
+  end
+
+  def millenium_notes(document)
     config = Constants::NOTES_DISPLAY
     to_display = []
     config.each do |note_config|
@@ -101,7 +118,6 @@ module MarcHelper
         to_display << {:label => note_config[:label], :values => values}
       end
     end
-    render partial: "catalog/record/notes", locals: {:note_display => to_display}
+    to_display
   end
-
 end

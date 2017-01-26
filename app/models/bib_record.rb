@@ -11,7 +11,9 @@ class BibRecord
     :online_b, :format, :language_facet, :location_code_t, :subject_t,
     :marc_display, :abstract_display,
     :url_fulltext_display, :url_suppl_display,
-    :topic_facet
+    :topic_facet,
+    :record_source_s,
+    :bdr_notes_display
   attr_reader :timestamp
 
   def initialize
@@ -37,6 +39,8 @@ class BibRecord
     @timestamp = nil
     @abstract_display = ""
     @topic_facet = []
+    @record_source_s = ""
+    @bdr_notes_display = []
   end
 
   def save
