@@ -11,13 +11,18 @@ module SolrLite
       @logger = Rails::logger
     end
 
-    # Fetches a Solr document by id. Returns the first document found.
+    # Fetches a Solr document by id.
+    # Returns the document found (or nil if nothing was found)
+    # Raises an exception if more than one doc was found.
     def get(id, q_field = "q", fl = "id,json_txt")
-      query_string = "#{q_field}=id:#{id}"
+      query_string = "#{q_field}=id:#{id_encode(id)}"
       query_string += "&fl=#{fl}"
       query_string += "&wt=json&indent=on"
       url = URI.encode("#{@solr_url}/select?#{query_string}")
       solr_response = http_get(url)
+      if solr_response.num_found > 1
+        raise "More than one record found for id #{id}"
+      end
       solr_response.solr_docs.first
     end
 
@@ -45,22 +50,32 @@ module SolrLite
 
     def update(json, do_commit = true)
       url = @solr_url + "/update"
-      solr_response = http_post(url, json)
+      solr_response = http_post_json(url, json)
       if solr_response.ok? && do_commit
         solr_response = commit()
       end
       solr_response
     end
 
-    def delete_all!()
-      url = @solr_url + "/update"
-      payload = "<delete><query>*:*</query></delete>"
-      payload = '{ "delete" : { "query" : "*:*" } }'
-      solr_response = http_post(url, payload)
-      if solr_response.ok?
-        solr_response = commit()
-      end
+    def delete_by_id(id)
+      # Use XML format here because that's the only way I could get
+      # the delete to recognize ids with a colon (e.g. bdr:123).
+      # Using json caused the Solr parser to choke.
+      url = @solr_url + "/update?commit=true"
+      payload = "<delete><id>#{id}</id></delete>"
+      solr_response = http_post(url, payload, "text/xml") || ""
+      solr_response.include?('<int name="status">0</int>')
+    end
+
+    def delete_by_query(query)
+      url = @solr_url + "/update?commit=true"
+      payload = '{ "delete" : { "query" : "' + query + '" } }'
+      solr_response = http_post_json(url, payload)
       solr_response
+    end
+
+    def delete_all!()
+      delete_by_query("*:*")
     end
 
     def commit()
@@ -69,7 +84,13 @@ module SolrLite
     end
 
     private
-      def http_post(url, payload)
+      def http_post_json(url, payload)
+        content_type = "application/json"
+        http_response = http_post(url, payload, content_type)
+        SearchResults.new(JSON.parse(http_response))
+      end
+
+      def http_post(url, payload, content_type)
         start = Time.now
         log_msg("Solr HTTP POST #{url}")
         uri = URI.parse(url)
@@ -79,11 +100,11 @@ module SolrLite
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
         request = Net::HTTP::Post.new(uri.request_uri)
-        request["Content-Type"] = "application/json"
+        request["Content-Type"] = content_type
         request.body = payload
         response = http.request(request)
         log_elapsed(start, "Solr HTTP POST")
-        SearchResults.new(JSON.parse(response.body))
+        response.body
       end
 
       def http_get(url)
@@ -100,6 +121,10 @@ module SolrLite
         response = http.request(request)
         log_elapsed(start, "Solr HTTP GET")
         SearchResults.new(JSON.parse(response.body))
+      end
+
+      def id_encode(id)
+        id.gsub(':', '\:')
       end
 
       def elapsed_ms(start)
