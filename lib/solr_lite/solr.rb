@@ -48,12 +48,9 @@ module SolrLite
       (page - 1) * page_size
     end
 
-    def update(json, do_commit = true)
-      url = @solr_url + "/update"
+    def update(json)
+      url = @solr_url + "/update?commit=true"
       solr_response = http_post_json(url, json)
-      if solr_response.ok? && do_commit
-        solr_response = commit()
-      end
       solr_response
     end
 
@@ -76,11 +73,6 @@ module SolrLite
 
     def delete_all!()
       delete_by_query("*:*")
-    end
-
-    def commit()
-      commit_url = @solr_url + "/update?commit=true&wt=json"
-      http_get(commit_url)
     end
 
     private

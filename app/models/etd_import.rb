@@ -19,30 +19,35 @@ class EtdImport
     page = 1
     while true
       puts "Processing page #{page}"
+      bib_records = []
       # fetch all dissertations (paginated via rows and start)
       url = "#{api_url}?q=ir_collection_name:Dissertations&rows=#{rows}&start=#{start}"
       api_response = HttpUtil::HttpJson.get(url)
       docs = api_response["response"]["docs"]
       break if docs.count == 0
       docs.each do |etd|
-        # TODO: commit at the end of the batch, not on each record
-        record = bib_record_from_etd(etd)
-        puts "\t#{etd['pid']}, #{record.save}"
+        bib_records << bib_record_from_etd(etd)
       end
+      BibRecord.save_batch(bib_records)
       start += rows
       page += 1
     end
   end
 
   def one_from_bdr(id)
-    api_url = ENV["BDR_ITEM_API_URL"]
-    # TODO: This enforces security which means I am not able to get the metadata
-    # for an embargoed item (whereas I can get it with the search API)
-    raise "No value for BDR_ITEM_API_URL was found the environment" if api_url == nil
-    url = "#{api_url}#{id}/"
-    etd = HttpUtil::HttpJson.get(url)
-    record = bib_record_from_etd(etd)
-    record.save
+    api_url = ENV["BDR_SEARCH_API_URL"]
+    raise "No value for BDR_SEARCH_API_URL was found the environment" if api_url == nil
+    id = id.gsub(':', '\:')
+    url = "#{api_url}?q=pid:#{id}"
+    http_response = HttpUtil::HttpJson.get(url)
+    docs = http_response["response"]["docs"]
+    if docs.count == 1
+      etd = docs.first
+      record = bib_record_from_etd(etd)
+      record.save
+    else
+      false
+    end
   end
 
   private

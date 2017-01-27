@@ -44,13 +44,16 @@ class BibRecord
   end
 
   def save
-    solr = SolrLite::Solr.new(ENV["SOLR_URL"])
-    json = [self].to_json
-    response = solr.update(json)
-    response.ok?
+    BibRecord.save_batch([self])
   end
 
   def to_s
     "#{@id}, #{@title_display}"
+  end
+
+  def self.save_batch(bib_records)
+    solr = SolrLite::Solr.new(ENV["SOLR_URL"])
+    response = solr.update(bib_records.to_json)
+    response.ok?
   end
 end

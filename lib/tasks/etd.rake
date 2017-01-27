@@ -21,9 +21,9 @@ namespace :josiah do
   end
 
   desc "Deletes a BDR ETD from Josiah"
-  task "etd_delete", [:id] => :environment do |_cmd, args|
+  task "etd_delete_one", [:id] => :environment do |_cmd, args|
     id = args[:id]
-    abort("Must pass an document id to delete") if id == nil
+    abort("Must pass a document id to delete") if id == nil
     solr = SolrLite::Solr.new(ENV['SOLR_URL'])
     record = solr.get(id, "fq", "id, record_source_s")
     abort("Document was not found #{id}") if record == nil
