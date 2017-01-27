@@ -28,7 +28,8 @@ namespace :josiah do
     record = solr.get(id, "fq", "id, record_source_s")
     abort("Document was not found #{id}") if record == nil
     if record["record_source_s"] == "BDR"
-      puts "Deleted #{id}? #{solr.delete_by_id(id)}"
+      result = solr.delete_by_id(id)
+      puts "Deleted #{id}? #{result.ok?}"
     else
       puts "Document was NOT deleted because it's not a BDR record"
     end

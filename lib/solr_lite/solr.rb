@@ -58,10 +58,13 @@ module SolrLite
       # Use XML format here because that's the only way I could get
       # the delete to recognize ids with a colon (e.g. bdr:123).
       # Using json caused the Solr parser to choke.
-      url = @solr_url + "/update?commit=true"
+      #
+      # Notice that they payload is XML but the response is JSON (wt=json)
+      url = @solr_url + "/update?commit=true&wt=json"
       payload = "<delete><id>#{id}</id></delete>"
-      solr_response = http_post(url, payload, "text/xml") || ""
-      solr_response.include?('<int name="status">0</int>')
+      http_response = http_post(url, payload, "text/xml")
+      solr_response = SearchResults.new(JSON.parse(http_response))
+      solr_response
     end
 
     def delete_by_query(query)

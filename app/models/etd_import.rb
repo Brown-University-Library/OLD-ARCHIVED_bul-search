@@ -28,7 +28,9 @@ class EtdImport
       docs.each do |etd|
         bib_records << bib_record_from_etd(etd)
       end
-      BibRecord.save_batch(bib_records)
+      if !BibRecord.save_batch(bib_records)
+        puts "\terror saving page #{page}!"
+      end
       start += rows
       page += 1
     end
