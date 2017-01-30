@@ -66,12 +66,23 @@ class EtdImport
 
       bib.opensearch_display = []
 
-      # TODO: figure out what we do in Traject with all the author fields
-      bib.author_t << etd["creator"]
-      bib.author_display = etd["creator"]
+      # TODO: implement some of the parsing that we do in Traject when importing
+      # author values (e.g. trim punctuation, handle alternate scripts)
+      creator = (etd["creator"] || [])
+      bib.author_display = creator.first
+      bib.author_spell = creator
+      bib.author_t = creator
+      # bib.author_unsteam_search = creator
+      bib.author_vern_display = creator.first
 
-      bib.author_addl_display = etd["contributor"]
+      contributors = (etd["contributor"] || [])
+      bib.author_addl_display = creator.first
       bib.author_addl_t = etd["contributor"]
+      # bib.author_addl_unsteam_search = etd["contributor"]
+
+      bib.author_facet = creator + contributors
+      bib.new_uniform_title_author_display = creator.first
+
 
       bib.physical_display = etd["mods_physicalDescription_extent_ssim"]
 
@@ -79,6 +90,8 @@ class EtdImport
       # bib.pub_date_sort is calculated
 
       bib.online_b = true
+      bib.access_facet = "Online"
+
       bib.language_facet = to_josiah_langs(etd["mods_language_code_ssim"])
       bib.format = "Thesis/Dissertation"
       bib.location_code_t = ["BDR"] # leave empty instead?
@@ -94,7 +107,11 @@ class EtdImport
       # TODO: handle empty ENV variable
       item_url = ENV["BDR_ITEM_URL"] + bib.id
       bib.url_fulltext_display = [item_url]
-      bib.url_suppl_display = ["Available online at the Brown Digital Repository"]
+      access_text = "Available online at the Brown Digital Repository"
+      if etd["_display_public_bsi"] == false
+        access_text += " (access might be restricted to Brown University users)"
+      end
+      bib.url_suppl_display = [access_text]
 
       # new fields
       bib.abstract_display = etd["abstract"]

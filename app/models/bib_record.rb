@@ -6,9 +6,20 @@ require "./lib/http_json.rb"
 
 class BibRecord
   attr_accessor :id, :updated_dt, :oclc, :title_t, :title_display,
-    :opensearch_display, :author_display, :author_addl_display,
-    :author_t, :author_addl_t, :physical_display, :pub_date, :pub_date_sort,
-    :online_b, :format, :language_facet, :location_code_t, :subject_t,
+    :opensearch_display,
+    :author_addl_display,
+    :author_addl_t,
+    # :author_addl_unsteam_search,
+    :author_display, # single value
+    :author_facet,
+    :author_spell,
+    :author_t,
+    # :author_unsteam_search,
+    :author_vern_display,               # single value
+    :new_uniform_title_author_display, # single value
+    :physical_display, :pub_date, :pub_date_sort,
+    :format, :language_facet, :location_code_t, :subject_t,
+    :online_b, :access_facet,
     :marc_display, :abstract_display,
     :url_fulltext_display, :url_suppl_display,
     :topic_facet,
@@ -23,14 +34,21 @@ class BibRecord
     @title_t = []
     @title_display = nil
     @opensearch_display = []
-    @author_display = nil
-    @author_addl_display = []
-    @author_t = []
+    @author_addl_display = ""
     @author_addl_t = []
+    # @author_addl_unsteam_search = []
+    @author_display = ""
+    @author_facet = []
+    @author_spell = []
+    @author_t = []
+    # @author_unsteam_search = []
+    @author_vern_display = ""
+    @new_uniform_title_author_display = ""
     @physical_display = []
     @pub_date = []
     @pub_date_sort = 0
     @online_b = false
+    @access_facet = nil
     @format = nil
     @language_facet = []
     @location_code_t = []
