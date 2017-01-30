@@ -85,6 +85,10 @@ function addAvailability(availabilityResponse) {
         item['scan'] = null;
         item['item_request_url'] = null;
       }
+      // add jcb link if necessary
+      if ( item['location'].slice(0, 3) == "JCB" ) {
+        item['jcb_url'] = jcbRequestFullLink( item )
+      }
     });
   }
 
