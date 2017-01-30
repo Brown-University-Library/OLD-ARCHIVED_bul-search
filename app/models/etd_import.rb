@@ -39,8 +39,8 @@ class EtdImport
   def one_from_bdr(id)
     api_url = ENV["BDR_SEARCH_API_URL"]
     raise "No value for BDR_SEARCH_API_URL was found the environment" if api_url == nil
-    id = id.gsub(':', '\:')
-    url = "#{api_url}?q=pid:#{id}"
+    params = "q=pid:#{id}"
+    url = "#{api_url}?" + CGI.escape(params)
     http_response = HttpUtil::HttpJson.get(url)
     docs = http_response["response"]["docs"]
     if docs.count == 1
