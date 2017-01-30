@@ -76,3 +76,14 @@ function easyScanFullLink(scanLink, bib, title) {
 function itemRequestFullLink(barCode, bib) {
   return "https://library.brown.edu/easyrequest/login/?bibnum=" + bib + "&barcode=" + barCode;
 }
+
+
+function jcbRequestFullLink( item ) {
+  console.log( item );
+  var jcb_ref_num = "b6344512";
+  var jcb_title = "The%20papers%20of%20Thomas%20Jefferson.%20Retirement%20series%20%2F%20J.%20Jefferson%20Looney%2C%20editor%20...%20%5Bet%20al.%5D";
+  var jcb_author = "Jefferson%2C%20Thomas%2C%201743-1826";
+  var jcb_publisher = "Princeton%20%3A%20Princeton%20University%20Press%2C%202004-%3C2012%3E";
+  var jcb_callnumber = "E302%20.J442%202004";
+  return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
+}
