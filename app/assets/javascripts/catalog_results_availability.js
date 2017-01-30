@@ -54,6 +54,9 @@ function getAvailability(bibs) {
                     item['scan'] = null;
                     item['item_request_url'] = null;
                   }
+                  // if (1 == 1) {
+                  //   item['jcb_url'] = "https://library.brown.edu"
+                  // }
                 });
 
                 var elem = $('[data-availability="' + bib + '"]');
