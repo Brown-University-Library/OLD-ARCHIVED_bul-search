@@ -87,7 +87,7 @@ function addAvailability(availabilityResponse) {
       }
       // add jcb link if necessary
       if ( item['location'].slice(0, 3) == "JCB" ) {
-        item['jcb_url'] = jcbRequestFullLink( bib )
+        item['jcb_url'] = jcbRequestFullLink( bib, title )
       }
     });
   }
