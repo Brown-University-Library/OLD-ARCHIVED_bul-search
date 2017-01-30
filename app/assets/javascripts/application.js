@@ -78,12 +78,12 @@ function itemRequestFullLink(barCode, bib) {
 }
 
 
-function jcbRequestFullLink( bib, title ) {
+function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
   // console.log( item );
   var jcb_ref_num = bib;
   var jcb_title = title.slice( 0, 100 );
-  var jcb_author = "Jefferson%2C%20Thomas%2C%201743-1826";
-  var jcb_publisher = "Princeton%20%3A%20Princeton%20University%20Press%2C%202004-%3C2012%3E";
-  var jcb_callnumber = "E302%20.J442%202004";
+  var jcb_author = author;  // pre-sliced
+  var jcb_publisher = publisher;  // pre-sliced
+  var jcb_callnumber = callnumber;
   return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
 }
