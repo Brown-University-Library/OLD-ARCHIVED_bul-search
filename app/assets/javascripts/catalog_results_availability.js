@@ -45,6 +45,8 @@ function getAvailability(bibs) {
                 };
 
                 _.each(context['items'], function(item) {
+                  console.log( "item..." );
+                  console.log( item );
                   var itemData = getItemData(bib);
                   item['map'] = item['map'] + '&title=' + itemData.title;
                   if (canScanItem(item['location'], itemData.format)) {
@@ -54,9 +56,12 @@ function getAvailability(bibs) {
                     item['scan'] = null;
                     item['item_request_url'] = null;
                   }
-                  // if (1 == 1) {
-                  //   item['jcb_url'] = "https://library.brown.edu"
-                  // }
+
+                  // add jcb link if necessary
+                  if ( item['location'].slice(0, 3) == "JCB" ) {
+                    item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, getAuthor(), getPublisher(), item['callnumber'] );
+                  }
+
                 });
 
                 var elem = $('[data-availability="' + bib + '"]');
@@ -67,4 +72,18 @@ function getAvailability(bibs) {
             });
         }
     })
+}
+
+
+function getAuthor() {
+  // for jcb link //
+  var author = $('div[class="title-subheading"]')[0].textContent.slice( 0, 100 );
+  return author;
+}
+
+
+function getPublisher() {
+  // for jcb link //
+  var publisher = "unavailable in result-list";
+  return publisher;
 }
