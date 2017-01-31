@@ -85,10 +85,12 @@ function addAvailability(availabilityResponse) {
         item['scan'] = null;
         item['item_request_url'] = null;
       }
+
       // add jcb link if necessary
       if ( item['location'].slice(0, 3) == "JCB" ) {
         item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
       }
+
     });
   }
 
@@ -107,12 +109,19 @@ function addAvailability(availabilityResponse) {
 
 function getAuthor() {
   // for jcb link //
-  var author_text = $('h5[class="title-subheading"]')[0].textContent;
-  var author = author_text.slice( 0, 100 );
-  if ( author_text.length > 100 ) {
-    author = author_text.slice( 0, 97 ) + "..."; }
+  var author = $('h5[class="title-subheading"]')[0].textContent;
   return author;
 }
+
+
+// function getAuthor() {
+//   // for jcb link //
+//   var author_text = $('h5[class="title-subheading"]')[0].textContent;
+//   var author = author_text.slice( 0, 100 );
+//   if ( author_text.length > 100 ) {
+//     author = author_text.slice( 0, 97 ) + "..."; }
+//   return author;
+// }
 
 
 function getPublisher() {

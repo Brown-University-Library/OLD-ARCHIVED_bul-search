@@ -78,14 +78,42 @@ function itemRequestFullLink(barCode, bib) {
 }
 
 
+// function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
+//   // console.log( item );
+//   var jcb_ref_num = bib;
+//   var jcb_title = title.slice( 0, 100 );
+//   if ( title.length > 100 ) {
+//     jcb_title = title.slice( 0, 97 ) + "..."; }
+//   var jcb_author = author;  // pre-sliced
+//   var jcb_publisher = publisher;  // pre-sliced
+//   var jcb_callnumber = callnumber;
+//   return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
+// }
+
+
 function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
   // console.log( item );
   var jcb_ref_num = bib;
-  var jcb_title = title.slice( 0, 100 );
-  if ( title.length > 100 ) {
-    jcb_title = title.slice( 0, 97 ) + "..."; }
-  var jcb_author = author;  // pre-sliced
+  var jcb_title = extractTitle( title );
+  var jcb_author = extractAuthor( author );
   var jcb_publisher = publisher;  // pre-sliced
   var jcb_callnumber = callnumber;
   return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
 }
+
+function extractTitle( title ) {
+  // for jcb link
+  var t = title;
+  if ( title.length > 100 ) {
+    t = title.slice( 0, 97 ) + "..."; }
+  return t;
+}
+
+function extractAuthor( author ) {
+  // for jcb link
+  var a = author;
+  if ( author.length > 100 ) {
+    a = author.slice( 0, 97 ) + "..."; }
+  return a;
+}
+
