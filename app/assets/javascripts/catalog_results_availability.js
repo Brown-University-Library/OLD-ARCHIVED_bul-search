@@ -31,7 +31,7 @@ function collectBibs() {
 function getItemData(bib) {
     var element = $('[data-id="' + bib + '"]');
     var title = element.find('a').text();
-    var parent_element = element.parent();  // needed for jcb author
+    var parent_element = element.parent();  // needed for JCB author
     var found_author = parent_element.next().text();
     return {title: title, found_author: found_author, format: element.data('format')};
 }

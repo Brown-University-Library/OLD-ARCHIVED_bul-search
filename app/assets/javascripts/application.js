@@ -78,18 +78,9 @@ function itemRequestFullLink(barCode, bib) {
 }
 
 
-// function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
-//   // console.log( item );
-//   var jcb_ref_num = bib;
-//   var jcb_title = title.slice( 0, 100 );
-//   if ( title.length > 100 ) {
-//     jcb_title = title.slice( 0, 97 ) + "..."; }
-//   var jcb_author = author;  // pre-sliced
-//   var jcb_publisher = publisher;  // pre-sliced
-//   var jcb_callnumber = callnumber;
-//   return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
-// }
-
+// =================
+// JCB link code
+// =================
 
 function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
   // console.log( item );
@@ -117,3 +108,5 @@ function extractAuthor( author ) {
   return a;
 }
 
+// END JCB link code
+// =================
