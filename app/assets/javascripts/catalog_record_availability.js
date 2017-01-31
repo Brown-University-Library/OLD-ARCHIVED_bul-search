@@ -107,8 +107,10 @@ function addAvailability(availabilityResponse) {
 
 function getAuthor() {
   // for jcb link //
-  var author = $('h5[class="title-subheading"]')[0].textContent.slice( 0, 100 );
-  // console.log( "author...");
+  var author_text = $('h5[class="title-subheading"]')[0].textContent;
+  var author = author_text.slice( 0, 100 );
+  if ( author_text.length > 100 ) {
+    author = author_text.slice( 0, 97 ) + "..."; }
   return author;
 }
 
@@ -116,7 +118,6 @@ function getAuthor() {
 function getPublisher() {
   // for jcb link //
   var publisher = $('h5[class="title-subheading"]')[1].textContent.slice( 0, 100 );
-  // console.log( "publisher...");
   return publisher;
 }
 
