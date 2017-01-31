@@ -22,10 +22,18 @@ function collectBibs() {
   getAvailability(bibs);
 }
 
+// function getItemData(bib) {
+//     var element = $('[data-id="' + bib + '"]');
+//     var title = element.find('a').text();
+//     return {title: title, format: element.data('format')};
+// }
+
 function getItemData(bib) {
     var element = $('[data-id="' + bib + '"]');
     var title = element.find('a').text();
-    return {title: title, format: element.data('format')};
+    var parent_element = element.parent();  // needed for jcb author
+    var found_author = parent_element.next().text();
+    return {title: title, found_author: found_author, format: element.data('format')};
 }
 
 //POST the list of bis to the service.
@@ -48,6 +56,8 @@ function getAvailability(bibs) {
                   console.log( "item..." );
                   console.log( item );
                   var itemData = getItemData(bib);
+                  console.log( "itemData..." );
+                  console.log( itemData );
                   item['map'] = item['map'] + '&title=' + itemData.title;
                   if (canScanItem(item['location'], itemData.format)) {
                     item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
@@ -59,7 +69,7 @@ function getAvailability(bibs) {
 
                   // add jcb link if necessary
                   if ( item['location'].slice(0, 3) == "JCB" ) {
-                    item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, getAuthor(), getPublisher(), item['callnumber'] );
+                    item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
                   }
 
                 });
@@ -72,18 +82,4 @@ function getAvailability(bibs) {
             });
         }
     })
-}
-
-
-function getAuthor() {
-  // for jcb link //
-  var author = $('div[class="title-subheading"]')[0].textContent.slice( 0, 100 );
-  return author;
-}
-
-
-function getPublisher() {
-  // for jcb link //
-  var publisher = "unavailable in result-list";
-  return publisher;
 }
