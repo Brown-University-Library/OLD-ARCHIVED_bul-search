@@ -73,16 +73,15 @@ class EtdImport
       bib.author_spell = creator
       bib.author_t = creator
       # bib.author_unsteam_search = creator
-      bib.author_vern_display = creator.first
+      # bib.author_vern_display = "" # TODO: populate only when different from author
 
       contributors = (etd["contributor"] || [])
-      bib.author_addl_display = creator.first
-      bib.author_addl_t = etd["contributor"]
+      bib.author_addl_display = contributors
+      bib.author_addl_t = contributors
       # bib.author_addl_unsteam_search = etd["contributor"]
 
       bib.author_facet = creator + contributors
-      bib.new_uniform_title_author_display = creator.first
-
+      bib.new_uniform_title_author_display = nil # not needed for theses/disserations
 
       bib.physical_display = etd["mods_physicalDescription_extent_ssim"]
 
