@@ -87,8 +87,6 @@ function addAvailability(availabilityResponse) {
       }
       // add jcb link if necessary
       if ( item['location'].slice(0, 3) == "JCB" ) {
-        // console.log( "item..." );
-        // console.log( item );
         item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
       }
     });

@@ -82,6 +82,8 @@ function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
   // console.log( item );
   var jcb_ref_num = bib;
   var jcb_title = title.slice( 0, 100 );
+  if ( title.length > 100 ) {
+    jcb_title = title.slice( 0, 97 ) + "..."; }
   var jcb_author = author;  // pre-sliced
   var jcb_publisher = publisher;  // pre-sliced
   var jcb_callnumber = callnumber;
