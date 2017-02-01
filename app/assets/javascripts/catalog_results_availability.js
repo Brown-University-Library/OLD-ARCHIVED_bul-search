@@ -22,10 +22,18 @@ function collectBibs() {
   getAvailability(bibs);
 }
 
+// function getItemData(bib) {
+//     var element = $('[data-id="' + bib + '"]');
+//     var title = element.find('a').text();
+//     return {title: title, format: element.data('format')};
+// }
+
 function getItemData(bib) {
     var element = $('[data-id="' + bib + '"]');
     var title = element.find('a').text();
-    return {title: title, format: element.data('format')};
+    var parent_element = element.parent();  // needed for JCB author
+    var found_author = parent_element.next().text();
+    return {title: title, found_author: found_author, format: element.data('format')};
 }
 
 //POST the list of bis to the service.
@@ -45,7 +53,11 @@ function getAvailability(bibs) {
                 };
 
                 _.each(context['items'], function(item) {
+                  console.log( "item..." );
+                  console.log( item );
                   var itemData = getItemData(bib);
+                  console.log( "itemData..." );
+                  console.log( itemData );
                   item['map'] = item['map'] + '&title=' + itemData.title;
                   if (canScanItem(item['location'], itemData.format)) {
                     item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
@@ -54,6 +66,12 @@ function getAvailability(bibs) {
                     item['scan'] = null;
                     item['item_request_url'] = null;
                   }
+
+                  // add jcb link if necessary
+                  if ( item['location'].slice(0, 3) == "JCB" ) {
+                    item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
+                  }
+
                 });
 
                 var elem = $('[data-availability="' + bib + '"]');

@@ -85,6 +85,12 @@ function addAvailability(availabilityResponse) {
         item['scan'] = null;
         item['item_request_url'] = null;
       }
+
+      // add jcb link if necessary
+      if ( item['location'].slice(0, 3) == "JCB" ) {
+        item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
+      }
+
     });
   }
 
@@ -98,6 +104,22 @@ function addAvailability(availabilityResponse) {
   };
   html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
   $("#availability").append(html);
+}
+
+
+function getAuthor() {
+  // for JCB link
+  // slicing occurs in application.js
+  var author = $('h5[class="title-subheading"]')[0].textContent;
+  return author;
+}
+
+
+function getPublisher() {
+  // for JCB link
+  // don't think we need elegant slicing for publisher
+  var publisher = $('h5[class="title-subheading"]')[1].textContent.slice( 0, 100 );
+  return publisher;
 }
 
 
