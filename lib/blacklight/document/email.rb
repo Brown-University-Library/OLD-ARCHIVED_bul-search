@@ -6,17 +6,10 @@ require "./lib/blacklight/document/bookmark_email_info"
 
 module Blacklight::Document::Email
 
-  # Return a text string that will be the body of the email
-  # We don't use this method, but we leave it here in case
-  # Blacklight does.
+  # We don't use this method, but we leave it here in case Blacklight does.
   def to_email_text
-    semantics = self.to_semantic_values
-    body = []
-    body << I18n.t('blacklight.email.text.title', value: semantics[:title].join(" ")) unless semantics[:title].blank?
-    body << I18n.t('blacklight.email.text.author', value: semantics[:author].join(" ")) unless semantics[:author].blank?
-    body << I18n.t('blacklight.email.text.format', value: semantics[:format].join(" ")) unless semantics[:format].blank?
-    body << I18n.t('blacklight.email.text.language', value: semantics[:language].join(" ")) unless semantics[:language].blank?
-    return body.join("\n") unless body.empty?
+    Rails.logger.error("Call to Blacklight::Document::Email.e_mail_text detected: #{caller.join('\n')}")
+    ""
   end
 
   # Returns an object with the information to be used in the

@@ -357,6 +357,7 @@ class SolrDocument
     end
 
     def marc_fields
+      return [] if has_marc_data? == false
       marc_display_json["fields"]
     end
 

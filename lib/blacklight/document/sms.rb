@@ -2,26 +2,29 @@
 module Blacklight::Document::Sms
 
   def parse_location_text availability_info
-    return nil if availability_info.nil?
     location_text = nil
-    if availability_info['items']
-      item_data = availability_info['items'][0]
+    begin
+      item_data = availability_info['items'].first
       if item_data['location']
         location_text = "Location: #{item_data['location']}"
         if item_data['shelf']
           location_text += " -- Level #{item_data['shelf']['floor']}, Aisle #{item_data['shelf']['aisle']}"
         end
       end
+    rescue
+      # no biggie
+      location_text = nil
     end
     location_text
   end
 
   def parse_location_call_number availability_info
-    return nil if availability_info.nil?
-    call_number = nil
-    if availability_info['items']
-      item_data = availability_info['items'][0]
+    begin
+      item_data = availability_info['items'].first
       call_number = item_data['callnumber']
+    rescue
+      # no biggie
+      call_number = nil
     end
     call_number
   end
