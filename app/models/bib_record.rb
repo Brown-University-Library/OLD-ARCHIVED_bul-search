@@ -70,7 +70,7 @@ class BibRecord
   end
 
   def self.save_batch(bib_records)
-    solr = SolrLite::Solr.new(ENV["SOLR_URL"])
+    solr = SolrLite::Solr.new(ENV["SOLR_URL_WRITE"])
     response = solr.update(bib_records.to_json)
     if !response.ok?
       puts response.error_msg
