@@ -14,13 +14,6 @@ module BlacklightHelper
 
   def render_constraints_notes params
     content = ""
-    if !params[:f].nil?
-      params[:f].each_pair do |facet,values|
-        if facet == 'format' && values.include?('Thesis/Dissertation')
-          content << 'See the <a href="https://repository.library.brown.edu/studio/collections/dissertation/">Brown Digital Repository</a> for more Theses/Dissertations, particularly more recent ones since 2008.'
-        end
-      end
-    end
     content_tag(:span, content.html_safe)
   end
 
