@@ -256,6 +256,26 @@ class CatalogController < ApplicationController
   #   ret_val
   # end
 
+  # Blacklight override
+  # Prevent the hit to Solr while we troubleshoot why this URL is getting
+  # hit by crawelers way too often.
+  def opensearch
+    respond_to do |format|
+      format.xml do
+        render :layout => false
+      end
+      if ENV['ALLOW_OPEN_SEARCH'] == "false"
+        data = {msg: 'This API has been temporarily disabled. ' +
+          'Please contact the library if you are affected by this.'}
+      else
+        data = get_opensearch_response
+      end
+      format.json do
+        render :json => data
+      end
+    end
+  end
+
   def api_call?
     format = params[:format]
     return format == "xml" || format == "json"
