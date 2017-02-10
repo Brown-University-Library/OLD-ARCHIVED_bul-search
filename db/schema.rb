@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160906123430) do
+ActiveRecord::Schema.define(version: 20170210140000) do
 
   create_table "bookmarks", force: true do |t|
     t.integer  "user_id",       null: false
@@ -54,6 +54,59 @@ ActiveRecord::Schema.define(version: 20160906123430) do
   end
 
   add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
+
+  create_table "searches_params", force: true do |t|
+    t.integer "search_id"
+    t.string  "q"
+    t.string  "search_field"
+    t.string  "action"
+    t.string  "controller"
+    t.string  "sort"
+    t.string  "utf8"
+    t.string  "source"
+    t.string  "f",                limit: 512
+    t.string  "other_id"
+    t.string  "op"
+    t.string  "all_fields"
+    t.string  "title"
+    t.string  "subject"
+    t.string  "publication_date"
+    t.string  "f_inclusive"
+    t.string  "format"
+    t.string  "facet_page"
+    t.string  "facet_sort"
+    t.string  "isbn"
+    t.string  "author"
+    t.string  "range_end"
+    t.string  "range_field"
+    t.string  "range_start"
+    t.string  "limit"
+    t.string  "range"
+    t.string  "rows"
+    t.string  "x_field"
+    t.string  "f_author_facet"
+    t.string  "f_building_facet"
+    t.string  "f_language_facet"
+    t.string  "f_topic_facet"
+    t.string  "f_access_facet"
+    t.string  "f_format"
+    t.string  "f_region_facet"
+    t.string  "range_pub_date"
+    t.string  "isbn_t"
+    t.string  "callnumber"
+    t.string  "callnumber_t"
+    t.string  "task"
+    t.string  "location_code"
+    t.string  "location_code_t"
+    t.string  "file"
+    t.string  "bookplate_code"
+    t.string  "loc"
+    t.string  "loc_code"
+    t.string  "loccode"
+  end
+
+  add_index "searches_params", ["q"], name: "index_searches_params_on_q", using: :btree
+  add_index "searches_params", ["search_id"], name: "index_searches_params_on_search_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "",    null: false
