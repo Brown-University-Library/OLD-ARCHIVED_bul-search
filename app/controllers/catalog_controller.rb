@@ -257,8 +257,7 @@ class CatalogController < ApplicationController
   # end
 
   # Blacklight override
-  # Prevent the hit to Solr while we troubleshoot why this URL is getting
-  # hit by crawelers way too often.
+  # Ability to configure when to response to OpenSearch requests
   def opensearch
     respond_to do |format|
       format.xml do
@@ -268,7 +267,12 @@ class CatalogController < ApplicationController
         data = {msg: 'This API has been temporarily disabled. ' +
           'Please contact the library if you are affected by this.'}
       else
-        data = get_opensearch_response
+        q = params[:q] || ""
+        if q.length <= 3
+          data = []
+        else
+          data = get_opensearch_response
+        end
       end
       format.json do
         render :json => data
