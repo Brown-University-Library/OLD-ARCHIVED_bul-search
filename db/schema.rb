@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20170210140000) do
     t.string  "title"
     t.string  "subject"
     t.string  "publication_date"
-    t.string  "f_inclusive"
+    t.string  "f_inclusive",      limit: 512
     t.string  "format"
     t.string  "facet_page"
     t.string  "facet_sort"

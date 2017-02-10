@@ -16,7 +16,7 @@ class CreateSearchesParams < ActiveRecord::Migration
       t.string :title, limit: 255
       t.string :subject, limit: 255
       t.string :publication_date, limit: 255
-      t.string :f_inclusive, limit: 255
+      t.string :f_inclusive, limit: 512
       t.string :format, limit: 255
       t.string :facet_page, limit: 255
       t.string :facet_sort, limit: 255

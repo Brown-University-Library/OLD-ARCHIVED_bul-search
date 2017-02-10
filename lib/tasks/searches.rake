@@ -18,11 +18,16 @@ namespace :josiah do
 
   desc "Parses `searches` table and populates `searches_params` table"
   task "searches_parse_params" => :environment do |_cmd, args|
+    count = 0
     process_searches do |batch|
       batch.each do |search|
         values = clean_search_values(search[:values])
         values["search_id"] = search[:id]
         begin
+          count += 1
+          if (count % 10000) == 0
+            puts "Processing record: #{count}"
+          end
           sp = SearchesParams.new(values)
           sp.save!
         rescue Exception => ex
@@ -37,7 +42,7 @@ end
 def process_searches
   max_id = max_searches_id
   start_id = 1
-  end_id = 10
+  end_id = start_id + 10
   while start_id <= max_id
     batch = get_searches_batch(start_id, end_id)
     yield batch
@@ -62,17 +67,29 @@ end
 
 
 def max_searches_id
-  return 50000
+  # return 50000
   sql = "select max(id) from searches;"
   rows = ActiveRecord::Base.connection.exec_query(sql).rows
   rows[0][0].to_i
 end
 
+def is_valid_field?(field)
+  if field == "_" || field == "i" || field == "test" ||
+    field == "frm" || field == "lKq6Q6lq" || || field == "esrc" ||
+    field == "rct" || field == "clientAction"
+    field.start_with?("bad_") || field.start_with?("whatever")
+    return false
+  end
+  return is_alphanum?(field)
+end
+
+def is_alphanum?(value)
+  !value.match(/[^A-Za-z1-9_]/)
+end
 
 def clean_search_values(hash)
   values = {}
   hash.keys.each do |key|
-    next if key == "_"
     case key
     when "id"
       clean_key = "other_id"
@@ -84,8 +101,19 @@ def clean_search_values(hash)
       clean_key = "x_field"
     when "Publication date"
       clean_key = "publication_date"
+    when "f%5Bauthor_facet%5D%5B%5D"
+      clean_key = "f_author_facet"
+    when "f%5Blanguage_facet%5D%5B%5D"
+      clean_key = "f_language_facet"
+    when "f%5Bbuilding_facet%5D%5B%5D"
+      clean_key = "f_building_facet"
     else
-      clean_key = key
+      if is_valid_field?(key)
+        clean_key = key
+      else
+        # don't process this field
+        next
+      end
     end
     if hash[key] != nil
       values[clean_key] = hash[key] # .to_s.strip
