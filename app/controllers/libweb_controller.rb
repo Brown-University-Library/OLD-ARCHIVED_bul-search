@@ -1,4 +1,6 @@
-
+# Handles searches within the Library web site
+# through Google Custom Search Engine (CSE)
+# https://cse.google.com/
 class LibwebController < ApplicationController
 
     def search
