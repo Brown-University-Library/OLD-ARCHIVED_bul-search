@@ -75,8 +75,8 @@ end
 
 def is_valid_field?(field)
   if field == "_" || field == "i" || field == "test" ||
-    field == "frm" || field == "lKq6Q6lq" || || field == "esrc" ||
-    field == "rct" || field == "clientAction"
+    field == "frm" || field == "lKq6Q6lq" || field == "esrc" ||
+    field == "rct" || field == "clientAction" ||
     field.start_with?("bad_") || field.start_with?("whatever")
     return false
   end
