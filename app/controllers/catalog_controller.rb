@@ -244,17 +244,17 @@ class CatalogController < ApplicationController
   end
 
   def index
+    @render_opensearch = true
     relax_max_per_page if api_call?
     ret_val = super
     restore_max_per_page if api_call?
     ret_val
   end
 
-  # def show
-  #   ret_val = super
-  #   byebug
-  #   ret_val
-  # end
+  def show
+    @render_opensearch = true
+    super
+  end
 
   # Blacklight override
   # Ability to configure when to response to OpenSearch requests
