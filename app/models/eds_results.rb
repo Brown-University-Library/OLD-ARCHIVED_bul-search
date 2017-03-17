@@ -22,14 +22,14 @@ class EdsResults
         id = r["ResultId"]
         link = r["PLink"]
         title = item_by_name(r["Items"], "Title")
-        isbn = item_by_name(r["Items"], "ISBN")
-        author = item_by_name(r["Items"], "Author")
+        year = self.get_year(r)
+        author = self.get_author(r)
         type = r["Header"]["ResourceType"]
         item = {
           id: id,
           title: title,
           author: author,
-          isbn: isbn,
+          year: year,
           type: type,
           link: link
         }
@@ -57,5 +57,17 @@ class EdsResults
       item = items.select {|e| e["Name"] == name}.first
       return nil if item == nil
       item["Data"]
+    end
+
+    def self.get_author(item)
+      item["RecordInfo"]["BibRecord"]["BibRelationships"]["HasContributorRelationships"][0]["PersonEntity"]["Name"]["NameFull"]
+    rescue
+      return nil
+    end
+
+    def self.get_year(item)
+      item["RecordInfo"]["BibRecord"]["BibRelationships"]["IsPartOfRelationships"][0]["BibEntity"]["Dates"][0]["Y"]
+    rescue
+      return nil
     end
 end

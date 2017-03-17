@@ -38,7 +38,9 @@ class Eds
   end
 
   def search(text)
-    url = @base_url + "/edsapi/publication/Search?query=#{text}&resultsperpage=20&pagenumber=1&sort=relevance&highlight=n&includefacets=y&view=brief&autosuggest=n"
+    # RV:Y peer-reviewed only
+    query_string = "query=#{text}&limiter=RV:y&resultsperpage=20&pagenumber=1&sort=relevance&highlight=n&includefacets=y&view=brief&autosuggest=n"
+    url = @base_url + "/edsapi/rest/Search?" + query_string
     headers = []
     headers << {key: "x-authenticationToken", value: auth_token()}
     headers << {key: "x-sessionToken", value: session_token()}

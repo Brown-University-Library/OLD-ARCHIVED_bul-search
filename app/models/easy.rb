@@ -290,7 +290,7 @@ class Easy
       d['id'] = doc[:id]
       d['title'] = doc[:title]
       d['link'] = doc[:link]
-      # d['year'] = nil
+      d['year'] = doc[:year]
       d['author'] = doc[:author]
       # d['venue'] = nil
       # d['volume'] = nil
