@@ -1,3 +1,4 @@
+require "./app/models/eds_results.rb"
 class Eds
 
   def initialize(base_url, credentials)
@@ -41,6 +42,6 @@ class Eds
     headers << {key: "x-authenticationToken", value: auth_token()}
     headers << {key: "x-sessionToken", value: session_token()}
     response = HttpUtil::HttpJson.get(url, headers)
-    response
+    EdsResults.from_response(response)
   end
 end
