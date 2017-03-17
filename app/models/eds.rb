@@ -1,3 +1,4 @@
+require "./lib/http_json.rb"
 require "./app/models/eds_results.rb"
 class Eds
 

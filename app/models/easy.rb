@@ -10,7 +10,8 @@ class Easy
 
   def initialize source, query
     if source == 'summon'
-      @results = get_summon(query)
+      # @results = get_summon(query)
+      @results = get_eds(query)
     elsif source == 'newspaper_articles'
       @results = get_summon_newspaper(query)
     elsif source == 'bdr'
@@ -279,6 +280,33 @@ class Easy
     return results['response']
   end
 
+  def get_eds(query)
+    eds = Eds.new("TODO", "TODO")
+    eds_results = eds.search(query)
+
+    results_docs = []
+    eds_results.items.each do |doc|
+      d = Hash.new
+      d['id'] = doc[:id]
+      d['title'] = doc[:title]
+      d['link'] = doc[:link]
+      # d['year'] = nil
+      d['author'] = doc[:author]
+      # d['venue'] = nil
+      # d['volume'] = nil
+      # d['issue'] = nil
+      # d['start'] = nil
+      results_docs << d
+    end
+
+    results = {}
+    results['response'] = {}
+    results['response']['more'] = "TBD"
+    results['response']['all'] = "TBD"
+    results['response']['docs'] = results_docs
+    results['response']['numFound'] = eds_results.total_hits
+    return results['response']
+  end
 
   def get_summon_newspaper query
     aid = ENV['SUMMON_ID']

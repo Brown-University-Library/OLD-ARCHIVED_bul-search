@@ -14,17 +14,26 @@ class EdsResults
     results = EdsResults.new(items, facets, total_hits)
   end
 
-  private   
+  private
     def self.items_from_response(response)
       items = []
       records = response["SearchResult"]["Data"]["Records"]
       records.each do |r|
         id = r["ResultId"]
+        link = r["PLink"]
         title = item_by_name(r["Items"], "Title")
         isbn = item_by_name(r["Items"], "ISBN")
         author = item_by_name(r["Items"], "Author")
         type = r["Header"]["ResourceType"]
-        items << {id: id, title: title, author: author, isbn: isbn, type: type}
+        item = {
+          id: id,
+          title: title,
+          author: author,
+          isbn: isbn,
+          type: type,
+          link: link
+        }
+        items << item
       end
       items
     end
