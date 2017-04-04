@@ -105,6 +105,14 @@ class Easy
     "#{cat_url}?f[format][]=#{enc_format}&q=#{eq}"
   end
 
+  def advanced_catalog_url(query, format)
+    #Link to advanced search
+    url = catalog_base_url.gsub("/catalog/", "/advanced/")
+    enc_format = URI.escape(format.to_s)
+    eq = CGI.escape(query)
+    "#{url}?f[format][]=#{enc_format}&q=#{eq}"
+  end
+
   #Produce a Brown Summon link.
   #
   #For searches with no results, return the link to Summon searches
@@ -116,6 +124,15 @@ class Easy
     else
       return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=f&q=#{eq}"
     end
+  end
+
+  def advanced_summon_url(query)
+    # This forces Summon to start on the Advanced Search view but
+    # unfortunately Summon does not initialize the search parameters
+    # (journals only, peer-reviews, query terms) with the values
+    # indicated in the URL.
+    eq = CGI.escape(query)
+    "http://brown.preview.summon.serialssolutions.com/#!/advanced?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{eq}"
   end
 
   def catalog_link id
@@ -208,6 +225,10 @@ class Easy
         end
         #Link to more results.
         grp_h['more'] = format_filter_url(query, format)
+        if format == "Book"
+          grp_h['advanced'] = advanced_catalog_url(query, format)
+        end
+
         #icons
         grp_h['icon'] = format_icon(format)
         #info text
@@ -274,6 +295,7 @@ class Easy
     results['response'] = Hash.new
     results['response']['more'] = summon_url(query, true)
     results['response']['all'] = summon_url(query, false)
+    results['response']['advanced'] = advanced_summon_url(query)
     results['response']['docs'] = results_docs
     results['response']['numFound'] = search.record_count
     return results['response']

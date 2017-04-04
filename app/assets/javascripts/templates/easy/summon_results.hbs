@@ -12,5 +12,9 @@
     {{/each}}
 </ul>
 <div class="more center-block">
-    <a href="{{this.more}}">View {{this.total}} results</a>
+    <a href="{{this.more}}">View {{this.total}} journal articles &raquo;</a>
+    {{#if this.advanced}}
+      <br/>
+      or use the <a href="{{this.advanced}}">advanced journal search</a>
+    {{/if}}
 </div>
