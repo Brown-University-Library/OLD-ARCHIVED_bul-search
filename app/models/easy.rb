@@ -110,7 +110,16 @@ class Easy
     url = catalog_base_url.gsub("/catalog/", "/advanced/")
     enc_format = URI.escape(format.to_s)
     eq = CGI.escape(query)
-    "#{url}?f[format][]=#{enc_format}&q=#{eq}"
+    # Notice that we don't pass the standard "f[format]=Book" parameter
+    # because that causes Blacklight's Advanced Search page to only
+    # display the Book format and prevents users from unselecting it or
+    # selecting a different one. We could use the "f_inclusive[format][]=Book"
+    # parameter which allows users to select _one_ additional format or
+    # unselect the existing format. But instead we are using a custom
+    # query string parameter (format_pre) to emulate on the Advanced Search
+    # the user clicking on a format as the page loads. This allows the
+    # user to select as many formats as the want to.
+    "#{url}?&q=#{eq}&format_pre=#{enc_format}"
   end
 
   #Produce a Brown Summon link.

@@ -46,6 +46,23 @@
 //= require 'jquery.stackview.min.js'
 
 
+// ==========================
+// General utility functions
+// ==========================
+function josiahGetUrlParameter(param) {
+  var url = window.location.search.substring(1);
+  var params = url.split('&');
+  var i, tokens;
+  for (var i = 0; i < params.length; i++) {
+    tokens = params[i].split('=');
+    if (tokens[0] == param) {
+      return tokens[1];
+    }
+  }
+  return null;
+}
+
+
 // ------------------------------
 // Functions used to display the option to Scan an
 // item or request it.

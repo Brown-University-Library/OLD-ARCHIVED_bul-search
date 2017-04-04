@@ -48,5 +48,12 @@ $(document).ready(function() {
       $("#advanced-search-sort-top").val(newValue);
     }
   });
+
+  // Preselect the book format.
+  // Used when getting here from the Books bento box.
+  var format_pre = josiahGetUrlParameter("format_pre");
+  if (format_pre == "Book") {
+    $("#f_inclusive_format_book").prop('checked', true);
+  }
 });
 </script>
