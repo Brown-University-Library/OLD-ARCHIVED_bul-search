@@ -25,3 +25,13 @@
  *= require 'jquery.stackview'
  *
 */
+
+/*
+ * Prevents printing URLs after anchor tags.
+ * Do we really want to prevent URL from printing?
+ */
+@media print {
+    a[href]:after {
+        content: none !important;
+    }
+}
