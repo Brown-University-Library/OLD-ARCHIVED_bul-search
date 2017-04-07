@@ -130,7 +130,9 @@ class SolrDocument
       ctx_obj.referent.set_format('book')
       ctx_obj.referent.set_metadata('btitle', self.fetch('title_display')) if self.key?('title_display')
       ctx_obj.referent.set_metadata('au', self.fetch('author_display')) if self.key?('author_display')
-      ctx_obj.referent.set_metadata('pub', self.fetch('published_display').join(' ')) if self.key?('published_display')
+      ctx_obj.referent.set_metadata('pub', publisher_name())
+      ctx_obj.referent.set_metadata('place', publisher_place())
+      ctx_obj.referent.set_metadata('date', (self[:pub_date] || []).first)
       ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
       ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
     elsif (format =~ /journal/i)
@@ -145,6 +147,7 @@ class SolrDocument
       ctx_obj.referent.set_metadata('format', format) unless format.nil?
       ctx_obj.referent.set_metadata('title', self.fetch('title_display')) if self.key?('title_display')
       ctx_obj.referent.set_metadata('creator', self.fetch('author_display')) if self.key?('author_display')
+      # Notice that Zotero does not recognize pub/place/date for these kind of items.
       ctx_obj.referent.set_metadata('publisher', self.fetch('published_display').join(' ')) if self.key?('published_display')
     end
     ctx_obj.kev
@@ -236,6 +239,30 @@ class SolrDocument
     rescue StandardError => e
       Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}, #{e.message}"
       []
+    end
+  end
+
+  def publisher_name
+    @publisher_name ||= begin
+      value = strip_punctuation(marc_subfield_values('264','b').first)
+      if value == nil
+        value = strip_punctuation(marc_subfield_values('260','b').first)
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error parsing publisher_name for ID: #{self.fetch('id', nil)}, #{e.message}"
+      nil
+    end
+  end
+
+  def publisher_place
+    @publisher_place ||= begin
+      value = strip_punctuation(marc_subfield_values('264','a').first)
+      if value == nil
+        value = strip_punctuation(marc_subfield_values('260','a').first)
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error parsing publisher_place for ID: #{self.fetch('id', nil)}, #{e.message}"
+      nil
     end
   end
 
@@ -397,5 +424,10 @@ class SolrDocument
         values << online_avail
       end
       values
+    end
+
+    def strip_punctuation(str)
+      return nil if str == nil
+      str.chomp(":").chomp(",").chomp(";").strip()
     end
 end
