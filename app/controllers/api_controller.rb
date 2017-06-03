@@ -4,6 +4,7 @@ require "./lib/user_input.rb"
 
 class ApiController < ApplicationController
   include Blacklight::Catalog
+  skip_before_filter :verify_authenticity_token
 
   # TODO: figure out a better way to configure Solr
   # without having to include Blacklight::Catalog
@@ -83,7 +84,7 @@ class ApiController < ApplicationController
       limit: "0",
       docs: documents
     }
-    render :json => nearby_response
+    render :json => nearby_response, :callback => params["callback"]
   end
 
   def shelf_item
@@ -100,7 +101,7 @@ class ApiController < ApplicationController
       isbns: doc[:isbn_t] || [],
       oclcs: doc[:oclc_t] || []
     }
-    render :json => item
+    render :json => item, :callback => params["callback"]
   end
 
   private
