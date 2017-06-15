@@ -21,7 +21,7 @@ class EtdImport
       puts "Processing page #{page}"
       bib_records = []
       # fetch all dissertations (paginated via rows and start)
-      url = "#{api_url}?q=ir_collection_name:Dissertations&rows=#{rows}&start=#{start}"
+      url = "#{api_url}?q=ir_collection_name:%22Theses%20and%20Dissertations%22&rows=#{rows}&start=#{start}"
       api_response = HttpUtil::HttpJson.get(url)
       docs = api_response["response"]["docs"]
       break if docs.count == 0
