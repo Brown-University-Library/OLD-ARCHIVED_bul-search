@@ -8,7 +8,7 @@
   <% @materials.books.each do |book| %>
     <li>
       <% if book.bib %>
-        <a href="/catalog/<%= book.bib %>"><%= book.title %></a>
+        <%= link_to(book.title, catalog_path(id: book.bib)) %>
       <% else %>
         <%= book.title %> <i><b>(professor's copy)</b></i>
       <% end %>
