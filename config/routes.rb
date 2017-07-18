@@ -27,9 +27,8 @@ BulSearch::Application.routes.draw do
 
   # Course Reserves
   get 'reserves/search' => 'reserves#search', as: :reserves_search
-  # get 'reserves/:classid' => 'reserves#show', as: :reserves_show
   get 'reserves/:classid/:classnumber' => 'reserves#show', as: :reserves_show
-  get 'reserves/' => 'reserves#index', as: :reserves_index
+  get 'reserves/' => 'reserves#search'
 
   # Stub controller to test the Availability Service
   get 'availability/test_auth' => 'availability#test_auth'

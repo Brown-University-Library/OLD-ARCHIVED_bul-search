@@ -1,9 +1,6 @@
 # -*- encoding : utf-8 -*-
 #
 class ReservesController < ApplicationController
-  def index
-  end
-
   def search
     @course_num = params["course_num"]
     @instructor = params["instructor"]
