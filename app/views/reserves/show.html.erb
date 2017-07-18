@@ -1,0 +1,34 @@
+<h2><%= @materials.course.name %>(<%= @materials.course.full_number %>)</h2>
+<h3><%= @materials.course.instructor %></h3>
+<h4>In-Library Course Reserves</h4>
+<% if @materials.books.count == 0 %>
+  <p>There are no in-library reserves for this course</p>
+<% else %>
+  <ul>
+  <% @materials.books.each do |book| %>
+    <li>
+      <% if book.bib %>
+        <a href="/catalog/<%= book.bib %>"><%= book.title %></a>
+      <% else %>
+        <%= book.title %> <i><b>(professor's copy)</b></i>
+      <% end %>
+      <%= book.callno %>
+      <%= book.loan_term %>
+  <% end %>
+  </ul>
+<% end %>
+
+<% if @materials.panopto_items > 0 || @materials.online_items > 0 %>
+  <h4>Other materials in reserve</h4>
+  <ul>
+  <% if @materials.panopto_items > 0 %>
+    <li>There are
+      <a href="<%=@materials.panopto_url %>" target="_blank"><%= @materials.panopto_items %> items in Panopto</a> for this course.
+  <% end %>
+
+  <% if @materials.online_items > 0 %>
+    <li>There are
+      <a href="<%=@materials.online_url %>" target="_blank"><%= @materials.online_items %> online items in OCRA</a> for this course.
+  <% end %>
+  </ul>
+<% end %>

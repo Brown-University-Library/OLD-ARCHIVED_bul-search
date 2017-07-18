@@ -1,0 +1,26 @@
+<%= form_tag("/reserves/search", method: "get") do %>
+  <div>
+    <%= label_tag(:course_num, "Course #") %>
+    <%= text_field_tag(:course_num, @course_num) %>
+  </div>
+  <div>
+    <%= label_tag(:instructor, "Instructor") %>
+    <%= text_field_tag(:instructor, @instructor) %>
+  </div>
+  <%= submit_tag("Search") %>
+<% end %>
+
+<div>
+  <% if @no_courses_msg %>
+    <p><%= @no_courses_msg %></p>
+  <% else %>
+    <p>The following courses were found</p>
+    <% @courses.each do |c| %>
+      <p>
+        <a href="/reserves/<%= c.classid %>/<%= c.number_url %>"><%= c.full_number %></a>
+        <%= c.name %>
+        <%= c.instructor %>
+      </p>
+    <% end %>
+  <% end %>
+</div>

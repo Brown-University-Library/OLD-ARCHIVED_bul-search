@@ -1,0 +1,11 @@
+<%= form_tag("/reserves/search", method: "get") do %>
+  <div>
+    <%= label_tag(:course_num, "Course #") %>
+    <%= text_field_tag(:course_num, @course_num) %>
+  </div>
+  <div>
+    <%= label_tag(:instructor, "Instructor:") %>
+    <%= text_field_tag(:instructor, @instructor) %>
+  </div>
+  <%= submit_tag("Search") %>
+<% end %>

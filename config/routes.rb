@@ -25,6 +25,12 @@ BulSearch::Application.routes.draw do
   get 'browse/about' => 'browse#about', as: :browse_about
   get 'browse/:id' => 'browse#from_item', as: :browse_item
 
+  # Course Reserves
+  get 'reserves/search' => 'reserves#search', as: :reserves_search
+  # get 'reserves/:classid' => 'reserves#show', as: :reserves_show
+  get 'reserves/:classid/:classnumber' => 'reserves#show', as: :reserves_show
+  get 'reserves/' => 'reserves#index', as: :reserves_index
+
   # Stub controller to test the Availability Service
   get 'availability/test_auth' => 'availability#test_auth'
   get 'availability/fake/:id' => 'availability#fake_one'
