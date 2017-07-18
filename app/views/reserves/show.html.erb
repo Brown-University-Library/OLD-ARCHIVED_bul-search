@@ -2,7 +2,9 @@
 <h3><%= @materials.course.instructor %></h3>
 <h4>In-Library Course Reserves</h4>
 <% if @materials.books.count == 0 %>
-  <p>There are no in-library reserves for this course</p>
+  <ul>
+    <li>There are no in-library reserves for this course
+  </ul>
 <% else %>
   <ul>
   <% @materials.books.each do |book| %>
