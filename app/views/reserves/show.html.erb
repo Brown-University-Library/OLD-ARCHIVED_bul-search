@@ -1,5 +1,7 @@
+<%= link_to("Back to Search Reserves", reserves_search_path()) %>
+
 <h2><%= @materials.course.name %>(<%= @materials.course.full_number %>)</h2>
-<h3><%= @materials.course.instructor %></h3>
+<h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor)) %></h3>
 <h4>In-Library Course Reserves</h4>
 <% if @materials.books.count == 0 %>
   <ul>
@@ -12,7 +14,10 @@
       <% if book.bib %>
         <%= link_to(book.title, catalog_path(id: book.bib)) %>
       <% else %>
-        <%= book.title %> <i><b>(professor's copy)</b></i>
+        <%= book.title %>
+      <% end %>
+      <% if book.personal %>
+        <i><b>(professor's copy)</b></i>
       <% end %>
       <%= book.callno %>
       <%= book.loan_term %>

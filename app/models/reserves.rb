@@ -7,12 +7,15 @@ class Reserves
   end
 
   def courses_by_course_num(course_num)
+    # OCRA's API allows for partial matches of cours number and
+    # section. For example "LITR 0100A" or "LITR 0100A S02"
     url = "#{@api_url}/coursesearch/#{CGI.escape(course_num)}"
     response = HttpUtil::HttpJson.get(url)
     courses = response.map {|x| ReservesCourse.from_hash(x)}
   end
 
   def courses_by_instructor(instructor)
+    # OCRA's API allows for partial matches on the instructor name.
     instructor = "" if instructor.blank?
     url = "#{@api_url}/instructor/#{CGI.escape(instructor)}"
     response = HttpUtil::HttpJson.get(url)
@@ -28,6 +31,9 @@ class Reserves
   end
 
   def items_for_course(id)
+    # OCRA's API can take either the class id (e.g. 207) or
+    # class number + section (e.g. "LITR 0100A S02"). In our
+    # case id is always the class id.
     url = "#{@api_url}/reserves/#{id.to_i}"
     response = HttpUtil::HttpJson.get(url)
     if response.length == 1
@@ -67,7 +73,7 @@ class ReservesMaterials
 end
 
 class ReservesBook
-  attr_accessor :bib, :callno, :title, :author, :loan_term
+  attr_accessor :bib, :callno, :title, :author, :loan_term, :personal
   def self.from_hash(hash)
     rb = ReservesBook.new()
     rb.bib = hash["bib"]
@@ -75,6 +81,7 @@ class ReservesBook
     rb.title = hash["title"]
     rb.author = hash["author"]
     rb.loan_term = hash["loan_term"]
+    rb.personal = hash["personal"] # item is the personal copy of the professor
     rb
   end
 end
