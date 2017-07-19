@@ -3,6 +3,7 @@
 $(document).ready(
   function(){
     var bib_id = getBibId();
+    addOcraLink(bib_id);
     addVirtualShelfLinks(bib_id);
     var api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
@@ -325,6 +326,15 @@ function clearResetButton() {
   var html = '<span>&nbsp;</span>';
   $(".num-found").html(html);
 }
+
+
+function addOcraLink(bib_id) {
+  var ocraUrl = "https://library.brown.edu/reserves/cr/ocrify/?bibnum=" + bib_id;
+  // Add "Reserve in OCRA" option to tools section
+  var link = '<li><a href="' + ocraUrl + '" target="_blank">Reserve this item on OCRA</a>';
+  $("div.panel-body>ul.nav").append(link);
+}
+
 
 function addVirtualShelfLinks(bib_id) {
   // Add "More Like This" option to tools section
