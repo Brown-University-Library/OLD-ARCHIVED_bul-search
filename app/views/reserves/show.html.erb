@@ -16,10 +16,15 @@
       <% else %>
         <%= book.title %>
       <% end %>
+
       <% if book.personal %>
         <i><b>(professor's copy)</b></i>
       <% end %>
-      <%= book.callno %>
+
+      <% if !book.callno.blank? %>
+        (<%= link_to(book.callno, catalog_index_path(q: '"' + book.callno + '"')) %>)
+      <% end %>
+
       <%= book.loan_term %>
   <% end %>
   </ul>
