@@ -2,21 +2,28 @@
 #
 class ReservesController < ApplicationController
   def search
-    @course_num = params["course_num"]
-    @instructor = params["instructor"]
-    @no_courses_msg = nil
-    if !@course_num.blank?
-      reserves = Reserves.new
-      @courses = reserves.courses_by_course_num(@course_num)
-      if @courses.count == 0
-        @no_courses_msg = 'No courses were found for course #' + @course_num
+    begin
+      @course_num = params["course_num"]
+      @instructor = params["instructor"]
+      @no_courses_msg = nil
+      if !@course_num.blank?
+        reserves = Reserves.new
+        @courses = reserves.courses_by_course_num(@course_num)
+        if @courses.count == 0
+          @no_courses_msg = 'No courses were found for course #' + @course_num
+        end
+      else
+        reserves = Reserves.new
+        @courses = reserves.courses_by_instructor(@instructor)
+        if @courses.count == 0
+          @no_courses_msg = 'No courses were found for instructor ' + @instructor
+        end
       end
-    else
-      reserves = Reserves.new
-      @courses = reserves.courses_by_instructor(@instructor)
-      if @courses.count == 0
-        @no_courses_msg = 'No courses were found for instructor ' + @instructor
-      end
+    rescue StandardError => e
+      Rails.logger.error("Course Reserves API: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
+      @no_courses_msg = "Could not retrieve Course Reserves information"
+      @courses = []
     end
     render
   end

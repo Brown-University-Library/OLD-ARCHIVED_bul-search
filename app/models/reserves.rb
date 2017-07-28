@@ -9,9 +9,10 @@ class Reserves
   def courses_by_course_num(course_num)
     # OCRA's API allows for partial matches of cours number and
     # section. For example "LITR 0100A" or "LITR 0100A S02"
-    url = "#{@api_url}/coursesearch/#{CGI.escape(course_num)}"
+    url = "#{@api_url}/coursesearch/#{CGI.escape(course_num.gsub(' ', ''))}"
     response = HttpUtil::HttpJson.get(url)
     courses = response.map {|x| ReservesCourse.from_hash(x)}
+    courses.sort_by { |c| c.number_section }
   end
 
   def courses_by_instructor(instructor)
@@ -27,7 +28,7 @@ class Reserves
         courses << course
       end
     end
-    courses
+    courses.sort_by { |c| c.number_section }
   end
 
   def items_for_course(id)
@@ -100,11 +101,7 @@ class ReservesCourse
   end
 
   def number_section
-    if section.blank?
-      number
-    else
-      number + " " + section
-    end
+    "#{number} #{section}".strip
   end
 
   def full_number
@@ -114,6 +111,6 @@ class ReservesCourse
   end
 
   def number_url
-    number_section.gsub!(" ", "-")
+    number_section.gsub(" ", "-")
   end
 end
