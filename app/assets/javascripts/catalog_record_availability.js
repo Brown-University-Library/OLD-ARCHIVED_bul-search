@@ -330,8 +330,8 @@ function clearResetButton() {
 
 function addOcraLink(bib_id) {
   var ocraUrl = "https://library.brown.edu/reserves/cr/ocrify/?bibnum=" + bib_id;
-  // Add "Reserve in OCRA" option to tools section
-  var link = '<li><a href="' + ocraUrl + '" target="_blank">Reserve this item on OCRA</a>';
+  var helpInfo = "Staff and Teaching Assistants can reserve this item in OCRA for courses they teach.";
+  var link = '<li><a href="' + ocraUrl + '" title="' + helpInfo + '" target="_blank">Add to OCRA</a>';
   $("div.panel-body>ul.nav").append(link);
 }
 
