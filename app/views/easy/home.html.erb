@@ -127,7 +127,11 @@ function sortFilterFacetList() {
 
 //Add the Journal Articles box via Summon.
 function summonBox(query) {
-    $.ajax(dataUrl + '&source=summon', {
+    var source = '&source=summon';
+    if (location.search.indexOf("&journals=eds") > -1) {
+        source = "&source=eds";
+    }
+    $.ajax(dataUrl + source, {
       success: function(response) {
         $('#summon i.waiting').hide();
         var summonSet = response;

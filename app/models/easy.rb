@@ -10,7 +10,8 @@ class Easy
 
   def initialize source, query
     if source == 'summon'
-      # @results = get_summon(query)
+      @results = get_summon(query)
+    elsif source == "eds"
       @results = get_eds(query)
     elsif source == 'newspaper_articles'
       @results = get_summon_newspaper(query)

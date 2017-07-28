@@ -38,8 +38,11 @@ class Eds
   end
 
   def search(text)
+    if text.empty?
+      return EdsResults.new([], [], 0)
+    end
     # RV:Y peer-reviewed only
-    query_string = "query=#{text}&limiter=RV:y&resultsperpage=20&pagenumber=1&sort=relevance&highlight=n&includefacets=y&view=brief&autosuggest=n"
+    query_string = "query=#{text}&limiter=RV:y&resultsperpage=5&pagenumber=1&sort=relevance&highlight=n&includefacets=y&view=brief&autosuggest=n"
     url = @base_url + "/edsapi/rest/Search?" + query_string
     headers = []
     headers << {key: "x-authenticationToken", value: auth_token()}
