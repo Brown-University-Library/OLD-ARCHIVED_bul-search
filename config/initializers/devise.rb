@@ -258,4 +258,6 @@ Devise.setup do |config|
                          :request_type => :header,
                          #:extra_fields => [:schacHomeOrganization]
                   }
+
+  config.secret_key = ENV['DEVISE_SECRET']
 end
