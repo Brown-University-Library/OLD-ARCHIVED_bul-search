@@ -20,16 +20,16 @@ module BulSearch
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    if Rails.env.production?
-      config.secret_key_base = ENV['ESEARCH_KEY']
-    else
-      config.secret_key_base = '4c6ca96a55bc7dd6e00265ece6bdc52a979355784da9b0f3668fd53e130741ebe0c68240b669912684be4c9cff3f4d6424dee2453cf0f4115c20c7cef81cd216'
-    end
-
     # dotenv-deployment is a deprecated gem that we used to depend on.
     # It's README file (https://github.com/bkeepers/dotenv-deployment) suggests
     # the following to achieve the previous functionality, namely to load and
     # override any existing variables if an environment-specific file exists.
     Dotenv.overload *Dir.glob(Rails.root.join("config/**/*.env.#{Rails.env}"), File::FNM_DOTMATCH)
+
+    if Rails.env.production?
+      config.secret_key_base = ENV['ESEARCH_KEY']
+    else
+      config.secret_key_base = '4c6ca96a55bc7dd6e00265ece6bdc52a979355784da9b0f3668fd53e130741ebe0c68240b669912684be4c9cff3f4d6424dee2453cf0f4115c20c7cef81cd216'
+    end
   end
 end

@@ -259,5 +259,5 @@ Devise.setup do |config|
                          #:extra_fields => [:schacHomeOrganization]
                   }
 
-  config.secret_key = ENV['DEVISE_SECRET']
+  # config.secret_key = ENV['DEVISE_SECRET']
 end
