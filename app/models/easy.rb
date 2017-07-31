@@ -313,7 +313,7 @@ class Easy
   end
 
   def get_eds(query)
-    eds = Eds.new("TODO", "TODO")
+    eds = Eds.new()
     eds_results = eds.search(query)
 
     results_docs = []
@@ -324,9 +324,9 @@ class Easy
       d['link'] = doc[:link]
       d['year'] = doc[:year]
       d['author'] = doc[:author]
-      # d['venue'] = nil
-      # d['volume'] = nil
-      # d['issue'] = nil
+      d['venue'] = doc[:venue]
+      d['volume'] = doc[:volume]
+      # d['issue'] = doc[:issue]
       # d['start'] = nil
       results_docs << d
     end

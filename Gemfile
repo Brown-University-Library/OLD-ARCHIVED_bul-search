@@ -56,7 +56,6 @@ gem "blacklight_range_limit"
 
 gem "summon", "~> 2.0.5"
 
-gem 'dotenv-rails', :groups => [:development, :test, :devbox]
 gem "font-awesome-rails"
 
 group :development do
@@ -68,8 +67,6 @@ end
 gem 'handlebars_assets', "= 0.17"
 
 gem 'mysql2', :group => [:production]
-
-gem 'dotenv-deployment', :group => [:production]
 
 gem "rspec-rails", :group => [:development, :test]
 
@@ -84,3 +81,7 @@ gem 'openurl', '~> 1.0.0'
 
 # Needed for rails console in Ubuntu
 gem "rb-readline"
+
+gem "dotenv"
+# gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-ruby.git'
+gem "ebsco-eds", path: "/Users/hectorcorrea/dev/edsapi-ruby"
