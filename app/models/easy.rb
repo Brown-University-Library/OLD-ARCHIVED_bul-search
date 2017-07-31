@@ -336,6 +336,7 @@ class Easy
     results['response']['more'] = "TBD"
     results['response']['all'] = "TBD"
     results['response']['docs'] = results_docs
+    results['response']['advanced'] = "TBD"
     results['response']['numFound'] = eds_results.total_hits
     return results['response']
   end
