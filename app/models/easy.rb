@@ -326,8 +326,8 @@ class Easy
       d['author'] = doc[:author]
       d['venue'] = doc[:venue]
       d['volume'] = doc[:volume]
-      # d['issue'] = doc[:issue]
-      # d['start'] = nil
+      d['issue'] = doc[:issue]
+      d['start'] = doc[:start]
       results_docs << d
     end
 

@@ -19,11 +19,11 @@ class Eds
     if text.empty?
       return EdsResults.new([], [], 0)
     end
-    # TODO: make sure we pass "RV:Y" to include peer-reviewed only
     options = {
       query: text,
       results_per_page: 5,
-      highlight: false
+      highlight: false,
+      limiters: ["RV:y"]      # peer-reviewed only (yes)
     }
     results = @session.search(options)
     # results = @session.simple_search(text)

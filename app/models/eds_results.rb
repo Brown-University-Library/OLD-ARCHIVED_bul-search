@@ -26,10 +26,10 @@ class EdsResults
           type: r.eds_publication_type,
           link: r.eds_plink,
           venue: r.eds_source_title,
-          volume: r.eds_volume
+          volume: r.eds_volume,
+          issue: r.eds_issue,
+          start: r.eds_page_start
         }
-        # TODO: handle r.Issue
-        # (current ebsco-eds gem throws an error with some data)
         items << item
       end
       items
