@@ -83,5 +83,5 @@ gem 'openurl', '~> 1.0.0'
 gem "rb-readline"
 
 gem "dotenv"
-# gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-ruby.git'
-gem "ebsco-eds", path: "/Users/hectorcorrea/dev/edsapi-ruby"
+gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-ruby.git'
+# gem "ebsco-eds", path: "/Users/hectorcorrea/dev/edsapi-ruby"

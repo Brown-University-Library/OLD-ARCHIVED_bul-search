@@ -17,7 +17,6 @@ class EdsResults
   private
     def self.items_from_response(response)
       items = []
-      byebug
       response.records.each do |r|
         item = {
           id: r.eds_result_id,

@@ -5,8 +5,9 @@ GIT
   specs:
     bulmarc (0.0.4.2)
 
-PATH
-  remote: /Users/hectorcorrea/dev/edsapi-ruby
+GIT
+  remote: https://github.com/Brown-University-Library/edsapi-ruby.git
+  revision: 72da47d1ea46019720ceba66ce411dec27b46131
   specs:
     ebsco-eds (0.2.8.pre)
       activesupport (~> 4.0)
