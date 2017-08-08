@@ -18,6 +18,10 @@ class Reserves
   def courses_by_instructor(instructor)
     # OCRA's API allows for partial matches on the instructor name.
     instructor = "" if instructor.blank?
+    if instructor.first == "#"
+      # search by instructor id, drop the #
+      instructor = instructor[1..-1]
+    end
     url = "#{@api_url}/instructor/#{CGI.escape(instructor)}"
     response = HttpUtil::HttpJson.get(url)
     courses = []
@@ -44,9 +48,12 @@ class Reserves
       course.number = item["number"]
       course.name = item["name"]
       course.section = item["section"]
-      course.instructor = item["instructor"]
       course.semester = item["semester"]
       course.location = item["library"]
+      course.instructor_id = item["instructorid"]
+      course.instructor = item["instructor"]
+      course.instructor_lastname = item["instructor_ln"]
+      course.instructor_firstname = item["instructor_fn"]
       books = (item["books"] || []).map {|x| ReservesBook.from_hash(x)}
       materials = ReservesMaterials.new(course, books, item["on_panopto"], item["online_items"])
     else
@@ -92,7 +99,8 @@ class ReservesBook
 end
 
 class ReservesCourse
-  attr_accessor :classid, :number, :section, :instructor, :semester, :name, :location
+  attr_accessor :classid, :number, :section, :semester, :name, :location,
+    :instructor, :instructor_id, :instructor_lastname, :instructor_firstname
   def self.from_hash(hash)
     rc = ReservesCourse.new()
     rc.classid = hash["classid"]
@@ -100,6 +108,7 @@ class ReservesCourse
     rc.number = hash["number"]
     rc.section = hash["section"]
     rc.instructor = hash["instructor"]
+    rc.instructor_id = hash["instructorid"]
     rc.semester = hash["semester"]
     rc.location = hash["library"]
     rc
@@ -120,6 +129,16 @@ class ReservesCourse
   end
 
   def instructor_search
+    if instructor_id
+      return "#" + instructor_id
+    end
+
+    if instructor_lastname || instructor_firstname
+      # If we have the individual values search by those.
+      return "#{instructor_lastname} #{instructor_firstname}".strip
+    end
+
+    # Otherwise do our best parsing the full instructor name
     tokens = instructor.split(" ")
     if tokens.count <= 2
       return instructor
@@ -131,10 +150,7 @@ class ReservesCourse
       return tokens.first + " " + tokens.last
     end
 
-    # Search by first name only. TODO: Ask Adam about a better
-    # way to handle cases with last names that have more than
-    # one word.
+    # Our last hope, search by first name only.
     tokens.first
   end
-
 end
