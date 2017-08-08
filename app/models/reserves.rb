@@ -46,6 +46,7 @@ class Reserves
       course.section = item["section"]
       course.instructor = item["instructor"]
       course.semester = item["semester"]
+      course.location = item["library"]
       books = (item["books"] || []).map {|x| ReservesBook.from_hash(x)}
       materials = ReservesMaterials.new(course, books, item["on_panopto"], item["online_items"])
     else
@@ -91,7 +92,7 @@ class ReservesBook
 end
 
 class ReservesCourse
-  attr_accessor :classid, :number, :section, :instructor, :semester, :name
+  attr_accessor :classid, :number, :section, :instructor, :semester, :name, :location
   def self.from_hash(hash)
     rc = ReservesCourse.new()
     rc.classid = hash["classid"]
@@ -100,6 +101,7 @@ class ReservesCourse
     rc.section = hash["section"]
     rc.instructor = hash["instructor"]
     rc.semester = hash["semester"]
+    rc.location = hash["library"]
     rc
   end
 

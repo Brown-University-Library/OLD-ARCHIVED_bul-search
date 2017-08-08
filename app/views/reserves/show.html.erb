@@ -35,6 +35,9 @@
       <%= book.loan_term %>
   <% end %>
   </ul>
+  <% if @materials.course.location %>
+    <p>Find these items at the front desk. <b>Library: <%= @materials.course.location %></b></p>
+  <% end %>
 <% end %>
 
 <% if @materials.panopto_items > 0 || @materials.online_items > 0 %>
