@@ -11,7 +11,7 @@
   <ul>
   <% @materials.books.each do |book| %>
     <li>
-      <% if book.bib %>
+      <% if !book.bib.empty? %>
         <%= link_to(book.title, catalog_path(id: book.bib)) %>
       <% else %>
         <%= book.title %>

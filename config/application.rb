@@ -1,5 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 require 'rails/all'
+require 'font-awesome-rails'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -19,6 +20,12 @@ module BulSearch
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+
+    # dotenv-deployment is a deprecated gem that we used to depend on.
+    # It's README file (https://github.com/bkeepers/dotenv-deployment) suggests
+    # the following to achieve the previous functionality, namely to load and
+    # override any existing variables if an environment-specific file exists.
+    Dotenv.overload *Dir.glob(Rails.root.join("config/**/*.env.#{Rails.env}"), File::FNM_DOTMATCH)
 
     if Rails.env.production?
       config.secret_key_base = ENV['ESEARCH_KEY']

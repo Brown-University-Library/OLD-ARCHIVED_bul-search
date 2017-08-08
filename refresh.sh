@@ -3,7 +3,11 @@ set -e
 git pull
 RAILS_ENV=production bundle install --without development test
 RAILS_ENV=production bundle exec rake db:migrate
+
+# In dev server use
+# RAILS_ENV=production bundle exec rake assets:precompile RAILS_RELATIVE_URL_ROOT=/find
+# to make sure the /find path is considered when compiling assets.
 RAILS_ENV=production bundle exec rake assets:precompile
-# sudo chown -R blacklight.libstaff /opt/local/bul-search-src/public/assets/
-# sudo chown -R blacklight.libstaff /opt/local/bul-search-src/tmp/
+
+#rm -rf tmp/cache
 touch tmp/restart.txt
