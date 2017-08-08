@@ -16,7 +16,7 @@ class ReservesController < ApplicationController
         reserves = Reserves.new
         @courses = reserves.courses_by_instructor(@instructor)
         if @courses.count == 0
-          @no_courses_msg = 'No courses were found for instructor ' + @instructor
+          @no_courses_msg = "No courses were found for instructor #{@instructor}"
         end
       end
     rescue StandardError => e
