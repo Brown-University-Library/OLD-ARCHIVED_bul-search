@@ -68,7 +68,7 @@ class ReservesMaterials
       @panopto_url = "https://brown.hosted.panopto.com/"
     end
     if @online_items > 0
-      @online_url = "https://worfdev.services.brown.edu/ocra_dev/student/course/?classid=#{@course.classid}"
+      @online_url = "https://library.brown.edu/reserves/student/course/?classid=#{@course.classid}"
     end
   end
 end
@@ -77,7 +77,10 @@ class ReservesBook
   attr_accessor :bib, :callno, :title, :author, :loan_term, :personal
   def self.from_hash(hash)
     rb = ReservesBook.new()
-    rb.bib = hash["bib"]
+    if hash["bib"] && hash["bib"].length == 8 && hash["bib"][0] == "b"
+      # only use the bib number if it looks like a bib number
+      rb.bib = hash["bib"]
+    end
     rb.callno = hash["callno"]
     rb.title = hash["title"]
     rb.author = hash["author"]
@@ -113,4 +116,23 @@ class ReservesCourse
   def number_url
     number_section.gsub(" ", "-")
   end
+
+  def instructor_search
+    tokens = instructor.split(" ")
+    if tokens.count <= 2
+      return instructor
+    end
+
+    has_middle_initial = tokens.count == 3 && tokens[1].strip.length == 1
+    if has_middle_initial
+      # Drop the middle initial
+      return tokens.first + " " + tokens.last
+    end
+
+    # Search by first name only. TODO: Ask Adam about a better
+    # way to handle cases with last names that have more than
+    # one word.
+    tokens.first
+  end
+
 end

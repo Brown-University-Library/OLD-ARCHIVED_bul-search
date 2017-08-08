@@ -1,7 +1,8 @@
 <%= link_to("Back to Search Reserves", reserves_search_path()) %>
 
-<h2><%= @materials.course.name %>(<%= @materials.course.full_number %>)</h2>
-<h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor)) %></h3>
+<h2><%= @materials.course.name %></h2>
+<h4><%= @materials.course.full_number %></h4>
+<h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor_search)) %></h3>
 <h4>In-Library Course Reserves</h4>
 <% if @materials.books.count == 0 %>
   <ul>
@@ -11,7 +12,7 @@
   <ul>
   <% @materials.books.each do |book| %>
     <li>
-      <% if !book.bib.empty? %>
+      <% if book.bib != nil %>
         <%= link_to(book.title, catalog_path(id: book.bib)) %>
       <% else %>
         <%= book.title %>
@@ -22,7 +23,13 @@
       <% end %>
 
       <% if !book.callno.blank? %>
-        (<%= link_to(book.callno, catalog_index_path(q: '"' + book.callno + '"')) %>)
+        <% if book.bib == nil %>
+          <!-- render as link -->
+          (<%= link_to(book.callno, catalog_index_path(q: '"' + book.callno + '"')) %>)
+        <% else %>
+          <!-- don't render as link we already have a link by BIB number -->
+          (<%= book.callno %>)
+        <% end %>
       <% end %>
 
       <%= book.loan_term %>
