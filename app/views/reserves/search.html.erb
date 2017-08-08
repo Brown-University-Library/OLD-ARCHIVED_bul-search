@@ -1,37 +1,56 @@
 <h1>In-Library Course Reserves</h1>
 <div>
-<%= form_tag(reserves_search_path, method: "get") do %>
-  <div>
-    <%= label_tag(:course_num, "Course #") %>
-    <%= text_field_tag(:course_num, @course_num) %>
+<%= form_tag(reserves_search_path, method: "get", class: "form-inline") do %>
+  <div class="form-group">
+    <%= label_tag(:course_num, "Course #", for:"course_num") %>
+    <%= text_field_tag(:course_num, @course_num, class: "form-control") %>
   </div>
-  <div>
-    <%= label_tag(:instructor, "Instructor") %>
-    <%= text_field_tag(:instructor, @instructor) %>
+  <div class="form-group">
+    <%= label_tag(:instructor, "Instructor", for:"instructor") %>
+    <%= text_field_tag(:instructor, @instructor, class: "form-control") %>
   </div>
-  <%= submit_tag("Search") %>
+  <%= submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
 <% end %>
+</div>
 
+<div>&nbsp;</div>
 <div>
   <% if @no_courses_msg %>
-    <p><%= @no_courses_msg %></p>
+    <div class="alert alert-danger" role="alert"><%= @no_courses_msg.html_safe %></div>
   <% else %>
-    <h3>The following courses were found</h3>
-    <table>
-      <tr>
-        <th>Course #</th>
-        <th>Course Name</th>
-        <th>Professor</th>
-      </tr>
-    <% @courses.each do |c| %>
-      <tr>
-        <td><%= link_to(c.full_number, reserves_show_path(classid: c.classid, classnumber: c.number_url)) %></td>
-        <td><%= c.name %></td>
-        <td><%= c.instructor %></td>
-      </p>
-      </tr>
-    <% end %>
-  </table>
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">The following courses were found</div>
+      <!-- <div class="panel-body">
+        <p>Select a course to view in-library and online reserves for it</p>
+      </div> -->
+      <table class="table">
+        <tr>
+          <th>Course #</th>
+          <th>Semester</th>
+          <th>Course Name</th>
+          <th>Professor</th>
+        </tr>
+        <% @courses.each do |c| %>
+          <tr>
+            <td><%= link_to(c.number_section, reserves_show_path(classid: c.classid, classnumber: c.number_url)) %></td>
+            <td><%= c.semester %>
+            <td><%= c.name %></td>
+            <td><%= c.instructor %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
   <% end %>
 </div>
 </div>
+
+<script type="text/javascript">
+$(function() {
+  if ($("#instructor").val() != "") {
+    $("#instructor").focus();
+  } else {
+    $("#course_num").focus();
+  }
+});
+</script>
