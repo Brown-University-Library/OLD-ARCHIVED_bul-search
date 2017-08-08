@@ -7,9 +7,15 @@ class Reserves
   end
 
   def courses_by_course_num(course_num)
+    # Dashes are not common in course numbers, but we display course numbers
+    # with dashes in the URL and therefore users might copy and paste them
+    # in the search box. Hence, we account for them here.
+    search_value = course_num || ""
+    search_value = search_value.gsub("-", " ").strip
+
     # OCRA's API allows for partial matches of cours number and
     # section. For example "LITR 0100A" or "LITR 0100A S02"
-    url = "#{@api_url}/coursesearch/#{CGI.escape(course_num.gsub(' ', ''))}"
+    url = "#{@api_url}/coursesearch/#{CGI.escape(search_value)}"
     response = HttpUtil::HttpJson.get(url)
     courses = response.map {|x| ReservesCourse.from_hash(x)}
     courses.sort_by { |c| c.number_section }
