@@ -7,8 +7,8 @@
   <div class="panel-heading">In-Library Course Reserves</div>
   <div class="panel-body">
     <% if @materials.books.count == 0 %>
-      There are no in-library reserves for this course. Ask the front desk
-      if you have questions.
+      There are no in-library reserves for this course yet. Please
+      ask the front desk if you have any questions.
     <% else %>
       The following items are in reserve at the library for this course.
       Find these items at the front desk.
@@ -67,7 +67,7 @@
 
   <div class="panel-footer">
   <% if @materials.panopto_items > 0 || @materials.online_items > 0 %>
-    <p>Notice that there are online items in reserve for this course. </p>
+    <p>Notice that there are<%= @materials.books.count > 0 ? " also " : " " %>online items in reserve for this course. </p>
     <ul>
     <% if @materials.panopto_items > 0 %>
       <li>There are
