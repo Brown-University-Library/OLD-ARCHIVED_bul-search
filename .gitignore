@@ -18,6 +18,7 @@ search_summon.rb
 /db/*.sqlite3-journal
 
 # Ignore all logfiles and tempfiles.
+faraday.log
 /log/*.log
 /tmp
 
