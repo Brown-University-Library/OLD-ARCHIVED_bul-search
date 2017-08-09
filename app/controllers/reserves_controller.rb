@@ -32,5 +32,6 @@ class ReservesController < ApplicationController
     @classid = params[:classid]
     reserves = Reserves.new
     @materials = reserves.items_for_course(@classid)
+    @page_title = "Reserves #{@materials.course.number_section}"
   end
 end

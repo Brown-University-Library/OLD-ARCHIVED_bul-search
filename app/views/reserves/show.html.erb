@@ -3,54 +3,83 @@
 <h2><%= @materials.course.name %></h2>
 <h4><%= @materials.course.full_number %></h4>
 <h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor_search)) %></h3>
-<h4>In-Library Course Reserves</h4>
-<% if @materials.books.count == 0 %>
-  <ul>
-    <li>There are no in-library reserves for this course
-  </ul>
-<% else %>
-  <ul>
-  <% @materials.books.each do |book| %>
-    <li>
-      <% if book.bib != nil %>
-        <%= link_to(book.title, catalog_path(id: book.bib)) %>
-      <% else %>
-        <%= book.title %>
-      <% end %>
+<div class="panel panel-default">
+  <div class="panel-heading">In-Library Course Reserves</div>
+  <div class="panel-body">
+    <% if @materials.books.count == 0 %>
+      There are no in-library reserves for this course. Ask the front desk
+      if you have questions.
+    <% else %>
+      The following items are in reserve at the library for this course.
+      Find these items at the front desk.
+    <% end %>
 
-      <% if book.personal %>
-        <i><b>(professor's copy)</b></i>
-      <% end %>
+    <% if @materials.course.location %>
+      <b>Library: <%= @materials.course.location %></b>
+    <% end %>
+  </div>
 
-      <% if !book.callno.blank? %>
-        <% if book.bib == nil %>
-          <!-- render as link -->
-          (<%= link_to(book.callno, catalog_index_path(q: '"' + book.callno_search + '"')) %>)
+  <% if @materials.books.count > 0 %>
+    <table class="table">
+      <tr>
+        <th>Title</th>
+        <th>Call #</th>
+        <th>Loan Term</th>
+      </tr>
+      <% @materials.books.each do |book| %>
+      <tr>
+        <td>
+          <% if book.bib != nil %>
+            <%= link_to(book.title, catalog_path(id: book.bib), title: "View this item in the catalog") %>
+          <% else %>
+            <%= book.title %>
+          <% end %>
+        </td>
+
+        <td>
+        <% if book.personal %>
+          Professor's copy
+          <i class="fa fa-info-circle"
+            data-toggle="tooltip"
+            title="This item is a professor's copy and not an item owned by the library. Go to the front desk to request it."></i>
         <% else %>
-          <!-- don't render as link we already have a link by BIB number -->
-          (<%= book.callno %>)
+          <% if book.callno.blank? %>
+            N/A
+          <% else %>
+            <% if book.bib == nil %>
+              <!-- render as link -->
+              <%= link_to(book.callno, catalog_index_path(q: '"' + book.callno_search + '"'), title: "Find this item in the catalog") %>
+            <% else %>
+              <!-- don't render as link we already have a link by BIB number -->
+              <%= book.callno %>
+            <% end %>
+          <% end %>
         <% end %>
-      <% end %>
+        </td>
 
-      <%= book.loan_term %>
-  <% end %>
-  </ul>
-  <% if @materials.course.location %>
-    <p>Find these items at the front desk. <b>Library: <%= @materials.course.location %></b></p>
-  <% end %>
-<% end %>
-
-<% if @materials.panopto_items > 0 || @materials.online_items > 0 %>
-  <h4>Other materials in reserve</h4>
-  <ul>
-  <% if @materials.panopto_items > 0 %>
-    <li>There are
-      <a href="<%=@materials.panopto_url %>" target="_blank"><%= @materials.panopto_items %> items in Panopto</a> for this course.
+        <td>
+          <%= book.loan_term %>
+        </td>
+      </tr>
+    <% end %>
+    </table>
   <% end %>
 
-  <% if @materials.online_items > 0 %>
-    <li>There are
-      <a href="<%=@materials.online_url %>" target="_blank"><%= @materials.online_items %> online items in OCRA</a> for this course.
+  <div class="panel-footer">
+  <% if @materials.panopto_items > 0 || @materials.online_items > 0 %>
+    <p>Notice that there are online items in reserve for this course. </p>
+    <ul>
+    <% if @materials.panopto_items > 0 %>
+      <li>There are
+        <a href="<%=@materials.panopto_url %>" target="_blank"><%= @materials.panopto_items %> items in Panopto</a> for this course.
+    <% end %>
+
+    <% if @materials.online_items > 0 %>
+      <li>There are
+        <a href="<%=@materials.online_url %>" target="_blank"><%= @materials.online_items %> online items in OCRA</a> for this course.
+    <% end %>
+    </ul>
   <% end %>
-  </ul>
-<% end %>
+  </div>
+
+</div> <!-- panel -->
