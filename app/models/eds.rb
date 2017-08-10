@@ -1,5 +1,6 @@
 require "./lib/http_json.rb"
 require "./app/models/eds_results.rb"
+require "./app/helpers/application_helper.rb"
 require 'ebsco/eds'
 
 class Eds
