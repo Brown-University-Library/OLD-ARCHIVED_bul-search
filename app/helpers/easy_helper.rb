@@ -28,6 +28,10 @@ module EasyHelper
     return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
   end
 
+  def eds_native_url(query)
+    return "TBD"
+  end
+
   def bdr_configured?
     ENV["BDR_SEARCH_URL"] != nil
   end

@@ -26,7 +26,11 @@
 
     <div id="facet-panel-all-results" class="panel-group">
       <ul class="list-unstyled">
-        <li><%= t('blacklight.articles.icon').html_safe %><a href="<%= summon_search(params[:q]) =%>"><%= t('blacklight.articles.heading')%></a></li>
+        <li><%= t('blacklight.articles.icon').html_safe %>
+          <a href="<%= @is_eds ? eds_native_url(params[:q]) : summon_search(params[:q]) %>">
+            <%= t('blacklight.articles.heading')%>
+          </a>
+        </li>
         <li><a class="large" href="<%= worldcat_search(params[:q]) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %>Search libraries worldwide</a></li>
         <% if bdr_configured? %>
           <li><a class="large" href="<%= bdr_search(params[:q]) =%>" id="bdr-search"><%= t('blacklight.bdr.heading')%></a></li>
