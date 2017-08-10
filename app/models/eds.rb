@@ -45,8 +45,7 @@ class Eds
     options = {
       query: text,
       results_per_page: 5,
-      highlight: false,
-      limiters: ["RV:y"]      # peer-reviewed only (yes)
+      highlight: false
     }
     # TODO: we should probably do this as part of the normal
     # search so we don't issue the same search twice.
