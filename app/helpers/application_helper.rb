@@ -32,6 +32,7 @@ module ApplicationHelper
   end
 
   def trusted_ip?(ip)
+    return false if ip == nil
     trusted_ips.each do |trusted_value|
       return true if ip.start_with?(trusted_value)
     end

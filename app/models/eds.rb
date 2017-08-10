@@ -3,15 +3,21 @@ require "./app/models/eds_results.rb"
 require 'ebsco/eds'
 
 class Eds
+  include ApplicationHelper
 
-  def initialize()
+  def initialize(ip = nil)
+    guest = !trusted_ip?(ip)
     @profile_id = ENV["EDS_PROFILE_ID"]
     @credentials = {
       user: ENV["EDS_USER_ID"],
       pass: ENV["EDS_PASSWORD"],
-      profile: @profile_id
+      profile: @profile_id,
+      guest: guest
     }
-    puts @credentials
+    # puts "==================="
+    # puts "EDS: guest? #{guest}"
+    # puts "EDS: IP #{ip}"
+    # puts "==================="
     @session = EBSCO::EDS::Session.new(@credentials)
   end
 

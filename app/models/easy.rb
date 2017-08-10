@@ -8,11 +8,11 @@ require 'uri'
 class Easy
   include BlacklightHelper
 
-  def initialize source, query
+  def initialize(source, query, ip = nil)
     if source == 'summon'
       @results = get_summon(query)
     elsif source == "eds"
-      @results = get_eds(query)
+      @results = get_eds(query, ip)
     elsif source == 'newspaper_articles'
       @results = get_summon_newspaper(query)
     elsif source == 'bdr'
@@ -312,8 +312,8 @@ class Easy
     return results['response']
   end
 
-  def get_eds(query)
-    eds = Eds.new()
+  def get_eds(query, ip)
+    eds = Eds.new(ip)
     eds_results = eds.search(query)
 
     results_docs = []

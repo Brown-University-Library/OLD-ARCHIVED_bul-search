@@ -17,11 +17,12 @@ class EdsResults
   private
     def self.items_from_response(response)
       items = []
+      byebug
       response.records.each do |r|
         item = {
           id: r.eds_result_id,
           title: r.eds_title,
-          author: r.eds_authors,
+          author: self.clean_author(r.eds_authors.first),
           year: r.eds_publication_year,
           type: r.eds_publication_type,
           link: r.eds_plink,
@@ -33,5 +34,20 @@ class EdsResults
         items << item
       end
       items
+    end
+
+    # Remove the ", Author" postfix on EDS values.
+    # We might need to account for other values and/or find out an EDS
+    # value that does not include these postfixes.
+    def self.clean_author(author)
+      return nil if author == nil
+      val_to_remove = ", Author"
+      value = author.strip
+      if value == val_to_remove
+        value = nil
+      elsif value.end_with?(val_to_remove)
+        value = value[0..(value.length()-9)]
+      end
+      value
     end
 end

@@ -16,7 +16,7 @@ class EasyController < ApplicationController
   end
 
   def search
-    @search_result = Easy.new params[:source], params[:q]
+    @search_result = Easy.new(params[:source], params[:q], request.remote_ip)
     #Add search to history for search history page.
     s = Search.create(:query_params => params)
     add_to_search_history(s)
