@@ -13,6 +13,8 @@ class Easy
       @results = get_summon(query)
     elsif source == "eds"
       @results = get_eds(query, ip)
+    elsif source == 'newspaper_articles_eds'
+      @results = get_eds_newspaper(query, ip)
     elsif source == 'newspaper_articles'
       @results = get_summon_newspaper(query)
     elsif source == 'bdr'
@@ -38,8 +40,8 @@ class Easy
 
   def get_bdr query
     solr_url = ENV['BDR_SEARCH_API_URL']
-    if solr_url == nil
-      Rails.logger.warn "Skipped BRD search (no BRD Solr URL available)"
+    if ENV['BDR_SEARCH_API_URL'] == nil || ENV['BDR_SEARCH_URL'] == nil
+      Rails.logger.warn "BRD search skipped (no BDR_SEARCH_API_URL or BDR_SEARCH_URL available)"
       return nil
     end
 
@@ -313,6 +315,10 @@ class Easy
   end
 
   def get_eds(query, ip)
+    if ENV["EDS_PROFILE_ID"] == nil
+      Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
+      return {}
+    end
     eds = Eds.new(ip)
     eds_results = eds.search(query)
 
@@ -339,6 +345,19 @@ class Easy
     results['response']['advanced'] = "TBD"
     results['response']['numFound'] = eds_results.total_hits
     return results['response']
+  end
+
+  def get_eds_newspaper(query, ip)
+    if ENV["EDS_PROFILE_ID"] == nil
+      Rails.logger.warn "EDS newspaper search skipped (no EDS_PROFILE_ID available)"
+      return {}
+    end
+    eds = Eds.new(ip)
+    count = eds.newspapers_count(query)
+    response = {}
+    response[:more] = "TBD"
+    response[:numFound] = count
+    return response
   end
 
   def get_summon_newspaper query

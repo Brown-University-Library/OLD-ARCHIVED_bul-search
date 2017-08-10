@@ -128,8 +128,8 @@ function sortFilterFacetList() {
 //Add the Journal Articles box via Summon.
 function summonBox(query) {
     var source = '&source=summon';
-    if (location.search.indexOf("&journals=eds") > -1) {
-        source = "&source=eds";
+    if (isEdsJournals()) {
+      source = "&source=eds";
     }
     $.ajax(dataUrl + source, {
       success: function(response) {
@@ -240,18 +240,22 @@ function addFormats(formats) {
 
 //Add newspaper article count via Summon.
 function addNewspaperArticlesCount(query) {
-    $.ajax(dataUrl + '&source=newspaper_articles', {
-      success: function(response) {
-        if (response.numFound > 0) {
-          //add count to facet on left
-          addFormats([{
-            'format': 'Newspaper Articles',
-            'more': response.more,
-            'count': commaSeparatedNumber(response.numFound)
-          }]);
-        };
-      }
-    });
+  var source = "&source=newspaper_articles";
+  if (isEdsJournals()) {
+    source = "&source=newspaper_articles_eds"
+  }
+  $.ajax(dataUrl + source, {
+    success: function(response) {
+      if (response.numFound > 0) {
+        //add count to facet on left
+        addFormats([{
+          'format': 'Newspaper Articles',
+          'more': response.more,
+          'count': commaSeparatedNumber(response.numFound)
+        }]);
+      };
+    }
+  });
 };
 
 
@@ -307,11 +311,15 @@ function addToJumpLinks(id, name) {
 //Create a comma separated number
 //http://stackoverflow.com/a/12947816/758157
 function commaSeparatedNumber(val){
-    while (/(\d+)(\d{3})/.test(val.toString())){
-      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
-    }
-    return val;
+  while (/(\d+)(\d{3})/.test(val.toString())){
+    val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
   }
+  return val;
+}
+
+function isEdsJournals() {
+  return (location.search.indexOf("&journals=eds") > -1);
+}
 </script>
 
 <!-- Google cse. -->
