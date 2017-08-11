@@ -6,6 +6,10 @@ class Reserves
     raise "No value for OCRA_API_URL was found the environment" if @api_url == nil
   end
 
+  def courses_all()
+    courses_by_course_num("")
+  end
+  
   def courses_by_course_num(course_num)
     # Dashes are not common in course numbers, but we display course numbers
     # with dashes in the URL and therefore users might copy and paste them

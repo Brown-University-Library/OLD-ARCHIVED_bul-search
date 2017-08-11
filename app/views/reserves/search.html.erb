@@ -17,7 +17,9 @@
 <div>
   <% if @no_courses_msg %>
     <div class="alert alert-danger" role="alert"><%= @no_courses_msg.html_safe %></div>
-  <% else %>
+  <% end %>
+
+  <% if @courses.count > 0 %>
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">The following courses were found</div>
