@@ -319,29 +319,15 @@ class Easy
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
       return {}
     end
+
     eds = Eds.new(ip)
     eds_results = eds.search(query)
-
-    results_docs = []
-    eds_results.items.each do |doc|
-      d = Hash.new
-      d['id'] = doc[:id]
-      d['title'] = doc[:title]
-      d['link'] = doc[:link]
-      d['year'] = doc[:year]
-      d['author'] = doc[:author]
-      d['venue'] = doc[:venue]
-      d['volume'] = doc[:volume]
-      d['issue'] = doc[:issue]
-      d['start'] = doc[:start]
-      results_docs << d
-    end
 
     results = {}
     results['response'] = {}
     results['response']['more'] = "TBD"
     results['response']['all'] = "TBD"
-    results['response']['docs'] = results_docs
+    results['response']['docs'] = eds_results.items
     results['response']['advanced'] = "TBD"
     results['response']['numFound'] = eds_results.total_hits
     return results['response']

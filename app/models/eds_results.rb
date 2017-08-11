@@ -18,6 +18,8 @@ class EdsResults
     def self.items_from_response(response)
       items = []
       response.records.each do |r|
+        # Do we also need package/vendor or is the info in "database" enough?
+        # (ask Jeanette)
         item = {
           id: r.eds_result_id,
           title: r.eds_title,
@@ -28,11 +30,25 @@ class EdsResults
           venue: r.eds_source_title,
           volume: r.eds_volume,
           issue: r.eds_issue,
-          start: r.eds_page_start
+          start: r.eds_page_start,
+          database: r.eds_database_name
         }
         items << item
       end
       items
+    end
+
+    def self.results_to_file(response)
+      delimiter = ""
+      File.open("eds_results.json", 'w') do |file|
+        file.write("[\r\n")
+        response.records.each do |r|
+          file.write(delimiter + r.to_json)
+          delimiter = ", \r\n"
+        end
+        file.write("]\r\n")
+      end
+      nil
     end
 
     # Remove the ", Author" postfix on EDS values.

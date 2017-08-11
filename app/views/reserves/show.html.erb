@@ -1,7 +1,7 @@
 <%= link_to("Back to Search Reserves", reserves_search_path()) %>
 
 <h2><%= @materials.course.name %></h2>
-<h4>Course #<b><%= @materials.course.number_section%></b>
+<h4>Course #<b> <%= @materials.course.number_section%></b>
 &nbsp;&nbsp;&nbsp;&nbsp;Semester: <b><%= @materials.course.semester%></b>
 </h4>
 <h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor_search)) %></h3>
