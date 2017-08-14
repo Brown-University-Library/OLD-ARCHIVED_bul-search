@@ -41,6 +41,10 @@ class ReservesCourse
   end
 
   def number_url
+    "#{number}".strip.gsub(" ", "-")
+  end
+
+  def number_section_url
     number_section.gsub(" ", "-")
   end
 

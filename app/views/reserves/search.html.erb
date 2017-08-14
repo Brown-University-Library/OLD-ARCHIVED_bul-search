@@ -148,7 +148,7 @@ function renderCourseList(list) {
         </tr>
         <% @courses.each do |c| %>
           <tr id="row_<%= c.classid %>" class="rowx">
-            <td><%= link_to(c.number_section, reserves_show_path(classid: c.classid, classnumber: c.number_url)) %></td>
+            <td><%= link_to(c.number_section, reserves_show_path(classid: c.classid, classnumber: c.number_section_url)) %></td>
             <td><%= c.semester %>
             <td><%= c.name %></td>
             <td><%= c.instructor %></td>

@@ -372,38 +372,7 @@ class Easy
     return results['response']
   end
 
-  #
-  # Get a best bet for the given query.
-  # Return hash with keys expected by partial
-  #
-  def self.get_best_bet query
-    solr_url = ENV['BEST_BETS_SOLR_URL']
-    if solr_url == nil
-      Rails.logger.warn "Skipped BestBet search (no BestBet Solr URL available)"
-      return nil
-    end
-
-    solr = RSolr.connect :url => solr_url
-
-    qp = {
-        :wt=>"json",
-        "q"=>"\"#{query}\"",
-        "qt" => 'search',
-    }
-
-    response = solr.get 'search', :params => qp
-    #Always take the first doc.
-    response[:response][:docs].each do |doc|
-      return {
-        :name => doc[:name_display],
-        :url => doc[:url_display][0],
-        :description => doc.fetch(:description_display, [nil])[0]
-      }
-    end
-    nil
-  rescue StandardError => e
-    Rails.logger.error e.message
-    Rails.logger.error e.backtrace.join("\n")
-    nil
+  def self.get_best_bet(query)
+    BestBet.get(query)
   end
 end
