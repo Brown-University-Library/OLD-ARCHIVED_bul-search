@@ -13,6 +13,7 @@ class BestBet
   #
   def self.get(query = "")
     return nil if query.empty?
+    query = query.strip
     match = self.get_from_solr(query)
     if match == nil
       match = self.get_from_reserves(query)
@@ -66,7 +67,7 @@ class BestBet
     else
       # search URL
       return {
-        :name => "#{matches[0].name}",
+        :name => "#{matches[0].name} (multiple matches)",
         :url => "/reserves/?course_num=#{matches[0].number_url}",
         :description => "Course reserves for: #{matches[0].name} (#{matches[0].number_section})"
       }
@@ -76,6 +77,6 @@ class BestBet
   def self.is_course_number?(query)
     # starts with 4 characters, a space, and 4 digits.
     regex = /^[A-Z][A-Z][A-Z][A-Z]\s\d\d\d\d/
-    query.match(regex) != nil
+    query.upcase.match(regex) != nil
   end
 end
