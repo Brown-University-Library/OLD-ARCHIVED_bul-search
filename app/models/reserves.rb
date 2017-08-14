@@ -5,7 +5,6 @@ class Reserves
   end
 
   def cache_update()
-    # TODO: Move this to ReservesCache
     errors = []
     ocra = ReservesOcra.new
     courses = ocra.all_courses()
@@ -15,6 +14,8 @@ class Reserves
       return errors
     end
 
+    # Deletes the courses in the cache and re-populate the table
+    # with the courses from OCRA.
     ReservesCache.delete_all
     courses.each do |course|
       c = ReservesCache.new

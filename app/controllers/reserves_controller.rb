@@ -1,36 +1,6 @@
 # -*- encoding : utf-8 -*-
 #
 class ReservesController < ApplicationController
-  def cache_update
-    # Assume everything is OK
-    text = "OK. Cache updated"
-    status = 200
-
-    if ENV["OCRA_KEY"] == nil
-      text = "ERROR. No OCRA_KEY defined in the environment."
-      status = 500
-    end
-
-    if params["key"] != ENV["OCRA_KEY"]
-      text = "ERROR. Invalid key parameter received."
-      status = 401
-    end
-
-    if status == 200
-      reserves = Reserves.new
-      errors = reserves.cache_update()
-      if errors.count > 0
-        errors.each do |err|
-          Rails.logger.error(err)
-        end
-        text = "ERROR. Could not update #{errors.count} cache records."
-        status = 500
-      end
-    end
-
-    render text: text, status: status
-  end
-
   def search
     begin
       @course_num = params["course_num"]
