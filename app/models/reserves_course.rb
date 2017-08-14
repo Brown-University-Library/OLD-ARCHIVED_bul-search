@@ -1,6 +1,7 @@
 class ReservesCourse
   attr_accessor :classid, :number, :section, :semester, :name, :location,
-    :instructor, :instructor_id, :instructor_lastname, :instructor_firstname
+    :instructor, :instructor_id, :instructor_lastname, :instructor_firstname,
+    :number_search
 
   def self.from_cache(cache)
     rc = ReservesCourse.new()
@@ -12,6 +13,7 @@ class ReservesCourse
     rc.instructor_id = cache.instructorid
     rc.semester = cache.semester
     rc.location = cache.library
+    rc.number_search = cache.number_search
     rc
   end
 

@@ -1,3 +1,77 @@
+<script>
+var courses = [];
+<% @courses.each do |course| %>
+  courses.push(<%= course.to_json.html_safe %>);
+<% end %>
+
+$(document).ready(function() {
+  $("#course_num").on("input", function() {
+    filterByCourseNumber();
+  });
+
+  $("#instructor").on("input", function() {
+    filterByInstructor();
+  });
+
+  // Honor the defult filter (if any)
+  if ($("#course_num").val()) {
+    filterByCourseNumber();
+  } else if ($("#instructor").val()) {
+    filterByInstructor();
+  }
+});
+
+function filterByCourseNumber() {
+  var filteredList = [];
+  var i, course, number, searchValue;
+
+  // make sure instructor is not used
+  $("#instructor").val("")
+
+  // remove dashes and spaces to use a "standardized" course number
+  searchValue = $("#course_num").val();
+  searchValue = searchValue.toUpperCase();
+  searchValue = searchValue.replace(/ /g, '');
+  searchValue = searchValue.replace(/-/g, '');
+
+  for(i = 0; i < courses.length; i++) {
+    course = courses[i];
+    number = course.number_search.toUpperCase();
+    if (number.indexOf(searchValue) != -1) {
+      filteredList.push(course);
+    }
+  }
+  renderCourseList(filteredList);
+}
+
+function filterByInstructor() {
+  var filteredList = [];
+  var i, course, number, searchValue;
+  var searchValue = $("#instructor").val().toUpperCase();
+
+  // make sure course number is not used
+  $("#course_num").val("")
+
+  for(i = 0; i < courses.length; i++) {
+    course = courses[i];
+    number = course.instructor.toUpperCase();
+    if (number.indexOf(searchValue) != -1) {
+      filteredList.push(course);
+    }
+  }
+  renderCourseList(filteredList);
+}
+
+function renderCourseList(list) {
+  var i;
+  $(".rowx").addClass("hide");
+  for(i = 0; i < list.length; i++) {
+    $("#row_" + list[i].classid).removeClass("hide");
+  }
+}
+</script>
+
+
 <h1>In-Library Course Reserves</h1>
 <div>
 <%= form_tag(reserves_search_path, method: "get", class: "form-inline") do %>
@@ -9,7 +83,7 @@
     <%= label_tag(:instructor, "Instructor", for:"instructor") %>
     <%= text_field_tag(:instructor, @instructor, class: "form-control") %>
   </div>
-  <%= submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
+  <% # submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
 <% end %>
 </div>
 
@@ -34,7 +108,7 @@
           <th>Professor</th>
         </tr>
         <% @courses.each do |c| %>
-          <tr>
+          <tr id="row_<%= c.classid %>" class="rowx">
             <td><%= link_to(c.number_section, reserves_show_path(classid: c.classid, classnumber: c.number_url)) %></td>
             <td><%= c.semester %>
             <td><%= c.name %></td>
@@ -45,14 +119,3 @@
     </div>
   <% end %>
 </div>
-</div>
-
-<script type="text/javascript">
-$(function() {
-  if ($("#instructor").val() != "") {
-    $("#instructor").focus();
-  } else {
-    $("#course_num").focus();
-  }
-});
-</script>
