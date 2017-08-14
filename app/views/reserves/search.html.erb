@@ -13,11 +13,17 @@ $(document).ready(function() {
     filterByInstructor();
   });
 
+  $("#course_name").on("input", function() {
+    filterByCourseName();
+  });
+
   // Honor the defult filter (if any)
   if ($("#course_num").val()) {
     filterByCourseNumber();
   } else if ($("#instructor").val()) {
     filterByInstructor();
+  } else if ($("#course_name").val()) {
+    filterByCourseName();
   }
 });
 
@@ -25,8 +31,9 @@ function filterByCourseNumber() {
   var filteredList = [];
   var i, course, number, searchValue;
 
-  // make sure instructor is not used
+  // clear other searches
   $("#instructor").val("")
+  $("#course_name").val("")
 
   // remove dashes and spaces to use a "standardized" course number
   searchValue = $("#course_num").val();
@@ -44,13 +51,36 @@ function filterByCourseNumber() {
   renderCourseList(filteredList);
 }
 
+function filterByCourseName() {
+  var filteredList = [];
+  var i, course, number, searchValue;
+
+  // clear other searches
+  $("#course_num").val("")
+  $("#instructor").val("")
+
+  // remove dashes and spaces to use a "standardized" course number
+  searchValue = $("#course_name").val();
+  searchValue = searchValue.toUpperCase();
+
+  for(i = 0; i < courses.length; i++) {
+    course = courses[i];
+    number = course.name.toUpperCase();
+    if (number.indexOf(searchValue) != -1) {
+      filteredList.push(course);
+    }
+  }
+  renderCourseList(filteredList);
+}
+
 function filterByInstructor() {
   var filteredList = [];
   var i, course, number, searchValue;
   var searchValue = $("#instructor").val().toUpperCase();
 
-  // make sure course number is not used
+  // clear other searches
   $("#course_num").val("")
+  $("#course_name").val("")
 
   for(i = 0; i < courses.length; i++) {
     course = courses[i];
@@ -82,6 +112,10 @@ function renderCourseList(list) {
   <div class="form-group">
     <%= label_tag(:instructor, "Instructor", for:"instructor") %>
     <%= text_field_tag(:instructor, @instructor, class: "form-control") %>
+  </div>
+  <div class="form-group">
+    <%= label_tag(:course_name, "Course Name", for:"course_name") %>
+    <%= text_field_tag(:course_name, @course_name, class: "form-control") %>
   </div>
   <% # submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
 <% end %>

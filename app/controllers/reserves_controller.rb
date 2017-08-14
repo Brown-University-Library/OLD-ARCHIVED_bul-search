@@ -35,6 +35,7 @@ class ReservesController < ApplicationController
     begin
       @course_num = params["course_num"]
       @instructor = params["instructor"]
+      @course_name = params["course_name"]
       @no_courses_msg = nil
       reserves = Reserves.new
       @courses = reserves.courses_all()
