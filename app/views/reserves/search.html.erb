@@ -19,11 +19,16 @@ $(document).ready(function() {
 
   // Honor the defult filter (if any)
   if ($("#course_num").val()) {
+    $("#course_num").focus();
     filterByCourseNumber();
   } else if ($("#instructor").val()) {
+    $("#instructor").focus();
     filterByInstructor();
   } else if ($("#course_name").val()) {
+    $("#course_name").focus();
     filterByCourseName();
+  } else {
+    $("#course_num").focus();
   }
 });
 
