@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170210140000) do
+ActiveRecord::Schema.define(version: 20170809114055) do
 
   create_table "bookmarks", force: true do |t|
     t.integer  "user_id",       null: false
@@ -44,6 +44,20 @@ ActiveRecord::Schema.define(version: 20170210140000) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "reserves_caches", force: true do |t|
+    t.string "classid",       limit: 10
+    t.string "name"
+    t.string "number",        limit: 50
+    t.string "section",       limit: 10
+    t.string "number_search", limit: 60
+    t.string "instructor"
+    t.string "instructorid",  limit: 10
+    t.string "semester",      limit: 50
+    t.string "library",       limit: 50
+  end
+
+  add_index "reserves_caches", ["number", "section"], name: "index_reserves_caches_on_number_and_section", using: :btree
 
   create_table "searches", force: true do |t|
     t.text     "query_params"

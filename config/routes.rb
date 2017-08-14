@@ -26,6 +26,7 @@ BulSearch::Application.routes.draw do
   get 'browse/:id' => 'browse#from_item', as: :browse_item
 
   # Course Reserves
+  get 'reserves/cache/update' => 'reserves#cache_update'
   get 'reserves/search' => 'reserves#search', as: :reserves_search
   get 'reserves/:classid/:classnumber' => 'reserves#show', as: :reserves_show
   get 'reserves/' => 'reserves#search'
