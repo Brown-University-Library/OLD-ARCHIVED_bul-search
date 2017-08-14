@@ -58,14 +58,20 @@ class BestBet
     if matches.count == 0
       nil
     elsif matches.count == 1
-      # details URL
+      # Details URL
+      #
+      # This URL does not work in dev because of missing /find/
+      # We should pass this prefix somehow to the model but
+      # for now I don't want to pollute the model with route
+      # information.
       return {
         :name => "#{matches[0].name}",
         :url => "/reserves/#{matches[0].classid}/#{matches[0].number_section_url}",
         :description => "Course reserves for: #{matches[0].name} (#{matches[0].number_section})"
       }
     else
-      # search URL
+      # Search URL
+      # See note above about /find/
       return {
         :name => "#{matches[0].name} (multiple matches)",
         :url => "/reserves/?course_num=#{matches[0].number_url}",
