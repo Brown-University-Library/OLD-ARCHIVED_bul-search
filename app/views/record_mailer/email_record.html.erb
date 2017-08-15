@@ -9,22 +9,8 @@
   <%= html_title_line("Format", info.format) %>
   <%= html_title_line("Language", info.language) %>
 
-  <% loc_count = info.locations.count %>
-  <% cb_count = info.callnumbers.count %>
-
-  <% if loc_count == 0 && cb_count == 0 %>
-    <% # nothing to print %>
-  <% elsif loc_count == 1 && cb_count == 1 %>
-    Location: <%= info.locations.first %><br/>
-    Call Number: <%= info.callnumbers.first %><br/>
-  <% elsif loc_count == 0 && cb_count > 0 %>
-    Call Numbers: <%= info.callnumbers.join(", ") %><br/>
-  <% elsif loc_count == 1 %>
-    Location: <%= info.locations.first %><br/>
-  <% else %>
-    <% # Ignore call numbers because we cannot cross-reference
-       # them with locations %>
-    Locations: <%= info.locations.join(", ") %><br/>
+  <% info.items.each do |item| %>
+    Location: <%= item.location_text %>, Call number: <%= item.callnumber %> <br/>
   <% end %>
 
   Bookmark: <%= polymorphic_url(document, @url_gen_params) %><br/>

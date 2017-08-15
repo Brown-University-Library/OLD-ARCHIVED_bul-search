@@ -57,26 +57,8 @@ class SolrDocument
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension( Blacklight::Document::Sms )
 
-  def location_data_url
-    "https:#{ENV['AVAILABILITY_SERVICE']}#{self.fetch('id')}"
-  end
-
-  def make_http_call url
-    begin
-      resp = open(url, 'rb')
-      resp.read
-    rescue StandardError => e
-      Rails.logger.error e.message
-      Rails.logger.error e.backtrace.join("\n")
-      nil
-    end
-  end
-
   def get_availability_info
-    url = location_data_url
-    availability_response = make_http_call url
-    return nil if (availability_response.nil? || availability_response.empty?)
-    JSON.parse(availability_response)
+    Availability.get(ENV['AVAILABILITY_SERVICE'], self.fetch('id'))
   end
 
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
