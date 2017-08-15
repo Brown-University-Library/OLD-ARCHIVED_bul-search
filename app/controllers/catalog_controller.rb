@@ -254,7 +254,13 @@ class CatalogController < ApplicationController
 
   def show
     @render_opensearch = true
-    super
+    r = super
+    # puts "=="
+    # puts __ENCODING__
+    # puts @document[:title_display]
+    # puts "=="
+    # byebug
+    r
   end
 
   # Blacklight override

@@ -1,2 +1,2 @@
-<% # bookmark/folder functions -%>
-<%= render_document_heading(document, :tag => :h3) %>
+<% # TODO: add .html_safe once we fix our data in Solr %>
+<h3><%= (document[:title_display] || "") %></h3>
