@@ -333,14 +333,13 @@ class Easy
 
     eds = Eds.new(ip)
     eds_results = eds.search(query)
-
     results = {}
     results['response'] = {}
-    results['response']['more'] = "TBD"
-    results['response']['all'] = "TBD"
+    results['response']['more'] = "http://search.ebscohost.com/?direct=true&bquery=#{query}&type=0&site=eds-live"
+    results['response']['all'] = results['response']['more']
     results['response']['raw'] = "/easy/search?source=eds_raw&q=#{query}"
     results['response']['docs'] = eds_results.items
-    results['response']['advanced'] = "TBD"
+    results['response']['advanced'] = "http://search.ebscohost.com/?direct=true&bquery=#{query}&type=1&site=eds-live"
     results['response']['numFound'] = eds_results.total_hits
     return results['response']
   end

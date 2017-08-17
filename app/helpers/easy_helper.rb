@@ -29,7 +29,7 @@ module EasyHelper
   end
 
   def eds_native_url(query)
-    return "TBD"
+    return "http://search.ebscohost.com/?direct=true&bquery=#{query}&type=0&site=eds-live"    
   end
 
   def bdr_configured?
