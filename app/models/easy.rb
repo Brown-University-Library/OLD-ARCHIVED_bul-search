@@ -13,6 +13,8 @@ class Easy
       @results = get_summon(query)
     elsif source == "eds"
       @results = get_eds(query, ip)
+    elsif source == "eds_raw"
+      @results = get_eds_raw(query, ip)
     elsif source == 'newspaper_articles_eds'
       @results = get_eds_newspaper(query, ip)
     elsif source == 'newspaper_articles'
@@ -314,6 +316,15 @@ class Easy
     return results['response']
   end
 
+  def get_eds_raw(query, ip)
+    if ENV["EDS_PROFILE_ID"] == nil
+      Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
+      return []
+    end
+    eds = Eds.new(ip)
+    eds.search_raw(query)
+  end
+
   def get_eds(query, ip)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
@@ -327,6 +338,7 @@ class Easy
     results['response'] = {}
     results['response']['more'] = "TBD"
     results['response']['all'] = "TBD"
+    results['response']['raw'] = "/easy/search?source=eds_raw&q=#{query}"
     results['response']['docs'] = eds_results.items
     results['response']['advanced'] = "TBD"
     results['response']['numFound'] = eds_results.total_hits

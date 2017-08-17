@@ -38,6 +38,20 @@ class Eds
     EdsResults.from_response(results)
   end
 
+  def search_raw(text)
+    if text.empty?
+      return "[]"
+    end
+    options = {
+      query: text,
+      results_per_page: 5,
+      highlight: false,
+      limiters: ["RV:y"]      # peer-reviewed only (yes)
+    }
+    results = @session.search(options)
+    results.records    
+  end
+
   def newspapers_count(text)
     if text.empty?
       return 0
