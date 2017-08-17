@@ -18,15 +18,13 @@ class EdsResults
     def self.items_from_response(response)
       items = []
       response.records.each do |r|
-        # Do we also need package/vendor or is the info in "database" enough?
-        # (ask Jeanette)
         item = {
           id: r.eds_result_id,
           title: r.eds_title,
-          author: self.clean_author(r.eds_authors.first),
+          author: clean_author(r.eds_authors.first),
           year: r.eds_publication_year,
           type: r.eds_publication_type,
-          link: r.eds_plink,
+          link: preferred_link(r),
           venue: r.eds_source_title,
           volume: r.eds_volume,
           issue: r.eds_issue,
@@ -36,6 +34,34 @@ class EdsResults
         items << item
       end
       items
+    end
+
+    def self.preferred_link(r)
+      link = easyarticle_link(r.all_links)
+      if link == nil
+        link = easyaccess_link(r.all_links)
+        if link == nil
+          link = r.eds_plink
+        end
+      end
+      link
+    end
+
+    def self.easyarticle_link(links)
+      easy_link(links, "//library.brown.edu/easyarticle/")
+    end
+
+    def self.easyaccess_link(links)
+      easy_link(links, "//library.brown.edu/easyaccess/find")
+    end
+
+    def self.easy_link(links, prefix)
+      links.each do |link|
+        if (link[:url] || "").include?(prefix)
+          return link[:url]
+        end
+      end
+      nil
     end
 
     def self.results_to_file(response)
