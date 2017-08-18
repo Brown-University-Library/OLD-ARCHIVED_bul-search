@@ -139,7 +139,7 @@ function summonBox(query) {
           //addItemsToBox(summonSet.docs, 'summon');
           //addMoreLink('summon', summonSet.more, summonSet.numFound);
           var rawLink = summonSet.raw;
-          if (rawLink && (rawLink.indexOf("dblightcit") != -1)) {
+          if (rawLink && (document.location.href.indexOf("dblightcit") != -1)) {
             rawLink = rawLink.replace("/easy/", "/find/easy/")
           }
           var context = {
