@@ -4,7 +4,9 @@
 <h4>Course #<b> <%= @materials.course.number_section%></b>
 &nbsp;&nbsp;&nbsp;&nbsp;Semester: <b><%= @materials.course.semester%></b>
 </h4>
-<h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor_search)) %></h3>
+<% if @materials.course.instructor %>
+  <h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor)) %></h3>
+<% end %>
 <div class="panel panel-default">
   <div class="panel-heading">In-Library Course Reserves</div>
   <div class="panel-body">
@@ -82,6 +84,17 @@
     <% end %>
     </ul>
   <% end %>
-  </div>
 
+  <% if @materials.course.lib_guide_url || @materials.course.subject_guide_url %>
+    <p>See Also</p>
+    <ul>
+      <% if @materials.course.lib_guide_url %>
+        <li><a href="<%= @materials.course.lib_guide_url %>" target="_blank">Lib Guide</a>
+      <% end %>
+      <% if @materials.course.subject_guide_url %>
+        <li><a href="<%= @materials.course.subject_guide_url%>" target="_blank">Subject Guide</a>
+      <% end %>
+    </ul>
+  <% end %>
+  </div>
 </div> <!-- panel -->

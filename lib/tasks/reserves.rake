@@ -6,7 +6,7 @@ namespace :josiah do
     puts "Updating cache reserves cache..."
     reserves = Reserves.new
     errors = reserves.cache_update()
-    if errors != nil
+    if errors.count == 0 
       puts "OK"
     else
       puts "Errors updating resrves:"

@@ -69,18 +69,6 @@ class Reserves
     cache.map {|x| ReservesCourse.from_cache(x)}
   end
 
-  # # Fetches courses by number from the OCRA
-  # def courses_by_course_num_ocra(course_num)
-  #   ocra = ReservesOcra.new
-  #   ocra.courses_by_course_num(course_num)
-  # end
-  #
-  # # Fetches courses by instructor from the OCRA
-  # def courses_by_instructor_ocra(instructor)
-  #   ocra = ReservesOcra.new
-  #   ocra.courses_by_instructor(instructor)
-  # end
-
   # Fetches the details for a course from OCRA
   def items_for_course(id)
     ocra = ReservesOcra.new
