@@ -138,11 +138,15 @@ function summonBox(query) {
         if (summonSet.docs.length > 0) {
           //addItemsToBox(summonSet.docs, 'summon');
           //addMoreLink('summon', summonSet.more, summonSet.numFound);
+          var rawLink = summonSet.raw;
+          if (rawLink && (rawLink.indexOf("dblightcit") != -1)) {
+            rawLink = rawLink.replace("/easy/", "/find/easy/")
+          }
           var context = {
             'docs': summonSet.docs,
             'total': commaSeparatedNumber(summonSet.numFound),
             'more': summonSet.more,
-            'raw': summonSet.raw,
+            'raw': rawLink,
             'advanced': summonSet.advanced,
             'max_title_length': maxTitleLength
           };
