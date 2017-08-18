@@ -85,16 +85,8 @@
     </ul>
   <% end %>
 
-  <% if @materials.course.lib_guide_url || @materials.course.subject_guide_url %>
-    <p>See Also</p>
-    <ul>
-      <% if @materials.course.lib_guide_url %>
-        <li><a href="<%= @materials.course.lib_guide_url %>" target="_blank">Lib Guide</a>
-      <% end %>
-      <% if @materials.course.subject_guide_url %>
-        <li><a href="<%= @materials.course.subject_guide_url%>" target="_blank">Subject Guide</a>
-      <% end %>
-    </ul>
+  <% if @materials.course.lib_guide_url %>
+    <p>See also the <a href="<%= @materials.course.lib_guide_url %>" target="_blank">course guide to library resources</a>.</p>
   <% end %>
   </div>
 </div> <!-- panel -->
