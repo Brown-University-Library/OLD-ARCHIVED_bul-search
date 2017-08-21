@@ -87,9 +87,16 @@ function addAvailability(availabilityResponse) {
         item['item_request_url'] = null;
       }
 
-      // add jcb link if necessary
+      // add jcb aeon link if necessary
       if ( item['location'].slice(0, 3) == "JCB" ) {
         item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
+      }
+
+      // add hay aeon link if necessary
+      if ( item['location'].slice(0, 3) == "HAY" ) {
+        if ( isValidHayAeonLocation(item['location']) == true ) {
+          item['hay_aeon_url'] = hayAeonFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
+        }
       }
 
     });
