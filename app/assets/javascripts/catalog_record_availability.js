@@ -87,9 +87,18 @@ function addAvailability(availabilityResponse) {
         item['item_request_url'] = null;
       }
 
-      // add jcb link if necessary
+      // add jcb aeon link if necessary
       if ( item['location'].slice(0, 3) == "JCB" ) {
+        console.log( 'jcb title, ```' + title + '```' )
         item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
+      }
+
+      // add hay aeon link if necessary
+      if ( item['location'].slice(0, 3) == "HAY" ) {
+        console.log( '- hay title, ```' + title + '```' )
+        if ( isValidHayAeonLocation(item['location']) == true ) {
+          item['hay_aeon_url'] = hayAeonFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
+        }
       }
 
     });
@@ -112,6 +121,7 @@ function getAuthor() {
   // for JCB link
   // slicing occurs in application.js
   var author = $('h5[class="title-subheading"]')[0].textContent;
+  console.log( 'author, ```' + author + '```' );
   return author;
 }
 

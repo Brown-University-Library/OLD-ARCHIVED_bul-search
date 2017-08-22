@@ -72,6 +72,13 @@ function getAvailability(bibs) {
                     item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
                   }
 
+                  // add hay aeon link if necessary
+                  if ( item['location'].slice(0, 3) == "HAY" ) {
+                    if ( isValidHayAeonLocation(item['location']) == true ) {
+                      item['hay_aeon_url'] = hayAeonFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
+                    }
+                  }
+
                 });
 
                 var elem = $('[data-availability="' + bib + '"]');
