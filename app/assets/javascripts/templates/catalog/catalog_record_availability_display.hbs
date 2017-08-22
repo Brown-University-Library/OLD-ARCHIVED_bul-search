@@ -56,7 +56,7 @@
             {{/if}}
           </td>
           <td>{{ callnumber }}</td>
-          <td>{{ status }} {{#if scan}} <a href="{{scan}}" class="scan">scan</a> | <a href="{{item_request_url}}">item</a>{{/if}} {{#if jcb_url}} <a href="{{jcb_url}}" class="scan">request-access</a> {{/if}}</td>
+          <td>{{ status }} {{#if scan}} <a href="{{scan}}" class="scan">scan</a> | <a href="{{item_request_url}}">item</a>{{/if}} {{#if jcb_url}} <a href="{{jcb_url}}" class="scan">request-access</a> {{/if}} {{#if hay_aeon_url}} <a href="{{hay_aeon_url}}" class="scan">request-access</a> {{/if}}</td>
         </tr>
       {{/each}}
     </tbody>

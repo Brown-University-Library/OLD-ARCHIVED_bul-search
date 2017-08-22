@@ -99,21 +99,24 @@ function itemRequestFullLink(barCode, bib) {
 ============================================================
 JCB Aeon link code
 ============================================================
-Reference Josiah pages: TODO- update these to search.library.brown.edu urls
-- `JCB`: <http://josiah.brown.edu/record=b3902979>
-- `JCB REF`: <http://josiah.brown.edu/record=b6344512>
-- `JCB VISUAL MATERIALS`: <http://josiah.brown.edu/record=b5660654>
-- `JCB - multiple copies`: <http://josiah.brown.edu/record=b2223864>
-- Very-long-title handling: <http://josiah.brown.edu/record=b5713050>  */
+Reference Josiah pages:
+- `JCB`: <http://127.0.0.1:3000/catalog/b3902979>
+- `JCB REF`: <http://127.0.0.1:3000/catalog/b6344512>
+- `JCB VISUAL MATERIALS`: <http://127.0.0.1:3000/catalog/b5660654>
+- `JCB - multiple copies`: <http://127.0.0.1:3000/catalog/b2223864>
+- Very-long-title handling: <http://127.0.0.1:3000/catalog/b5713050>  */
 
 function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
-  // console.log( item );
+  // console.log( 'starting' )
   var jcb_ref_num = bib;
   var jcb_title = extractTitle( title );
   var jcb_author = extractAuthor( author );
   var jcb_publisher = publisher;  // pre-sliced
   var jcb_callnumber = callnumber;
   return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
+  // var full_url = "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
+  // console.log( '- returning full_url value of, ```' + full_url + '```' )
+  // return full_url;
 }
 
 /*
@@ -127,50 +130,48 @@ Hay Aeon link code
 ============================================================
 Note: initially very similar to JCB link code, but I (bjd) expect this to end up being different
 Reference Josiah pages: TODO- update these to search.library.brown.edu urls
-- `HAY BROADSIDES` - regular: <http://josiah.brown.edu/record=b3326323>
-- `HAY BROADSIDES` - multiple 'HAY BROADSIDES' copies: <http://josiah.brown.edu/record=b3000585>
-- `HAY STAR & HAY LINCOLN` - multiple copies, mixture of two: <http://josiah.brown.edu/record=b1870356>
-- `HAY STAR` - very-long-title handling: <http://josiah.brown.edu/record=b1001443>  */
+- `HAY BROADSIDES` - regular: <http://127.0.0.1:3000/catalog/b3326323>
+- `HAY BROADSIDES` - multiple 'HAY BROADSIDES' copies: <http://127.0.0.1:3000/catalog/b3000585>
+- `HAY STAR & HAY LINCOLN` - multiple copies, mixture of two: <http://127.0.0.1:3000/catalog/b1870356>
+- `HAY STAR` - very-long-title handling: <http://127.0.0.1:3000/catalog/b1001443>  */
 
 function hayAeonFullLink( bib, title, author, publisher, callnumber ) {
   /* called by catalog_record_availability.js */
-  // console.log( item );
-  var hayA_root_url = "https://brown.aeon.atlas-sys.com/logon/?Action=10&Form=30";
+  console.log( '- starting hayAeonFullLink()' );
+  var hayA_root_url = "https://brown.aeon.atlas-sys.com/logon/";
   var hayA_ref_num = bib;
   var hayA_title = extractTitle( title );
   var hayA_author = extractAuthor( author );
   var hayA_publisher = publisher;  // pre-sliced
   var hayA_callnumber = callnumber;
-  var full_url = hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&ItemInfo2=";
-  return full_url;
+  console.log( 'title, ```' + title + '```' )
+  // var full_url = hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&ItemInfo2=";
+  // console.log( '- returning full_url value of, ```' + full_url + '```' )
+  // return full_url;
+  return hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&ItemInfo2=";
 }
 
-function isValidHayAeonLocation( item['location'] ) {
+function isValidHayAeonLocation( josiah_location ) {
   /* called by catalog_record_availability.js */
+  console.log( '- starting isValidHayAeonLocation()' )
   var hay_found = false;
   var non_aeon_locations = [
-      "HAY ANNEX TEMP",
-      "HAY ARCHIVES MANUSCRIPTS",
-      "HAY COURSE RESERVES",
-      "HAY MANUSCRIPTS"
-      ];
-  for( var i=0; i < bib_items_entry_rows.length; i++ ) {
-      var row = bib_items_entry_rows[i];
-      var josiah_location = row.children[0].textContent.trim();
-      console.log( "- current josiah_location, `" + josiah_location + "`" );
-      if ( josiah_location.slice(0, 3) == "HAY" ){
-          console.log( "- seeing HAY slice" );
-          var index_of_val = non_aeon_locations.indexOf( josiah_location );
-          console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
-          if ( index_of_val == -1 ) {
-              console.log( "- hay_found is `true`" );
-              hay_found = true;
-              break;
-          }
-      }
+    "HAY ANNEX TEMP",
+    "HAY ARCHIVES MANUSCRIPTS",
+    "HAY COURSE RESERVES",
+    "HAY MANUSCRIPTS"
+    ];
+  if ( josiah_location.slice(0, 3) == "HAY" ){
+    console.log( "- seeing HAY slice" );
+    var index_of_val = non_aeon_locations.indexOf( josiah_location );
+    console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
+    if ( index_of_val == -1 ) {
+      console.log( "- hay_found is `true`" );
+      hay_found = true;
+    }
   }
+  console.log( '- returning hay_found value of, ```' + hay_found + '```' )
   return hay_found;
-
 }
 
 /*
