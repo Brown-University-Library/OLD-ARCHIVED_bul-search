@@ -95,7 +95,7 @@ function addAvailability(availabilityResponse) {
 
       // add hay aeon link if necessary
       if ( item['location'].slice(0, 3) == "HAY" ) {
-        console.log( 'hay title, ```' + title + '```' )
+        console.log( '- hay title, ```' + title + '```' )
         if ( isValidHayAeonLocation(item['location']) == true ) {
           item['hay_aeon_url'] = hayAeonFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
         }
