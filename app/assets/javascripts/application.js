@@ -133,7 +133,8 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 - `HAY BROADSIDES` - regular: <http://127.0.0.1:3000/catalog/b3326323>
 - `HAY BROADSIDES` - multiple 'HAY BROADSIDES' copies: <http://127.0.0.1:3000/catalog/b3000585>
 - `HAY STAR & HAY LINCOLN` - multiple copies, mixture of two: <http://127.0.0.1:3000/catalog/b1870356>
-- `HAY STAR` - very-long-title handling: <http://127.0.0.1:3000/catalog/b1001443>  */
+- `HAY STAR` - very-long-title handling: <http://127.0.0.1:3000/catalog/b1001443>
+- multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
 
 function hayAeonFullLink( bib, title, author, publisher, callnumber ) {
   /* called by catalog_record_availability.js */
