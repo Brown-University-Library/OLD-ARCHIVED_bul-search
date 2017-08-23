@@ -258,7 +258,7 @@ class CatalogController < ApplicationController
       # if the id includes the checksum digit, redirect to the
       # one without it.
       new_id = id[0..7]
-      redirect_to catalog_path(id: new_id), status: 302
+      redirect_to catalog_path(id: new_id, format: params[:format]), status: 302
       return
     end
 
