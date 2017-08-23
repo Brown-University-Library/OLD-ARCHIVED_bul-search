@@ -253,13 +253,17 @@ class CatalogController < ApplicationController
   end
 
   def show
+    id = params[:id] || ""
+    if id.length == 9
+      # if the id includes the checksum digit, redirect to the
+      # one without it.
+      new_id = id[0..7]
+      redirect_to catalog_path(id: new_id), status: 302
+      return
+    end
+
     @render_opensearch = true
     r = super
-    # puts "=="
-    # puts __ENCODING__
-    # puts @document[:title_display]
-    # puts "=="
-    # byebug
     r
   end
 
