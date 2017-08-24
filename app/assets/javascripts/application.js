@@ -137,7 +137,7 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 - `HAY MANUSCRIPTS` - _NO_ Aeon link should appear: <http://127.0.0.1:3000/catalog/b2499606>
 - multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
 
-function hayAeonFullLink( bib, title, author, publisher, callnumber ) {
+function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) {
   /* called by catalog_record_availability.js */
   console.log( '- starting hayAeonFullLink()' );
   var hayA_root_url = "https://brown.aeon.atlas-sys.com/logon/";
@@ -146,11 +146,10 @@ function hayAeonFullLink( bib, title, author, publisher, callnumber ) {
   var hayA_author = extractAuthor( author );
   var hayA_publisher = publisher;  // pre-sliced
   var hayA_callnumber = callnumber;
-  console.log( 'title, ```' + title + '```' )
-  // var full_url = hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&ItemInfo2=";
+  var hayA_location = location;
+  var full_url = hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&Location=" + hayA_location + "&ItemInfo2=";
   // console.log( '- returning full_url value of, ```' + full_url + '```' )
-  // return full_url;
-  return hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&ItemInfo2=";
+  return full_url;
 }
 
 function isValidHayAeonLocation( josiah_location ) {
