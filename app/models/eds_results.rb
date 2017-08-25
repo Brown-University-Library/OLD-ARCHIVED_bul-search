@@ -42,16 +42,15 @@ class EdsResults
         link = easyaccess_link(r.all_links)
         if link == nil
           link = r.eds_plink
+          if link != nil
+            # Prepend revproxy to the EBSCO links to make sure users
+            # go through Shibboleth. Otherwise users working from
+            # outside our IP range are confronted with an EBSCO
+            # login page. RevProxy makes sure users are presented
+            # with Brown's Shibboleth authentication instead.
+            link = "https://login.revproxy.brown.edu/login?url=#{link}"
+          end
         end
-      end
-
-      if link != nil
-        # Prepend revproxy to the all links to make sure users
-        # go through Shibboleth. Otherwise users working from
-        # outside our IP range are confronted with an EBSCO
-        # login page. RevProxy makes sure users are presented
-        # with Brown's Shibboleth authentication instead.
-        link = "https://login.revproxy.brown.edu/login?url=#{link}"
       end
       link
     end
