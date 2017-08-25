@@ -153,8 +153,6 @@ function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) 
 }
 
 function isValidHayAeonLocation( josiah_location ) {
-  // TODO: Enable this once we go live with Aeon.
-  return false;
   /* called by catalog_record_availability.js */
   console.log( '- starting isValidHayAeonLocation()' )
   var hay_found = false;
