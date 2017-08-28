@@ -8,15 +8,15 @@ require 'uri'
 class Easy
   include BlacklightHelper
 
-  def initialize(source, query, ip = nil)
+  def initialize(source, query, guest = true)
     if source == 'summon'
       @results = get_summon(query)
     elsif source == "eds"
-      @results = get_eds(query, ip)
+      @results = get_eds(query, guest)
     elsif source == "eds_raw"
-      @results = get_eds_raw(query, ip)
+      @results = get_eds_raw(query, guest)
     elsif source == 'newspaper_articles_eds'
-      @results = get_eds_newspaper(query, ip)
+      @results = get_eds_newspaper(query, guest)
     elsif source == 'newspaper_articles'
       @results = get_summon_newspaper(query)
     elsif source == 'bdr'
@@ -316,22 +316,22 @@ class Easy
     return results['response']
   end
 
-  def get_eds_raw(query, ip)
+  def get_eds_raw(query, guest)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
       return []
     end
-    eds = Eds.new(ip)
+    eds = Eds.new(guest)
     eds.search_raw(query)
   end
 
-  def get_eds(query, ip)
+  def get_eds(query, guest)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
       return {}
     end
 
-    eds = Eds.new(ip)
+    eds = Eds.new(guest)
     eds_results = eds.search(query)
     results = {}
     results['response'] = {}
@@ -344,12 +344,12 @@ class Easy
     return results['response']
   end
 
-  def get_eds_newspaper(query, ip)
+  def get_eds_newspaper(query, guest)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS newspaper search skipped (no EDS_PROFILE_ID available)"
       return {}
     end
-    eds = Eds.new(ip)
+    eds = Eds.new(guest)
     count = eds.newspapers_count(query)
     response = {}
     response[:more] = "TBD"

@@ -4,11 +4,8 @@ require "./app/helpers/application_helper.rb"
 require 'ebsco/eds'
 
 class Eds
-  include ApplicationHelper
-
-  def initialize(ip = nil)
+  def initialize(guest)
     # TODO: make the credentials a parameter rather than ENV values
-    guest = !trusted_ip?(ip)
     @profile_id = ENV["EDS_PROFILE_ID"]
     @credentials = {
       user: ENV["EDS_USER_ID"],
@@ -16,10 +13,6 @@ class Eds
       profile: @profile_id,
       guest: guest
     }
-    # puts "==================="
-    # puts "EDS: guest? #{guest}"
-    # puts "EDS: IP #{ip}"
-    # puts "==================="
     @session = EBSCO::EDS::Session.new(@credentials)
   end
 
@@ -49,7 +42,7 @@ class Eds
       limiters: ["RV:y"]      # peer-reviewed only (yes)
     }
     results = @session.search(options)
-    results.records    
+    results.records
   end
 
   def newspapers_count(text)

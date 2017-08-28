@@ -3,6 +3,8 @@
 class EasyController < ApplicationController
   include Blacklight::Catalog
   include Blacklight::BlacklightHelperBehavior
+  include ApplicationHelper # for trusted_ip?()
+
   def home
     @easy_search = true
     @query = params[:q]
@@ -18,7 +20,7 @@ class EasyController < ApplicationController
 
   def search
     beginTime = Time.now
-    @search_result = Easy.new(params[:source], params[:q], request.remote_ip)
+    @search_result = Easy.new(params[:source], params[:q], is_guest_user?)
     endTime = Time.now
     elapsed_ms = (endTime - beginTime) * 1000.0
     save_search(params, elapsed_ms)
@@ -30,6 +32,13 @@ class EasyController < ApplicationController
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n")
     render json: empty_set().to_json
+  end
+
+  def is_guest_user?
+    if current_user != nil
+      return false
+    end
+    !trusted_ip?(request.remote_ip)
   end
 
   def save_search(params, elapsed_ms)
