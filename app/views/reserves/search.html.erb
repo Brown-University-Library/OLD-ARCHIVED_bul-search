@@ -106,55 +106,76 @@ function renderCourseList(list) {
 }
 </script>
 
+<div class="container">
 
-<h1>In-Library Course Reserves</h1>
-<div>
-<%= form_tag(reserves_search_path, method: "get", class: "form-inline") do %>
-  <div class="form-group">
-    <%= label_tag(:course_num, "Course #", for:"course_num") %>
-    <%= text_field_tag(:course_num, @course_num, class: "form-control") %>
-  </div>
-  <div class="form-group">
-    <%= label_tag(:instructor, "Instructor", for:"instructor") %>
-    <%= text_field_tag(:instructor, @instructor, class: "form-control") %>
-  </div>
-  <div class="form-group">
-    <%= label_tag(:course_name, "Course Name", for:"course_name") %>
-    <%= text_field_tag(:course_name, @course_name, class: "form-control") %>
-  </div>
-  <% # submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
-<% end %>
-</div>
-
-<div>&nbsp;</div>
-<div>
-  <% if @no_courses_msg %>
-    <div class="alert alert-danger" role="alert"><%= @no_courses_msg.html_safe %></div>
-  <% end %>
-
-  <% if @courses.count > 0 %>
-    <div class="panel panel-default">
-      <!-- Default panel contents -->
-      <div class="panel-heading">The following courses were found</div>
-      <!-- <div class="panel-body">
-        <p>Select a course to view in-library and online reserves for it</p>
-      </div> -->
-      <table class="table">
-        <tr>
-          <th>Course #</th>
-          <th>Semester</th>
-          <th>Course Name</th>
-          <th>Professor</th>
-        </tr>
-        <% @courses.each do |c| %>
-          <tr id="row_<%= c.classid %>" class="rowx">
-            <td><%= link_to(c.number_section, reserves_show_path(classid: c.classid, classnumber: c.number_section_url)) %></td>
-            <td><%= c.semester %>
-            <td><%= c.name %></td>
-            <td><%= c.instructor %></td>
-          </tr>
-        <% end %>
-      </table>
+  <div class="row">
+    <div id="courseList" class="col-md-9">
+      <h1>In-Library Course Reserves</h1>
+      <p>Find materials in reserves for your courses</p>
+      <div>
+      <%= form_tag(reserves_search_path, method: "get", class: "form-inline") do %>
+        <div class="form-group">
+          <%= label_tag(:course_num, "Course #", for:"course_num") %>
+          <%= text_field_tag(:course_num, @course_num, class: "form-control") %>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:instructor, "Instructor", for:"instructor") %>
+          <%= text_field_tag(:instructor, @instructor, class: "form-control") %>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:course_name, "Course Name", for:"course_name") %>
+          <%= text_field_tag(:course_name, @course_name, class: "form-control") %>
+        </div>
+        <% # submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
+      <% end %>
+      </div>
     </div>
-  <% end %>
+
+    <div id="sidebar" class="col-md-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Tools
+        </div>
+        <div class="panel-body">
+          <p>Faculty and staff can manage course reserves via
+            <a href="http://library.brown.edu/reserves" target="_blank">OCRA</a>.
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- row -->
+
+  <div class="row">
+    <div>
+      <% if @no_courses_msg %>
+        <div class="alert alert-danger" role="alert"><%= @no_courses_msg.html_safe %></div>
+      <% end %>
+
+      <% if @courses.count > 0 %>
+        <div class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">The following courses were found</div>
+          <!-- <div class="panel-body">
+            <p>Select a course to view in-library and online reserves for it</p>
+          </div> -->
+          <table class="table">
+            <tr>
+              <th>Course #</th>
+              <th>Semester</th>
+              <th>Course Name</th>
+              <th>Professor</th>
+            </tr>
+            <% @courses.each do |c| %>
+              <tr id="row_<%= c.classid %>" class="rowx">
+                <td><%= link_to(c.number_section, reserves_show_path(classid: c.classid, classnumber: c.number_section_url)) %></td>
+                <td><%= c.semester %>
+                <td><%= c.name %></td>
+                <td><%= c.instructor %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </div> <!-- row -->
 </div>
