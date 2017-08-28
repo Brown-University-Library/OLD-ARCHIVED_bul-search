@@ -17,10 +17,11 @@ class EasyController < ApplicationController
   end
 
   def search
+    beginTime = Time.now
     @search_result = Easy.new(params[:source], params[:q], request.remote_ip)
-    #Add search to history for search history page.
-    s = Search.create(:query_params => params)
-    add_to_search_history(s)
+    endTime = Time.now
+    elapsed_ms = (endTime - beginTime) * 1000.0
+    save_search(params, elapsed_ms)
     #Set session variable with this query.
     set_last_easy_search(params[:q])
     @search_result = empty_set() if @search_result == nil
@@ -29,6 +30,13 @@ class EasyController < ApplicationController
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n")
     render json: empty_set().to_json
+  end
+
+  def save_search(params, elapsed_ms)
+    query_params = params
+    query_params[:elapsed_ms] = elapsed_ms
+    s = Search.create(:query_params => params)
+    add_to_search_history(s)
   end
 
   def search_action_url
