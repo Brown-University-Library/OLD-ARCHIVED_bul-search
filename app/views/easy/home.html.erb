@@ -127,43 +127,44 @@ function sortFilterFacetList() {
 
 //Add the Journal Articles box via Summon.
 function summonBox(query) {
-    var source = '&source=summon';
-    if (isEdsJournals()) {
-      source = "&source=eds";
-    }
-    $.ajax(dataUrl + source, {
-      success: function(response) {
-        $('#summon i.waiting').hide();
-        var summonSet = response;
-        if (summonSet.docs.length > 0) {
-          //addItemsToBox(summonSet.docs, 'summon');
-          //addMoreLink('summon', summonSet.more, summonSet.numFound);
-          var rawLink = summonSet.raw;
+  var source = '&source=summon';
+  if (isEdsJournals()) {
+    source = "&source=eds";
+  }
+  $.ajax(dataUrl + source, {
+    success: function(response) {
+      $('#summon i.waiting').hide();
+      var summonSet = response;
+      if (summonSet.docs.length > 0) {
+        var rawLink = null;
+        if (isDebug()) {
+          rawLink = summonSet.raw;
           if (rawLink && (document.location.href.indexOf("dblightcit") != -1)) {
             rawLink = rawLink.replace("/easy/", "/find/easy/")
           }
-          var context = {
-            'docs': summonSet.docs,
-            'total': commaSeparatedNumber(summonSet.numFound),
-            'more': summonSet.more,
-            'raw': rawLink,
-            'advanced': summonSet.advanced,
-            'max_title_length': maxTitleLength
-          };
-          var html = HandlebarsTemplates['easy/summon_results'](context);
-          $('#summon').append(html);
-          //add count to facet on left
-          addFormats([{
-            'format': 'Journal Articles',
-            'more': summonSet.more,
-            'count': commaSeparatedNumber(summonSet.numFound)
-          }]);
-        } else {
-          var txt = "<a href=\"" + summonSet.all + "\">expanding your search</a>"
-          $('#summon').append('<h5>No results.  Try ' + txt + '</h5>');
+        }
+        var context = {
+          'docs': summonSet.docs,
+          'total': commaSeparatedNumber(summonSet.numFound),
+          'more': summonSet.more,
+          'raw': rawLink,
+          'advanced': summonSet.advanced,
+          'max_title_length': maxTitleLength
         };
-      }
-    });
+        var html = HandlebarsTemplates['easy/summon_results'](context);
+        $('#summon').append(html);
+        //add count to facet on left
+        addFormats([{
+          'format': 'Journal Articles',
+          'more': summonSet.more,
+          'count': commaSeparatedNumber(summonSet.numFound)
+        }]);
+      } else {
+        var txt = "<a href=\"" + summonSet.all + "\">expanding your search</a>"
+        $('#summon').append('<h5>No results.  Try ' + txt + '</h5>');
+      };
+    }
+  });
 };
 
 
@@ -324,6 +325,10 @@ function commaSeparatedNumber(val){
 
 function isEdsJournals() {
   return (location.search.indexOf("&journals=eds") > -1);
+}
+
+function isDebug() {
+  return (location.search.indexOf("&debug=true") > -1);
 }
 </script>
 
