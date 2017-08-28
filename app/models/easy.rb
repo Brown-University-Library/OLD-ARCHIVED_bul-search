@@ -351,7 +351,7 @@ class Easy
     eds = Eds.new(guest, trusted_ip)
     count = eds.newspapers_count(query)
     response = {}
-    response[:more] = "" # TODO
+    response[:more] = Eds.native_newspapers_url(query, trusted_ip)
     response[:numFound] = count
     return response
   end

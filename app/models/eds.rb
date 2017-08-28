@@ -41,6 +41,16 @@ class Eds
     url
   end
 
+  def self.native_newspapers_url(query, trusted_ip)
+    # TODO: Apply filter for newspaper
+    url = "http://search.ebscohost.com/login.aspx?direct=true&bquery=#{query}&type=1&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    if !trusted_ip
+      # Ditto what I said for native_url()
+      url = "https://login.revproxy.brown.edu/login?url=" + url
+    end
+    url
+  end
+
   def search(text)
     if text.empty?
       return EdsResults.new([], [], 0)
