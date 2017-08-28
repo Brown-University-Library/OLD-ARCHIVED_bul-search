@@ -4,7 +4,12 @@ require "./app/helpers/application_helper.rb"
 require 'ebsco/eds'
 
 class Eds
-  def initialize(guest)
+  def initialize(guest_user, trusted_ip)
+    if trusted_ip
+      guest = false
+    else
+      guest = !trusted_ip
+    end
     # TODO: make the credentials a parameter rather than ENV values
     @profile_id = ENV["EDS_PROFILE_ID"]
     @credentials = {
@@ -14,6 +19,24 @@ class Eds
       guest: guest
     }
     @session = EBSCO::EDS::Session.new(@credentials)
+  end
+
+  def self.native_url(query, trusted_ip)
+    url = "http://search.ebscohost.com/login.aspx?direct=true&bquery=#{query}&type=0&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    if !trusted_ip
+      # Force users *not on campus* to authenticate through Shibboleth,
+      # otherwise EBSCO will ask them to authenticate with them and we
+      # don't want that.
+      url = "https://login.revproxy.brown.edu/login?url=" + url
+    end
+  end
+
+  def self.native_advanced_url(query, trusted_ip)
+    url = "http://search.ebscohost.com/login.aspx?direct=true&bquery=#{query}&type=1&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    if !trusted_ip
+      # Ditto what I said for native_url()
+      url = "https://login.revproxy.brown.edu/login?url=" + url
+    end
   end
 
   def search(text)

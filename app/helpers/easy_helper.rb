@@ -28,8 +28,8 @@ module EasyHelper
     return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
   end
 
-  def eds_native_url(query)
-    return "http://search.ebscohost.com/?direct=true&bquery=#{query}&type=0&site=eds-live"    
+  def eds_native_url(query, trusted_ip = false)
+    return Eds.native_url(query, trusted_ip)
   end
 
   def bdr_configured?

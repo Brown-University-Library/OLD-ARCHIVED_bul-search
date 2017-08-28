@@ -20,7 +20,9 @@ class EasyController < ApplicationController
 
   def search
     beginTime = Time.now
-    @search_result = Easy.new(params[:source], params[:q], is_guest_user?)
+    trusted_ip = trusted_ip?(request.remote_ip)
+    guest_user = current_user == nil
+    @search_result = Easy.new(params[:source], params[:q], guest_user, trusted_ip)
     endTime = Time.now
     elapsed_ms = (endTime - beginTime) * 1000.0
     save_search(params, elapsed_ms)
@@ -32,13 +34,6 @@ class EasyController < ApplicationController
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n")
     render json: empty_set().to_json
-  end
-
-  def is_guest_user?
-    if current_user != nil
-      return false
-    end
-    !trusted_ip?(request.remote_ip)
   end
 
   def save_search(params, elapsed_ms)

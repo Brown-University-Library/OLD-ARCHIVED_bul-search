@@ -8,15 +8,15 @@ require 'uri'
 class Easy
   include BlacklightHelper
 
-  def initialize(source, query, guest = true)
+  def initialize(source, query, guest = true, trusted_ip = false)
     if source == 'summon'
       @results = get_summon(query)
     elsif source == "eds"
-      @results = get_eds(query, guest)
+      @results = get_eds(query, guest, trusted_ip)
     elsif source == "eds_raw"
-      @results = get_eds_raw(query, guest)
+      @results = get_eds_raw(query, guest, trusted_ip)
     elsif source == 'newspaper_articles_eds'
-      @results = get_eds_newspaper(query, guest)
+      @results = get_eds_newspaper(query, guest, trusted_ip)
     elsif source == 'newspaper_articles'
       @results = get_summon_newspaper(query)
     elsif source == 'bdr'
@@ -316,43 +316,42 @@ class Easy
     return results['response']
   end
 
-  def get_eds_raw(query, guest)
+  def get_eds_raw(query, guest, trusted_ip)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
       return []
     end
-    eds = Eds.new(guest)
+    eds = Eds.new(guest, trusted_ip)
     eds.search_raw(query)
   end
 
-  def get_eds(query, guest)
+  def get_eds(query, guest, trusted_ip)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
       return {}
     end
-
-    eds = Eds.new(guest)
+    eds = Eds.new(guest, trusted_ip)
     eds_results = eds.search(query)
     results = {}
     results['response'] = {}
-    results['response']['more'] = "http://search.ebscohost.com/?direct=true&bquery=#{query}&type=0&site=eds-live"
+    results['response']['more'] = Eds.native_url(query, trusted_ip)
     results['response']['all'] = results['response']['more']
     results['response']['raw'] = "/easy/search?source=eds_raw&q=#{query}"
     results['response']['docs'] = eds_results.items
-    results['response']['advanced'] = "http://search.ebscohost.com/?direct=true&bquery=#{query}&type=1&site=eds-live"
+    results['response']['advanced'] = Eds.native_advanced_url(query, trusted_ip)
     results['response']['numFound'] = eds_results.total_hits
     return results['response']
   end
 
-  def get_eds_newspaper(query, guest)
+  def get_eds_newspaper(query, guest, trusted_ip)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS newspaper search skipped (no EDS_PROFILE_ID available)"
       return {}
     end
-    eds = Eds.new(guest)
+    eds = Eds.new(guest, trusted_ip)
     count = eds.newspapers_count(query)
     response = {}
-    response[:more] = "TBD"
+    response[:more] = "" # TODO
     response[:numFound] = count
     return response
   end
