@@ -29,6 +29,7 @@ class Eds
       # don't want that.
       url = "https://login.revproxy.brown.edu/login?url=" + url
     end
+    url
   end
 
   def self.native_advanced_url(query, trusted_ip)
@@ -37,6 +38,7 @@ class Eds
       # Ditto what I said for native_url()
       url = "https://login.revproxy.brown.edu/login?url=" + url
     end
+    url
   end
 
   def search(text)
