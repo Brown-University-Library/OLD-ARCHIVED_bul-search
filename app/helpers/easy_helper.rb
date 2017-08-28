@@ -28,7 +28,9 @@ module EasyHelper
     return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
   end
 
-  def eds_native_url(query, trusted_ip = false)
+  def eds_native_url(query)
+    # Depends on a request object being available
+    trusted_ip = trusted_ip?(request.remote_ip) # ApplicationHelper
     return Eds.native_url(query, trusted_ip)
   end
 
