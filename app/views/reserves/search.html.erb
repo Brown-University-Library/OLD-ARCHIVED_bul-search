@@ -129,7 +129,7 @@ function renderCourseList(list) {
         <% # submit_tag("Search", class: "btn btn-primary search-btn", name: "search") %>
       <% end %>
       </div>
-    </div>
+    </div> <!-- searchForm, col-md-9 -->
 
     <div id="sidebar" class="col-md-3">
       <div class="panel panel-default">
@@ -141,12 +141,11 @@ function renderCourseList(list) {
             <a href="http://library.brown.edu/reserves" target="_blank">OCRA</a>.</p>
         </div>
       </div>
-    </div>
-
+    </div> <!-- sidebar, col-md-3 -->
   </div> <!-- row -->
 
   <div class="row">
-    <div>
+    <div id="coursesFound">
       <% if @no_courses_msg %>
         <div class="alert alert-danger" role="alert"><%= @no_courses_msg.html_safe %></div>
       <% end %>
@@ -176,6 +175,6 @@ function renderCourseList(list) {
           </table>
         </div>
       <% end %>
-    </div>
+    </div> <!-- coursesFound -->
   </div> <!-- row -->
 </div>

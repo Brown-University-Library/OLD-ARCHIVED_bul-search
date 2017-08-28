@@ -1,20 +1,26 @@
 <%= link_to("Back to Search Reserves", reserves_search_path()) %>
-
-<h2><%= @materials.course.name %></h2>
-<h4>Course #<b> <%= @materials.course.number_section%></b>
-&nbsp;&nbsp;&nbsp;&nbsp;Semester: <b><%= @materials.course.semester%></b>
-</h4>
-<% if @materials.course.instructor %>
-  <h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor)) %></h3>
-<% end %>
-
 <div class="container">
-  <div class="row">
 
+  <div class="row">
+    <div id="header" class="col-md-12">
+      <h2><%= @materials.course.name %></h2>
+      <h4>Course #<b> <%= @materials.course.number_section%></b>
+      &nbsp;&nbsp;&nbsp;&nbsp;Semester: <b><%= @materials.course.semester%></b>
+      </h4>
+      <% if @materials.course.instructor %>
+        <h3><%= link_to(@materials.course.instructor, reserves_search_path(instructor:@materials.course.instructor)) %></h3>
+      <% end %>
+    </div>
+  </div> <!-- header, col-md-12 -->
+
+  <div class="row">
     <div id="content" class="col-md-9">
 
       <div class="panel panel-default">
-        <div class="panel-heading">In-Library Course Reserves</div>
+        <div class="panel-heading">
+          In-Library Course Reserves
+        </div>
+
         <div class="panel-body">
           <% if @materials.books.count == 0 %>
             There are no in-library reserves for this course yet. <br/>
@@ -27,56 +33,55 @@
           <% if @materials.course.location %>
             <b>Library: <%= @materials.course.location %></b>
           <% end %>
-        </div>
 
-        <% if @materials.books.count > 0 %>
-          <table class="table">
-            <tr>
-              <th>Title</th>
-              <th>Call #</th>
-              <th>Loan Term</th>
-            </tr>
-            <% @materials.books.each do |book| %>
-            <tr>
-              <td>
-                <% if book.bib != nil %>
-                  <%= link_to(book.title, catalog_path(id: book.bib), title: "View this item in the catalog") %>
-                <% else %>
-                  <%= book.title %>
-                <% end %>
-              </td>
-
-              <td>
-              <% if book.personal %>
-                Professor's copy
-                <i class="fa fa-info-circle"
-                  data-toggle="tooltip"
-                  title="This item is a professor's copy and not an item owned by the library. Go to the front desk to request it."></i>
-              <% else %>
-                <% if book.callno.blank? %>
-                  N/A
-                <% else %>
-                  <% if book.bib == nil %>
-                    <!-- render as link -->
-                    <%= link_to(book.callno, catalog_index_path(q: '"' + book.callno_search + '"'), title: "Find this item in the catalog") %>
+          <% if @materials.books.count > 0 %>
+            <table class="table">
+              <tr>
+                <th>Title</th>
+                <th>Call #</th>
+                <th>Loan Term</th>
+              </tr>
+              <% @materials.books.each do |book| %>
+              <tr>
+                <td>
+                  <% if book.bib != nil %>
+                    <%= link_to(book.title, catalog_path(id: book.bib), title: "View this item in the catalog") %>
                   <% else %>
-                    <!-- don't render as link we already have a link by BIB number -->
-                    <%= book.callno %>
+                    <%= book.title %>
+                  <% end %>
+                </td>
+
+                <td>
+                <% if book.personal %>
+                  Professor's copy
+                  <i class="fa fa-info-circle"
+                    data-toggle="tooltip"
+                    title="This item is a professor's copy and not an item owned by the library. Go to the front desk to request it."></i>
+                <% else %>
+                  <% if book.callno.blank? %>
+                    N/A
+                  <% else %>
+                    <% if book.bib == nil %>
+                      <!-- render as link -->
+                      <%= link_to(book.callno, catalog_index_path(q: '"' + book.callno_search + '"'), title: "Find this item in the catalog") %>
+                    <% else %>
+                      <!-- don't render as link we already have a link by BIB number -->
+                      <%= book.callno %>
+                    <% end %>
                   <% end %>
                 <% end %>
-              <% end %>
-              </td>
+                </td>
 
-              <td>
-                <%= book.loan_term %>
-              </td>
-            </tr>
+                <td>
+                  <%= book.loan_term %>
+                </td>
+              </tr>
+            <% end %>
+            </table>
           <% end %>
-          </table>
-        <% end %>
-
+        </div> <!-- panel-body -->
       </div> <!-- panel -->
-    </div> <!-- col-md-9 -->
+    </div> <!-- content, col-md-9 -->
 
     <div id="sidebar" class="col-md-3">
       <div class="panel panel-default">
@@ -107,6 +112,6 @@
             <a href="http://library.brown.edu/reserves" target="_blank">OCRA</a>.</p>
         </div>
       </div>
-    </div>
+    </div> <!-- sidebar, col-md-3 -->
   </div> <!-- row -->
 </div>
