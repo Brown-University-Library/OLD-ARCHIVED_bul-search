@@ -324,7 +324,11 @@ function commaSeparatedNumber(val){
 }
 
 function isEdsJournals() {
-  return (location.search.indexOf("&journals=eds") > -1);
+  <% if ENV['JOURNALS_PROV'] == "eds" %>
+    return true;
+  <% else %>
+    return false;
+  <% end %>
 }
 
 function isDebug() {

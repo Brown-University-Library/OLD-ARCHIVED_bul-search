@@ -8,7 +8,7 @@ class EasyController < ApplicationController
   def home
     @easy_search = true
     @query = params[:q]
-    @is_eds = params["journals"] == "eds"
+    @is_eds = ENV["JOURNALS_PROV"] == "eds"
     if @query.blank?
       @has_query = false
       @query = ''
