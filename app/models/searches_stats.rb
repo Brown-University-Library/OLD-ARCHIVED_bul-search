@@ -46,6 +46,7 @@ class SearchesStats
 
   def median()
     values = times().sort()
+    return 0 if values.length == 0
     if (values.length % 2) == 0
       a = values.length/2
       b = a + 1
@@ -59,6 +60,7 @@ class SearchesStats
 
   def average()
     values = times()
+    return 0 if values.length == 0
     values.sum() / values.length
   end
 end
