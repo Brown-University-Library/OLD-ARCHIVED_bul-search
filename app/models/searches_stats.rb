@@ -20,7 +20,13 @@ class SearchesStats
     results = []
     searches().each do |s|
       params = s[:query_params]
-      results << {q: params[:q], elapsed_ms: params[:elapsed_ms], id: s[:id]}
+      result = {
+        q: params[:q],
+        elapsed_ms: params[:elapsed_ms],
+        id: s[:id],
+        created_at: s[:created_at]
+      }
+      results << result
     end
     results
   end
@@ -48,11 +54,11 @@ class SearchesStats
     values = times().sort()
     return 0 if values.length == 0
     if (values.length % 2) == 0
-      a = values.length/2
+      a = (values.length/2) - 1
       b = a + 1
       result = (values[a] + values[b]) / 2
     else
-      a = (values.length / 2).to_i
+      a = (values.length / 2).to_i - 1
       result = values[a]
     end
     result
