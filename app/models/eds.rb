@@ -18,7 +18,38 @@ class Eds
       profile: @profile_id,
       guest: guest
     }
-    @session = EBSCO::EDS::Session.new(@credentials)
+    @session = get_session(@credentials, guest)
+  end
+
+  def get_session(credentials, guest)
+    if ENV["EDS_CACHE_SESSION"] != "true"
+      # Rails.logger.info "EDS_SESSION: == NO CACHE == #{Time.now}"
+      return EBSCO::EDS::Session.new(credentials)
+    end
+
+    if guest
+      Rails.logger.info "EDS_SESSION: == GUEST SESSION == #{Time.now}"
+      return Rails.cache.fetch("eds_guest_session", expires_in: 2.minute) do
+        begin
+          Rails.logger.info "EDS_SESSION: == NEW GUEST SESSION == #{Time.now}"
+          EBSCO::EDS::Session.new(credentials)
+        rescue Exception => e
+          Rails.logger.error "EDS_SESSION: Could not get new guest session for EDS: #{e.to_s}"
+          nil
+        end
+      end
+    end
+
+    Rails.logger.info "EDS_SESSION: == AUTH SESSION == #{Time.now}"
+    return Rails.cache.fetch("eds_auth_session", expires_in: 2.minute) do
+      begin
+        Rails.logger.info "EDS_SESSION: == NEW AUTH SESSION == #{Time.now}"
+        EBSCO::EDS::Session.new(credentials)
+      rescue Exception => e
+        Rails.logger.error "EDS_SESSION: Could not get new auth session for EDS: #{e.to_s}"
+        nil
+      end
+    end
   end
 
   def self.native_url(query, trusted_ip)
