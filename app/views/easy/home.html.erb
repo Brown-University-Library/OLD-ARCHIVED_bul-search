@@ -248,7 +248,9 @@ function addFormats(formats) {
 function addNewspaperArticlesCount(query) {
   var source = "&source=newspaper_articles";
   if (isEdsJournals()) {
-    source = "&source=newspaper_articles_eds"
+    // source = "&source=newspaper_articles_eds"
+    // skip this call for EDS for now
+    return;
   }
   $.ajax(dataUrl + source, {
     success: function(response) {
