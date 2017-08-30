@@ -23,6 +23,8 @@ class SearchesStats
       result = {
         q: params[:q],
         elapsed_ms: params[:elapsed_ms],
+        trusted_ip: params[:trusted_ip],
+        guest_user: params[:guest_user],
         id: s[:id],
         created_at: s[:created_at]
       }

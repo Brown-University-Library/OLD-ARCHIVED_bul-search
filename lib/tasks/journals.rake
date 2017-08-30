@@ -39,15 +39,17 @@ namespace :josiah do
     puts "Median (ms): #{st.median()}"
     puts "Average (ms): #{st.average()}"
     if show_details
-      puts "\tID\tTime(ms)\tAt\tQuery"
+      puts "\tID\tTime(ms)\tAt\tUser\tQuery"
       times.each do |s|
         elapsed_ms = (s[:elapsed_ms] || "0").to_i
         q = (s[:q] || "").strip
         at = (s[:created_at] || "--")
+        trusted = (s[:trusted_ip] || false) ? "Y" : "N"
+        guest = (s[:guest_user] || false) ? "Y" : "N"
         if q == ""
           q = "--"
         end
-        puts "\t#{s[:id]}\t#{elapsed_ms}\t#{at}\t#{q}"
+        puts "\t#{s[:id]}\t#{elapsed_ms}\t#{at}\t#{trusted}#{guest}\t#{q}"
       end
     end
     puts "=="

@@ -25,7 +25,7 @@ class EasyController < ApplicationController
     @search_result = Easy.new(params[:source], params[:q], guest_user, trusted_ip)
     endTime = Time.now
     elapsed_ms = (endTime - beginTime) * 1000.0
-    save_search(params, elapsed_ms)
+    save_search(params, elapsed_ms, trusted_ip, guest_user)
     #Set session variable with this query.
     set_last_easy_search(params[:q])
     @search_result = empty_set() if @search_result == nil
@@ -36,9 +36,11 @@ class EasyController < ApplicationController
     render json: empty_set().to_json
   end
 
-  def save_search(params, elapsed_ms)
+  def save_search(params, elapsed_ms, trusted_ip, guest_user)
     query_params = params
     query_params[:elapsed_ms] = elapsed_ms
+    query_params[:trusted_ip] = trusted_ip
+    query_params[:guest_user] = guest_user
     s = Search.create(:query_params => params)
     add_to_search_history(s)
   end
