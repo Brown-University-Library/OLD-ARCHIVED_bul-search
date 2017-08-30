@@ -18,21 +18,19 @@ class Eds
       profile: @profile_id,
       guest: guest
     }
-    @session = get_session(@credentials, guest)
+    @session = get_session(@credentials)
   end
 
-  def get_session(credentials, guest)
+  def get_session(credentials)
     if ENV["EDS_CACHE_SESSION"] != "true"
-      # Rails.logger.info "EDS_SESSION: == NO CACHE == #{Time.now}"
-      return EBSCO::EDS::Session.new(credentials)
+      return new_session(credentials, "no cache")
     end
 
-    if guest
-      Rails.logger.info "EDS_SESSION: == GUEST SESSION == #{Time.now}"
+    if credentials[:guest]
+      Rails.logger.info "EDS_SESSION: guest session"
       return Rails.cache.fetch("eds_guest_session", expires_in: 2.minute) do
         begin
-          Rails.logger.info "EDS_SESSION: == NEW GUEST SESSION == #{Time.now}"
-          EBSCO::EDS::Session.new(credentials)
+          new_session(credentials, "new guest session")
         rescue Exception => e
           Rails.logger.error "EDS_SESSION: Could not get new guest session for EDS: #{e.to_s}"
           nil
@@ -40,16 +38,23 @@ class Eds
       end
     end
 
-    Rails.logger.info "EDS_SESSION: == AUTH SESSION == #{Time.now}"
+    Rails.logger.info "EDS_SESSION: auth session"
     return Rails.cache.fetch("eds_auth_session", expires_in: 2.minute) do
       begin
-        Rails.logger.info "EDS_SESSION: == NEW AUTH SESSION == #{Time.now}"
-        EBSCO::EDS::Session.new(credentials)
+        new_session(credentials, "new auth session")
       rescue Exception => e
         Rails.logger.error "EDS_SESSION: Could not get new auth session for EDS: #{e.to_s}"
         nil
       end
     end
+  end
+
+  def new_session(credentials, log_msg)
+    beginTime = Time.now
+    session = EBSCO::EDS::Session.new(credentials)
+    elapsed_ms = ((Time.now - beginTime) * 1000).to_i
+    Rails.logger.info "EDS_SESSION: #{log_msg}, #{elapsed_ms}ms"
+    session
   end
 
   def self.native_url(query, trusted_ip)
