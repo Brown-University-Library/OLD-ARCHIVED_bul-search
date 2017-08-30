@@ -56,7 +56,10 @@ class EdsResults
     end
 
     def self.easyarticle_link(links)
-      easy_link(links, "//library.brown.edu/easyarticle/")
+      link = easy_link(links, "//library.brown.edu/easyarticle/")
+      return nil if link == nil
+      # Use the easyaccess URL instead easyarticle to prevent an extra redirect
+      link.gsub("//library.brown.edu/easyarticle/", "//library.brown.edu/easyaccess/find/")
     end
 
     def self.easyaccess_link(links)
