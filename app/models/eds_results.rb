@@ -36,34 +36,40 @@ class EdsResults
       items
     end
 
-    def self.preferred_link(r)
-      link = easyarticle_link(r.all_links)
+    def self.preferred_link(record)
+      link = easyarticle_link(record)
       if link == nil
-        link = easyaccess_link(r.all_links)
+        link = easyaccess_link(record)
         if link == nil
-          link = r.eds_plink
-          if link != nil
-            # Prepend revproxy to the EBSCO links to make sure users
-            # go through Shibboleth. Otherwise users working from
-            # outside our IP range are confronted with an EBSCO
-            # login page. RevProxy makes sure users are presented
-            # with Brown's Shibboleth authentication instead.
-            link = "https://login.revproxy.brown.edu/login?url=#{link}"
-          end
+          link = ebscoperma_link(record, true)
         end
       end
       link
     end
 
-    def self.easyarticle_link(links)
-      link = easy_link(links, "//library.brown.edu/easyarticle/")
-      return nil if link == nil
-      # Use the easyaccess URL instead easyarticle to prevent an extra redirect
-      link.gsub("//library.brown.edu/easyarticle/", "//library.brown.edu/easyaccess/find/")
+    def self.ebscoperma_link(record, proxy)
+      link = record.eds_plink
+      if link != nil && proxy
+        # Prepend revproxy to the EBSCO links to make sure users
+        # go through Shibboleth. Otherwise users working from
+        # outside our IP range are confronted with an EBSCO
+        # login page. RevProxy makes sure users are presented
+        # with Brown's Shibboleth authentication instead.
+        link = "https://login.revproxy.brown.edu/login?url=#{link}"
+      end
+      link
     end
 
-    def self.easyaccess_link(links)
-      easy_link(links, "//library.brown.edu/easyaccess/find")
+    def self.easyarticle_link(record)
+      link = easy_link(record.all_links, "//library.brown.edu/easyarticle/")
+      return nil if link == nil
+      # Use the easyaccess URL instead easyarticle to prevent an extra redirect
+      link = link.gsub("//library.brown.edu/easyarticle/", "//library.brown.edu/easyaccess/find/")
+      link += "&ebscoperma_link=#{ebscoperma_link(record, false)}"
+    end
+
+    def self.easyaccess_link(record)
+      easy_link(record.all_links, "//library.brown.edu/easyaccess/find")
     end
 
     def self.easy_link(links, prefix)
