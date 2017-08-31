@@ -244,7 +244,7 @@ class CatalogController < ApplicationController
   end
 
   def index
-    @is_eds = params["journals"] == "eds"
+    @is_eds = ENV["JOURNALS_PROV"] == "eds"
     @render_opensearch = true
     relax_max_per_page if api_call?
     ret_val = super
