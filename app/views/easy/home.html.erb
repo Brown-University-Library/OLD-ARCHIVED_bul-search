@@ -23,15 +23,6 @@
     </div>
 <% else %>
         <div id="bentos" class="col-md-9">
-            <div class="row" id="jump-links">
-              <ul class="list-inline">
-                <li>Results:</li>
-                <li><i class="fa fa-arrow-down"></i><a href="#books">Books</a></li>
-                <li><i class="fa fa-arrow-down"></i><a href="#summon"><%= t('blacklight.articles.heading')%></a></li>
-                <li id="dynamic"><i class="fa fa-arrow-down"></i><a href="#bdr-search">Brown Digital Repository</a></li>
-                <li><i class="fa fa-arrow-down"></i><a href="#website">Library website</a></li>
-              </ul>
-            </div>
             <% if @best_bet != nil %>
               <div class="row">
                 <div id="best-bet">
