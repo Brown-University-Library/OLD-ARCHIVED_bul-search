@@ -1,0 +1,8 @@
+<h2>Access Denied</h2>
+<div class="alert alert-danger" role="alert">You don't have access to this page.</div>
+
+<% if current_user %>
+  <p>User: <%= current_user %></p>
+<% else %>
+  <p><a href="https://search.library.brown.edu/users/auth/shibboleth">Login</a></p>
+<% end %>

@@ -1,4 +1,6 @@
 class SearchesStats
+  attr_reader :begin_date, :end_date
+
   # valid provider values for EDS: "eds" and "newspaper_articles_eds"
   # valid provider values for Summon: "summon", "newspaper_articles"
   def initialize(provider, begin_date, end_date)

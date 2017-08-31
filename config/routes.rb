@@ -42,4 +42,7 @@ BulSearch::Application.routes.draw do
   get 'api/items/nearby' => 'api#items_nearby'
   get 'api/items/shelf_item/:id' => 'api#shelf_item'
   get 'api/items/shelf_items' => 'api#shelf_items'
+
+  # Stats
+  get 'stats/eds' => 'stats#eds'
 end

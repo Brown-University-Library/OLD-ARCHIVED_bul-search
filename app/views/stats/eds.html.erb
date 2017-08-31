@@ -1,0 +1,44 @@
+<div class="container">
+
+  <div class="row">
+    <div id="header" class="col-md-12">
+      <h2>EDS timings </h2>
+      <h4>From: <b><%= @st.begin_date %></b> to: <b><%= @st.end_date %></b></h4>
+
+      <p>Total searches: <%= @st.search_times().count %></p>
+      <p>Median (ms): <%= @st.median() %></p>
+      <p>Average (ms): <%= @st.average() %></p>
+    </div>
+  </div> <!-- header, col-md-12 -->
+
+  <div class="row">
+    <div id="content" class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <p>Search details</p>
+          <table class="table">
+            <tr>
+              <th>ID</th>
+              <th>Time (ms)</th>
+              <th>At</th>
+              <th>Campus?</th>
+              <th>Guest?</th>
+              <th>Query</th>
+            </tr>
+            <% @st.search_times().each do |s| %>
+              <tr>
+                <td><%= s[:id] %></td>
+                <td><%= (s[:elapsed_ms] || "0").to_i %></td>
+                <td><%= (s[:created_at] || "--") %></td>
+                <td><%= s[:trusted_ip] ? "Y" : "N" %></td>
+                <td><%= s[:guest_user] ? "Y" : "N" %></td>
+                <td><%= (s[:q] || "").strip %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div> <!-- panel-body -->
+      </div> <!-- panel -->
+    </div> <!-- content, col-md-9 -->
+  </div> <!-- row -->
+
+</div>
