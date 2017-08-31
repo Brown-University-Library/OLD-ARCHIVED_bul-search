@@ -15,7 +15,7 @@ class StatsController < ApplicationController
 
   def valid_user?
     return false if current_user == nil
-    user = "/" + current_user + "/"
-    return (ENV["STAT_USERS"] || "").includes?(user)
-  end
+     user = "/#{current_user}/"
+     return (ENV["STAT_USERS"] || "").include?(user)
+   end
 end
