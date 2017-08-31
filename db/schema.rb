@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170818093500) do
+ActiveRecord::Schema.define(version: 20170831102300) do
 
   create_table "bookmarks", force: true do |t|
     t.integer  "user_id",       null: false
@@ -37,6 +37,24 @@ ActiveRecord::Schema.define(version: 20170818093500) do
   add_index "callnumbers", ["bib"], name: "index_callnumbers_on_bib", using: :btree
   add_index "callnumbers", ["normalized"], name: "index_callnumbers_on_normalized", using: :btree
   add_index "callnumbers", ["original"], name: "index_callnumbers_on_original", using: :btree
+
+  create_table "items", force: true do |t|
+    t.string "bib",            limit: 8
+    t.string "callnumber",     limit: 100
+    t.string "barcode",        limit: 100
+    t.string "callnumber_raw", limit: 2000
+  end
+
+  add_index "items", ["bib"], name: "index_items_on_bib", using: :btree
+  add_index "items", ["callnumber"], name: "index_items_on_callnumber", using: :btree
+
+  create_table "items_temp", id: false, force: true do |t|
+    t.string "bib",        limit: 8
+    t.string "callnumber", limit: 2000
+    t.string "barcode",    limit: 100
+  end
+
+  add_index "items_temp", ["bib"], name: "index_items_on_bib", using: :btree
 
   create_table "libguides_caches", force: true do |t|
     t.string "name",       limit: 50
@@ -76,6 +94,7 @@ ActiveRecord::Schema.define(version: 20170818093500) do
     t.datetime "updated_at"
   end
 
+  add_index "searches", ["created_at"], name: "index_searches_on_created_at", using: :btree
   add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
 
   create_table "searches_params", force: true do |t|
