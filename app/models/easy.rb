@@ -332,9 +332,10 @@ class Easy
     end
     eds = Eds.new(guest, trusted_ip)
     eds_results = eds.search(query)
+    query_safe = URI.encode(query) # encode to prevent XSS
     results = {}
     results['response'] = {}
-    results['response']['more'] = Eds.native_url(query, trusted_ip)
+    results['response']['more'] = Eds.native_url(query_safe, trusted_ip)
     results['response']['all'] = results['response']['more']
     results['response']['raw'] = "/easy/search?source=eds_raw&q=#{query}"
     results['response']['docs'] = eds_results.items
