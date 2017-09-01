@@ -57,8 +57,19 @@ class Eds
     session
   end
 
+  def self.ebsco_base_url(query)
+    url = "http://search.ebscohost.com/login.aspx"
+    url += "?direct=true&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    # cli0=RV&clv0=Y for peer reviewed
+    # cli1=FT&clv1=Y for full text
+    url += "&cli0=RV&clv0=Y&cli1=FT&clv1=Y"
+    if query != nil
+      url += "&bquery=#{query}"
+    end
+  end
+
   def self.native_url(query, trusted_ip)
-    url = "http://search.ebscohost.com/login.aspx?direct=true&bquery=#{query}&type=0&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    url = self.ebsco_base_url(query) + "&type=0"
     if !trusted_ip
       # Force users *not on campus* to authenticate through Shibboleth,
       # otherwise EBSCO will ask them to authenticate with them and we
@@ -69,7 +80,7 @@ class Eds
   end
 
   def self.native_advanced_url(query, trusted_ip)
-    url = "http://search.ebscohost.com/login.aspx?direct=true&bquery=#{query}&type=1&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    url = self.ebsco_base_url(query) + "&type=1"
     if !trusted_ip
       # Ditto what I said for native_url()
       url = "https://login.revproxy.brown.edu/login?url=" + url
@@ -79,18 +90,16 @@ class Eds
 
   def self.native_newspapers_url(query, trusted_ip)
     # TODO: Apply filter for newspaper
-    url = "http://search.ebscohost.com/login.aspx?direct=true&bquery=#{query}&type=1&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
-    if !trusted_ip
-      # Ditto what I said for native_url()
-      url = "https://login.revproxy.brown.edu/login?url=" + url
-    end
-    url
+    return self.native_url(query, trusted_ip)
   end
 
   def search(text)
     if text.empty?
       return EdsResults.new([], [], 0)
     end
+    # Notice that we don't pass an explicit parameter to request
+    # full text only because API profile has been configured in
+    # the EBSCO Admin tool to return full text only by default.
     options = {
       query: text,
       results_per_page: 5,
