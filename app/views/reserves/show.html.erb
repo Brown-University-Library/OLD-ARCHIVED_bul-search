@@ -1,4 +1,13 @@
-<%= link_to("Back to Search Reserves", reserves_search_path()) %>
+<a href="<%= reserves_search_path() %>" class="back-to-search" id="backToSearch">
+  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>Back to Search Reserves
+</a>
+
+<script>
+$(document).ready(function(){
+  $("#backToSearch").attr("href", "javascript: history.go(-1)");
+});
+</script>
+
 <div class="container">
 
   <div class="row">
