@@ -4,7 +4,10 @@
       <li><%= link_to t('blacklight.bento.label'), easy_search_link %></li>
     <% end %>
     <li>
-      <%= link_to t('blacklight.feedback.label'), t('blacklight.feedback.link') %>
+      <%= link_to "Reserves", reserves_search_path, title: 'In-Library Reserves', rel: 'tooltip' %>
+    </li>
+    <li>
+      <%= link_to t('blacklight.feedback.label'), t('blacklight.feedback.link'), title: 'Let us know what you think', rel: 'tooltip'  %>
     </li>
     <% if render_bookmarks_control? %>
     <li>
