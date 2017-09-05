@@ -57,14 +57,14 @@ module BlacklightHelper
   end
 
 
-  def convert_to_array value = []
-    arr = []
-    if value.nil?
+  def convert_to_array(value = [])
+    if value.nil? || value == ""
+      return []
+    elsif value.kind_of?(Array)
+      return value
     else
-      arr = value if value.kind_of?(Array)
-      arr.push(value) if value.kind_of?(String)
+      return [value.to_s]
     end
-    arr
   end
 
   # Search History and Saved Searches display
@@ -83,10 +83,11 @@ module BlacklightHelper
   def item_subheading fld_value
     text = []
     text << convert_to_array(fld_value)[0]
-    if text == []
+    text.compact!
+    if text.length == 0
       return nil
     else
-      return content_tag("h5", safe_join(text.compact, ". "), :class => "title-subheading")
+      return content_tag("h5", safe_join(text, ". "), :class => "title-subheading")
     end
   end
 
@@ -94,10 +95,12 @@ module BlacklightHelper
     text = []
     text << catalog_author_display(document)
     text << convert_to_array(document['pub_date'])[0]
-    if text == []
+    text.compact!
+    if text.length == 0
+      byebug
       return nil
     else
-      return content_tag("div", safe_join(text.compact, ". "), :class => "title-subheading")
+      return content_tag("div", safe_join(text, ". "), :class => "title-subheading")
     end
   end
 
