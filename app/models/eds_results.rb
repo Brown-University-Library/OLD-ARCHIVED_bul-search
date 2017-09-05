@@ -65,7 +65,12 @@ class EdsResults
       return nil if link == nil
       # Use the easyaccess URL instead easyarticle to prevent an extra redirect
       link = link.gsub("//library.brown.edu/easyarticle/", "//library.brown.edu/easyaccess/find/")
-      link += "&ebscoperma_link=#{ebscoperma_link(record, false)}"
+      ebsco_link = ebscoperma_link(record, false)
+      if ebsco_link != nil
+        # EasyAccess expects the EBSCO permalink to be encoded
+        link += "&ebscoperma_link=#{CGI.escape(ebsco_link)}"
+      end
+      link
     end
 
     def self.easyaccess_link(record)
