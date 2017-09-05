@@ -69,7 +69,6 @@ module BlacklightHelper
 
   # Search History and Saved Searches display
   def link_to_previous_search(params)
-    #require 'byebug'; byebug
     if params[:controller] == 'easy'
       query = params[:q]
       url = url_for :controller=>'easy', :action=> 'home', :q => query
@@ -97,7 +96,6 @@ module BlacklightHelper
     text << convert_to_array(document['pub_date'])[0]
     text.compact!
     if text.length == 0
-      byebug
       return nil
     else
       return content_tag("div", safe_join(text, ". "), :class => "title-subheading")
