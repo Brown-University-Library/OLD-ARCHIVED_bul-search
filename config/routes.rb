@@ -45,4 +45,9 @@ BulSearch::Application.routes.draw do
 
   # Stats
   get 'stats/eds' => 'stats#eds'
+
+  # Legacy
+  get 'find/Search/Results' => "legacy#search_results"
+  get 'find/search' => "legacy#search"
+  get 'find' => "legacy#home"
 end
