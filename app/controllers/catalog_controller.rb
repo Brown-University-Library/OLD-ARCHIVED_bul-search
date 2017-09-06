@@ -120,7 +120,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'language_facet', :label => 'Language'
     config.add_show_field 'published_display', :label => 'Published'
     config.add_show_field 'published_vern_display', :label => 'Published'
-    config.add_show_field 'physical_display', :label => 'Physical Description'
+    config.add_show_field 'physical_display_extra', :label => "x" # calculated (e.g. not in Solr)
     #config.add_show_field 'toc_display', :label => 'Contents'
     config.add_show_field 'isbn_t', :label => 'ISBN'
     config.add_show_field 'issn_t', :label => 'ISSN'

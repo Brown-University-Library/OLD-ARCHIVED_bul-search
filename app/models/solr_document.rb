@@ -209,6 +209,72 @@ class SolrDocument
     locations
   end
 
+  def clean_join(a, b)
+    case
+      when a != nil && b != nil
+        "#{a} #{b}"
+      when a != nil && b == nil
+        "#{a}"
+      when a == nil && b != nil
+        "#{b}"
+      else
+        ""
+    end
+  end
+
+  def physical_display_extra
+    values = []
+    if self[:physical_display] != nil && self[:physical_display].first != nil
+      values << self[:physical_display].first
+    end
+    cmc = content_media_carrier()
+    if cmc[:content] != nil
+      values << cmc[:content]
+    end
+    if cmc[:media] != nil
+      values << cmc[:media]
+    end
+    if cmc[:carrier] != nil
+      values << cmc[:carrier]
+    end
+    [values.join("; ")]
+  end
+
+  def content_media_carrier
+    @content_media_carrier ||= begin
+      content = marc_subfield_values("336", "a").first
+      media = marc_subfield_values("337", "a").first
+      carrier = marc_subfield_values("338", "a").first
+      if content != nil || media != nil || carrier != nil
+        {content: content, media: media, carrier: carrier}
+      else
+        {}
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error parsing content_media_carrier for ID: #{self.fetch('id', nil)}, #{e.message}"
+      {}
+    end
+  end
+
+  def music_notes
+    @music_notes ||= begin
+      notes = []
+      fields = marc_field("028")
+      fields.each do |field, index|
+        a = subfield_value(field, "a")
+        b = subfield_value(field, "b")
+        note = clean_join(a, b)
+        if note != nil
+          notes << note
+        end
+      end
+      notes
+    rescue StandardError => e
+      Rails.logger.error "Error parsing music notes for ID: #{self.fetch('id', nil)}, #{e.message}"
+      []
+    end
+  end
+
   def full_abstract
     @full_abstract ||= begin
       if self["abstract_display"] != nil

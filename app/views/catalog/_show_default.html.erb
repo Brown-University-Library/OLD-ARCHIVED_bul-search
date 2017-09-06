@@ -62,6 +62,8 @@
 <hr/>
 <h4>Details</h4>
 <dl class="dl-horizontal  dl-invert record-page">
+
+
   <% document_show_fields(document).each do |solr_fname, field| -%>
     <% if should_render_show_field? document, field %>
         <% if field.linked_fielded_search %>
@@ -98,8 +100,20 @@
                 <dd><%= anchor %></dd>
             <% end -%>
         <% end -%>
+    <% elsif solr_fname == "physical_display_extra" && document.physical_display_extra.count > 0%>
+      <dt class="blacklight-physical-display">Physical Description:</dt>
+      <% document.physical_display_extra.each do |physical| %>
+          <dd><%= physical %></dd>
+      <% end %>
     <% end -%>
   <% end -%>
+
+  <% if document.music_notes.count > 0 %>
+    <dt class="blacklight-music_notes">Music Notes:</dt>
+    <% document.music_notes.each do |note| %>
+      <dd><%= note %></dd>
+    <% end %>
+  <% end %>
 
   <%# Calls method with notes config will display nothing if note doesn't
   exist or fetching for MARC fails -%>
