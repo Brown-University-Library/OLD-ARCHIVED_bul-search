@@ -251,6 +251,16 @@ class SolrDocument
     end
   end
 
+  def performer_notes
+    @performer_notes ||= begin
+      notes = marc_subfield_values("511", "a")
+      notes || []
+    rescue StandardError => e
+      Rails.logger.error "Error parsing performer notes for ID: #{self.fetch('id', nil)}, #{e.message}"
+      []
+    end
+  end
+
   def music_notes
     @music_notes ||= begin
       notes = []

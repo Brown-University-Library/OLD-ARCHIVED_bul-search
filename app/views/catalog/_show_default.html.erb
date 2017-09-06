@@ -110,6 +110,13 @@
     <% end %>
   <% end %>
 
+  <% if document.performer_notes.count > 0 %>
+    <dt class="blacklight-performer_notes">Performer:</dt>
+    <% document.performer_notes.each do |note| %>
+      <dd><%= note %></dd>
+    <% end %>
+  <% end %>
+
   <% if document.series != nil %>
     <!-- TODO: make it a hyperlink once we index this field -->
     <dt class="blacklight-series">Series:</dt>
