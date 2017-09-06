@@ -100,11 +100,6 @@
                 <dd><%= anchor %></dd>
             <% end -%>
         <% end -%>
-    <% elsif solr_fname == "physical_display_extra" && document.physical_display_extra.count > 0%>
-      <dt class="blacklight-physical-display">Physical Description:</dt>
-      <% document.physical_display_extra.each do |physical| %>
-          <dd><%= physical %></dd>
-      <% end %>
     <% end -%>
   <% end -%>
 
@@ -113,6 +108,12 @@
     <% document.music_notes.each do |note| %>
       <dd><%= note %></dd>
     <% end %>
+  <% end %>
+
+  <% if document.series != nil %>
+    <!-- TODO: make it a hyperlink once we index this field -->
+    <dt class="blacklight-series">Series:</dt>
+    <dd><%= document.series %></dd>
   <% end %>
 
   <%# Calls method with notes config will display nothing if note doesn't

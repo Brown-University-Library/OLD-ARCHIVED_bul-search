@@ -222,22 +222,17 @@ class SolrDocument
     end
   end
 
-  def physical_display_extra
-    values = []
-    if self[:physical_display] != nil && self[:physical_display].first != nil
-      values << self[:physical_display].first
+  # I'd use the 830 field. It is a controlled heading for the series,
+  # so it can act like any of the added author fields. There will be
+   #some records that only have 490 and no 830
+  def series
+    @series ||= begin
+      series = marc_subfield_values("830", "a").first
+      if series == nil
+        series = marc_subfield_values("490", "a").first
+      end
+      series
     end
-    cmc = content_media_carrier()
-    if cmc[:content] != nil
-      values << cmc[:content]
-    end
-    if cmc[:media] != nil
-      values << cmc[:media]
-    end
-    if cmc[:carrier] != nil
-      values << cmc[:carrier]
-    end
-    [values.join("; ")]
   end
 
   def content_media_carrier
