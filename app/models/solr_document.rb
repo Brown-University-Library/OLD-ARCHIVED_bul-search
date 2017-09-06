@@ -222,6 +222,12 @@ class SolrDocument
     end
   end
 
+  def license_agreements
+    @license_agreements ||= begin
+      marc_subfield_values("540", "a")
+    end
+  end
+
   # I'd use the 830 field. It is a controlled heading for the series,
   # so it can act like any of the added author fields. There will be
    #some records that only have 490 and no 830

@@ -108,6 +108,7 @@ class CatalogController < ApplicationController
     #config.add_show_field 'title_vern_display', :label => 'Title'
     #config.add_show_field 'abstract_display', :label => 'Abstract/summary'
     config.add_show_field 'format', :label => 'Format', :show_icon => true
+    config.add_show_field 'license_agreements', :label => 'x' # calculated, not in Solr
     config.add_show_field 'subtitle_display', :label => 'Subtitle'
     config.add_show_field 'subtitle_vern_display', :label => 'Subtitle'
     config.add_show_field 'author_display', :label => 'Author', :linked_fielded_search => 'author'
