@@ -38,4 +38,13 @@ module ApplicationHelper
     end
     false
   end
+
+  def google_form_url()
+    url = "https://docs.google.com/forms/d/e/1FAIpQLSfJzCWiV06MFF8mkJ7uhhnv_FeWAoKdlxIXMHAAwn7LIv4_UA/viewform?usp=pp_url&entry.707592340&entry.1473753199&entry.1930188522&entry.1267373353&entry.1478665067="
+    if defined?(request) && request != nil
+      josiah_url = request.url.gsub("utf8=%E2%9C%93&", "")
+      url += josiah_url
+    end
+    url
+  end
 end
