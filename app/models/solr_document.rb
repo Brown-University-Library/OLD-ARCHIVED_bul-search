@@ -224,7 +224,17 @@ class SolrDocument
 
   def license_agreements
     @license_agreements ||= begin
-      marc_subfield_values("540", "a")
+      agreements = []
+      fields = marc_field("540")
+      fields.each do |field, index|
+        a = subfield_value(field, "a")
+        if a != nil
+          u = subfield_value(field, "u")
+          agreement = {text: a, url: u}
+          agreements << agreement
+        end
+      end
+      agreements
     end
   end
 

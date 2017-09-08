@@ -102,8 +102,12 @@
         <% end -%>
     <% elsif solr_fname == "license_agreements" && document.license_agreements.count > 0 %>
       <dt class="blacklight-license_agreements">License Agreement:</dt>
-      <% document.license_agreements.each do |lic| %>
-        <dd><%= lic %></dd>
+      <% document.license_agreements.each do |agreement| %>
+        <% if agreement[:url] == nil %>
+          <dd><%= agreement[:text] %></dd>
+        <% else %>
+        <dd><a href="<%= agreement[:url] %>" target="_blank"><%= agreement[:text] %></a></dd>
+        <% end %>
       <% end %>
     <% end -%>
   <% end -%>
@@ -111,10 +115,10 @@
   <% if document.music_numbers.count > 0 %>
     <dt class="blacklight-music_number">UPC No:</dt>
     <% document.music_numbers.each do |number| %>
-      <% if number[:url] != nil %>
-        <dd><a href="<%= number[:url] %>" target="_blank"><%= number[:text] %></a></dd>
-      <% else %>
+      <% if number[:url] == nil %>
         <dd><%= number[:text] %> <%= number[:qualifying] %></dd>
+      <% else %>
+        <dd><a href="<%= number[:url] %>" target="_blank"><%= number[:text] %></a></dd>
       <% end %>
     <% end %>
   <% end %>
