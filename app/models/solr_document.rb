@@ -286,6 +286,31 @@ class SolrDocument
     end
   end
 
+  def music_numbers
+    @music_numbers ||= begin
+      numbers = []
+      fields = marc_field("024")
+      fields.each do |field, index|
+        text = subfield_value(field, "a")
+        if text != nil
+          source = subfield_value(field, "2")
+          qualifying = subfield_value(field, "q")
+          url = nil
+          if source == "doi"
+            url = "https://doi.org/#{text}"
+          end
+          number = {text: text, source: source, url: url, qualifying: qualifying}
+          numbers << number
+        end
+      end
+      numbers
+    rescue StandardError => e
+      Rails.logger.error "Error parsing music number for ID: #{self.fetch('id', nil)}, #{e.message}"
+      []
+    end
+  end
+
+
   def full_abstract
     @full_abstract ||= begin
       if self["abstract_display"] != nil

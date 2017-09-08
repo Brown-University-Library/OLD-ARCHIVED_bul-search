@@ -108,6 +108,17 @@
     <% end -%>
   <% end -%>
 
+  <% if document.music_numbers.count > 0 %>
+    <dt class="blacklight-music_number">UPC No:</dt>
+    <% document.music_numbers.each do |number| %>
+      <% if number[:url] != nil %>
+        <dd><a href="<%= number[:url] %>" target="_blank"><%= number[:text] %></a></dd>
+      <% else %>
+        <dd><%= number[:text] %> <%= number[:qualifying] %></dd>
+      <% end %>
+    <% end %>
+  <% end %>
+
   <% if document.music_notes.count > 0 %>
     <dt class="blacklight-music_notes">Music Notes:</dt>
     <% document.music_notes.each do |note| %>

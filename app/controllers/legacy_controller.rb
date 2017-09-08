@@ -7,7 +7,6 @@ class LegacyController < ApplicationController
       redirect_to easyS_path(), status: 302
     end
     def search_results
-      byebug
       if params["filter"] != nil
         filter = Array(params["filter"]).first
         if filter == "collection:Brown University Dissertations"
