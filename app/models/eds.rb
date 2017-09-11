@@ -4,6 +4,12 @@ require "./app/helpers/application_helper.rb"
 require 'ebsco/eds'
 
 class Eds
+
+  # RV:Y peer reviewed
+  # FT: Y full text only
+  DEFAULT_LIMITERS = ["RV:Y", "FT:Y"]
+  DEFAULT_LIMITERS_QS = "&cli0=RV&clv0=Y&cli1=FT&clv1=Y"
+
   def initialize(guest_user, trusted_ip)
     if trusted_ip
       guest = false
@@ -60,9 +66,7 @@ class Eds
   def self.ebsco_base_url(query)
     url = "http://search.ebscohost.com/login.aspx"
     url += "?direct=true&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
-    # cli0=RV&clv0=Y for peer reviewed
-    # cli1=FT&clv1=Y for full text
-    url += "&cli0=RV&clv0=Y&cli1=FT&clv1=Y"
+    url += DEFAULT_LIMITERS_QS
     if query != nil
       url += "&bquery=#{query}"
     end
@@ -104,7 +108,7 @@ class Eds
       query: text,
       results_per_page: 5,
       highlight: false,
-      limiters: ["RV:y"]      # peer-reviewed only (yes)
+      limiters: DEFAULT_LIMITERS
     }
     results = @session.search(options)
     # results = @session.simple_search(text)
@@ -119,7 +123,7 @@ class Eds
       query: text,
       results_per_page: 5,
       highlight: false,
-      limiters: ["RV:y"]      # peer-reviewed only (yes)
+      limiters: DEFAULT_LIMITERS
     }
     results = @session.search(options)
     results.records
