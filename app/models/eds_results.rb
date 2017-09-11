@@ -104,11 +104,12 @@ class EdsResults
     # value that does not include these postfixes.
     def self.clean_author(author)
       return nil if author == nil
-      val_to_remove = ", Author"
+      val_to_remove = ", author"
       value = author.strip
-      if value == val_to_remove
+      test_value = value.downcase
+      if test_value == val_to_remove
         value = nil
-      elsif value.end_with?(val_to_remove)
+      elsif test_value.end_with?(val_to_remove)
         value = value[0..(value.length()-9)]
       end
       value
