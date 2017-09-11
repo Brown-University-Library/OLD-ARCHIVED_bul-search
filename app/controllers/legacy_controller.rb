@@ -1,8 +1,5 @@
 # Handles legacy viewFind URLs
 class LegacyController < ApplicationController
-    def home
-      redirect_to easyS_path(), status: 302
-    end
     def search
       redirect_to easyS_path(), status: 302
     end
