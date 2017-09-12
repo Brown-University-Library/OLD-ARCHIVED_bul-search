@@ -1,5 +1,3 @@
-
-
 class EasyController < ApplicationController
   include Blacklight::Catalog
   include Blacklight::BlacklightHelperBehavior
@@ -51,6 +49,11 @@ class EasyController < ApplicationController
 
   def set_last_easy_search query
     session[:last_easy_search] = query
+  end
+
+  def not_found()
+    flash[:error] = "The page that you are looking for was not found"
+    render "home", status: 404
   end
 
   def empty_set

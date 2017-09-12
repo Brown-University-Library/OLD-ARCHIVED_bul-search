@@ -49,4 +49,9 @@ BulSearch::Application.routes.draw do
   # Legacy
   get 'Search/Results' => "legacy#search_results"
   get 'Search' => "legacy#search"
+
+  # Catch-all route
+  if Rails.env.production?
+    get '*path' => "easy#not_found"
+  end
 end
