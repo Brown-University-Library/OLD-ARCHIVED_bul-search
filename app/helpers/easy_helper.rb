@@ -15,6 +15,7 @@ module EasyHelper
   end
 
   def escape_query query
+    return nil if query == nil
     CGI.escape(query)
   end
 
