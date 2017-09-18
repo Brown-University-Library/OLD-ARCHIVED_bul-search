@@ -116,7 +116,7 @@ function sortFilterFacetList() {
   $('ul#format-list i.waiting').hide();
 };
 
-//Add the Journal Articles box via Summon.
+//Add the Journal Articles box via EDS.
 function summonBox(query) {
   var source = '&source=summon';
   if (isEdsJournals()) {
@@ -151,8 +151,10 @@ function summonBox(query) {
           'count': commaSeparatedNumber(summonSet.numFound)
         }]);
       } else {
-        var txt = "<a href=\"" + summonSet.all + "\">expanding your search</a>"
-        $('#summon').append('<h5>No results.  Try ' + txt + '</h5>');
+        var html = '<h5>No results were found in peer reviewed with full text access sources. ' +
+          'Try <a href="' + summonSet.expandSearch + '">expanding your search</a> to include ' +
+          'non-peer reviewed sources and items without full text access.</h5>';
+        $('#summon').append(html);
       };
     }
   });

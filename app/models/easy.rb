@@ -337,6 +337,7 @@ class Easy
     results['response'] = {}
     results['response']['more'] = Eds.native_url(query_safe, trusted_ip)
     results['response']['all'] = results['response']['more']
+    results['response']['expandSearch'] = Eds.native_expanded_url(query_safe, trusted_ip)
     results['response']['raw'] = "/easy/search?source=eds_raw&q=#{query}"
     results['response']['docs'] = eds_results.items
     results['response']['advanced'] = Eds.native_advanced_url(query, trusted_ip)

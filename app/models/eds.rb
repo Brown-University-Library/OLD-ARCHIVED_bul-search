@@ -9,6 +9,7 @@ class Eds
   # FT: Y full text only
   DEFAULT_LIMITERS = ["RV:Y", "FT:Y"]
   DEFAULT_LIMITERS_QS = "&cli0=RV&clv0=Y&cli1=FT&clv1=Y"
+  DEFAULT_EXPAND_LIMITERS_QS = "&cli0=RV&clv0=N&cli1=FT&clv1=N"
 
   def initialize(guest_user, trusted_ip)
     if trusted_ip
@@ -63,17 +64,21 @@ class Eds
     session
   end
 
-  def self.ebsco_base_url(query)
+  def self.ebsco_base_url(query, delimiters = true)
     url = "http://search.ebscohost.com/login.aspx"
     url += "?direct=true&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
-    url += DEFAULT_LIMITERS_QS
+    if delimiters
+      url += DEFAULT_LIMITERS_QS
+    else
+      url += DEFAULT_EXPAND_LIMITERS_QS
+    end
     if query != nil
       url += "&bquery=#{query}"
     end
   end
 
-  def self.native_url(query, trusted_ip)
-    url = self.ebsco_base_url(query) + "&type=0"
+  def self.native_url(query, trusted_ip, delimiters = true)
+    url = self.ebsco_base_url(query, delimiters) + "&type=0"
     if !trusted_ip
       # Force users *not on campus* to authenticate through Shibboleth,
       # otherwise EBSCO will ask them to authenticate with them and we
@@ -81,6 +86,10 @@ class Eds
       url = "https://login.revproxy.brown.edu/login?url=" + url
     end
     url
+  end
+
+  def self.native_expanded_url(query, trusted_ip)
+    native_url(query, trusted_ip, false)
   end
 
   def self.native_advanced_url(query, trusted_ip)
