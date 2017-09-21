@@ -50,6 +50,12 @@ BulSearch::Application.routes.draw do
   get 'Search/Results' => "legacy#search_results"
   get 'Search' => "legacy#search"
 
+  # This is a duplicate route from the one that gem blacklight_advanced_search
+  # adds on its own (https://github.com/projectblacklight/blacklight_advanced_search/blob/release-5.x/config/routes.rb)
+  # We add it here so that it precedes the catch all route and it is recognized.
+  # Newer versions of the gem handle this better.
+  get 'advanced' => 'advanced#index'
+
   # Catch-all route
   if Rails.env.production?
     get '*path' => "easy#not_found"
