@@ -120,7 +120,11 @@ function addAvailability(availabilityResponse) {
 function getAuthor() {
   // for JCB link
   // slicing occurs in application.js
-  var author = $('h5[class="title-subheading"]')[0].textContent;
+  var elements = $('h5[class="title-subheading"]');
+  if (elements.length == 0) {
+    return "";
+  }
+  var author = elements[0].textContent;
   console.log( 'author, ```' + author + '```' );
   return author;
 }
@@ -129,7 +133,11 @@ function getAuthor() {
 function getPublisher() {
   // for JCB link
   // don't think we need elegant slicing for publisher
-  var publisher = $('h5[class="title-subheading"]')[1].textContent.slice( 0, 100 );
+  var elements = $('h5[class="title-subheading"]');
+  if (elements.length < 2) {
+    return "";
+  }
+  var publisher = elements[1].textContent.slice( 0, 100 );
   return publisher;
 }
 
