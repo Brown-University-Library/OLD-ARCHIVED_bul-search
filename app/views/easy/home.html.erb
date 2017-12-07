@@ -8,7 +8,7 @@
                 </ul>
                 <ul id="other-searches" class="list-unstyled">
                     <li class="worldcat">
-                      <a class="large" href="<%= worldcat_search(@query) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %><%= t('blacklight.worldcat.heading')%></a>
+                      <a class="large" target="_blank" href="<%= worldcat_search(@query) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %><%= t('blacklight.worldcat.heading')%></a>
                       <%= render_info_text t('blacklight.info.sources.worldcat') %>
                     </li>
                     <li>
