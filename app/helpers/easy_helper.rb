@@ -4,9 +4,26 @@ module EasyHelper
   def data_link(query)
     url_for :controller=>'easy', :action=> 'search', :q => query
   end
+
   def website_search(query)
-    url_for :controller=>'libweb', :action=> 'search', :q => query
+    libweb_more_link(query)
   end
+
+  def libweb_more(query)
+    link_to("More results", libweb_more_link(query))
+  end
+
+  def libweb_more_link(query)
+    no_query = ((query || "").strip.length == 0)
+    if no_query
+      # library home page
+      "http://library.brown.edu"
+    else
+      # search results within the library web site
+      url_for :controller=>'libweb', :action=> 'search', :q => query
+    end
+  end
+
   def catalog_record_url
     #This shouldn't be hard coded but couldn't find Blacklight documentation
     #at first pass.

@@ -1,16 +1,7 @@
-<% if @has_query != true %>
-    <div class="col-md-6 col-md-offset-3">
-        <div class="well well-lg">
-            Lorem ipsum dolor sit amet, luptatum vivendum quo ex, pri cu veri commune definiebas, id homero omnesque postulant est. Minimum recteque sed ne, usu no case officiis intellegebat, ius an esse fabellas. Ne cum tation labores officiis. No doming reprehendunt his, mei id natum salutandi deterruisset. Eos quem integre et, dictas argumentum definitiones vel ad.
-        </div>
-    </div>
-
-<% else %>
-    <h3>Library website search</h3>
-    <div id="libweb-search" class="col-md-12" data-no-turbolink>
-        <gcse:searchresults-only queryParameterName="q" linkTarget="_self" webSearchResultSetSize="10">
-    </div>
-<% end %>
+<h3>Library website search</h3>
+<div id="libweb-search" class="col-md-12" data-no-turbolink>
+    <gcse:searchresults-only queryParameterName="q" linkTarget="_self" webSearchResultSetSize="10">
+</div>
 
 <!-- Google cse. -->
 <script>
