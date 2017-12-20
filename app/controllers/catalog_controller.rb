@@ -223,7 +223,14 @@ class CatalogController < ApplicationController
     config.add_search_field("bookplate_code") do |field|
       field.include_in_simple_select = true
       field.include_in_advanced_search = false
-      field.solr_parameters = { :qf => "bookplate_code_facet" }
+      # I cannot specify qf, q, of fq here because I want to support regular
+      # expressions via `q=bookplate_code_facet:/something.*/`. This is also
+      # why I am forcing eDisMax (which should be our default but that's
+      # another issue)
+      #
+      # TODO: create a new field rather than using a "_facet" field.
+      #       make sure the field is string, multi-value, stored, and indexed
+      field.solr_parameters = { defType: "edismax" }
     end
   end  # end of `configure_blacklight do |config|`
 
@@ -306,15 +313,16 @@ class CatalogController < ApplicationController
   end
 
   def bookplate
-    per_page = int_param(:per_page, 10, 100)
-    page = int_param(:page, 1)
-    bookplate = Bookplate.new(blacklight_config)
-    @response, @document_list = bookplate.items_by_code(params[:bookplate_code], per_page, page)
-    # Prevent facets from showing up since we don't
-    # support faceting over the result from the bookplate
-    # code search.
-    @hide_facets = true
-    render
+    url = catalog_url(id:"")
+    if params[:code] != nil
+      code = (params[:code] || "").strip
+      if code.length > 0
+        # create a search URL with the indicated book plate code
+        code_regex = "/#{code}.*/"
+        url += "?search_field=bookplate_code&q=bookplate_code_facet:#{code_regex}"
+      end
+    end
+    redirect_to url
   end
 
   # Blacklight override
