@@ -43,6 +43,21 @@
     <script>
         var availabilityService = '<%= availability_service_url %>';
     </script>
+
+    <!-- TODO: We should render the item information server side with the
+         information on the 945 fields. We still need to make the call to the
+         Availability API to get real time availability, but going of the 945,
+         would allows to render book plate information for items that don't
+         have a bar code. Currently we cannot display book plate information
+         for items without a bar code (e.g. https://search.library.brown.edu/catalog/b5102800)
+         because addAvailability() in catalog_record_availability.js uses barcodes
+         to match book plates with availability info.
+
+         If we do this, how should we display this record?
+         https://search.library.brown.edu/catalog/b2424700
+
+       -->
+
     <!-- Populated by `catalog_record_availability` <script> above. -->
 </div>
 
