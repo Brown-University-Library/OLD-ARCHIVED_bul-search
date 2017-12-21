@@ -318,8 +318,8 @@ class CatalogController < ApplicationController
       code = (params[:code] || "").strip
       if code.length > 0
         # create a search URL with the indicated book plate code
-        code_regex = "/#{code}.*/"
-        url += "?search_field=bookplate_code&q=bookplate_code_facet:#{code_regex}"
+        code_regex = bookplate_regex(code)
+        url += "?search_field=bookplate_code&q=bookplate_code_ss:#{code_regex}"
       end
     end
     redirect_to url
@@ -373,5 +373,23 @@ class CatalogController < ApplicationController
       return true
     end
     return false
+  end
+
+  def bookplate_regex(code)
+    safe_code = ""
+    code.each_char do |c|
+      case
+        when (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") ||
+          (c >= "0" && c <= "9") || c == " " || c == "_"
+          safe_code += c
+        when c == "+"
+          safe_code += "%5C%2B"     # Regex escaped and URL encoded
+        when c == "." || c == "*"
+          safe_code += "%5C#{c}"    # Regex escaped, should I encode these too?
+        else
+          safe_code += "."
+      end
+    end
+    "/#{safe_code}.*/"
   end
 end
