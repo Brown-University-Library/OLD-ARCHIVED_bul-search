@@ -66,7 +66,7 @@ class Eds
 
   def self.ebsco_base_url(query, delimiters = true)
     url = "http://search.ebscohost.com/login.aspx"
-    url += "?direct=true&site=eds-live&authtype=ip&custid=rock&groupid=main&profid=eds"
+    url += "?direct=true&site=eds-live&authtype=ip,sso&custid=rock&groupid=main&profid=eds"
     if delimiters
       url += DEFAULT_LIMITERS_QS
     else
