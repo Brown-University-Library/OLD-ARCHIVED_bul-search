@@ -223,13 +223,11 @@ class CatalogController < ApplicationController
     config.add_search_field("bookplate_code") do |field|
       field.include_in_simple_select = true
       field.include_in_advanced_search = false
-      # I cannot specify qf, q, of fq here because I want to support regular
-      # expressions via `q=bookplate_code_facet:/something.*/`. This is also
-      # why I am forcing eDisMax (which should be our default but that's
-      # another issue)
-      #
-      # TODO: create a new field rather than using a "_facet" field.
-      #       make sure the field is string, multi-value, stored, and indexed
+      # I cannot specify qf here because I want to support regular
+      # expressions. Solr supports regex via `q=bookplate_code_ss:/something.*/`
+      # but not using `q=/something.*/&qf=bookplate_code_ss`.
+      # Regex support is also why I am forcing eDisMax (which should be our
+      # default but that's another issue)
       field.solr_parameters = { defType: "edismax" }
     end
   end  # end of `configure_blacklight do |config|`
@@ -252,6 +250,7 @@ class CatalogController < ApplicationController
   end
 
   def index
+    adjust_special_fields()
     @is_eds = ENV["JOURNALS_PROV"] == "eds"
     @render_opensearch = true
     relax_max_per_page if api_call?
@@ -299,27 +298,15 @@ class CatalogController < ApplicationController
     end
   end
 
-  def api_call?
-    format = params[:format]
-    return format == "xml" || format == "json"
-  end
-
-  def relax_max_per_page
-    blacklight_config.max_per_page = 1000
-  end
-
-  def restore_max_per_page
-    blacklight_config.max_per_page = 100
-  end
-
+  # Redirects user to the catalog page with the appropriate filter
+  # to view items purchased witht the given bookplate code.
   def bookplate
     url = catalog_url(id:"")
     if params[:code] != nil
       code = (params[:code] || "").strip
       if code.length > 0
-        # create a search URL with the indicated book plate code
-        code_regex = bookplate_regex(code)
-        url += "?search_field=bookplate_code&q=bookplate_code_ss:#{code_regex}"
+        # create a search URL with the indicated bookplate
+        url += "?search_field=bookplate_code&q=#{code}"
       end
     end
     redirect_to url
@@ -352,44 +339,91 @@ class CatalogController < ApplicationController
     flash[:error].blank?
   end
 
-  def spam_attempt?
-    return false if spam_check? == false
-    return false if trusted_ip?(request.remote_ip)
-    case
-    when params[:t1] == nil
-      Rails.logger.info( "E-mail not sent, missing token 1.")
-      return true
-    when params[:t2] == nil
-      Rails.logger.info( "E-mail not sent, missing token 2.")
-      return true
-    when params[:t1] != params[:t2]
-      Rails.logger.info( "E-mail not sent, request token mismatch (t1: #{params[:t1]}, t2: #{params[:t2]})")
-      return true
-    when params[:agreement] != daily_token()
-      Rails.logger.info( "E-mail not sent, daily token mismatch (expected: #{daily_token()}, got: #{params[:agreement]})")
-      return true
-    when params[:to].to_s.downcase.include?("qq.com")
-      Rails.logger.info( "E-mail not sent, qq.com email (#{params[:to]})")
-      return true
-    end
-    return false
-  end
+  private
 
-  def bookplate_regex(code)
-    safe_code = ""
-    code.each_char do |c|
-      case
-        when (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") ||
-          (c >= "0" && c <= "9") || c == " " || c == "_"
-          safe_code += c
-        when c == "+"
-          safe_code += "%5C%2B"     # Regex escaped and URL encoded
-        when c == "." || c == "*"
-          safe_code += "%5C#{c}"    # Regex escaped, should I encode these too?
+    def adjust_special_fields
+      return if params[:q] == nil || params[:q].empty?
+
+      if params[:search_field] == "bookplate_code"
+        if params[:q].start_with?("bookplate_code_ss:")
+          # Nothing to do - assume the value has already been processed
         else
-          safe_code += "."
+          # Add the field to the expression and make the value a regex
+          # q=bookplate_code_ss:/value/
+          # Adding the field to the expression is required when using regex
+          # search values in Solr.
+          params[:q] = "bookplate_code_ss:#{bookplate_regex(params[:q])}"
+        end
       end
     end
-    "/#{safe_code}.*/"
-  end
+
+    def api_call?
+      format = params[:format]
+      return format == "xml" || format == "json"
+    end
+
+    def relax_max_per_page
+      blacklight_config.max_per_page = 1000
+    end
+
+    def restore_max_per_page
+      blacklight_config.max_per_page = 100
+    end
+
+    def spam_attempt?
+      return false if spam_check? == false
+      return false if trusted_ip?(request.remote_ip)
+      case
+      when params[:t1] == nil
+        Rails.logger.info( "E-mail not sent, missing token 1.")
+        return true
+      when params[:t2] == nil
+        Rails.logger.info( "E-mail not sent, missing token 2.")
+        return true
+      when params[:t1] != params[:t2]
+        Rails.logger.info( "E-mail not sent, request token mismatch (t1: #{params[:t1]}, t2: #{params[:t2]})")
+        return true
+      when params[:agreement] != daily_token()
+        Rails.logger.info( "E-mail not sent, daily token mismatch (expected: #{daily_token()}, got: #{params[:agreement]})")
+        return true
+      when params[:to].to_s.downcase.include?("qq.com")
+        Rails.logger.info( "E-mail not sent, qq.com email (#{params[:to]})")
+        return true
+      end
+      return false
+    end
+
+    def is_regex?(code)
+      return false if code == nil
+      code.start_with?("/") && code.end_with?("/")
+    end
+
+    # Converts a given bookplate code to a regex that we can to send Solr
+    # to retrive items with it. For example "bookplateBloomingdaleLymanG"
+    # becomes "/bookplateBloomingdaleLymanG.*/"
+    #
+    # We use a regex so that we can execute "starts with" kind of searches.
+    # For example a query for "bookplate 054106" is converted into
+    # "/bookplate 054106.*/" (notice the .*) and will pick up items where
+    # the bookplate code is "bookplate 054106_purchased_2005" or
+    # "bookplate 054106_purchased_2012"
+    def bookplate_regex(code)
+      return code if is_regex?(code)
+      safe_code = ""
+      code.each_char do |c|
+        case
+          when (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") ||
+            (c >= "0" && c <= "9") || c == " " || c == "_"
+            safe_code += c
+          when c == "+"
+            safe_code += "%5C%2B"     # Regex escaped and URL encoded
+          when c == "." || c == "*"
+            safe_code += "%5C#{c}"    # Regex escaped, should I encode these too?
+          else
+            safe_code += "."
+        end
+      end
+      regex = "/#{safe_code}.*/"
+      regex
+    end
 end
