@@ -307,6 +307,7 @@ class CatalogController < ApplicationController
       if code.length > 0
         # create a search URL with the indicated bookplate
         url += "?search_field=bookplate_code&q=#{code}"
+        url += "&sort=pub_date_sort desc, title_sort asc"
       end
     end
     redirect_to url
