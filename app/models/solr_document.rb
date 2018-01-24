@@ -227,7 +227,6 @@ class SolrDocument
   def performer_notes
     @performer_notes ||= begin
       notes = marc.subfield_values("511", "a")
-      notes || []
     rescue StandardError => e
       Rails.logger.error "Error parsing performer notes for ID: #{self.fetch('id', nil)}, #{e.message}"
       []
@@ -285,7 +284,7 @@ class SolrDocument
         self["abstract_display"]
       else
         # parse the MARC data in Solr to get the abstract
-        marc_abstract = marc.subfield_values('520','a')
+        marc.subfield_values('520','a')
       end
     rescue StandardError => e
       Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}, #{e.message}"
