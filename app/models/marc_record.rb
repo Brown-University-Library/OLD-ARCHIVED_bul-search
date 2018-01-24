@@ -26,7 +26,10 @@ class MarcRecord
 
   # Receives a field code (e.g. "504") and subfield
   # code (e.g. "a") and returns an array with the
-  # string values for a field code/subfield.
+  # the string values for all fields that match the
+  # field_code and subfield_code. For example if there
+  # are many fields with code "028" and subfield "a"
+  # it will return an array with all of them.
   def subfield_values(field_code, subfield_code)
     values = []
     fields = field(field_code)
@@ -44,14 +47,12 @@ class MarcRecord
     values
   end
 
-  # Receives a field object and a subfield code (e.g. "a")
-  # and returns the first value found.
+  # Receives a field object and a subfield code (e.g. "a") and
+  # and returns the first value found. The field object is
+  # expected to be one of the fields returned by `field(code)`.
   #
-  # TODO: I don't like how hidden the difference between methods
-  # subfield_values() and subfield_value() is. It's too easy to
-  # get confused. I should refactor these methods to make more
-  # obvious the difference in input and output.
-  #
+  # We use this method to pick a subfield value from a very specific
+  # field (e.g. subfield "a" from the second "028" field in the record)
   def subfield_value(field, subfield_code)
     field["subfields"].each do |subfield|
       if subfield.keys.first == subfield_code
