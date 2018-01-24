@@ -2,12 +2,12 @@
 require 'bulmarc'
 require 'json'
 require 'open-uri'
+require "./app/models/string_utils.rb"
 require "./app/models/table_of_contents.rb"
+require "./app/models/marc_record.rb"
 
 class SolrDocument
-
   include MarcDisplay
-
   include Blacklight::Solr::Document
 
   extension_parameters[:marc_source_field] = :marc_display
@@ -27,16 +27,16 @@ class SolrDocument
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension( Blacklight::Document::Sms )
 
-  def get_availability_info
-    Availability.get(ENV['AVAILABILITY_SERVICE'], self.fetch('id'))
-  end
-
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or
   # single valued. See Blacklight::Solr::Document::ExtendableClassMethods#field_semantics
   # and Blacklight::Solr::Document#to_semantic_values
   # Recommendation: Use field names from Dublin Core
   use_extension( Blacklight::Document::DublinCore)
+
+  def get_availability_info
+    Availability.get(ENV['AVAILABILITY_SERVICE'], self.fetch('id'))
+  end
 
   def record_source
     return "MIL" if self["record_source_s"] == nil
@@ -164,7 +164,7 @@ class SolrDocument
     # Once the location_code_t field is in Solr we shouldn't
     # need to parse it out of the marc_display value.
     locations = []
-    values = marc_subfield_values("945", "l")
+    values = marc.subfield_values("945", "l")
     values.uniq.each do |code|
       next if code == nil
       location = Location.find_by_code(code)
@@ -179,27 +179,14 @@ class SolrDocument
     locations
   end
 
-  def clean_join(a, b)
-    case
-      when a != nil && b != nil
-        "#{a} #{b}"
-      when a != nil && b == nil
-        "#{a}"
-      when a == nil && b != nil
-        "#{b}"
-      else
-        ""
-    end
-  end
-
   def license_agreements
     @license_agreements ||= begin
       agreements = []
-      fields = marc_field("540")
+      fields = marc.field("540")
       fields.each do |field, index|
-        a = subfield_value(field, "a")
+        a = marc.subfield_value(field, "a")
         if a != nil
-          u = subfield_value(field, "u")
+          u = marc.subfield_value(field, "u")
           agreement = {text: a, url: u}
           agreements << agreement
         end
@@ -213,9 +200,9 @@ class SolrDocument
    #some records that only have 490 and no 830
   def series
     @series ||= begin
-      series = marc_subfield_values("830", "a").first
+      series = marc.subfield_values("830", "a").first
       if series == nil
-        series = marc_subfield_values("490", "a").first
+        series = marc.subfield_values("490", "a").first
       end
       series
     end
@@ -223,9 +210,9 @@ class SolrDocument
 
   def content_media_carrier
     @content_media_carrier ||= begin
-      content = marc_subfield_values("336", "a").first
-      media = marc_subfield_values("337", "a").first
-      carrier = marc_subfield_values("338", "a").first
+      content = marc.subfield_values("336", "a").first
+      media = marc.subfield_values("337", "a").first
+      carrier = marc.subfield_values("338", "a").first
       if content != nil || media != nil || carrier != nil
         {content: content, media: media, carrier: carrier}
       else
@@ -239,7 +226,7 @@ class SolrDocument
 
   def performer_notes
     @performer_notes ||= begin
-      notes = marc_subfield_values("511", "a")
+      notes = marc.subfield_values("511", "a")
       notes || []
     rescue StandardError => e
       Rails.logger.error "Error parsing performer notes for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -250,11 +237,11 @@ class SolrDocument
   def music_notes
     @music_notes ||= begin
       notes = []
-      fields = marc_field("028")
+      fields = marc.field("028")
       fields.each do |field, index|
-        a = subfield_value(field, "a")
-        b = subfield_value(field, "b")
-        note = clean_join(a, b)
+        a = marc.subfield_value(field, "a")
+        b = marc.subfield_value(field, "b")
+        note = StringUtils.clean_join(a, b)
         if note != nil
           notes << note
         end
@@ -269,12 +256,12 @@ class SolrDocument
   def music_numbers
     @music_numbers ||= begin
       numbers = []
-      fields = marc_field("024")
+      fields = marc.field("024")
       fields.each do |field, index|
-        text = subfield_value(field, "a")
+        text = marc.subfield_value(field, "a")
         if text != nil
-          source = subfield_value(field, "2")
-          qualifying = subfield_value(field, "q")
+          source = marc.subfield_value(field, "2")
+          qualifying = marc.subfield_value(field, "q")
           url = nil
           if source == "doi"
             url = "https://doi.org/#{text}"
@@ -298,7 +285,7 @@ class SolrDocument
         self["abstract_display"]
       else
         # parse the MARC data in Solr to get the abstract
-        marc_abstract = marc_subfield_values('520','a')
+        marc_abstract = marc.subfield_values('520','a')
       end
     rescue StandardError => e
       Rails.logger.error "Error parsing abstract for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -308,9 +295,9 @@ class SolrDocument
 
   def publisher_name
     @publisher_name ||= begin
-      value = strip_punctuation(marc_subfield_values('264','b').first)
+      value = StringUtils.strip_punctuation(marc.subfield_values('264','b').first)
       if value == nil
-        value = strip_punctuation(marc_subfield_values('260','b').first)
+        value = StringUtils.strip_punctuation(marc.subfield_values('260','b').first)
       end
     rescue StandardError => e
       Rails.logger.error "Error parsing publisher_name for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -320,9 +307,9 @@ class SolrDocument
 
   def publisher_place
     @publisher_place ||= begin
-      value = strip_punctuation(marc_subfield_values('264','a').first)
+      value = StringUtils.strip_punctuation(marc.subfield_values('264','a').first)
       if value == nil
-        value = strip_punctuation(marc_subfield_values('260','a').first)
+        value = StringUtils.strip_punctuation(marc.subfield_values('260','a').first)
       end
     rescue StandardError => e
       Rails.logger.error "Error parsing publisher_place for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -351,27 +338,27 @@ class SolrDocument
       values = []
 
       # Item data is on the 945 fields.
-      marc_fields.each_with_index do |marc_field, index|
+      marc.fields.each_with_index do |marc_field, index|
         next if marc_field.keys.first != "945"
 
         f_945 = marc_field["945"]
-        location_code = subfield_value(f_945, "l")
-        barcode = subfield_value(f_945, "i")
+        location_code = marc.subfield_value(f_945, "l")
+        barcode = marc.subfield_value(f_945, "i")
 
-        bookplate_code = subfield_value(f_945, "f")
+        bookplate_code = marc.subfield_value(f_945, "f")
 
         # bookplate URL and display text are on the next 996
         i = index + 1
-        while i < marc_fields.count
-          if marc_fields[i].keys.first == "945"
+        while i < marc.fields.count
+          if marc.fields[i].keys.first == "945"
             # ran into a new 945, no bookplate info found.
             break
           end
 
-          if marc_fields[i].keys.first == "996"
-            f_996 = marc_fields[i]["996"]
-            bookplate_url = subfield_value(f_996, "u")
-            bookplate_display = subfield_value(f_996, "z")
+          if marc.fields[i].keys.first == "996"
+            f_996 = marc.fields[i]["996"]
+            bookplate_url = marc.subfield_value(f_996, "u")
+            bookplate_display = marc.subfield_value(f_996, "z")
             # parsed a 996, we should be done.
             break
           end
@@ -394,62 +381,12 @@ class SolrDocument
 
   private
 
-    # Returns the values for a MARC field.
-    # For some fields this is an array of string (e.g. 001)
-    # whereas for others (e.g. 015) is an array of Hash objects
-    # with subfield definitions.
-    def marc_field(code)
-      values = []
-      marc_fields.each do |marc_field|
-        if marc_field.keys.first == code && marc_field[code] != nil
-          values << marc_field[code]
-        end
-      end
-      values
-    end
-
-    # Returns an array with the string values
-    # for a field/subfield
-    def marc_subfield_values(field_code, subfield_code)
-      values = []
-      fields = marc_field(field_code)
-      fields.each do |field|
-        field["subfields"].each do |subfield|
-          if subfield.keys.first == subfield_code
-            subfield.values.each do |value|
-              if value != nil
-                values << value.strip
-              end
-            end
-          end
-        end
-      end
-      values
-    end
-
-    def subfield_value(field, subfield_code)
-      field["subfields"].each do |subfield|
-        if subfield.keys.first == subfield_code
-          # Could there be many values???
-          value = subfield.values.first
-          value = value.strip if value != nil
-          return value
-        end
-      end
-      nil
-    end
-
     def has_marc_data?
       self["marc_display"] != nil
     end
 
-    def marc_display_json
-      @marc_display_json ||= JSON.parse(self["marc_display"])
-    end
-
-    def marc_fields
-      return [] if has_marc_data? == false
-      marc_display_json["fields"]
+    def marc
+      @marc_record ||= MarcRecord.new(self["marc_display"])
     end
 
     def online_availability_from_solr
@@ -476,22 +413,17 @@ class SolrDocument
       values = []
 
       # Online availability info is on fields 856.
-      marc_fields.each do |marc_field|
+      marc.fields.each do |marc_field|
         next if marc_field.keys.first != "856"
 
         f_856 = marc_field["856"]
-        url = subfield_value(f_856, "u")
-        note = subfield_value(f_856, "z")
-        materials = subfield_value(f_856, "3")
+        url = marc.subfield_value(f_856, "u")
+        note = marc.subfield_value(f_856, "z")
+        materials = marc.subfield_value(f_856, "3")
 
         online_avail = OnlineAvailData.new(url, note, materials)
         values << online_avail
       end
       values
-    end
-
-    def strip_punctuation(str)
-      return nil if str == nil
-      str.chomp(":").chomp(",").chomp(";").strip()
     end
 end
