@@ -19,143 +19,184 @@ $(document).ready(
 );
 
 
+function getItemById(id) {
+  var i;
+  for(i = 0; i < itemsData.length; i++) {
+    if (itemsData[i].id == id) {
+      return itemsData[i];
+    }
+  }
+  return null;
+}
+
+function getItemByBarcode(barcode) {
+  var i;
+  for(i = 0; i < itemsData.length; i++) {
+    if (itemsData[i].barcode == barcode) {
+      return itemsData[i];
+    }
+  }
+  return null;
+}
+
+
 function getBibId() {
-  /* Pulls bib_id from DOM, called on doc.ready */
-  bib_id_div_name = $( "div[id^='doc_']" )[0].id;
-  bib_id_start = bib_id_div_name.search( '_' ) + 1;
-  bib_id = bib_id_div_name.substring( bib_id_start );
-  return bib_id;
+  return bibData.id;
 }
 
 
 function getTitle() {
-  return $('h3[itemprop="name"]').text();
+  return bibData.title;
 }
 
 
 function getFormat() {
-  return $("dd.blacklight-format").text().trim();
-}
-
-
-function processItems(availabilityResponse) {
-  var out = []
-  $.each(availabilityResponse.items, function( index, item ) {
-    var loc = item['location'].toLowerCase();
-    out.push(item);
-  });
-  var rsp = availabilityResponse;
-  return rsp;
-}
-
-
-function hasItems(availabilityResponse) {
-  return (availabilityResponse.items.length > 0);
-}
-
-
-function addAvailability(availabilityResponse) {
-  var title = getTitle();
-  var bib = getBibId();
-  var format = getFormat();
-  //check for request button
-  addRequestButton(availabilityResponse)
-  //do realtime holdings
-  context = availabilityResponse;
-  context['book_title'] = title;
-  context['online_resource'] = $("#online_resources").length == 1
-  if (hasItems(availabilityResponse)) {
-    _.each(context['items'], function(item) {
-
-      // add title to map link.
-      item['map'] = item['map'] + '&title=' + title;
-
-      // add bookplate information
-      // item_info() is defined in _show_default.html.erb
-      var bookplate = item_info(item['barcode'])
-      if (bookplate != null) {
-        item['bookplate_url'] = bookplate.url;
-        item['bookplate_display'] = bookplate.display;
-      }
-
-      //add easyScan link & item request
-      if (canScanItem(item['location'], format)) {
-        item['scan'] = easyScanFullLink(item['scan'], bib, title);
-        item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-      } else {
-        item['scan'] = null;
-        item['item_request_url'] = null;
-      }
-
-      // add jcb aeon link if necessary
-      if ( item['location'].slice(0, 3) == "JCB" ) {
-        console.log( 'jcb title, ```' + title + '```' )
-        item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
-      }
-
-      // add hay aeon link if necessary
-      if ( item['location'].slice(0, 3) == "HAY" ) {
-        console.log( '- hay title, ```' + title + '```' )
-        if ( isValidHayAeonLocation(item['location']) == true ) {
-          item['hay_aeon_url'] = hayAeonFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'], item['location'] );
-        }
-      }
-
-    });
-  }
-
-  if (context['has_more'] == true) {
-    context['more_link'] = window.location.href + '?limit=false';
-  }
-  //turning off for now.
-  context['show_ezb_button'] = false;
-  if (availabilityResponse.requestable) {
-    context['request_link'] = requestLink();
-  };
-  html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
-  $("#availability").append(html);
+  return bibData.format;
 }
 
 
 function getAuthor() {
-  // for JCB link
-  // slicing occurs in application.js
-  var elements = $('h5[class="title-subheading"]');
-  if (elements.length == 0) {
-    return "";
-  }
-  var author = elements[0].textContent;
-  console.log( 'author, ```' + author + '```' );
-  return author;
+  return bibData.author;
 }
 
 
 function getPublisher() {
-  // for JCB link
-  // don't think we need elegant slicing for publisher
-  var elements = $('h5[class="title-subheading"]');
-  if (elements.length < 2) {
-    return "";
+  bibData.publisher;
+}
+
+
+function addAvailability(availabilityResponse) {
+
+  // Realtime status of items (and other item specific information)
+  _.each(availabilityResponse.items, function(avItem) {
+    updateItemInfo(avItem);
+  });
+
+  if (availabilityResponse.has_more == true) {
+    $("#show_more_items").removeClass("hidden");
   }
-  var publisher = elements[1].textContent.slice( 0, 100 );
-  return publisher;
-}
 
-
-function requestLink() {
-  var bib = getBibId();
-  return 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
-}
-
-
-function addRequestButton(availabilityResponse) {
-  //ugly Josiah request url.
-  //https://josiah.brown.edu/search~S7?/.b2305331/.b2305331/1%2C1%2C1%2CB/request~b2305331
   if (availabilityResponse.requestable) {
-    var bib = getBibId();
-    var url = 'https://josiah.brown.edu/search~S7?/.' + bib + '/.' + bib + '/%2C1%2C1%2CB/request~' + bib;
-    //$('#sidebar ul.nav').prepend('<li><a href=\"' + url + '\">Request this</a></li>');
+    $(".request-this-link").removeClass("hidden");
   };
+}
+
+// TODO: why do these show online and aval in prod. (which is correct)
+// https://search.library.brown.edu/catalog/b8085136
+// https://search.library.brown.edu/catalog/b5850361
+
+// Updates item information (already on the page) with the
+// extra information that we got from the Availability service.
+function updateItemInfo(avItem) {
+  var item, barcode, itemRow;
+
+  barcode = avItem['barcode'];
+  item = getItemByBarcode(barcode);
+  if (item == null) {
+    showError("ERROR: barcode " + barcode + " not found in MARC item data");
+    return;
+  }
+
+  if (item.call_number != avItem['callnumber']) {
+    showError("WARN: call number mismatch for barcode " + barcode + ": " + item.call_number  + " vs " + avItem['callnumber']);
+  }
+
+  itemRow = $("#item_" + item.id);
+  updateItemMap(itemRow, avItem);
+  updateItemStatus(itemRow, avItem);
+  updateItemScanStatus(itemRow, avItem, barcode);
+  updateItemAeonLinks(itemRow, avItem);
+}
+
+
+function updateItemMap(row, avItem) {
+  var floor, aisle, mapText, mapUrl, html;
+  if (avItem['shelf'] && avItem['shelf']['floor'] && avItem['shelf']['aisle']) {
+    floor = avItem['shelf']['floor'];
+    aisle = avItem['shelf']['aisle'];
+    mapText = "Level " + floor + ", Aisle " + aisle;
+    if (avItem['map']) {
+      mapUrl = avItem['map'] + '&title=' + getTitle();
+      html = "-- <a href=" + mapUrl + ">" + mapText + "</a>";
+    } else {
+      html = "-- mapText";
+    }
+    row.find(".location_map").html(html);
+  }
+}
+
+
+function updateItemStatus(row, avItem) {
+  if (avItem['status']) {
+    row.find(".status").html(avItem['status']);
+  }
+}
+
+
+function updateItemScanStatus(row, avItem, barcode) {
+  var scanLink, itemLink, html;
+  // Birkin's original code
+  //add easyScan link & item request
+  // if (canScanItem(item['location'], format)) {
+  //   item['scan'] = easyScanFullLink(item['scan'], bib, title);
+  //   item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
+  // } else {
+  //   item['scan'] = null;
+  //   item['item_request_url'] = null;
+  // }
+  if (canScanItem(avItem['location'], bibData.format)) {
+    scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '">scan</a>';
+    itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '">item</a>';
+    html = scanLink + " | " + itemLink;
+    row.find(".scan").html(html);
+  }
+}
+
+
+function updateItemAeonLinks(row, avItem) {
+  var location, url, html;
+  // Birkin's original code
+  // // add jcb aeon link if necessary
+  // if ( item['location'].slice(0, 3) == "JCB" ) {
+  //   console.log( 'jcb title, ```' + title + '```' )
+  //   item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
+  // }
+  //
+  // // add hay aeon link if necessary
+  // if ( item['location'].slice(0, 3) == "HAY" ) {
+  //   console.log( '- hay title, ```' + title + '```' )
+  //   if ( isValidHayAeonLocation(item['location']) == true ) {
+  //     item['hay_aeon_url'] = hayAeonFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'], item['location'] );
+  //   }
+  // }
+
+  location = (avItem['location'] || "").slice(0, 3);
+
+  // JCB Aeon link
+  if (location == "JCB") {
+    url = jcbRequestFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, avItem['callnumber']);
+    html = '<a href="' + url + '">request-access</a>';
+    row.find(".jcb_url").html(html);
+  }
+
+  // Hay Aeon link
+  if (location == "HAY") {
+    if (isValidHayAeonLocation(avItem['location']) == true) {
+      // Birkin: This version handles author/publisher better because it gets the
+      // information from the bibData object rather than guessing from HTML element.
+      // See for example http://localhost:3000/catalog/b3326323 (previously the code
+      // was using the publisher as the author because there is no author.)
+      url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, avItem['callnumber'], avItem['location']);
+      html = '<a href="' + url + '">request-access</a>';
+      row.find(".hay_aeon_url").html(html);
+    }
+  }
+}
+
+
+function showError(message) {
+  $("#errorMsg").removeClass("hidden");
+  $("#errorMsg").append("<p>" + message + "</p>");
 }
 
 

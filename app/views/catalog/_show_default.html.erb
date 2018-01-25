@@ -39,39 +39,84 @@
     </div>
 <% end %>
 
+<div id="errorMsg" class="hidden"></div>
+
 <div id="availability">
-    <script>
-        var availabilityService = '<%= availability_service_url %>';
-    </script>
-
-    <!-- TODO: We should render the item information server side with the
-         information on the 945 fields. We still need to make the call to the
-         Availability API to get real time availability, but going of the 945,
-         would allows to render book plate information for items that don't
-         have a bar code. Currently we cannot display book plate information
-         for items without a bar code (e.g. https://search.library.brown.edu/catalog/b5102800)
-         because addAvailability() in catalog_record_availability.js uses barcodes
-         to match book plates with availability info.
-
-         If we do this, how should we display this record?
-         https://search.library.brown.edu/catalog/b2424700
-
-       -->
-
-    <!-- Populated by `catalog_record_availability` <script> above. -->
+  <!--
+    Samples to test:
+    * Physical record without a barcode (but with bookplate) https://search.library.brown.edu/catalog/b5102800
+    * Online record: https://search.library.brown.edu/catalog/b2424700
+   -->
+   <div class="holdings-wrapper" class="results">
+     <h4>Availability
+       <% request_link = "https://josiah.brown.edu/search~S7?/.#{@document.id}/.#{@document.id}/%2C1%2C1%2CB/request~#{@document.id}" %>
+       <a class="hidden btn request-this-link" href="<%= request_link %>" target="_blank">Request this</a>
+     </h4>
+     <% if @document.item_data.count == 0 && @document.online_availability.count == 0 %>
+        <div>We don't currently have availability information for this item.
+          <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
+          Contact the library staff<a/> for assistance with this item.</div>
+     </div>
+     <% else %>
+        <table class="table">
+          <tr>
+            <th>Location</th>
+            <th>Call number</th>
+            <th>Status</th>
+          </tr>
+          <% @document.item_data.each_with_index do |item, index| %>
+            <!-- TODO: pass `limit=false` as a param rather than picking up
+                from the request. -->
+            <% row_css_class = (index > 9 && !request.url.include?("limit=false")) ? "hidden" : "" %>
+            <tr id="item_<%= item.id %>" class="bib_item <%= row_css_class %>">
+              <td>
+                <span class="location"><%= item.location_code %></span>
+                <span class="location_map"></span>
+                <% if item.bookplate_url %>
+                  <div>
+                    <a href="<%= item.bookplate_url %>" target="_blank"><%= item.bookplate_display.gsub('"', '\"').html_safe %></a>
+                  </div>
+                <% end %>
+              </td>
+              <td class="callnumber"><%= item.call_number %></td>
+              <td>
+                <span class="status">--</span>
+                <span class="scan"></span>
+                <span class="jcb_url"></span>
+                <span class="hay_aeon_url"></span>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+        <div id="show_more_items" class="more-results pull-right hidden">
+            <a href="<%= catalog_url(@document.id) %>?limit=false" class="label label-info">more</a>
+        </div>
+     <% end %>
+   </div>
 </div>
 
 <script>
-      // Called after retrieving availability information
-      // to link up each item with their bookplate.
-      function item_info(barcode) {
-        <% @document.item_data.select{|x| x.barcode != nil }.each do |item| %>
-          if (barcode === "<%= item.barcode %>") {
-            return {url: "<%= item.bookplate_url %>", display: "<%= item.bookplate_display.gsub('"', '\"').html_safe %>"};
-          }
-        <% end %>
-        return null;
-      }
+var availabilityService = '<%= availability_service_url %>';
+
+var bibData = {};
+bibData.id = "<%= @document.id %>";
+bibData.title = "<%= document[:title_display] %>";
+bibData.format = "<%= document[:format] %>";
+bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
+bibData.publisher = "<%= document.marc_imprint() %>";
+
+var itemsData = [];
+var item;
+<% @document.item_data.each do |item| %>
+  itemsData.push({
+    id: "<%= item.id %>",
+    barcode: "<%= item.barcode %>",
+    location_code: "<%= item.location_code %>",
+    bookplate_display: "<%= item.bookplate_display.gsub('"', '\"').html_safe %>",
+    bookplate_url: "<%= item.bookplate_url %>",
+    call_number: "<%= item.call_number %>"
+  });
+<% end %>
 </script>
 
 <hr/>
