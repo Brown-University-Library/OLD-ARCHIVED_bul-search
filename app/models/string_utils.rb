@@ -1,15 +1,18 @@
 class StringUtils
-  def self.clean_join(a, b)
+  def self.clean_join(a, b, c = nil)
+    ab = ""
     case
       when a != nil && b != nil
-        "#{a} #{b}"
+        ab = "#{a.strip} #{b.strip}"
       when a != nil && b == nil
-        "#{a}"
+        ab = "#{a.strip}"
       when a == nil && b != nil
-        "#{b}"
-      else
-        ""
+        ab = "#{b.strip}"
     end
+    if c != nil
+      ab = self.clean_join(ab, c)
+    end
+    ab.strip
   end
 
   def self.strip_punctuation(str)

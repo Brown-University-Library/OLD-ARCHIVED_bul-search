@@ -1,14 +1,11 @@
 class ItemData
-  attr_reader :barcode
-  attr_accessor :location_code, :bookplate_code
+  attr_reader :id, :barcode
+  attr_accessor :location_code, :bookplate_code, :call_number, :copy, :volume
   attr_writer :bookplate_url, :bookplate_display
 
-  def initialize(barcode)
-    if barcode == nil
-      @barcode = nil
-    else
-      @barcode = barcode.gsub(" ", "")
-    end
+  def initialize(id, barcode)
+    @id = clean_id(id)
+    @barcode = clean_barcode(barcode)
   end
 
   def bookplate_url
@@ -20,6 +17,19 @@ class ItemData
   end
 
   def to_s
-    "#{@barcode}, #{@location_code}, #{@bookplate_code}"
+    "#{@barcode}, #{@location_code}, #{@bookplate_code}, #{@id}"
+  end
+
+  def clean_id(id)
+    return nil if (id || "").strip.length == 0
+    if id.start_with?(".i")
+      return id[2..-1]
+    end
+    id
+  end
+
+  def clean_barcode(barcode)
+    return nil if barcode == nil
+    barcode.gsub(" ", "")
   end
 end
