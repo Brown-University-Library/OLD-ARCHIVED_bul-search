@@ -20,6 +20,20 @@ class ItemData
     "#{@barcode}, #{@location_code}, #{@bookplate_code}, #{@id}"
   end
 
+  def online?
+    return false if @location_code == nil
+    return true if @location_code == "el001"
+    @location_code[0..1] == "es"
+  end
+
+  def location
+    if online?
+      "ONLINE"
+    else
+      @location_code
+    end
+  end
+
   def clean_id(id)
     return nil if (id || "").strip.length == 0
     if id.start_with?(".i")

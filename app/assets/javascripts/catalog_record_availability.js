@@ -4,12 +4,15 @@ $(document).ready(
   function(){
     var bib_id = getBibId();
     addOcraLink(bib_id);
+    addBookServicesLink();
     addVirtualShelfLinks(bib_id);
+
     var api_url = availabilityService + bib_id + "/?callback=?";
     var limit = getUrlParameter("limit");
     if (limit == "false") {
       api_url = api_url + "&limit=false"
     }
+    // TODO: make this call only if bibData.showAvailability
     $.getJSON(api_url, addAvailability);
 
     if (location.search.indexOf("nearby") > -1) {
@@ -66,10 +69,19 @@ function getPublisher() {
 
 
 function addAvailability(availabilityResponse) {
+  var i;
+  var someAvailable = false;
+
+  for (i = 0; i < availabilityResponse.items.length; i++) {
+    if (availabilityResponse.items[i]['status'] == "AVAILABLE") {
+      someAvailable = true;
+      break
+    }
+  }
 
   // Realtime status of items (and other item specific information)
   _.each(availabilityResponse.items, function(avItem) {
-    updateItemInfo(avItem);
+    updateItemInfo(avItem, availabilityResponse.requestable);
   });
 
   if (availabilityResponse.has_more == true) {
@@ -79,38 +91,67 @@ function addAvailability(availabilityResponse) {
   if (availabilityResponse.requestable) {
     $(".request-this-link").removeClass("hidden");
   };
+
+  showEasyBorrow(availabilityResponse.requestable, someAvailable)
 }
 
-// TODO: why do these show online and aval in prod. (which is correct)
-// https://search.library.brown.edu/catalog/b8085136
-// https://search.library.brown.edu/catalog/b5850361
+
+function showEasyBorrow(requestable, someAvailable) {
+  var allowEasyBorrow = false;
+  if (requestable) {
+    // If the bib record is requestable and there are no copies
+    // available allow the user to request it via easyBorrow.
+    //
+    // A downside of this approach is that items that are lost are not
+    // requestable and therefore we are not allowing the user to use
+    // easyBorrow in those cases. However, allowing easyBorrow for non
+    // requestable items allows the user to requests things that are
+    // not available via easyBorrow (e.g. items for use in library).
+    // In a future version we could expand the logic to be more specific
+    // on what status should allow easyBorrow. For now this is better than
+    // not allowing easyBorrow at all.
+    if (someAvailable == false) {
+      allowEasyBorrow = (bibData.itemsMultiType == "copy" || bibData.itemsMultiType == "single")
+    }
+  }
+
+  if (allowEasyBorrow) {
+    $("#request-copy-ezb").removeClass("hidden");
+  }
+}
+
 
 // Updates item information (already on the page) with the
 // extra information that we got from the Availability service.
-function updateItemInfo(avItem) {
+function updateItemInfo(avItem, requestable) {
   var item, barcode, itemRow;
 
   barcode = avItem['barcode'];
   item = getItemByBarcode(barcode);
   if (item == null) {
-    showError("ERROR: barcode " + barcode + " not found in MARC item data");
+    debugMessage("ERROR: barcode " + barcode + " not found in MARC item data");
     return;
   }
 
   if (item.call_number != avItem['callnumber']) {
-    showError("WARN: call number mismatch for barcode " + barcode + ": " + item.call_number  + " vs " + avItem['callnumber']);
+    debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + avItem['callnumber'] + "</b>");
   }
 
   itemRow = $("#item_" + item.id);
-  updateItemMap(itemRow, avItem);
-  updateItemStatus(itemRow, avItem);
+  updateItemLocation(itemRow, avItem);
+  updateItemStatus(itemRow, avItem, requestable);
   updateItemScanStatus(itemRow, avItem, barcode);
   updateItemAeonLinks(itemRow, avItem);
 }
 
 
-function updateItemMap(row, avItem) {
+function updateItemLocation(row, avItem) {
   var floor, aisle, mapText, mapUrl, html;
+
+  if (avItem['location']) {
+    row.find(".location").html(avItem['location']);
+  }
+
   if (avItem['shelf'] && avItem['shelf']['floor'] && avItem['shelf']['aisle']) {
     floor = avItem['shelf']['floor'];
     aisle = avItem['shelf']['aisle'];
@@ -126,9 +167,20 @@ function updateItemMap(row, avItem) {
 }
 
 
-function updateItemStatus(row, avItem) {
-  if (avItem['status']) {
-    row.find(".status").html(avItem['status']);
+function updateItemStatus(row, avItem, requestable) {
+  var status, url, text, html;
+  status = avItem['status'];
+  if (status) {
+    row.find(".status").html(status);
+    if (requestable && bibData.itemsMultiType == "volume" && status != "AVAILABLE") {
+      // Allow the user to request this volume via easyBorrow.
+      // TODO: pass all the parameters to easy borrow
+      url = "https://library.brown.edu/easyaccess/find/";
+      text = "Request this volume";
+      html = '<a href="' + url + '">' + text + '</a>';
+      row.find(".ezb_volume_url").html(html);
+    }
+
   }
 }
 
@@ -194,9 +246,12 @@ function updateItemAeonLinks(row, avItem) {
 }
 
 
-function showError(message) {
-  $("#errorMsg").removeClass("hidden");
-  $("#errorMsg").append("<p>" + message + "</p>");
+function debugMessage(message) {
+  var debug = getUrlParameter("debug");
+  if (debug == "true") {
+    $("#debugInfo").removeClass("hidden");
+    $("#debugInfo").append("<p>" + message + "</p>");
+  }
 }
 
 
@@ -391,6 +446,13 @@ function addOcraLink(bib_id) {
   var ocraUrl = "https://library.brown.edu/reserves/cr/ocrify/?bibnum=" + bib_id;
   var helpInfo = "Staff and Teaching Assistants can reserve this item in OCRA for courses they teach.";
   var link = '<li><a href="' + ocraUrl + '" title="' + helpInfo + '" target="_blank">Add to OCRA</a>';
+  $("div.panel-body>ul.nav").append(link);
+}
+
+
+function addBookServicesLink() {
+  var helpInfo = "Other library services (e.g. recall books for faculty)";
+  var link = '<li><a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
   $("div.panel-body>ul.nav").append(link);
 }
 

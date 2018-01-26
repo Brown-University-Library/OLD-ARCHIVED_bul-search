@@ -39,71 +39,85 @@
     </div>
 <% end %>
 
-<div id="errorMsg" class="hidden"></div>
+<div id="debugInfo" class="hidden"></div>
 
-<div id="availability">
-  <!--
-    Samples to test:
-    * Physical record without a barcode (but with bookplate) https://search.library.brown.edu/catalog/b5102800
-    * Online record: https://search.library.brown.edu/catalog/b2424700
-   -->
-   <div class="holdings-wrapper" class="results">
-     <h4>Availability
-       <% request_link = "https://josiah.brown.edu/search~S7?/.#{@document.id}/.#{@document.id}/%2C1%2C1%2CB/request~#{@document.id}" %>
-       <a class="hidden btn request-this-link" href="<%= request_link %>" target="_blank">Request this</a>
-     </h4>
-     <% if @document.item_data.count == 0 && @document.online_availability.count == 0 %>
-        <div>We don't currently have availability information for this item.
-          <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
-          Contact the library staff<a/> for assistance with this item.</div>
-     </div>
-     <% else %>
-        <table class="table">
-          <tr>
-            <th>Location</th>
-            <th>Call number</th>
-            <th>Status</th>
-          </tr>
-          <% @document.item_data.each_with_index do |item, index| %>
-            <!-- TODO: pass `limit=false` as a param rather than picking up
-                from the request. -->
-            <% row_css_class = (index > 9 && !request.url.include?("limit=false")) ? "hidden" : "" %>
-            <tr id="item_<%= item.id %>" class="bib_item <%= row_css_class %>">
-              <td>
-                <span class="location"><%= item.location_code %></span>
-                <span class="location_map"></span>
-                <% if item.bookplate_url %>
-                  <div>
-                    <a href="<%= item.bookplate_url %>" target="_blank"><%= item.bookplate_display.gsub('"', '\"').html_safe %></a>
-                  </div>
-                <% end %>
-              </td>
-              <td class="callnumber"><%= item.call_number %></td>
-              <td>
-                <span class="status">--</span>
-                <span class="scan"></span>
-                <span class="jcb_url"></span>
-                <span class="hay_aeon_url"></span>
-              </td>
+<% if @document.show_item_availability? %>
+  <div id="availability">
+    <!--
+      Sample bib records usefule for testing:
+      * Physical record without a barcode (but with bookplate): https://search.library.brown.edu/catalog/b5102800
+      * Online record: https://search.library.brown.edu/catalog/b2424700
+      * Checked out, available via ezb: Request via easyBorrow: https://search.library.brown.edu/catalog/b2743304
+      * Online only: https://search.library.brown.edu/catalog/b6940356
+     -->
+     <div class="holdings-wrapper" class="results">
+       <h4>Availability
+         <!-- TODO create ezb link -->
+         <a id="request-copy-ezb"
+          class="hidden btn request-this-link"
+          href="https://github.com/birkin/"
+          title="Our copy is not available at the moment, but we can try get it for you from other libraries"
+          target="_blank">Request via EasyBorrow</a>
+       </h4>
+       <% if @document.item_data.count == 0 && @document.online_availability.count == 0 %>
+          <div>We don't currently have availability information for this item.
+            <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
+            Contact the library staff<a/> for assistance with this item.</div>
+       </div>
+       <% else %>
+          <table class="table">
+            <tr>
+              <th>Location</th>
+              <th>Call number</th>
+              <th>Status</th>
             </tr>
-          <% end %>
-        </table>
-        <div id="show_more_items" class="more-results pull-right hidden">
-            <a href="<%= catalog_url(@document.id) %>?limit=false" class="label label-info">more</a>
-        </div>
-     <% end %>
-   </div>
-</div>
+            <% @document.item_data.each_with_index do |item, index| %>
+              <% next if item.online? && item.bookplate_url == "" %>
+              <!-- TODO: pass `limit=false` as a param rather than picking up
+                  from the request. -->
+              <% row_css_class = (index > 9 && !request.url.include?("limit=false")) ? "hidden" : "" %>
+              <tr id="item_<%= item.id %>" class="bib_item <%= row_css_class %>">
+                <td>
+                  <span class="location"><%= item.location %></span>
+                  <span class="location_map"></span>
+                  <% if item.bookplate_url %>
+                    <div>
+                      <a href="<%= item.bookplate_url %>" target="_blank"><%= item.bookplate_display.gsub('"', '\"').html_safe %></a>
+                    </div>
+                  <% end %>
+                </td>
+                <td class="callnumber"><%= item.call_number %></td>
+                <td>
+                  <span class="status">--</span>
+                  <span class="scan"></span>
+                  <span class="jcb_url"></span>
+                  <span class="hay_aeon_url"></span>
+                  <span class="ezb_volume_url"></span>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+          <div id="show_more_items" class="more-results pull-right hidden">
+              <a href="<%= catalog_url(@document.id) %>?limit=false" class="label label-info">more</a>
+          </div>
+       <% end %>
+     </div>
+  </div>
+<% end %>
 
 <script>
 var availabilityService = '<%= availability_service_url %>';
 
 var bibData = {};
+bibData.showAvailability = <%= @document.show_item_availability? %>;
+bibData.bookServicesUrl = "<%= @document.book_services_url %>"
+
 bibData.id = "<%= @document.id %>";
 bibData.title = "<%= document[:title_display] %>";
 bibData.format = "<%= document[:format] %>";
 bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
 bibData.publisher = "<%= document.marc_imprint() %>";
+bibData.itemsMultiType = "<%= @document.items_multi_type %>";
 
 var itemsData = [];
 var item;

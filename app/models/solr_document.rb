@@ -329,6 +329,53 @@ class SolrDocument
     end
   end
 
+  # This  method is to support the UI.
+  # We only show the Availability section on the page
+  # if there are physical books or if there are online books
+  # that are associated with a bookplate (so that we display
+  # which ones were bought with the bookplate).
+  def show_item_availability?
+    item_data.each do |item|
+      if !item.online?
+        return true
+      else
+        if item.bookplate_url != ""
+          return true
+        end
+      end
+    end
+    false
+  end
+
+  def volume_count
+    @volume_count ||= item_data.map {|item| item.volume }.uniq.count
+  end
+
+  def copy_count
+    @copy_count ||= item_data.map {|item| item.copy }.uniq.count
+  end
+
+  def items_multi_type
+    v_count = volume_count
+    c_count = copy_count
+    case
+    when v_count == 0 && c_count == 0
+      "none"
+    when v_count == 1 && c_count == 1
+      "single"
+    when v_count > 1 && c_count == 1
+      "volume"
+    when v_count == 1 && c_count > 1
+      "copy"
+    else
+      "both"
+    end
+  end
+
+  def book_services_url
+    "https://josiah.brown.edu/search~S7?/.#{id}/.#{id}/%2C1%2C1%2CB/request~#{id}"
+  end
+
   # Fetches the item data for the bibliographic (BIB)
   # record. Notice that there could be more than one
   # item for a given BIB record.
@@ -353,17 +400,17 @@ class SolrDocument
         # callnumber
         part1 = marc.subfield_value(f_945, "a")
         part2 = marc.subfield_value(f_945, "b")
-        if part1 == nil
-          base_number = StringUtils.clean_join(f_090f, f_090a, f_090b)
-        else
+        if part1 != nil || part2 != nil
           base_number = StringUtils.clean_join(f_090f, part1, part2)
+        else
+          base_number = StringUtils.clean_join(f_090f, f_090a, f_090b)
         end
         volume = marc.subfield_value(f_945, "c")
         copy = marc.subfield_value(f_945, "g")
         if copy == "1"
           copy = ""
         elsif copy > "1"
-          copy = "c. #{copy}"
+          copy = "c.#{copy}"
         end
         call_number = StringUtils.clean_join(base_number, volume, copy)
         if call_number.end_with?("\\")
