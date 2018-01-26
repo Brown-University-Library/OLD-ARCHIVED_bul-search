@@ -18,6 +18,8 @@ $(document).ready(
     if (location.search.indexOf("nearby") > -1) {
       loadNearbyItems(false);
     }
+
+    debugMessage("bib record multi: " + bibData.itemsMultiType)
   }
 );
 
@@ -79,6 +81,11 @@ function addAvailability(availabilityResponse) {
     }
   }
 
+  // TODO: remove this test code
+  if (bibData.id == "b1235490") {
+    availabilityResponse.items[1]['status'] = "DUE XX/YY/ZZZZ";
+  }
+
   // Realtime status of items (and other item specific information)
   _.each(availabilityResponse.items, function(avItem) {
     updateItemInfo(avItem, availabilityResponse.requestable);
@@ -89,7 +96,7 @@ function addAvailability(availabilityResponse) {
   }
 
   if (availabilityResponse.requestable) {
-    $(".request-this-link").removeClass("hidden");
+    $("#book_services_link").removeClass("hidden");
   };
 
   showEasyBorrow(availabilityResponse.requestable, someAvailable)
@@ -130,14 +137,18 @@ function updateItemInfo(avItem, requestable) {
   item = getItemByBarcode(barcode);
   if (item == null) {
     debugMessage("ERROR: barcode " + barcode + " not found in MARC item data");
+    // TODO: attempt by callnumber, not all items have bar codes
+    // see for example: https://search.library.brown.edu/catalog/b1770680
     return;
   }
 
-  if (item.call_number != avItem['callnumber']) {
+  itemRow = $("#item_" + item.id);
+
+  if (item.call_number != barcode) {
+    itemRow.find(".callnumber").html(barcode);
     debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + avItem['callnumber'] + "</b>");
   }
 
-  itemRow = $("#item_" + item.id);
   updateItemLocation(itemRow, avItem);
   updateItemStatus(itemRow, avItem, requestable);
   updateItemScanStatus(itemRow, avItem, barcode);
@@ -168,7 +179,7 @@ function updateItemLocation(row, avItem) {
 
 
 function updateItemStatus(row, avItem, requestable) {
-  var status, url, text, html;
+  var status, url, text, tooltip, html;
   status = avItem['status'];
   if (status) {
     row.find(".status").html(status);
@@ -177,7 +188,8 @@ function updateItemStatus(row, avItem, requestable) {
       // TODO: pass all the parameters to easy borrow
       url = "https://library.brown.edu/easyaccess/find/";
       text = "Request this volume";
-      html = '<a href="' + url + '">' + text + '</a>';
+      tooltip = "Our copy is not available at the moment, but we can try get it for you from other libraries";
+      html = '<a href="' + url + '" title="' + tooltip + '">' + text + '</a>';
       row.find(".ezb_volume_url").html(html);
     }
 
@@ -451,9 +463,12 @@ function addOcraLink(bib_id) {
 
 
 function addBookServicesLink() {
+  // hidden by default
+  var li = '<li id="book_services_link" class="hidden">';
   var helpInfo = "Other library services (e.g. recall books for faculty)";
-  var link = '<li><a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
-  $("div.panel-body>ul.nav").append(link);
+  var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
+  var html = li + a;
+  $("div.panel-body>ul.nav").append(html);
 }
 
 
