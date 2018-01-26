@@ -131,7 +131,7 @@ function showEasyBorrow(requestable, someAvailable) {
 // Updates item information (already on the page) with the
 // extra information that we got from the Availability service.
 function updateItemInfo(avItem, requestable) {
-  var item, barcode, itemRow;
+  var item, barcode, callnumber, itemRow;
 
   barcode = avItem['barcode'];
   item = getItemByBarcode(barcode);
@@ -144,9 +144,10 @@ function updateItemInfo(avItem, requestable) {
 
   itemRow = $("#item_" + item.id);
 
-  if (item.call_number != barcode) {
-    itemRow.find(".callnumber").html(barcode);
-    debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + avItem['callnumber'] + "</b>");
+  callnumber = avItem['callnumber']
+  if (item.call_number != callnumber) {
+    itemRow.find(".callnumber").html(callnumber);
+    debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + callnumber + "</b>");
   }
 
   updateItemLocation(itemRow, avItem);
