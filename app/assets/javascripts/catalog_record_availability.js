@@ -26,6 +26,9 @@ $(document).ready(
 
 function getItemById(id) {
   var i;
+  if (id == null || id == "") {
+    return null;
+  }
   for(i = 0; i < itemsData.length; i++) {
     if (itemsData[i].id == id) {
       return itemsData[i];
@@ -34,12 +37,39 @@ function getItemById(id) {
   return null;
 }
 
+
 function getItemByBarcode(barcode) {
   var i;
+  if (barcode == null || barcode == "") {
+    return null;
+  }
   for(i = 0; i < itemsData.length; i++) {
     if (itemsData[i].barcode == barcode) {
       return itemsData[i];
     }
+  }
+  return null;
+}
+
+
+function getItemByCallnumber(avCallnumber) {
+  var i, candidates, marcCallnumber;
+  if (avCallnumber == null || avCallnumber == "") {
+    return null;
+  }
+  candidates = [];
+  for(i = 0; i < itemsData.length; i++) {
+    // The call number that we have in the MARC record is partial
+    // (e.g. does not include "1-SIZE" or "94th ed") so we only look
+    // for a partial match.
+    marcCallnumber = itemsData[i].call_number;
+    if (marcCallnumber != null && avCallnumber.indexOf(marcCallnumber) != -1) {
+      candidates.push(itemsData[i]);
+    }
+  }
+  if (candidates.length == 1) {
+    // yay! we got a single match.
+    return candidates[0];
   }
   return null;
 }
@@ -133,18 +163,20 @@ function showEasyBorrow(requestable, someAvailable) {
 function updateItemInfo(avItem, requestable) {
   var item, barcode, callnumber, itemRow;
 
-  barcode = avItem['barcode'];
+  barcode = avItem['barcode'] || "";
+  callnumber = avItem['callnumber'] || "";
+
   item = getItemByBarcode(barcode);
   if (item == null) {
-    debugMessage("ERROR: barcode " + barcode + " not found in MARC item data");
-    // TODO: attempt by callnumber, not all items have bar codes
-    // see for example: https://search.library.brown.edu/catalog/b1770680
-    return;
+    item = getItemByCallnumber(callnumber);
+    if (item == null) {
+      debugMessage("ERROR: item (" + barcode + "/" + callnumber + ") not found in MARC item data");
+      return;
+    }
   }
 
   itemRow = $("#item_" + item.id);
 
-  callnumber = avItem['callnumber']
   if (item.call_number != callnumber) {
     itemRow.find(".callnumber").html(callnumber);
     debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + callnumber + "</b>");
