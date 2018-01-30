@@ -2,24 +2,33 @@
 // Loaded by `app/views/catalog/show.html.erb`.
 $(document).ready(
   function(){
-    var bib_id = getBibId();
-    addOcraLink(bib_id);
+    var req;
+    addOcraLink(bibData.id);
     addBookServicesLink();
-    addVirtualShelfLinks(bib_id);
+    addVirtualShelfLinks(bibData.id);
 
-    var api_url = availabilityService + bib_id + "/?callback=?";
+    var api_url = availabilityService + bibData.id + "/?callback=?";
     var limit = getUrlParameter("limit");
     if (limit == "false") {
       api_url = api_url + "&limit=false"
     }
-    // TODO: make this call only if bibData.showAvailability
-    $.getJSON(api_url, addAvailability);
+    if (bibData.showAvailability) {
+      // We are using .ajax() rather than .getJSON() here to be able
+      // to handle errors (https://stackoverflow.com/a/5121811/446681)
+      // The timeout value is required for the error() function to be called!
+      req = $.ajax({url: api_url, dataType: "jsonp", timeout: 5000});
+      req.success(addAvailability);
+      req.error(errAvailability);
+    } else {
+      showAvailability(true);
+      debugMessage("Skipped call to Availability API");
+    }
 
     if (location.search.indexOf("nearby") > -1) {
       loadNearbyItems(false);
     }
 
-    debugMessage("bib record multi: " + bibData.itemsMultiType)
+    debugMessage("BIB record multi: " + bibData.itemsMultiType)
   }
 );
 
@@ -137,13 +146,34 @@ function addAvailability(availabilityResponse) {
 
   if (availabilityResponse.has_more == true) {
     $("#show_more_items").removeClass("hidden");
+    showAvailability(false);
+  } else {
+    showAvailability(true);
   }
 
   if (availabilityResponse.requestable) {
     $("#book_services_link").removeClass("hidden");
   };
 
-  showEasyBorrow(availabilityResponse.requestable, someAvailable)
+  showEasyBorrow(availabilityResponse.requestable, someAvailable);
+}
+
+
+function errAvailability() {
+  // show whatever we have from the MARC data already on the HTML
+  debugMessage("Availability API error, using MARC data instead");
+  showAvailability(true);
+}
+
+function showAvailability(all) {
+  var i;
+  var limit = getUrlParameter("limit");
+  var items = $(".bib_item");
+  for (i = 0; i < items.length; i++) {
+    if (all || i < 10) {
+      $(items[i]).removeClass("hidden");
+    }
+  }
 }
 
 
@@ -311,7 +341,7 @@ function debugMessage(message) {
   var debug = getUrlParameter("debug");
   if (debug == "true") {
     $("#debugInfo").removeClass("hidden");
-    $("#debugInfo").append("<p>" + message + "</p>");
+    $("#debugInfo").append("<p style='color:blue;'>" + message + "</p>");
   }
 }
 

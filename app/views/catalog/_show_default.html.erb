@@ -16,7 +16,7 @@
         <% end %>
         </div>
 
-        <script>
+        <script type="text/javascript">
         $("#abstract_show_more").on("click", function(e) {
           e.preventDefault();
           $(this).addClass("hidden");
@@ -52,7 +52,6 @@
      -->
      <div class="holdings-wrapper" class="results">
        <h4>Availability
-         <!-- TODO create ezb link -->
          <a id="request-copy-ezb"
           class="hidden btn request-this-link"
           href="<%= @document.easyBorrowUrl() %>"
@@ -73,10 +72,7 @@
             </tr>
             <% @document.item_data.each_with_index do |item, index| %>
               <% next if item.online? && item.bookplate_url == "" %>
-              <!-- TODO: pass `limit=false` as a param rather than picking up
-                  from the request. -->
-              <% row_css_class = (index > 9 && !request.url.include?("limit=false")) ? "hidden" : "" %>
-              <tr id="item_<%= item.id %>" class="bib_item <%= row_css_class %>">
+              <tr id="item_<%= item.id %>" class="hidden bib_item">
                 <td>
                   <span class="location"><%= item.location %></span>
                   <span class="location_map"></span>
@@ -105,7 +101,7 @@
   </div>
 <% end %>
 
-<script>
+<script type="text/javascript">
 var availabilityService = '<%= availability_service_url %>';
 
 var bibData = {};
@@ -219,8 +215,8 @@ var item;
     <dd><%= document.series %></dd>
   <% end %>
 
-  <%# Calls method with notes config will display nothing if note doesn't
-  exist or fetching for MARC fails -%>
+  <%# Calls method with notes config will display nothing
+      if note does not exist or fetching for MARC fails -%>
   <%= render_record_notes document %>
 
   <% if document.has_uniform_titles? %>
@@ -314,7 +310,7 @@ $(".biglink li").hover(function() {
 </style>
 <div>
   <h4 id="also-on-shelf" class="hidden">More Like This</h4>
-  <p id="also-on-shelf-none" class="hidden">We are sorry, we don't have information about other items like this.</p>
+  <p id="also-on-shelf-none" class="hidden">We are sorry, we do not have information about other items like this.</p>
   <div id="basic-stack"></div>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
