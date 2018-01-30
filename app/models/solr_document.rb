@@ -76,7 +76,7 @@ class SolrDocument
     document.key?( :marc_display )
   end
 
-  def openurl_ctx_kev(format = nil)
+  def openurl_ctx_kev(format = nil, volume = nil)
     ctx_obj = OpenURL::ContextObject.new
     if format == 'book'
       ctx_obj.referent.set_format('book')
@@ -87,12 +87,14 @@ class SolrDocument
       ctx_obj.referent.set_metadata('date', (self[:pub_date] || []).first)
       ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
       ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
+      ctx_obj.referent.set_metadata('volume', volume) if volume != nil
     elsif (format =~ /journal/i)
       ctx_obj.referent.set_format('journal')
       ctx_obj.referent.set_metadata('jtitle', self.fetch('title_display')) if self.key?('title_display')
       ctx_obj.referent.set_metadata('au', self.fetch('author_display')) if self.key?('author_display')
       ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
       ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
+      ctx_obj.referent.set_metadata('volume', volume) if volume != nil
     else
       #DC metadata about the object
       ctx_obj.referent.set_format('dc')
@@ -101,6 +103,7 @@ class SolrDocument
       ctx_obj.referent.set_metadata('creator', self.fetch('author_display')) if self.key?('author_display')
       # Notice that Zotero does not recognize pub/place/date for these kind of items.
       ctx_obj.referent.set_metadata('publisher', self.fetch('published_display').join(' ')) if self.key?('published_display')
+      ctx_obj.referent.set_metadata('volume', volume) if volume != nil
     end
     ctx_obj.kev
   end
@@ -392,11 +395,10 @@ class SolrDocument
   end
 
   def easyBorrowUrl(volume = nil)
-    openurl = openurl_ctx_kev(nil)
-    if volume != nil
-      openurl += "&volume=#{volume}"
-    end
-    "https://library.brown.edu/easyaccess/find/?#{openurl}"
+    bib_format = self.fetch('format', "").downcase
+    open_url = openurl_ctx_kev(bib_format, volume)
+    url = "https://library.brown.edu/easyaccess/find/?#{open_url}"
+    url
   end
 
   private
