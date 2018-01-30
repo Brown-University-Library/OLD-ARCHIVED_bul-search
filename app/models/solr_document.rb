@@ -321,6 +321,9 @@ class SolrDocument
       if has_marc_data?
         online_availability_from_marc
       else
+        # TODO: I don't think we need this. marc_data is always true.
+        # Remove this after the big refactor of the recall/easyBorrow feature
+        # has been finished.
         online_availability_from_solr
       end
     rescue StandardError => e
@@ -386,6 +389,14 @@ class SolrDocument
       Rails.logger.error "Error parsing item_data for ID: #{self.fetch('id', nil)}, #{e.message}\r\n#{e.backtrace}"
       []
     end
+  end
+
+  def easyBorrowUrl(volume = nil)
+    openurl = openurl_ctx_kev(nil)
+    if volume != nil
+      openurl += "&volume=#{volume}"
+    end
+    "https://library.brown.edu/easyaccess/find/?#{openurl}"
   end
 
   private

@@ -55,7 +55,7 @@
          <!-- TODO create ezb link -->
          <a id="request-copy-ezb"
           class="hidden btn request-this-link"
-          href="https://github.com/birkin/"
+          href="<%= @document.easyBorrowUrl() %>"
           title="Our copy is not available at the moment, but we can try get it for you from other libraries"
           target="_blank">Request via EasyBorrow</a>
        </h4>
@@ -118,6 +118,7 @@ bibData.format = "<%= document[:format] %>";
 bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
 bibData.publisher = "<%= document.marc_imprint() %>";
 bibData.itemsMultiType = "<%= @document.items_multi_type %>";
+bibData.easyBorrowUrl = "<%= document.easyBorrowUrl() %>";
 
 var itemsData = [];
 var item;
@@ -128,7 +129,8 @@ var item;
     location_code: "<%= item.location_code %>",
     bookplate_display: "<%= item.bookplate_display.gsub('"', '\"').html_safe %>",
     bookplate_url: "<%= item.bookplate_url %>",
-    call_number: "<%= item.call_number %>"
+    call_number: "<%= item.call_number %>",
+    volume: "<%= item.volume %>"
   });
 <% end %>
 </script>

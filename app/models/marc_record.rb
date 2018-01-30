@@ -81,6 +81,7 @@ class MarcRecord
 
       f_945 = marc_field["945"]
 
+      # TODO: pick up the location name from our local SQL table.
       location_code = subfield_value(f_945, "l")
       barcode = subfield_value(f_945, "i")
       id = subfield_value(f_945, "y")

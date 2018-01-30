@@ -57,16 +57,25 @@ function getItemByCallnumber(avCallnumber) {
   if (avCallnumber == null || avCallnumber == "") {
     return null;
   }
+
+  for(i = 0; i < itemsData.length; i++) {
+    marcCallnumber = itemsData[i].call_number;
+    if (marcCallnumber != null && marcCallnumber == avCallnumber) {
+      // we found an exact match.
+      return itemsData[i];
+    }
+  }
+
+  // The call number that we have in the MARC record is partial
+  // because we don't get all the item data. For example the "1-SIZE"
+  // sometimes is in the 091f (https://search.library.brown.edu/catalog/b6615023
+  // or the edition information is in an item field that is not included
+  // in our MARC files (e.g. "94th ed" in https://search.library.brown.edu/catalog/b6615023)
+  //
+  // Hence, we do partial match (indexOf) here to try to match the
+  // MARC call numbers with the ones returned by the Availability API.
   candidates = [];
   for(i = 0; i < itemsData.length; i++) {
-    // The call number that we have in the MARC record is partial
-    // because we don't get all the item data. For example the "1-SIZE"
-    // sometimes is in the 091f (https://search.library.brown.edu/catalog/b6615023
-    // or the edition information is in an item field that is not included
-    // in our MARC files (e.g. "94th ed" in https://search.library.brown.edu/catalog/b6615023)
-    //
-    // Hence, we do partial match (indexOf) here to try to match the
-    // MARC call numbers with the ones returned by the Availability API.
     marcCallnumber = itemsData[i].call_number;
     if (marcCallnumber != null && avCallnumber.indexOf(marcCallnumber) != -1) {
       candidates.push(itemsData[i]);
@@ -188,7 +197,7 @@ function updateItemInfo(avItem, requestable) {
   }
 
   updateItemLocation(itemRow, avItem);
-  updateItemStatus(itemRow, avItem, requestable);
+  updateItemStatus(itemRow, avItem, requestable, item.volume);
   updateItemScanStatus(itemRow, avItem, barcode);
   updateItemAeonLinks(itemRow, avItem);
 }
@@ -216,18 +225,20 @@ function updateItemLocation(row, avItem) {
 }
 
 
-function updateItemStatus(row, avItem, requestable) {
+function updateItemStatus(row, avItem, requestable, volume) {
   var status, url, text, tooltip, html;
   status = avItem['status'];
   if (status) {
     row.find(".status").html(status);
     if (requestable && bibData.itemsMultiType == "volume" && status != "AVAILABLE") {
       // Allow the user to request this volume via easyBorrow.
-      // TODO: pass all the parameters to easy borrow
-      url = "https://library.brown.edu/easyaccess/find/";
+      url = bibData.easyBorrowUrl;
+      if (volume != "") {
+          url += "&volume=" + volume;
+      }
       text = "Request this volume";
       tooltip = "Our copy is not available at the moment, but we can try get it for you from other libraries";
-      html = '<a href="' + url + '" title="' + tooltip + '">' + text + '</a>';
+      html = '<a href="' + url + '" title="' + tooltip + '" target="_blank">' + text + '</a>';
       row.find(".ezb_volume_url").html(html);
     }
 
