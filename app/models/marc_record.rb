@@ -1,3 +1,6 @@
+require "./app/models/string_utils.rb"
+require "./app/models/item_data.rb"
+
 class MarcRecord
   attr_reader :fields
 
@@ -63,5 +66,74 @@ class MarcRecord
       end
     end
     nil
+  end
+
+  # Extracts data from the 945 fields for the MARC record.
+  def items
+    items = []
+    f_090a = subfield_values("090", "a").first
+    f_090b = subfield_values("090", "b").first
+    f_090f = subfield_values("090", "f").first  # e.g. 1-SIZE
+
+    # Item data is on the 945 fields.
+    fields.each_with_index do |marc_field, index|
+      next if marc_field.keys.first != "945"
+
+      f_945 = marc_field["945"]
+
+      location_code = subfield_value(f_945, "l")
+      barcode = subfield_value(f_945, "i")
+      id = subfield_value(f_945, "y")
+      bookplate_code = subfield_value(f_945, "f")
+
+      # callnumber
+      part1 = subfield_value(f_945, "a")
+      part2 = subfield_value(f_945, "b")
+      if part1 != nil || part2 != nil
+        base_number = StringUtils.clean_join(f_090f, part1, part2)
+      else
+        base_number = StringUtils.clean_join(f_090f, f_090a, f_090b)
+      end
+      volume = subfield_value(f_945, "c")
+      copy = subfield_value(f_945, "g")
+      if copy == "1"
+        copy = ""
+      elsif copy > "1"
+        copy = "c.#{copy}"
+      end
+      call_number = StringUtils.clean_join(base_number, volume, copy)
+      if call_number.end_with?("\\")
+        call_number = call_number[0..-2]
+      end
+
+      # bookplate URL and display text are on the next 996
+      i = index + 1
+      while i < fields.count
+        if fields[i].keys.first == "945"
+          # ran into a new 945, no bookplate info found.
+          break
+        end
+
+        if fields[i].keys.first == "996"
+          f_996 = fields[i]["996"]
+          bookplate_url = subfield_value(f_996, "u")
+          bookplate_display = subfield_value(f_996, "z")
+          # parsed a 996, we should be done.
+          break
+        end
+        i += 1
+      end
+
+      item = ItemData.new(id, barcode)
+      item.location_code = location_code
+      item.bookplate_code = bookplate_code
+      item.bookplate_url = bookplate_url
+      item.bookplate_display = bookplate_display
+      item.copy = copy
+      item.volume = volume
+      item.call_number = call_number
+      items << item
+    end
+    items
   end
 end

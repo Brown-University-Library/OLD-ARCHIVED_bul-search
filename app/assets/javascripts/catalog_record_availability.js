@@ -60,8 +60,13 @@ function getItemByCallnumber(avCallnumber) {
   candidates = [];
   for(i = 0; i < itemsData.length; i++) {
     // The call number that we have in the MARC record is partial
-    // (e.g. does not include "1-SIZE" or "94th ed") so we only look
-    // for a partial match.
+    // because we don't get all the item data. For example the "1-SIZE"
+    // sometimes is in the 091f (https://search.library.brown.edu/catalog/b6615023
+    // or the edition information is in an item field that is not included
+    // in our MARC files (e.g. "94th ed" in https://search.library.brown.edu/catalog/b6615023)
+    //
+    // Hence, we do partial match (indexOf) here to try to match the
+    // MARC call numbers with the ones returned by the Availability API.
     marcCallnumber = itemsData[i].call_number;
     if (marcCallnumber != null && avCallnumber.indexOf(marcCallnumber) != -1) {
       candidates.push(itemsData[i]);
