@@ -1,22 +1,32 @@
 // JavaScript functions for individual catalog records.
 // Loaded by `app/views/catalog/show.html.erb`.
+//
+// Global variables:
+//      availabilityService
+//      bibData
+//      itemData
+//
 $(document).ready(
   function(){
-    var req;
+    var req, apiUrl, limit;
+
     addOcraLink(bibData.id);
     addBookServicesLink();
     addVirtualShelfLinks(bibData.id);
 
-    var api_url = availabilityService + bibData.id + "/?callback=?";
-    var limit = getUrlParameter("limit");
-    if (limit == "false") {
-      api_url = api_url + "&limit=false"
+    if (availabilityService) {
+      apiUrl = availabilityService + bibData.id + "/?callback=?";
+      limit = getUrlParameter("limit");
+      if (limit == "false") {
+        apiUrl += "&limit=false";
+      }
     }
-    if (bibData.showAvailability) {
+
+    if (apiUrl && bibData.showAvailability) {
       // We are using .ajax() rather than .getJSON() here to be able
       // to handle errors (https://stackoverflow.com/a/5121811/446681)
       // The timeout value is required for the error() function to be called!
-      req = $.ajax({url: api_url, dataType: "jsonp", timeout: 5000});
+      req = $.ajax({url: apiUrl, dataType: "jsonp", timeout: 5000});
       req.success(addAvailability);
       req.error(errAvailability);
     } else {
