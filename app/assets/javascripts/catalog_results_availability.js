@@ -1,11 +1,14 @@
-/*
-- Grabs item divs, and for each item...
-  - Checks that availability info hasn't already been created (addressing a Safari event issue)
-  - Gets bib_id
-  - Hits availability api.
-  - Displays holdings table.
-- Loaded by `app/views/catalog/_search_results.html.erb`.
-*/
+//
+// - Grabs item divs, and for each item...
+//   - Checks that availability info hasn't already been created (addressing a Safari event issue)
+//   - Gets bib_id
+//   - Hits availability api.
+//   - Displays holdings table.
+// - Loaded by `app/views/catalog/_search_results.html.erb`.
+//
+// Global variables:
+//      availabilityService
+//
 
 $(document).on(  // $(document).ready... is problematic, see <http://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbolinks>
   "page:change",
@@ -38,6 +41,9 @@ function getItemData(bib) {
 
 //POST the list of bis to the service.
 function getAvailability(bibs) {
+  if (!availabilityService) {
+    return;
+  }
     $.ajax({
         type: "POST",
         //url: 'https://apps.library.brown.edu/bibutils/bib/',
