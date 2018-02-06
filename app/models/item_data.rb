@@ -27,10 +27,10 @@ class ItemData
   end
 
   def location
-    if online?
+    @location_name ||= if online?
       "ONLINE"
     else
-      @location_code
+      Location.get_name(@location_code)
     end
   end
 
