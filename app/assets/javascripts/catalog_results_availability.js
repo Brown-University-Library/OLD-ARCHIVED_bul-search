@@ -25,18 +25,19 @@ function collectBibs() {
   getAvailability(bibs);
 }
 
-// function getItemData(bib) {
-//     var element = $('[data-id="' + bib + '"]');
-//     var title = element.find('a').text();
-//     return {title: title, format: element.data('format')};
-// }
 
 function getItemData(bib) {
-    var element = $('[data-id="' + bib + '"]');
-    var title = element.find('a').text();
-    var parent_element = element.parent();  // needed for JCB author
-    var found_author = parent_element.next().text();
-    return {title: title, found_author: found_author, format: element.data('format')};
+  var i;
+  for(i = 0; i < bibsData.length; i++) {
+    if (bibsData[i].id == bib) {
+      // TODO:
+      // Currently the author is always empty because we don't load the MARC
+      // data for search results which is where the author is buried under the
+      // statement_of_responsibility field. We should change this.
+      return {title: bibsData[i].title, found_author: bibsData[i].author, format: bibsData[i].format};
+    }
+  }
+  return {title: "", found_author: "", format: ""};
 }
 
 //POST the list of bis to the service.
@@ -44,9 +45,9 @@ function getAvailability(bibs) {
   if (!availabilityService) {
     return;
   }
+
     $.ajax({
         type: "POST",
-        //url: 'https://apps.library.brown.edu/bibutils/bib/',
         url: availabilityService,
         data: JSON.stringify(bibs),
         success: function (data) {
@@ -59,11 +60,11 @@ function getAvailability(bibs) {
                 };
 
                 _.each(context['items'], function(item) {
-                  console.log( "item..." );
-                  console.log( item );
+                  // console.log( "item..." );
+                  // console.log( item );
                   var itemData = getItemData(bib);
-                  console.log( "itemData..." );
-                  console.log( itemData );
+                  // console.log( "itemData..." );
+                  // console.log( itemData );
                   item['map'] = item['map'] + '&title=' + itemData.title;
                   if (canScanItem(item['location'], itemData.format)) {
                     item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);

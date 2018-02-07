@@ -1,0 +1,105 @@
+{{! comment: called by `app/assets/javascripts/catalog_record_availability.js - addStatus()` }}
+
+<div class="holdings-wrapper" {{#if results}}class="results"{{/if}}>
+  {{#unless results}}
+    {{#if summary}}
+      <h4>Summary</h4>
+      {{#each summary}}
+      <div class="summary-holdings">
+        {{#each this}}
+          <span>{{this.label}}:&nbsp;</span>
+          <span>{{this.value}}</span>
+          </br>
+        {{/each}}
+      </div>
+      {{/each}}
+    {{/if}}
+    {{#if items}}
+      <h4>
+        Availability
+        {{#if request_link }}<a class="btn request-this-link" href="{{ request_link }}" target="_blank">Request this</a>{{/if}}
+      </h4>
+    {{else}}
+      {{#if online_resource}}
+        {{! nothing to render }}
+      {{ else }}
+        <h4>
+          Availability
+        </h4>
+        <div>
+          We don't currently have availability information for this item.
+          <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
+            Contact the library staff<a/>
+          for assistance with this item.
+        </div>
+      {{/if}}
+    {{/if}}
+  {{/unless}}
+  {{#if items}}
+  <table class="table">
+    <tr>
+      <th>Location</th>
+      <th>Call number</th>
+      <th>Status</th>
+    </tr>
+    <tbody>
+      {{#each items}}
+        <tr>
+          <td id="{{item_id}}">
+            <span class="location">{{ location }}</span>
+            {{#if shelf}} -- <a href="{{ map }}" class="stack-map-link">Level {{ shelf.floor }}, Aisle {{ shelf.aisle }}</a>{{/if}}
+            {{#if bookplate_url}}
+              <div>
+                <a href="{{ bookplate_url }}" target="_blank">{{ bookplate_display }}</a>
+              </div>
+            {{/if}}
+          </td>
+          <td>{{ callnumber }}</td>
+          <td>{{ status }} {{#if scan}} <a href="{{scan}}" class="scan">scan</a> | <a href="{{item_request_url}}">item</a>{{/if}} {{#if jcb_url}} <a href="{{jcb_url}}" class="scan">request-access</a> {{/if}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{/if}}
+
+  {{#if has_more }}
+    <div class="more-results pull-right">
+        <a href="{{ more_link }}" class="label label-info">more</a>
+    </div>
+  {{/if}}
+
+  {{#if show_ezb_button}}
+
+    <div class="pull-right">
+        <a href="{{ openurl }}" class="btn btn-primary btn-sm" role="button">Request Item</a>
+        <button class="glyphicon glyphicon-question-sign btn btn-default btn-sm" data-toggle="modal" data-target="#myModal"></button>
+    </div>
+
+  {{/if}}
+
+</div>
+
+
+
+
+<!-- Modal dialog box; only shows if question-button is clicked -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">When does the 'Request' button appear?</h4>
+      </div>
+      <div class="modal-body">
+        'Request' means we'll get you a copy from a partner Library.
+        There's a lot of logic we'll spare you, but in a nutshell, our goal is to get you a copy of a book you can take home.
+        So of course if a Library copy isn't available, you'll see the Request button,
+        but you may also see it if, for instance, the Library's only copy must be used within the Library.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>

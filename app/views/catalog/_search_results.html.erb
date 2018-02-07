@@ -27,7 +27,24 @@
 
 <%= render 'results_pagination' %>
 
-<%
-#Used in Javascript to determine catalog record path.
-%>
+<!-- Used in Javascript to determine catalog record path. -->
 <span class="hidden" id="record-path"><%= catalog_record_url %></span>
+
+<script type="text/javascript">
+var bibData;
+var bibsData = [];
+<% @document_list.each do |document| %>
+  bibData = {
+    id: "<%= document.id %>",
+    title: "<%= document[:title_display] %>",
+    format: "<%= document[:format] %>",
+    author: "<%= document.marc_responsibility() %>",
+    publisher: "<%= document.marc_imprint() %>",
+    itemsMultiType: "TBD",
+    easyBorrowUrl: null,
+    showAvailability: true,
+    bookServicesUrl: "<%= document.book_services_url %>"
+  };
+  bibsData.push(bibData);
+<% end %>
+</script>
