@@ -30,10 +30,6 @@ function getItemData(bib) {
   var i;
   for(i = 0; i < bibsData.length; i++) {
     if (bibsData[i].id == bib) {
-      // TODO:
-      // Currently the author is always empty because we don't load the MARC
-      // data for search results which is where the author is buried under the
-      // statement_of_responsibility field. We should change this.
       return {title: bibsData[i].title, found_author: bibsData[i].author, format: bibsData[i].format};
     }
   }

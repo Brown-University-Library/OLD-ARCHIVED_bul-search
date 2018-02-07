@@ -31,6 +31,8 @@
 <span class="hidden" id="record-path"><%= catalog_record_url %></span>
 
 <script type="text/javascript">
+// Notice that we use the author_display instead of statement_of_responsibility
+// because we do not have the MARC data for search results.
 var bibData;
 var bibsData = [];
 <% @document_list.each do |document| %>
@@ -38,7 +40,7 @@ var bibsData = [];
     id: "<%= document.id %>",
     title: "<%= document[:title_display] %>",
     format: "<%= document[:format] %>",
-    author: "<%= document.marc_responsibility() %>",
+    author: "<%= document[:author_display] %>",
     publisher: "<%= document.marc_imprint() %>",
     itemsMultiType: "TBD",
     easyBorrowUrl: null,
