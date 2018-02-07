@@ -1,48 +1,47 @@
 // JavaScript functions for individual catalog records.
 // Loaded by `app/views/catalog/show.html.erb`.
 //
-// Global variables:
+// Global variables (defined in app/views/catalog/show.html.erb):
 //      availabilityService
 //      availabilityEZB
 //      bibData
 //      itemData
+//      josiahRootUrl   (defined in shared/_header_navbar.html.erb)
 //
-$(document).ready(
-  function(){
-    var req, apiUrl, limit;
+$(document).ready(function() {
+  var req, apiUrl, limit;
 
-    addOcraLink(bibData.id);
-    addBookServicesLink();
-    addVirtualShelfLinks(bibData.id);
+  addOcraLink(bibData.id);
+  addBookServicesLink();
+  addVirtualShelfLinks(bibData.id);
 
-    if (availabilityService) {
-      apiUrl = availabilityService + bibData.id + "/?callback=?";
-      limit = getUrlParameter("limit");
-      if (limit == "false") {
-        apiUrl += "&limit=false";
-      }
+  if (availabilityService) {
+    apiUrl = availabilityService + bibData.id + "/?callback=?";
+    limit = getUrlParameter("limit");
+    if (limit == "false") {
+      apiUrl += "&limit=false";
     }
-
-    if (apiUrl && bibData.showAvailability) {
-      // We are using .ajax() rather than .getJSON() here to be able
-      // to handle errors (https://stackoverflow.com/a/5121811/446681)
-      // The timeout value is required for the error() function to be called!
-      req = $.ajax({url: apiUrl, dataType: "jsonp", timeout: 5000});
-      req.success(addAvailability);
-      req.error(errAvailability);
-    } else {
-      showAvailability(true);
-      showAeon();
-      debugMessage("Skipped call to Availability API");
-    }
-
-    if (location.search.indexOf("nearby") > -1) {
-      loadNearbyItems(false);
-    }
-
-    debugMessage("BIB record multi: " + bibData.itemsMultiType)
   }
-);
+
+  if (apiUrl && bibData.showAvailability) {
+    // We are using .ajax() rather than .getJSON() here to be able
+    // to handle errors (https://stackoverflow.com/a/5121811/446681)
+    // The timeout value is required for the error() function to be called!
+    req = $.ajax({url: apiUrl, dataType: "jsonp", timeout: 5000});
+    req.success(addAvailability);
+    req.error(errAvailability);
+  } else {
+    showAvailability(true);
+    showAeon();
+    debugMessage("Skipped call to Availability API");
+  }
+
+  if (location.search.indexOf("nearby") > -1) {
+    loadNearbyItems(false);
+  }
+
+  debugMessage("BIB record multi: " + bibData.itemsMultiType)
+});
 
 
 function getItemById(id) {
@@ -135,6 +134,24 @@ function getPublisher() {
 }
 
 
+function addOcraLink(bib_id) {
+  var ocraUrl = "https://library.brown.edu/reserves/cr/ocrify/?bibnum=" + bib_id;
+  var helpInfo = "Staff and Teaching Assistants can reserve this item in OCRA for courses they teach.";
+  var link = '<li><a href="' + ocraUrl + '" title="' + helpInfo + '" target="_blank">Add to OCRA</a>';
+  $("div.panel-body>ul.nav").append(link);
+}
+
+
+function addBookServicesLink() {
+  // hidden by default
+  var li = '<li id="book_services_link" class="hidden">';
+  var helpInfo = "Other library services (e.g. paging of books for Faculty and Grad/Med students)";
+  var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
+  var html = li + a;
+  $("div.panel-body>ul.nav").append(html);
+}
+
+
 function addAvailability(availabilityResponse) {
   var i;
   var someAvailable = false;
@@ -177,6 +194,7 @@ function errAvailability() {
   showAvailability(true);
   showAeon();
 }
+
 
 function showAvailability(all) {
   var i;
@@ -253,6 +271,8 @@ function updateItemInfo(avItem, requestable) {
   itemRow = rowForItem(item);
 
   if (item.call_number != callnumber) {
+    // The call number in the MARC data is different from the one the
+    // availability API returned. Prefer the one from the availability API.
     itemRow.find(".callnumber").html(callnumber);
     debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + callnumber + "</b>");
   }
@@ -279,7 +299,7 @@ function updateItemLocation(row, avItem) {
       mapUrl = avItem['map'] + '&title=' + getTitle();
       html = "-- <a href=" + mapUrl + ">" + mapText + "</a>";
     } else {
-      html = "-- mapText";
+      html = "-- " + mapText;
     }
     row.find(".location_map").html(html);
   }
@@ -368,7 +388,6 @@ function getUrlParameter(sParam) {
 //
 // =============================================
 function browseShelfUri(id, block, norm) {
-  // josiahRootUrl is defined in shared/_header_navbar.html.erb
   url = josiahRootUrl + "api/items/nearby?id=" + id;
   if (block) {
     url += "&block=" + block;
@@ -381,7 +400,6 @@ function browseShelfUri(id, block, norm) {
 
 
 function browseStackUri(id) {
-  // josiahRootUrl is defined in shared/_header_navbar.html.erb
   return josiahRootUrl + "browse/" + id;
 }
 
@@ -534,24 +552,6 @@ function showResetButton() {
 function clearResetButton() {
   var html = '<span>&nbsp;</span>';
   $(".num-found").html(html);
-}
-
-
-function addOcraLink(bib_id) {
-  var ocraUrl = "https://library.brown.edu/reserves/cr/ocrify/?bibnum=" + bib_id;
-  var helpInfo = "Staff and Teaching Assistants can reserve this item in OCRA for courses they teach.";
-  var link = '<li><a href="' + ocraUrl + '" title="' + helpInfo + '" target="_blank">Add to OCRA</a>';
-  $("div.panel-body>ul.nav").append(link);
-}
-
-
-function addBookServicesLink() {
-  // hidden by default
-  var li = '<li id="book_services_link" class="hidden">';
-  var helpInfo = "Other library services (e.g. paging of books for Faculty and Grad/Med students)";
-  var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
-  var html = li + a;
-  $("div.panel-body>ul.nav").append(html);
 }
 
 
