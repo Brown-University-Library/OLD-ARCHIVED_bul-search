@@ -103,6 +103,7 @@
 
 <script type="text/javascript">
 var availabilityService = '<%= availability_service_url %>';
+var availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
 
 var bibData = {};
 bibData.showAvailability = <%= @document.show_item_availability? %>;

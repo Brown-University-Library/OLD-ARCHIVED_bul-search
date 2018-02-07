@@ -3,6 +3,7 @@
 //
 // Global variables:
 //      availabilityService
+//      availabilityEZB
 //      bibData
 //      itemData
 //
@@ -189,6 +190,9 @@ function showAvailability(all) {
 
 function showEasyBorrow(requestable, someAvailable) {
   var allowEasyBorrow = false;
+  if (!availabilityEZB) {
+    return;
+  }
   if (requestable) {
     // If the bib record is requestable and there are no copies
     // available allow the user to request it via easyBorrow.
@@ -270,7 +274,7 @@ function updateItemStatus(row, avItem, requestable, volume) {
   status = avItem['status'];
   if (status) {
     row.find(".status").html(status);
-    if (requestable && bibData.itemsMultiType == "volume" && status != "AVAILABLE") {
+    if (availabilityEZB && requestable && bibData.itemsMultiType == "volume" && status != "AVAILABLE") {
       // Allow the user to request this volume via easyBorrow.
       url = bibData.easyBorrowUrl;
       if (volume != "") {
@@ -554,7 +558,7 @@ function addOcraLink(bib_id) {
 function addBookServicesLink() {
   // hidden by default
   var li = '<li id="book_services_link" class="hidden">';
-  var helpInfo = "Other library services (e.g. recall books for faculty)";
+  var helpInfo = "Other library services (e.g. paging of books for Faculty and Grad/Med students)";
   var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
   var html = li + a;
   $("div.panel-body>ul.nav").append(html);
