@@ -78,7 +78,13 @@ class Easy
         end
       end
     end
-    response['response']['more'] = ENV['BDR_SEARCH_URL'] + '?' + URI.encode_www_form( {'q'=> query} )
+
+    bdr_search_url = "https://repository.library.brown.edu/"
+    if query != nil && !query.empty?
+      bdr_search_url = ENV['BDR_SEARCH_URL'] + '?' + URI.encode_www_form( {'q'=> query} )
+    end
+
+    response['response']['more'] = bdr_search_url
     response['response']
   end
 
