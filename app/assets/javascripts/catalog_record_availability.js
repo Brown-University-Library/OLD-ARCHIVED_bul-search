@@ -175,6 +175,7 @@ function errAvailability() {
   // show whatever we have from the MARC data already on the HTML
   debugMessage("Availability API error, using MARC data instead");
   showAvailability(true);
+  showAeon();
 }
 
 function showAvailability(all) {
