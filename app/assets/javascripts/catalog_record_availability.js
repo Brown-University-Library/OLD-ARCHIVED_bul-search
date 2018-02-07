@@ -32,6 +32,7 @@ $(document).ready(
       req.error(errAvailability);
     } else {
       showAvailability(true);
+      showAeon();
       debugMessage("Skipped call to Availability API");
     }
 
@@ -188,6 +189,16 @@ function showAvailability(all) {
 }
 
 
+function showAeon() {
+  var i, item, row;
+  for(i = 0; i < itemsData.length; i++) {
+    item = itemsData[i];
+    row = rowForItem(item);
+    updateItemAeonLinks(row, item);
+  }
+}
+
+
 function showEasyBorrow(requestable, someAvailable) {
   var allowEasyBorrow = false;
   if (!availabilityEZB) {
@@ -216,6 +227,11 @@ function showEasyBorrow(requestable, someAvailable) {
 }
 
 
+function rowForItem(item) {
+  return $("#item_" + item.id);
+}
+
+
 // Updates item information (already on the page) with the
 // extra information that we got from the Availability service.
 function updateItemInfo(avItem, requestable) {
@@ -233,7 +249,7 @@ function updateItemInfo(avItem, requestable) {
     }
   }
 
-  itemRow = $("#item_" + item.id);
+  itemRow = rowForItem(item);
 
   if (item.call_number != callnumber) {
     itemRow.find(".callnumber").html(callnumber);
@@ -243,7 +259,7 @@ function updateItemInfo(avItem, requestable) {
   updateItemLocation(itemRow, avItem);
   updateItemStatus(itemRow, avItem, requestable, item.volume);
   updateItemScanStatus(itemRow, avItem, barcode);
-  updateItemAeonLinks(itemRow, avItem);
+  updateItemAeonLinks(itemRow, item);
 }
 
 
@@ -292,15 +308,6 @@ function updateItemStatus(row, avItem, requestable, volume) {
 
 function updateItemScanStatus(row, avItem, barcode) {
   var scanLink, itemLink, html;
-  // Birkin's original code
-  //add easyScan link & item request
-  // if (canScanItem(item['location'], format)) {
-  //   item['scan'] = easyScanFullLink(item['scan'], bib, title);
-  //   item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-  // } else {
-  //   item['scan'] = null;
-  //   item['item_request_url'] = null;
-  // }
   if (canScanItem(avItem['location'], bibData.format)) {
     scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '">scan</a>';
     itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '">item</a>';
@@ -310,40 +317,22 @@ function updateItemScanStatus(row, avItem, barcode) {
 }
 
 
-function updateItemAeonLinks(row, avItem) {
-  var location, url, html;
-  // Birkin's original code
-  // // add jcb aeon link if necessary
-  // if ( item['location'].slice(0, 3) == "JCB" ) {
-  //   console.log( 'jcb title, ```' + title + '```' )
-  //   item['jcb_url'] = jcbRequestFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'] );
-  // }
-  //
-  // // add hay aeon link if necessary
-  // if ( item['location'].slice(0, 3) == "HAY" ) {
-  //   console.log( '- hay title, ```' + title + '```' )
-  //   if ( isValidHayAeonLocation(item['location']) == true ) {
-  //     item['hay_aeon_url'] = hayAeonFullLink( bib, title, getAuthor(), getPublisher(), item['callnumber'], item['location'] );
-  //   }
-  // }
-
-  location = (avItem['location'] || "").slice(0, 3);
+function updateItemAeonLinks(row, item) {
+  var url, html;
+  var location = item.location_name;
+  var location_prefix = (location || "").slice(0, 3).toUpperCase();
 
   // JCB Aeon link
-  if (location == "JCB") {
-    url = jcbRequestFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, avItem['callnumber']);
+  if (location_prefix == "JCB") {
+    url = jcbRequestFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number);
     html = '<a href="' + url + '">request-access</a>';
     row.find(".jcb_url").html(html);
   }
 
   // Hay Aeon link
-  if (location == "HAY") {
-    if (isValidHayAeonLocation(avItem['location']) == true) {
-      // Birkin: This version handles author/publisher better because it gets the
-      // information from the bibData object rather than guessing from HTML element.
-      // See for example http://localhost:3000/catalog/b3326323 (previously the code
-      // was using the publisher as the author because there is no author.)
-      url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, avItem['callnumber'], avItem['location']);
+  if (location_prefix == "HAY") {
+    if (isValidHayAeonLocation(location) == true) {
+      url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
       html = '<a href="' + url + '">request-access</a>';
       row.find(".hay_aeon_url").html(html);
     }
