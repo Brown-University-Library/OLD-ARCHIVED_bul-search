@@ -46,10 +46,14 @@
 //= require 'jquery.stackview.min.js'
 
 
+// Object to group our global functions.
+window.josiahObject = {};
+
+
 // ==========================
 // General utility functions
 // ==========================
-function josiahGetUrlParameter(param) {
+window.josiahObject.getUrlParameter = function(param) {
   var url = window.location.search.substring(1);
   var params = url.split('&');
   var i, tokens;
