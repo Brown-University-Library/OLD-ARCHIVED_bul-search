@@ -145,7 +145,7 @@ function addOcraLink(bib_id) {
 function addBookServicesLink() {
   // hidden by default
   var li = '<li id="book_services_link" class="hidden">';
-  var helpInfo = "Other library services (e.g. paging of books for Faculty and Grad/Med students)";
+  var helpInfo = "Faculty and Grad/Med students can request this book to be paged for you.";
   var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Request This</a>';
   var html = li + a;
   $("div.panel-body>ul.nav").append(html);
