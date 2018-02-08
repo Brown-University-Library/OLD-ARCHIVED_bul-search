@@ -146,7 +146,7 @@ function addBookServicesLink() {
   // hidden by default
   var li = '<li id="book_services_link" class="hidden">';
   var helpInfo = "Other library services (e.g. paging of books for Faculty and Grad/Med students)";
-  var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Library Services</a>';
+  var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Request This</a>';
   var html = li + a;
   $("div.panel-body>ul.nav").append(html);
 }
@@ -163,10 +163,10 @@ function addAvailability(availabilityResponse) {
     }
   }
 
-  // TODO: remove this test code
-  if (bibData.id == "b1235490") {
-    availabilityResponse.items[1]['status'] = "DUE XX/YY/ZZZZ";
-  }
+  // // TODO: remove this test code
+  // if (bibData.id == "b1235490") {
+  //   availabilityResponse.items[1]['status'] = "DUE XX/YY/ZZZZ";
+  // }
 
   // Realtime status of items (and other item specific information)
   _.each(availabilityResponse.items, function(avItem) {
