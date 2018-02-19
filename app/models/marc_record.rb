@@ -96,7 +96,7 @@ class MarcRecord
         base_number = StringUtils.clean_join(f_090f, f_090a, f_090b)
       end
       volume = subfield_value(f_945, "c")
-      copy = subfield_value(f_945, "g")
+      copy = subfield_value(f_945, "g") || ""
       if copy == "1"
         copy = ""
       elsif copy > "1"

@@ -85,8 +85,9 @@ class BestBet
   end
 
   def self.is_course_number?(query)
-    # starts with 4 characters, a space (optional), and 4 digits.
-    regex = /^[A-Z][A-Z][A-Z][A-Z]\s?\d\d\d\d/
-    query.upcase.match(regex) != nil
+    # starts with 3 to 5 characters, a space (optional), and 4 digits.
+    regex = /^[A-Z]{3,5}\s?\d\d\d\d/
+    return true if query.upcase.match(regex) != nil
+    false
   end
 end
