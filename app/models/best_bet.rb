@@ -40,16 +40,16 @@ class BestBet
     }
 
     response = solr.get('search', :params => qp)
-    if response[:response][:docs].count == 1
+    if response["response"]["docs"].count == 1
       Rails.logger.warn "BestBet: more than one match found for (#{query})"
     end
 
     #Always take the first doc.
-    response[:response][:docs].each do |doc|
+    response["response"]["docs"].each do |doc|
       return {
-        :name => doc[:name_display],
-        :url => doc[:url_display][0],
-        :description => doc.fetch(:description_display, [nil])[0]
+        :name => doc["name_display"],
+        :url => doc["url_display"][0],
+        :description => doc.fetch("description_display", [nil])[0]
       }
     end
     nil
