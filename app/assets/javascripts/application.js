@@ -14,7 +14,6 @@
 //= require 'blacklight_advanced_search'
 
 //= require jquery_ujs
-//= require turbolinks
 //
 // Required by Blacklight
 //= require blacklight/blacklight
@@ -47,7 +46,10 @@
 
 
 // Object to group our global functions.
-window.josiahObject = {};
+window.josiahObject = {
+  bibData: {},
+  itemsData: []
+};
 
 
 // ==========================

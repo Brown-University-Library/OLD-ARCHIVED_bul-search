@@ -85,14 +85,20 @@ class SolrDocument
       ctx_obj.referent.set_metadata('pub', publisher_name())
       ctx_obj.referent.set_metadata('place', publisher_place())
       ctx_obj.referent.set_metadata('date', (self[:pub_date] || []).first)
-      ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
+      if self.key?('isbn_t')
+        isbns = clean_isbns(self.fetch('isbn_t')).join(' ')
+        ctx_obj.referent.set_metadata('isbn', isbns)
+      end
       ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
       ctx_obj.referent.set_metadata('volume', volume) if volume != nil
     elsif (format =~ /journal/i)
       ctx_obj.referent.set_format('journal')
       ctx_obj.referent.set_metadata('jtitle', self.fetch('title_display')) if self.key?('title_display')
       ctx_obj.referent.set_metadata('au', self.fetch('author_display')) if self.key?('author_display')
-      ctx_obj.referent.set_metadata('isbn', self.fetch('isbn_t').join(' ')) if self.key?('isbn_t')
+      if self.key?('isbn_t')
+        isbns = clean_isbns(self.fetch('isbn_t')).join(' ')
+        ctx_obj.referent.set_metadata('isbn', isbns)
+      end
       ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
       ctx_obj.referent.set_metadata('volume', volume) if volume != nil
     else
@@ -324,9 +330,8 @@ class SolrDocument
       if has_marc_data?
         online_availability_from_marc
       else
-        # TODO: I don't think we need this. marc_data is always true.
-        # Remove this after the big refactor of the recall/easyBorrow feature
-        # has been finished.
+        # We don't have MARC data when fetching search results.
+        # We should eventually change that, but for now that's how things work.
         online_availability_from_solr
       end
     rescue StandardError => e
@@ -447,5 +452,23 @@ class SolrDocument
         values << online_avail
       end
       values
+    end
+
+    # Returns the ISBN numbers without the extra text.
+    # For example if the input values are:
+    #  ["9781472430496 (hardback : alk. paper)", "1472430492 (hardback : alk. paper)"]
+    #
+    # the returned value will be:
+    #  ["9781472430496", "1472430492"]
+    #
+    def clean_isbns(values)
+      clean = []
+      (values || []).each do |value|
+        tokens = value.split(" ")
+        if tokens.count > 0
+          clean << tokens[0]
+        end
+      end
+      clean
     end
 end

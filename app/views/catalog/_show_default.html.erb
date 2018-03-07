@@ -102,25 +102,21 @@
 <% end %>
 
 <script type="text/javascript">
-var availabilityService = '<%= availability_service_url %>';
-var availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
+josiahObject.availabilityService = "<%= availability_service_url %>";
+josiahObject.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
 
-var bibData = {};
-bibData.showAvailability = <%= @document.show_item_availability? %>;
-bibData.bookServicesUrl = "<%= @document.book_services_url %>"
+josiahObject.bibData.showAvailability = <%= @document.show_item_availability? %>;
+josiahObject.bibData.bookServicesUrl = "<%= @document.book_services_url %>"
+josiahObject.bibData.id = "<%= @document.id %>";
+josiahObject.bibData.title = "<%= document[:title_display] %>";
+josiahObject.bibData.format = "<%= document[:format] %>";
+josiahObject.bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
+josiahObject.bibData.publisher = "<%= document.marc_imprint() %>";
+josiahObject.bibData.itemsMultiType = "<%= @document.items_multi_type %>";
+josiahObject.bibData.easyBorrowUrl = "<%= document.easyBorrowUrl() %>";
 
-bibData.id = "<%= @document.id %>";
-bibData.title = "<%= document[:title_display] %>";
-bibData.format = "<%= document[:format] %>";
-bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
-bibData.publisher = "<%= document.marc_imprint() %>";
-bibData.itemsMultiType = "<%= @document.items_multi_type %>";
-bibData.easyBorrowUrl = "<%= document.easyBorrowUrl() %>";
-
-var itemsData = [];
-var item;
 <% @document.item_data.each do |item| %>
-  itemsData.push({
+  josiahObject.itemsData.push({
     id: "<%= item.id %>",
     barcode: "<%= item.barcode %>",
     location_code: "<%= item.location_code %>",
