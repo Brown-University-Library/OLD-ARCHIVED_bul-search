@@ -21,16 +21,17 @@ gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
+# How to disable Turbolinks in Rails 4
+#   http://blog.flightswithfriends.com/post/53943440505/how-to-disable-turbolinks-in-rails-4
+# gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
-group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
-  gem 'sdoc', require: false
-end
+# group :doc do
+#   # bundle exec rake doc:rails generates the API under doc/api.
+#   gem 'sdoc', require: false
+# end
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
@@ -70,7 +71,6 @@ gem 'mysql2', :group => [:production]
 
 gem "rspec-rails", :group => [:development, :test]
 
-#gem "bulmarc", :path => "/work/bul_marc_utils"
 gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'master'
 
 gem "http_logger", :group => [:development]
@@ -84,4 +84,3 @@ gem "rb-readline"
 
 gem "dotenv"
 gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-ruby.git'
-# gem "ebsco-eds", path: "/Users/hectorcorrea/dev/edsapi-ruby"
