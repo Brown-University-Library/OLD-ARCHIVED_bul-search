@@ -4,3 +4,4 @@
 # main minified JavaScript file.
 Rails.application.config.assets.precompile += %w( catalog_results_availability.js )
 Rails.application.config.assets.precompile += %w( catalog_record_availability.js )
+Rails.application.config.assets.precompile += %w( browse_index.js )
