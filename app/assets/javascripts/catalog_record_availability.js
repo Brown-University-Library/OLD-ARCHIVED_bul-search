@@ -309,8 +309,8 @@ $(document).ready(function() {
     //       once we fix the results page.
     if (avItem["status"] == "AVAILABLE") {
       if (canScanItem(avItem['location'], bibData.format)) {
-        scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '">scan</a>';
-        itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '">item</a>';
+        scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
+        itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
         html = scanLink + " | " + itemLink;
         row.find(".scan").html(html);
       }
@@ -533,7 +533,7 @@ $(document).ready(function() {
 
 
   scope.highlightCurrent = function(docs) {
-    var currentId = getBibId();
+    var currentId = scope.getBibId();
     var i;
     for(i = 0; i < docs.length; i++) {
       if (docs[i].id == currentId) {
