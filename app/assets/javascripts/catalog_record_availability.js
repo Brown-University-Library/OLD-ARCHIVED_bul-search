@@ -305,15 +305,11 @@ $(document).ready(function() {
 
   scope.updateItemScanStatus = function(row, avItem, barcode) {
     var scanLink, itemLink, html;
-    // TODO: move the status check inside canScanItem()
-    //       once we fix the results page.
-    if (avItem["status"] == "AVAILABLE") {
-      if (canScanItem(avItem['location'], bibData.format)) {
-        scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
-        itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
-        html = scanLink + " | " + itemLink;
-        row.find(".scan").html(html);
-      }
+    if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
+      scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
+      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
+      html = scanLink + " | " + itemLink;
+      row.find(".scan").html(html);
     }
   };
 
@@ -411,19 +407,19 @@ $(document).ready(function() {
       url += "&normalized=" + norm;
     }
     return url;
-  }
+  };
 
 
   scope.browseStackUri = function(id) {
     return josiahRootUrl + "browse/" + id;
-  }
+  };
 
 
   scope.scrollToBottomOfPage = function() {
     // scroll to bottom of the page
     // http://stackoverflow.com/a/10503637/446681
     $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-  }
+  };
 
 
   scope.loadNearbyItems = function(scroll) {
@@ -466,7 +462,7 @@ $(document).ready(function() {
         scope.scrollToBottomOfPage();
       }
     });
-  }
+  };
 
 
   scope.loadPrevNearbyItems = function() {
@@ -485,7 +481,7 @@ $(document).ready(function() {
       scope.showResetButton();
       scope.updateNearbyBounds(data.docs, true, true);
     });
-  }
+  };
 
 
   scope.loadNextNearbyItems = function() {
@@ -503,7 +499,7 @@ $(document).ready(function() {
       scope.showResetButton();
       scope.updateNearbyBounds(data.docs, true, true);
     });
-  }
+  };
 
 
   // Save the Id and normalized call number at the top and/or bottom
@@ -529,7 +525,7 @@ $(document).ready(function() {
         $("#lastBookNorm").text(docs[docs.length-1].normalized);
       }
     }
-  }
+  };
 
 
   scope.highlightCurrent = function(docs) {
@@ -541,7 +537,7 @@ $(document).ready(function() {
         break;
       }
     }
-  }
+  };
 
 
   scope.addDebugInfoToDocs = function(docs) {
@@ -553,7 +549,7 @@ $(document).ready(function() {
       doc = docs[i];
       doc.title = doc.title + "<br/>" + doc.id + ": " + doc.callnumbers.toString();
     }
-  }
+  };
 
 
   scope.showResetButton = function() {
@@ -561,13 +557,13 @@ $(document).ready(function() {
     var html = "<span>" + href + "</span>";
     $(".num-found").html(html);
     $("#resetShelfLink").on("click", function() { scope.loadNearbyItems(false); });
-  }
+  };
 
 
   scope.clearResetButton = function() {
     var html = '<span>&nbsp;</span>';
     $(".num-found").html(html);
-  }
+  };
 
 
   scope.addVirtualShelfLinks = function(bib_id) {
@@ -579,7 +575,7 @@ $(document).ready(function() {
     // Add "Browse the stacks" option to tools section
     var link2 = '<li><a href="' + scope.browseStackUri(bib_id) + '" target="_blank">Browse the Stacks</a>';
     $("div.panel-body>ul.nav").append(link2);
-  }
+  };
 
 
   // Execute our code

@@ -72,12 +72,19 @@ window.josiahObject.getUrlParameter = function(param) {
 // I think we might need to add a check on "status" since
 // only Available items can be requested.
 // See https://github.com/Brown-University-Library/easyscan/blob/391cbef95f4731894a0b0b30cf15f062263fd77e/easyscan_app/lib/josiah_easyscan.js#L214-L224
-function canScanItem(location, format) {
+function canScanItem(location, format, status) {
   var location = (location || "").toLowerCase();
   var format = (format || "").toLowerCase();
+  var status = (status || "").toLowerCase();
+
+  if (status != "available") {
+    return false;
+  }
+
   if (location != "annex") {
     return false;
   }
+
   if ((format != "book") && (format != "periodical title")) {
     return false;
   }
@@ -139,7 +146,7 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 
 function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) {
   /* called by catalog_record_availability.js */
-  console.log( '- starting hayAeonFullLink()' );
+  // console.log( '- starting hayAeonFullLink()' );
   var hayA_root_url = "https://brown.aeon.atlas-sys.com/logon/";
   var hayA_ref_num = bib;
   var hayA_title = extractTitle( title );
@@ -154,7 +161,7 @@ function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) 
 
 function isValidHayAeonLocation( josiah_location ) {
   /* called by catalog_record_availability.js */
-  console.log( '- starting isValidHayAeonLocation()' )
+  // console.log( '- starting isValidHayAeonLocation()' )
   var hay_found = false;
   // var non_aeon_locations = [
   //   "HAY ANNEX TEMP",
@@ -164,15 +171,15 @@ function isValidHayAeonLocation( josiah_location ) {
   //   ];
   var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
   if ( josiah_location.slice(0, 3) == "HAY" ){
-    console.log( "- seeing HAY slice" );
+    // console.log( "- seeing HAY slice" );
     var index_of_val = non_aeon_locations.indexOf( josiah_location );
-    console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
+    // console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
     if ( index_of_val == -1 ) {
-      console.log( "- hay_found is `true`" );
+      // console.log( "- hay_found is `true`" );
       hay_found = true;
     }
   }
-  console.log( '- returning hay_found value of, ```' + hay_found + '```' )
+  // console.log( '- returning hay_found value of, ```' + hay_found + '```' )
   return hay_found;
 }
 

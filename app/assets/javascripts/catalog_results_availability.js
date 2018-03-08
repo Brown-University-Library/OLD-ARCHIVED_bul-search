@@ -15,7 +15,7 @@ $(document).ready(function() {
       bibs.push(bibsData[i].id);
     }
     scope.getAvailability(bibs);
-  }
+  };
 
 
   scope.getItemData = function(bib) {
@@ -26,7 +26,7 @@ $(document).ready(function() {
       }
     }
     return {title: "", found_author: "", format: ""};
-  }
+  };
 
 
   scope.getAvailability = function(bibs) {
@@ -40,7 +40,7 @@ $(document).ready(function() {
       data: JSON.stringify(bibs),
       success: scope.showAvailability
     });
-  }
+  };
 
 
   scope.showAvailability = function(data) {
@@ -55,7 +55,9 @@ $(document).ready(function() {
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
           item['map'] = item['map'] + '&title=' + itemData.title;
-          if (canScanItem(item['location'], itemData.format)) {
+
+          // add scan|item links
+          if (canScanItem(item['location'], itemData.format, item['status'])) {
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
           } else {
@@ -64,26 +66,25 @@ $(document).ready(function() {
           }
 
           // add jcb link if necessary
-          if ( item['location'].slice(0, 3) == "JCB" ) {
-            item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
+          if (item['location'].slice(0, 3) == "JCB") {
+            item['jcb_url'] = jcbRequestFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber']);
           }
 
           // add hay aeon link if necessary
-          if ( item['location'].slice(0, 3) == "HAY" ) {
-            if ( isValidHayAeonLocation(item['location']) == true ) {
-              item['hay_aeon_url'] = hayAeonFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location'] );
+          if (item['location'].slice(0, 3) == "HAY") {
+            if (isValidHayAeonLocation(item['location']) == true) {
+              item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
             }
           }
-
         });
 
         var elem = $('[data-availability="' + bib + '"]');
-        html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
+        var html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
         $(elem).append(html);
         $(elem).removeClass('hidden');
       };
     });
-  }
+  };
 
   scope.Init();
 }); // $(document).ready(function() {
