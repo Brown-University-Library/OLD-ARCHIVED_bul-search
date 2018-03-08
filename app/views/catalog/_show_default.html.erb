@@ -102,21 +102,24 @@
 <% end %>
 
 <script type="text/javascript">
-josiahObject.availabilityService = "<%= availability_service_url %>";
-josiahObject.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
+/* Push the data that we need to a few global variables */
+window.availabilityService = "<%= availability_service_url %>";
+window.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
 
-josiahObject.bibData.showAvailability = <%= @document.show_item_availability? %>;
-josiahObject.bibData.bookServicesUrl = "<%= @document.book_services_url %>"
-josiahObject.bibData.id = "<%= @document.id %>";
-josiahObject.bibData.title = "<%= document[:title_display] %>";
-josiahObject.bibData.format = "<%= document[:format] %>";
-josiahObject.bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
-josiahObject.bibData.publisher = "<%= document.marc_imprint() %>";
-josiahObject.bibData.itemsMultiType = "<%= @document.items_multi_type %>";
-josiahObject.bibData.easyBorrowUrl = "<%= document.easyBorrowUrl() %>";
+window.bibData = {};
+window.bibData.showAvailability = <%= @document.show_item_availability? %>;
+window.bibData.bookServicesUrl = "<%= @document.book_services_url %>"
+window.bibData.id = "<%= @document.id %>";
+window.bibData.title = "<%= document[:title_display] %>";
+window.bibData.format = "<%= document[:format] %>";
+window.bibData.author = "<%= document.marc_responsibility() %>";  // would author be better?
+window.bibData.publisher = "<%= document.marc_imprint() %>";
+window.bibData.itemsMultiType = "<%= @document.items_multi_type %>";
+window.bibData.easyBorrowUrl = "<%= document.easyBorrowUrl() %>";
 
+window.itemsData = [];
 <% @document.item_data.each do |item| %>
-  josiahObject.itemsData.push({
+  window.itemsData.push({
     id: "<%= item.id %>",
     barcode: "<%= item.barcode %>",
     location_code: "<%= item.location_code %>",

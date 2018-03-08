@@ -45,16 +45,10 @@
 //= require 'jquery.stackview.min.js'
 
 
-// Object to group our global functions.
-window.josiahObject = {
-  bibData: {},
-  itemsData: []
-};
-
-
 // ==========================
 // General utility functions
 // ==========================
+window.josiahObject = {};
 window.josiahObject.getUrlParameter = function(param) {
   var url = window.location.search.substring(1);
   var params = url.split('&');
