@@ -9,7 +9,7 @@ $(document).ready(function() {
   var itemsData = window.itemsData;                     // defined in _show_default.html.erb
   var availabilityService = window.availabilityService; // defined in _show_default.html.erb
   var availabilityEZB = window.availabilityEZB;         // defined in _show_default.html.erb
-  var josiahRootUrl = window.josiahRootUrl;             // defined in shared/_header_navbar.html.erb
+  var josiahRootUrl = window.josiahRootUrl;             // defined in app/views/shared/_header_navbar.html.erb
   var josiahObject = window.josiahObject;               // defined in app/assets/javascripts/application.js
 
   scope.Init = function() {

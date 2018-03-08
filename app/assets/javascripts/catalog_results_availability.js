@@ -1,92 +1,89 @@
-//
-// - Grabs item divs, and for each item...
-//   - Checks that availability info hasn't already been created (addressing a Safari event issue)
-//   - Gets bib_id
-//   - Hits availability api.
-//   - Displays holdings table.
-// - Loaded by `app/views/catalog/_search_results.html.erb`.
-//
-// Global variables:
-//      availabilityService
-//
-
+// JavaScript functions for search results.
+// Loaded by `app/views/catalog/_search_results.html.erb`.
 $(document).ready(function() {
-  collectBibs();
-});
+  var scope = {};
 
-function collectBibs() {
-  var bibs = [];
-  $.each($('.index_title'), function(i, bib) {
-      bibs.push($(bib).data('id'));
-  });
-  getAvailability(bibs);
-}
+  // Get the data from the global variables into local variables.
+  // Ideally these should be scope.x but for convenience they are just x.
+  var bibsData = window.bibsData;                       // defined in _search_results.html.erb
+  var availabilityService = window.availabilityService; // defined in app/views/catalog/index.html.erb
 
-
-function getItemData(bib) {
-  var i;
-  for(i = 0; i < bibsData.length; i++) {
-    if (bibsData[i].id == bib) {
-      return {title: bibsData[i].title, found_author: bibsData[i].author, format: bibsData[i].format};
+  scope.Init = function() {
+    var bibs = [];
+    var i;
+    for(i = 0; i < bibsData.length; i++) {
+      bibs.push(bibsData[i].id);
     }
+    scope.getAvailability(bibs);
   }
-  return {title: "", found_author: "", format: ""};
-}
 
-//POST the list of bis to the service.
-function getAvailability(bibs) {
-  if (!availabilityService) {
-    return;
+
+  scope.getItemData = function(bib) {
+    var i;
+    for(i = 0; i < bibsData.length; i++) {
+      if (bibsData[i].id == bib) {
+        return {title: bibsData[i].title, found_author: bibsData[i].author, format: bibsData[i].format};
+      }
+    }
+    return {title: "", found_author: "", format: ""};
   }
+
+
+  scope.getAvailability = function(bibs) {
+    if (!availabilityService) {
+      return;
+    }
 
     $.ajax({
-        type: "POST",
-        url: availabilityService,
-        data: JSON.stringify(bibs),
-        success: function (data) {
-            $.each(data, function(bib, context){
-              if (context) {
-                context['results'] = true;
+      type: "POST",
+      url: availabilityService,
+      data: JSON.stringify(bibs),
+      success: scope.showAvailability
+    });
+  }
 
-                if (context['has_more'] == true) {
-                  context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
-                };
 
-                _.each(context['items'], function(item) {
-                  // console.log( "item..." );
-                  // console.log( item );
-                  var itemData = getItemData(bib);
-                  // console.log( "itemData..." );
-                  // console.log( itemData );
-                  item['map'] = item['map'] + '&title=' + itemData.title;
-                  if (canScanItem(item['location'], itemData.format)) {
-                    item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
-                    item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-                  } else {
-                    item['scan'] = null;
-                    item['item_request_url'] = null;
-                  }
+  scope.showAvailability = function(data) {
+    $.each(data, function(bib, context){
+      if (context) {
+        context['results'] = true;
 
-                  // add jcb link if necessary
-                  if ( item['location'].slice(0, 3) == "JCB" ) {
-                    item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
-                  }
+        if (context['has_more'] == true) {
+          context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
+        };
 
-                  // add hay aeon link if necessary
-                  if ( item['location'].slice(0, 3) == "HAY" ) {
-                    if ( isValidHayAeonLocation(item['location']) == true ) {
-                      item['hay_aeon_url'] = hayAeonFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location'] );
-                    }
-                  }
+        _.each(context['items'], function(item) {
+          var itemData = scope.getItemData(bib);
+          item['map'] = item['map'] + '&title=' + itemData.title;
+          if (canScanItem(item['location'], itemData.format)) {
+            item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
+            item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
+          } else {
+            item['scan'] = null;
+            item['item_request_url'] = null;
+          }
 
-                });
+          // add jcb link if necessary
+          if ( item['location'].slice(0, 3) == "JCB" ) {
+            item['jcb_url'] = jcbRequestFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'] );
+          }
 
-                var elem = $('[data-availability="' + bib + '"]');
-                html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
-                $(elem).append(html);
-                $(elem).removeClass('hidden');
-              };
-            });
-        }
-    })
-}
+          // add hay aeon link if necessary
+          if ( item['location'].slice(0, 3) == "HAY" ) {
+            if ( isValidHayAeonLocation(item['location']) == true ) {
+              item['hay_aeon_url'] = hayAeonFullLink( bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location'] );
+            }
+          }
+
+        });
+
+        var elem = $('[data-availability="' + bib + '"]');
+        html = HandlebarsTemplates['catalog/catalog_record_availability_display'](context);
+        $(elem).append(html);
+        $(elem).removeClass('hidden');
+      };
+    });
+  }
+
+  scope.Init();
+}); // $(document).ready(function() {
