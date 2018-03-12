@@ -196,10 +196,10 @@ $(document).ready(function() {
     var allowEasyBorrow = (bibData.itemsMultiType == "copy" || bibData.itemsMultiType == "single");
 
     if (!availabilityEZB) {
-      console.log("ezb bib: disabled");
+      // console.log("ezb bib: disabled");
       return;
     } else if (!allowEasyBorrow) {
-      console.log("ezb bib: not applicable");
+      // console.log("ezb bib: not applicable");
       return;
     }
 
@@ -212,10 +212,10 @@ $(document).ready(function() {
     }
 
     if (!hasAvailableItems && hasEasyBorrowItems) {
-      console.log("ezb bib: yes");
+      // console.log("ezb bib: yes");
       $("#request-copy-ezb").removeClass("hidden");
     } else {
-      console.log("ezb bib: no (av:" + hasAvailableItems + ", ezb:" + hasEasyBorrowItems + ")");
+      // console.log("ezb bib: no (av:" + hasAvailableItems + ", ezb:" + hasEasyBorrowItems + ")");
     }
   };
 

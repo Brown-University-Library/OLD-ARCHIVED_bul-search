@@ -7,6 +7,7 @@ $(document).ready(function() {
   // Ideally these should be scope.x but for convenience they are just x.
   var bibsData = window.bibsData;                       // defined in _search_results.html.erb
   var availabilityService = window.availabilityService; // defined in app/views/catalog/index.html.erb
+  var availabilityEZB = window.availabilityEZB;
 
   scope.Init = function() {
     var bibs = [];
@@ -22,7 +23,12 @@ $(document).ready(function() {
     var i;
     for(i = 0; i < bibsData.length; i++) {
       if (bibsData[i].id == bib) {
-        return {title: bibsData[i].title, found_author: bibsData[i].author, format: bibsData[i].format};
+        return {
+          id: bib,
+          title: bibsData[i].title,
+          found_author: bibsData[i].author,
+          format: bibsData[i].format
+        };
       }
     }
     return {title: "", found_author: "", format: ""};
@@ -51,6 +57,12 @@ $(document).ready(function() {
         if (context['has_more'] == true) {
           context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
         };
+
+        // Used for showing "available via easyBorrow"
+        var bibData = scope.getItemData(bib);
+        var avItems = context['items'];
+        context['bibURL'] = window.location.pathname + '/' + bib;
+        context['ezbBIB'] = false; // See comment on scope.isEasyBorrowBib(bibData, avItems);
 
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
@@ -85,6 +97,49 @@ $(document).ready(function() {
       };
     });
   };
+
+  // TODO: Once we get this working, see if we can move it to application.js
+  scope.isEasyBorrowBib = function(bibData, avItems) {
+    var i
+    var hasAvailableItems = false;
+    var hasEasyBorrowItems = false;
+
+    // Currently I cannot get this to work because we don't have the itemsMultiType
+    // value calculated here (like we do for individual catalog records).
+    //
+    // The information that the availability API returns for the items does not
+    // let me determine whether this record is multi-copy or single. I'll need to
+    // fetch the MARC data form Solr on the search and calculate the value via
+    // the SolrDocument code already in place for individual records.
+    //
+    // var allowEasyBorrow = (bibData.itemsMultiType == "copy" || bibData.itemsMultiType == "single");
+    var allowEasyBorrow = (avItems.length == 1); // same as "single"
+
+    if (!availabilityEZB) {
+      console.log("ezb bib: disabled");
+      return false;
+    } else if (!allowEasyBorrow) {
+      console.log("ezb bib: not applicable for " + bibData.id);
+      return false;
+    }
+
+    for (i = 0; i < avItems.length; i++) {
+      if (isAvailableStatus(avItems[i]["status"])) {
+        hasAvailableItems = true;
+      } else if (isTakeHomeLocation(avItems[i]["location"])) {
+        hasEasyBorrowItems = true;
+      }
+    }
+
+    if (!hasAvailableItems && hasEasyBorrowItems) {
+      console.log("ezb bib " + bibData.id + ": yes");
+      return true;
+    }
+
+    console.log("ezb bib " + bibData.id + ": no (av:" + hasAvailableItems + ", ezb:" + hasEasyBorrowItems + ")");
+    return false;
+  };
+
 
   scope.Init();
 }); // $(document).ready(function() {

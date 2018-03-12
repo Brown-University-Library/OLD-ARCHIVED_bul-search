@@ -29,6 +29,8 @@
 <span class="hidden" id="record-path"><%= catalog_record_url %></span>
 
 <script type="text/javascript">
+window.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
+
 // Notice that we use the author_display instead of statement_of_responsibility
 // because we do not have the MARC data for search results.
 var bibData;
