@@ -86,7 +86,6 @@ class SolrDocument
       ctx_obj.referent.set_metadata('place', publisher_place())
       ctx_obj.referent.set_metadata('date', (self[:pub_date] || []).first)
       isbn = main_isbn(self.fetch('isbn_t', []))
-      isbn = nil
       if isbn != nil
         ctx_obj.referent.set_metadata('isbn', isbn)
       else
