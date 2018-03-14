@@ -85,9 +85,15 @@ class SolrDocument
       ctx_obj.referent.set_metadata('pub', publisher_name())
       ctx_obj.referent.set_metadata('place', publisher_place())
       ctx_obj.referent.set_metadata('date', (self[:pub_date] || []).first)
-      if self.key?('isbn_t')
-        isbns = clean_isbns(self.fetch('isbn_t')).join(' ')
-        ctx_obj.referent.set_metadata('isbn', isbns)
+      isbn = main_isbn(self.fetch('isbn_t', []))
+      isbn = nil
+      if isbn != nil
+        ctx_obj.referent.set_metadata('isbn', isbn)
+      else
+        oclc = self.fetch('oclc_t', [])
+        if oclc.length > 0
+          ctx_obj.referent.set_metadata('oclcnum', oclc.first)
+        end
       end
       ctx_obj.referent.set_metadata('issn', self.fetch('issn_t').join(' ')) if self.key?('issn_t')
       ctx_obj.referent.set_metadata('volume', volume) if volume != nil
@@ -454,7 +460,8 @@ class SolrDocument
       values
     end
 
-    # Returns the ISBN numbers without the extra text.
+    # Returns the ISBN numbers without the extra text and
+    # without duplicates.
     # For example if the input values are:
     #  ["9781472430496 (hardback : alk. paper)", "1472430492 (hardback : alk. paper)"]
     #
@@ -469,6 +476,20 @@ class SolrDocument
           clean << tokens[0]
         end
       end
-      clean
+      clean.uniq
+    end
+
+    def main_isbn(values)
+      isbns = clean_isbns(values)
+      long = isbns.find {|x| x.length == 13}
+      if long != nil
+        # use the first long ISBN
+        return long
+      end
+      if isbns.count > 0
+        # use the first ISBN
+        return isbns[0]
+      end
+      nil
     end
 end
