@@ -288,6 +288,7 @@ $(document).ready(function() {
       location = avItem["location"];
       offerEZB = availabilityEZB && bibData.itemsMultiType == "volume" &&
         !scope.isAvailableStatus(status) && scope.isTakeHomeLocation(location);
+      offerEZB = false; // TODO: enable once easyBorrow honors the volume parameter
       if (offerEZB) {
         // Allow the user to request this volume via easyBorrow.
         url = bibData.easyBorrowUrl;
