@@ -85,6 +85,9 @@ class SolrDocument
       ctx_obj.referent.set_metadata('pub', publisher_name())
       ctx_obj.referent.set_metadata('place', publisher_place())
       ctx_obj.referent.set_metadata('date', (self[:pub_date] || []).first)
+      ctx_obj.referent.set_metadata('format', format)
+      ctx_obj.referent.set_metadata('sid', "BUL:Josiah:#{self[:id]}")
+
       isbn = main_isbn(self.fetch('isbn_t', []))
       if isbn != nil
         ctx_obj.referent.set_metadata('isbn', isbn)
