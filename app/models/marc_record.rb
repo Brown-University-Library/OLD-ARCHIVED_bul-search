@@ -86,6 +86,7 @@ class MarcRecord
       barcode = subfield_value(f_945, "i")
       id = subfield_value(f_945, "y")
       bookplate_code = subfield_value(f_945, "f")
+      suppressed = subfield_value(f_945, "o") == "n"
 
       # callnumber
       part1 = subfield_value(f_945, "a")
@@ -125,15 +126,18 @@ class MarcRecord
         i += 1
       end
 
-      item = ItemData.new(id, barcode)
-      item.location_code = location_code
-      item.bookplate_code = bookplate_code
-      item.bookplate_url = bookplate_url
-      item.bookplate_display = bookplate_display
-      item.copy = copy
-      item.volume = volume
-      item.call_number = call_number
-      items << item
+      if !suppressed
+        item = ItemData.new(id, barcode)
+        item.location_code = location_code
+        item.bookplate_code = bookplate_code
+        item.bookplate_url = bookplate_url
+        item.bookplate_display = bookplate_display
+        item.copy = copy
+        item.volume = volume
+        item.call_number = call_number
+        item.suppressed = suppressed
+        items << item
+      end
     end
     items
   end
