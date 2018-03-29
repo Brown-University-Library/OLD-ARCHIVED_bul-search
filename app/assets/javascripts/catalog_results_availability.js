@@ -70,6 +70,7 @@ $(document).ready(function() {
 
           // add scan|item links
           if (canScanItem(item['location'], itemData.format, item['status'])) {
+            // Birkin: you can use bibData.format here
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
           } else {

@@ -45,6 +45,7 @@ $(document).ready(function() {
     }
 
     scope.debugMessage("BIB record multi: " + bibData.itemsMultiType)
+    // scope.debugMessage("BIB format: " + scope.getFormat())
   };
 
 
@@ -307,6 +308,7 @@ $(document).ready(function() {
   scope.updateItemScanStatus = function(row, avItem, barcode) {
     var scanLink, itemLink, html;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
+      // Birkin: you can use scope.getFormat() here to get the bib record format.
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
       itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
       html = scanLink + " | " + itemLink;
