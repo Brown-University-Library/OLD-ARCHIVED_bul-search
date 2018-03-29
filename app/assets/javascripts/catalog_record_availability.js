@@ -183,7 +183,7 @@ $(document).ready(function() {
     var i, item, row;
     for(i = 0; i < itemsData.length; i++) {
       item = itemsData[i];
-      row = rowForItem(item);
+      row = scope.rowForItem(item);
       scope.updateItemAeonLinks(row, item);
     }
   };
