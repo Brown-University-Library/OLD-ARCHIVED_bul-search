@@ -11,7 +11,6 @@ module Blacklight::Document::Email
   # This is the default method that Blacklight calls.
   # We don't use it.
   def to_email_text
-    2/0
     Rails.logger.error("Call to Blacklight::Document::Email.e_mail_text detected: #{caller.join('\n')}")
     ""
   end
