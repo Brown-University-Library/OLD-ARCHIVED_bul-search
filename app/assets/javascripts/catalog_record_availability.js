@@ -77,6 +77,25 @@ $(document).ready(function() {
       }
     }
 
+    // The call number that we have in the MARC record is partial
+    // because we don't get all the item data. For example the "1-SIZE"
+    // sometimes is in the 091f (https://search.library.brown.edu/catalog/b6615023
+    // or the edition information is in an item field that is not included
+    // in our MARC files (e.g. "94th ed" in https://search.library.brown.edu/catalog/b6615023)
+    //
+    // Hence, we do partial match (indexOf) here to try to match the
+    // MARC call numbers with the ones returned by the Availability API.
+    candidates = [];
+    for(i = 0; i < itemsData.length; i++) {
+      marcCallnumber = itemsData[i].call_number;
+      if (marcCallnumber != null && avCallnumber.indexOf(marcCallnumber) != -1) {
+       candidates.push(itemsData[i]);
+      }
+    }
+    if (candidates.length == 1) {
+      // yay! we got a single match.
+      return candidates[0];
+    }
     return null;
   };
 
@@ -215,11 +234,18 @@ $(document).ready(function() {
     barcode = avItem['barcode'] || "";
     callnumber = avItem['callnumber'] || "";
 
-    item = scope.getItemByBarcode(barcode);
-    if (item == null) {
+    if (barcode != "") {
+      item = scope.getItemByBarcode(barcode);
+      if (item == null) {
+        scope.debugMessage("ERROR: barcode (" + barcode + ") not found in MARC item data");
+        return;
+      }
+    } else {
+      // For those items that do not a have barcode (e.g. HAY HARRIS items)
+      // we try by callnumber, but this is not 100% accurate.
       item = scope.getItemByCallnumber(callnumber);
       if (item == null) {
-        scope.debugMessage("ERROR: item (" + barcode + "/" + callnumber + ") not found in MARC item data");
+        scope.debugMessage("ERROR: barcode (" + barcode + ") callnumber (" + callnumber + ") not found in MARC item data");
         return;
       }
     }
