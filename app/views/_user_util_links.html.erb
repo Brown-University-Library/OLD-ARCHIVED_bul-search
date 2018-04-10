@@ -43,7 +43,7 @@
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Advanced Search <span class="caret"></span></a>
       <ul class="dropdown-menu">
         <li><a href="<%= advanced_search_path(params) %>">Library Catalog</a></li>
-        <li><a href="<%= Eds.native_advanced_url('', @trusted_ip || false) %>" target="_blank">Journals</a></li>
+        <li><a href="<%= Eds.native_advanced_url(@query || '', @trusted_ip || false) %>" target="_blank">Journal Articles</a></li>
       </ul>
     </li>
   </ul>
