@@ -4,6 +4,7 @@ class EasyController < ApplicationController
   include ApplicationHelper # for trusted_ip?()
 
   def home
+    @trusted_ip = trusted_ip?(request.remote_ip)
     @easy_search = true
     @query = params[:q]
     @is_eds = ENV["JOURNALS_PROV"] == "eds"

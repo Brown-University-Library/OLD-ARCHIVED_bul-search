@@ -28,13 +28,24 @@
     <li>
       <a href="http://library.brown.edu/libweb/askalib.php">Help</a>
     </li>
-    <% if @easy_search != true && @libweb_search != true %>
-        <% if controller_name == 'bdr' %>
-          <li><%= link_to 'Advanced Search', bdr_advanced_search_path(params), :class=>'advanced_search'%></li>
-        <% elsif controller_name != 'advanced' %>
-          <li><%= link_to 'Advanced Search', advanced_search_path(params), :class=>'advanced_search'%></li>
-        <% end %>
-      <% end %>
+
+    <style>
+      .navbar-inverse .navbar-nav > .open > a,
+      .navbar-inverse .navbar-nav > .open > a:hover,
+      .navbar-inverse .navbar-nav > .open > a:focus {
+        background-color: #dec280;
+      }
+      .dropdown-menu > li > a {
+        padding: 15px 20px;
+      }
+    </style>
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Advanced Search <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        <li><a href="<%= advanced_search_path(params) %>">Library Catalog</a></li>
+        <li><a href="<%= Eds.native_advanced_url('', @trusted_ip || false) %>" target="_blank">Journals</a></li>
+      </ul>
+    </li>
   </ul>
 
 </div>
