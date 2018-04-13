@@ -66,7 +66,7 @@ class Eds
 
   def self.ebsco_base_url(query, delimiters = true)
     url = "http://search.ebscohost.com/login.aspx"
-    url += "?direct=true&site=eds-live&authtype=ip,sso&custid=rock&groupid=main&profid=eds"
+    url += "?direct=true&site=eds-live&authtype=ip,sso&custid=rock&groupid=main&profile=eds"
     if delimiters
       url += DEFAULT_LIMITERS_QS
     else
@@ -93,7 +93,7 @@ class Eds
   end
 
   def self.native_advanced_url(query, trusted_ip)
-    url = self.ebsco_base_url(query) + "&type=1"
+    url = self.ebsco_base_url(query) + "&type=1&setup=1"
     if !trusted_ip
       # Ditto what I said for native_url()
       url = "https://login.revproxy.brown.edu/login?url=" + url
