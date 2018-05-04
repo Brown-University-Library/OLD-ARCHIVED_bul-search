@@ -261,7 +261,7 @@ class CatalogController < ApplicationController
 
   def show
     id = params[:id] || ""
-    if id.length == 9
+    if id.length == 9 && !id.start_with?("bdr:")
       # if the id includes the checksum digit, redirect to the
       # one without it.
       new_id = id[0..7]
