@@ -47,4 +47,8 @@ module ApplicationHelper
     end
     url
   end
+
+  def my_library_account_url()
+    ENV["MY_LIBRARY_ACCOUNT_URL"]
+  end
 end

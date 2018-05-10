@@ -9,9 +9,9 @@
     <li><a href="http://library.brown.edu/libweb/askalib.php">Ask a Question Now</a></li>
     <li><a href="http://library.brown.edu/libweb/proxy.php">Off-Campus Access</a></li>
     <% if current_user == nil %>
-      <li><a href="https://josiah.brown.edu/patroninfo">My Library Account</a>
+      <li><a href="<%= my_library_account_url() %>">My Library Account</a>
     <% else %>
-      <li><i><a href="https://josiah.brown.edu/patroninfo">My Library Account</a></i>
+      <li><i><a href="<%= my_library_account_url() %>">My Library Account</a></i>
     <% end %>
   </ul>
 </div>
