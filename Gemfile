@@ -71,7 +71,8 @@ gem 'mysql2', :group => [:production]
 
 gem "rspec-rails", :group => [:development, :test]
 
-gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'master'
+# gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'master'
+gem "bulmarc", :git => 'https://bitbucket.org/bul/bulmarc.git', :branch => 'master'
 
 gem "http_logger", :group => [:development]
 
