@@ -201,19 +201,18 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 - `HAY MANUSCRIPTS` - _NO_ Aeon link should appear: <http://127.0.0.1:3000/catalog/b2499606>
 - multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
 
-function easyrequestHayFullLink( bib, title, author, publisher, callnumber, location ) {
+function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnumber, location ) {
   /* called by catalog_record_availability.js */
   // console.log( '- starting easyrequestHayFullLink()' );
-  var ezRqHay_root_url = "https://dlibwwwcit.services.brown.edu/easyrequest_hay/login/"
-  var ezRqHay_aeon_root_url = "https://brown.aeon.atlas-sys.com/logon/";
-  var ezRqHay_ref_num = bib;
+  var ezRqHay_root_url = "https://dlibwwwcit.services.brown.edu/easyrequest_hay/confirm/"
+  var ezRqHay_bib = bib;
+  var ezRqHay_barcode = barcode;
   var ezRqHay_title = extractTitle( title );
   var ezRqHay_author = extractAuthor( author );
   var ezRqHay_publisher = publisher;  // pre-sliced
   var ezRqHay_callnumber = callnumber;
   var ezRqHay_location = location;
-  var ezRqHay_next = "Action=10&Form=30" + "&ReferenceNumber=" + ezRqHay_ref_num + "&ItemTitle=" + ezRqHay_title + "&ItemAuthor=" + ezRqHay_author + "&ItemPublisher=" + ezRqHay_publisher + "&CallNumber=" + ezRqHay_callnumber + "&Location=" + ezRqHay_location + "&ItemInfo2=";
-  var ezRqHay_full_url = ezRqHay_root_url + "?next=" + ezRqHay_next;
+  var ezRqHay_full_url = ezRqHay_root_url + "?item_bib=" + ezRqHay_bib + "&item_barcode=" + ezRqHay_barcode + "&item_title=" + ezRqHay_title + "&item_author=" + ezRqHay_author + "&item_publisher=" + ezRqHay_publisher + "&item_callnumber=" + ezRqHay_callnumber + "&item_location=" + ezRqHay_location + "&item_digital_version_url=" + "" + "&referring_url=https%3A%2F%2Fsearch.library.brown.edu%2Fcatalog%2F" + ezRqHay_bib;
   console.log( '- returning ezRqHay_full_url value of, ```' + ezRqHay_full_url + '```' )
   return ezRqHay_full_url;
 }
