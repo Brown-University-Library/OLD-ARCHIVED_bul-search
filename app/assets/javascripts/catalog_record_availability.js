@@ -344,6 +344,16 @@ $(document).ready(function() {
         row.find(".hay_aeon_url").html(html);
       }
     }
+
+    // Annex-Hay `easyrequest_hay` link
+    if (location_prefix == "ANNEX HAY") {
+      if (1 == 1) {
+        url = easyrequestHayFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
+        html = '<a href="' + url + '">request-access</a>';
+        row.find(".annexhay_easyrequest_url").html(html);
+      }
+    }
+
   };
 
 
