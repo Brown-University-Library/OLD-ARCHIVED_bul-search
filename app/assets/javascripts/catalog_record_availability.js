@@ -262,7 +262,8 @@ $(document).ready(function() {
     scope.updateItemLocation(itemRow, avItem);
     scope.updateItemStatus(itemRow, avItem, item.volume);
     scope.updateItemScanStatus(itemRow, avItem, barcode);
-    scope.updateItemAeonLinks(itemRow, item);
+    // scope.updateItemAeonLinks(itemRow, item);
+    scope.updateItemAeonLinks(itemRow, item, barcode);
   };
 
 
@@ -324,7 +325,8 @@ $(document).ready(function() {
   };
 
 
-  scope.updateItemAeonLinks = function(row, item) {
+  // scope.updateItemAeonLinks = function(row, item) {
+  scope.updateItemAeonLinks = function(row, item, barcode) {
     var url, html;
     var location = item.location_name;
     var location_prefix = (location || "").slice(0, 3).toUpperCase();
@@ -350,7 +352,7 @@ $(document).ready(function() {
     console.log( "- location_prefix `" + location_prefix + "`" );
     if (location == "QHS") {  // `ANNEX HAY`
       if (1 == 1) {  // this will be a check against... format I think
-        url = easyrequestHayFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
+        url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
         html = '<a href="' + url + '">request-access</a>';
         row.find(".annexhay_easyrequest_url").html(html);
       }
