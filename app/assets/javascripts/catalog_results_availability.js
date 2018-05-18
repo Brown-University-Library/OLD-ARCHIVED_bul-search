@@ -89,6 +89,16 @@ $(document).ready(function() {
               item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
             }
           }
+
+          // add Annex-Hay `easyrequest_hay` link if necessary
+          console.log( "- item['location'] `" + item['location'] + "`" );
+          if (item['location'] == "ANNEX HAY") {
+            console.log( "- in annex-hay block" )
+            if (1 == 1) {  // this will be a check against... format I think
+              item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+            }
+          }
+
         });
 
         var elem = $('[data-availability="' + bib + '"]');
