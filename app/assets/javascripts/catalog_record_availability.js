@@ -353,7 +353,7 @@ $(document).ready(function() {
     if (location == "QHS") {  // `ANNEX HAY`
       if (1 == 1) {  // this will be a check against... format I think
         url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
-        html = '<a href="' + url + '">request-access</a>';
+        html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
         row.find(".annexhay_easyrequest_url").html(html);
       }
     }
