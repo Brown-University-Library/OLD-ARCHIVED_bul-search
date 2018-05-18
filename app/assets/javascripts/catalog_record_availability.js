@@ -349,9 +349,10 @@ $(document).ready(function() {
 
     // Annex-Hay `easyrequest_hay` link
     console.log( "- location `" + location + "`" );
+    console.log( "- item.location_code `" + item.location_code + "`" );
     console.log( "- location_prefix `" + location_prefix + "`" );
     console.log( "- format `" + scope.getFormat() + "`" );
-    if (location == "QHS") {  // `ANNEX HAY`
+    if (item.location_code == "qhs") {  // `ANNEX HAY`
       if ( scope.getFormat() != "Archives/Manuscripts" ) {
         url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
         html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
