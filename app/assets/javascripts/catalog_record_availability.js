@@ -350,8 +350,9 @@ $(document).ready(function() {
     // Annex-Hay `easyrequest_hay` link
     console.log( "- location `" + location + "`" );
     console.log( "- location_prefix `" + location_prefix + "`" );
+    console.log( "- format `" + scope.getFormat() + "`" );
     if (location == "QHS") {  // `ANNEX HAY`
-      if (1 == 1) {  // this will be a check against... format I think
+      if ( scope.getFormat() != "Archives/Manuscripts" ) {
         url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
         html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
         row.find(".annexhay_easyrequest_url").html(html);
