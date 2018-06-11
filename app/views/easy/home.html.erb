@@ -156,6 +156,14 @@ function summonBox(query) {
           'non-peer reviewed sources and items without full text access.</h5>';
         $('#summon').append(html);
       };
+    },
+    error: function(errorObj, errorType, text) {
+      // Check https://status.ebsco.com/ for outages.
+      var ebscoBaseUrl = "http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&authtype=ip,sso&custid=rock&groupid=main&profile=eds";
+      var html = '<span class="label label-warning">Error </span><h5>Could not connect to EBSCO Discovery Service (EDS) to search for peer reviewed full text sources at this time. ' +
+        'Try <a href="' + ebscoBaseUrl + '" target="_blank">going directly to EBSCO Discovery Service</a>.</h5>';
+      $('#summon').append(html);
+      $('#summon i.waiting').hide();
     }
   });
 };

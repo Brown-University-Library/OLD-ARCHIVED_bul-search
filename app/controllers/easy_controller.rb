@@ -32,7 +32,7 @@ class EasyController < ApplicationController
   rescue StandardError => e
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n")
-    render json: empty_set().to_json
+    render json: empty_set().to_json, status: 500
   end
 
   def save_search(params, elapsed_ms, trusted_ip, guest_user)
