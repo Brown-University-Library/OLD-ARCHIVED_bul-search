@@ -255,8 +255,9 @@ $(document).ready(function() {
     if (item.call_number != callnumber) {
       // The call number in the MARC data is different from the one the
       // availability API returned. Prefer the one from the availability API.
-      itemRow.find(".callnumber").html(callnumber);
       scope.debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + callnumber + "</b>");
+      itemRow.find(".callnumber").html(callnumber);
+      item.call_number = callnumber;
     }
 
     scope.updateItemLocation(itemRow, avItem);
