@@ -204,7 +204,7 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnumber, location ) {
   /* called by catalog_record_availability.js */
   // console.log( '- starting easyrequestHayFullLink()' );
-  var ezRqHay_root_url = "https://dlibwwwcit.services.brown.edu/easyrequest_hay/confirm/"
+  var ezRqHay_root_url = "https://library.brown.edu/easyrequest_hay/confirm/"
   var ezRqHay_bib = bib;
   var ezRqHay_barcode = barcode;
   var ezRqHay_title = extractTitle( title );
