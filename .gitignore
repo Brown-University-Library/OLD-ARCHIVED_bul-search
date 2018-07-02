@@ -52,6 +52,9 @@ config/secrets.yml
 ## ignore local ruby verson spec
 .ruby-version
 
+## ignore local gemset file installed by ```$ rvm use ruby-2.5.0@myapp --ruby-version --create```
+.ruby-gemset
+
 ## Ignore precompiled assets
 /public/assets
 

@@ -255,14 +255,16 @@ $(document).ready(function() {
     if (item.call_number != callnumber) {
       // The call number in the MARC data is different from the one the
       // availability API returned. Prefer the one from the availability API.
-      itemRow.find(".callnumber").html(callnumber);
       scope.debugMessage("WARN: call number mismatch for barcode " + barcode + ": <b>" + item.call_number  + "</b> vs <b>" + callnumber + "</b>");
+      itemRow.find(".callnumber").html(callnumber);
+      item.call_number = callnumber;
     }
 
     scope.updateItemLocation(itemRow, avItem);
     scope.updateItemStatus(itemRow, avItem, item.volume);
     scope.updateItemScanStatus(itemRow, avItem, barcode);
-    scope.updateItemAeonLinks(itemRow, item);
+    // scope.updateItemAeonLinks(itemRow, item);
+    scope.updateItemAeonLinks(itemRow, item, barcode);
   };
 
 
@@ -324,7 +326,8 @@ $(document).ready(function() {
   };
 
 
-  scope.updateItemAeonLinks = function(row, item) {
+  // scope.updateItemAeonLinks = function(row, item) {
+  scope.updateItemAeonLinks = function(row, item, barcode) {
     var url, html;
     var location = item.location_name;
     var location_prefix = (location || "").slice(0, 3).toUpperCase();
@@ -344,6 +347,20 @@ $(document).ready(function() {
         row.find(".hay_aeon_url").html(html);
       }
     }
+
+    // Annex-Hay `easyrequest_hay` link
+    console.log( "- location `" + location + "`" );
+    console.log( "- item.location_code `" + item.location_code + "`" );
+    console.log( "- location_prefix `" + location_prefix + "`" );
+    console.log( "- format `" + scope.getFormat() + "`" );
+    if (item.location_code == "qhs") {  // `ANNEX HAY`
+      if ( scope.getFormat() != "Archives/Manuscripts" ) {
+        url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
+        html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
+        row.find(".annexhay_easyrequest_url").html(html);
+      }
+    }
+
   };
 
 

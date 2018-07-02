@@ -190,6 +190,64 @@ END Hay Aeon link code
 
 /*
 ============================================================
+easyRequest-Hay Aeon link code
+============================================================
+Note: initially very similar to JCB link code, but I (bjd) expect this to end up being different
+Reference Josiah pages: TODO- update these to search.library.brown.edu urls
+- `HAY BROADSIDES` - regular: <http://127.0.0.1:3000/catalog/b3326323>
+- `HAY BROADSIDES` - multiple 'HAY BROADSIDES' copies: <http://127.0.0.1:3000/catalog/b3000585>
+- `HAY STAR & HAY LINCOLN` - multiple copies, mixture of two: <http://127.0.0.1:3000/catalog/b1870356>
+- `HAY STAR` - very-long-title handling: <http://127.0.0.1:3000/catalog/b1001443>
+- `HAY MANUSCRIPTS` - _NO_ Aeon link should appear: <http://127.0.0.1:3000/catalog/b2499606>
+- multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
+
+function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnumber, location ) {
+  /* called by catalog_record_availability.js */
+  // console.log( '- starting easyrequestHayFullLink()' );
+  var ezRqHay_root_url = "https://library.brown.edu/easyrequest_hay/confirm/"
+  var ezRqHay_bib = bib;
+  var ezRqHay_barcode = barcode;
+  var ezRqHay_title = extractTitle( title );
+  var ezRqHay_author = extractAuthor( author );
+  var ezRqHay_publisher = publisher;  // pre-sliced
+  var ezRqHay_callnumber = callnumber;
+  var ezRqHay_location = location;
+  var ezRqHay_full_url = ezRqHay_root_url + "?item_bib=" + ezRqHay_bib + "&item_barcode=" + ezRqHay_barcode + "&item_title=" + ezRqHay_title + "&item_author=" + ezRqHay_author + "&item_publisher=" + ezRqHay_publisher + "&item_callnumber=" + ezRqHay_callnumber + "&item_location=" + ezRqHay_location + "&item_digital_version_url=" + "" + "&referring_url=https%3A%2F%2Fsearch.library.brown.edu%2Fcatalog%2F" + ezRqHay_bib;
+  console.log( '- returning ezRqHay_full_url value of, ```' + ezRqHay_full_url + '```' )
+  return ezRqHay_full_url;
+}
+
+function isValidHayAeonLocation( josiah_location ) {
+  /* called by catalog_record_availability.js */
+  // console.log( '- starting isValidHayAeonLocation()' )
+  var hay_found = false;
+  // var non_aeon_locations = [
+  //   "HAY ANNEX TEMP",
+  //   "HAY ARCHIVES MANUSCRIPTS",
+  //   "HAY COURSE RESERVES",
+  //   "HAY MANUSCRIPTS"
+  //   ];
+  var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
+  if ( josiah_location.slice(0, 3) == "HAY" ){
+    // console.log( "- seeing HAY slice" );
+    var index_of_val = non_aeon_locations.indexOf( josiah_location );
+    // console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
+    if ( index_of_val == -1 ) {
+      // console.log( "- hay_found is `true`" );
+      hay_found = true;
+    }
+  }
+  // console.log( '- returning hay_found value of, ```' + hay_found + '```' )
+  return hay_found;
+}
+
+/*
+END easyRequest-Hay Aeon link code
+==================================  */
+
+
+/*
+============================================================
 common Aeon link code
 ============================================================  */
 

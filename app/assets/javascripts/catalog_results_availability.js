@@ -89,6 +89,17 @@ $(document).ready(function() {
               item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
             }
           }
+
+          // add Annex-Hay `easyrequest_hay` link if necessary
+          console.log( "- item['location'] `" + item['location'] + "`" );
+          console.log( "- format, `" + itemData.format + "`" );
+          if (item['location'] == "ANNEX HAY") {
+            console.log( "- in annex-hay block" )
+            if ( itemData.format != "Archives/Manuscripts" ) {
+              item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+            }
+          }
+
         });
 
         var elem = $('[data-availability="' + bib + '"]');
