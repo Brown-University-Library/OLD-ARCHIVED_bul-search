@@ -213,7 +213,7 @@ function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnum
   var ezRqHay_callnumber = callnumber;
   var ezRqHay_location = location;
   var ezRqHay_full_url = ezRqHay_root_url + "?item_bib=" + ezRqHay_bib + "&item_barcode=" + ezRqHay_barcode + "&item_title=" + ezRqHay_title + "&item_author=" + ezRqHay_author + "&item_publisher=" + ezRqHay_publisher + "&item_callnumber=" + ezRqHay_callnumber + "&item_location=" + ezRqHay_location + "&item_digital_version_url=" + "" + "&referring_url=https%3A%2F%2Fsearch.library.brown.edu%2Fcatalog%2F" + ezRqHay_bib;
-  console.log( '- returning ezRqHay_full_url value of, ```' + ezRqHay_full_url + '```' )
+  // console.log( '- returning ezRqHay_full_url value of, ```' + ezRqHay_full_url + '```' )
   return ezRqHay_full_url;
 }
 
