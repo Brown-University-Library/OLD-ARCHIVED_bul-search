@@ -45,7 +45,6 @@ $(document).ready(function() {
     }
 
     scope.debugMessage("BIB record multi: " + bibData.itemsMultiType)
-    // scope.debugMessage("BIB format: " + scope.getFormat())
   };
 
 
@@ -181,11 +180,13 @@ $(document).ready(function() {
 
 
   scope.showAeon = function() {
-    var i, item, row;
+    var i, item, row, barcode, status;
     for(i = 0; i < itemsData.length; i++) {
       item = itemsData[i];
       row = scope.rowForItem(item);
-      scope.updateItemAeonLinks(row, item);
+      barcode = null;
+      status = null;
+      scope.updateItemAeonLinks(row, item, barcode, status);
     }
   };
 
@@ -263,8 +264,7 @@ $(document).ready(function() {
     scope.updateItemLocation(itemRow, avItem);
     scope.updateItemStatus(itemRow, avItem, item.volume);
     scope.updateItemScanStatus(itemRow, avItem, barcode);
-    // scope.updateItemAeonLinks(itemRow, item);
-    scope.updateItemAeonLinks(itemRow, item, barcode);
+    scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
   };
 
 
@@ -317,7 +317,6 @@ $(document).ready(function() {
   scope.updateItemScanStatus = function(row, avItem, barcode) {
     var scanLink, itemLink, html;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
-      // Birkin: you can use scope.getFormat() here to get the bib record format.
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
       itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
       html = scanLink + " | " + itemLink;
@@ -326,8 +325,7 @@ $(document).ready(function() {
   };
 
 
-  // scope.updateItemAeonLinks = function(row, item) {
-  scope.updateItemAeonLinks = function(row, item, barcode) {
+  scope.updateItemAeonLinks = function(row, item, barcode, status) {
     var url, html;
     var location = item.location_name;
     var location_prefix = (location || "").slice(0, 3).toUpperCase();
@@ -339,7 +337,7 @@ $(document).ready(function() {
       row.find(".jcb_url").html(html);
     }
 
-    // Hay Aeon link
+    // Hay Aeon link (i.e. "request access")
     if (location_prefix == "HAY") {
       if (isValidHayAeonLocation(location) == true) {
         url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
@@ -348,37 +346,27 @@ $(document).ready(function() {
       }
     }
 
-    // Annex-Hay `easyrequest_hay` link
-    console.log( "- location `" + location + "`" );
-    console.log( "- item.location_code `" + item.location_code + "`" );
-    console.log( "- location_prefix `" + location_prefix + "`" );
-    console.log( "- format `" + scope.getFormat() + "`" );
-    if (item.location_code == "qhs") {  // `ANNEX HAY`
+    // Annex Hay Aeon Link (i.e. "request access")
+    // qhs = annex hay
+    if ((item.location_code == "qhs") && (status == "AVAILABLE")) {
       if ( scope.getFormat() != "Archives/Manuscripts" ) {
         url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
         html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
         row.find(".annexhay_easyrequest_url").html(html);
       }
     }
-
   };
 
 
   scope.takeHomeLocations = function() {
     var locs = [];
     locs.push("ANNEX");
-    // locs.push("ANNEX ***"); ????
-    // locs.push("ONLINE");, <== remove
-    // locs.push("ONLINE BOOK"); <== remove
-    // locs.push("ORWIG STORAGE");  <== remove
-    // locs.push("ROCK STORAGE FARMINGTON");  <==remove
-    // locs.push("SCI THESES"); <==remove
     locs.push("ORWIG");
     locs.push("ROCK");
-    locs.push("ROCK (RESTRICTED CIRC)");  // <== new
+    locs.push("ROCK (RESTRICTED CIRC)");
     locs.push("ROCK CHINESE");
-    locs.push("ROCK CUTTER-K");           // <== new
-    locs.push("ROCK DIVERSIONS");         // <== new
+    locs.push("ROCK CUTTER-K");
+    locs.push("ROCK DIVERSIONS");
     locs.push("ROCK JAPANESE");
     locs.push("ROCK KOREAN");
     locs.push("ROCK STORAGE");
