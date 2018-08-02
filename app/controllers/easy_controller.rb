@@ -7,7 +7,6 @@ class EasyController < ApplicationController
     @trusted_ip = trusted_ip?(request.remote_ip)
     @easy_search = true
     @query = params[:q]
-    @is_eds = ENV["JOURNALS_PROV"] == "eds"
     if @query.blank?
       @has_query = false
       @query = ''

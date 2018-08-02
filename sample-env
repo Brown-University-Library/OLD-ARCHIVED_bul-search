@@ -7,7 +7,9 @@ export BDR_ITEM_API_URL=''
 export BDR_SEARCH_URL=''
 export BDR_ITEM_URL=''
 
-export SUMMON_ID='---'
-export SUMMON_KEY='---'
+export EDS_CACHE_SESSION=false
+export EDS_PROFILE_ID=xxx
+export EDS_USER_ID=xxx
+export EDS_PASSWORD=xxx
 
 export ESEARCH_KEY='---'

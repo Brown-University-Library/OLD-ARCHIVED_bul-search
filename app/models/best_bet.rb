@@ -1,7 +1,6 @@
 require 'cgi'
 require 'json'
 require 'open-uri'
-require 'summon'
 require 'rsolr'
 require 'uri'
 

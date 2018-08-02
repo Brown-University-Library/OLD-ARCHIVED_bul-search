@@ -41,11 +41,6 @@ module EasyHelper
     return "http://worldcat.org.revproxy.brown.edu/search?&q=#{query}"
   end
 
-  def summon_search(query)
-    query = escape_query(query)
-    return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{query}"
-  end
-
   def eds_native_url(query)
     # Depends on a request object being available
     trusted_ip = trusted_ip?(request.remote_ip) # ApplicationHelper

@@ -103,6 +103,6 @@ The working name for this app/project is `easySearch`.
 
 Locally the Bento Box is available at: `http://localhost:3000/easy/`
 
-At present, the Bento Box queries Summon and the local Solr index for data.
+At present, the Bento Box queries EDS and the local Solr index for data.
 
 The model code is in `app/models/easy.rb` and the JavaScript for now is in `app/views/easy/home.html.erb`.

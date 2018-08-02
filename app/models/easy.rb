@@ -1,7 +1,6 @@
 require 'cgi'
 require 'json'
 require 'open-uri'
-require 'summon'
 require 'rsolr'
 require 'uri'
 
@@ -9,16 +8,12 @@ class Easy
   include BlacklightHelper
 
   def initialize(source, query, guest = true, trusted_ip = false)
-    if source == 'summon'
-      @results = get_summon(query)
-    elsif source == "eds"
+    if source == "eds"
       @results = get_eds(query, guest, trusted_ip)
     elsif source == "eds_raw"
       @results = get_eds_raw(query, guest, trusted_ip)
     elsif source == 'newspaper_articles_eds'
       @results = get_eds_newspaper(query, guest, trusted_ip)
-    elsif source == 'newspaper_articles'
-      @results = get_summon_newspaper(query)
     elsif source == 'bdr'
       @results = get_bdr(query)
     else
@@ -132,28 +127,6 @@ class Easy
     # the user clicking on a format as the page loads. This allows the
     # user to select as many formats as the want to.
     "#{url}?&q=#{eq}&format_pre=#{enc_format}"
-  end
-
-  #Produce a Brown Summon link.
-  #
-  #For searches with no results, return the link to Summon searches
-  #that include materials outside fo the Brown collection.
-  def summon_url(query, filtered)
-    eq = CGI.escape(query)
-    if filtered == true
-      return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{eq}"
-    else
-      return "http://brown.preview.summon.serialssolutions.com/#!/search?ho=f&q=#{eq}"
-    end
-  end
-
-  def advanced_summon_url(query)
-    # This forces Summon to start on the Advanced Search view but
-    # unfortunately Summon does not initialize the search parameters
-    # (journals only, peer-reviews, query terms) with the values
-    # indicated in the URL.
-    eq = CGI.escape(query)
-    "http://brown.preview.summon.serialssolutions.com/#!/advanced?ho=t&fvf=ContentType,Journal%20Article,f%7CIsScholarly,true,f&l=en&q=#{eq}"
   end
 
   def catalog_link id
@@ -275,53 +248,6 @@ class Easy
     return out_data
   end
 
-  def get_summon query
-    aid = ENV['SUMMON_ID']
-    akey = ENV['SUMMON_KEY']
-    if aid == nil || akey == nil
-      Rails.logger.warn "Skipped Summon search (no SUMMON_KEY available)"
-      return nil
-    end
-
-    @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
-    search = @service.search(
-      "s.q" => "#{query}",
-      "s.fvf" => "ContentType,Journal Article",
-      "s.cmd" => "addFacetValueFilters(IsScholarly, true)",
-      "s.ho" => "t",
-      "s.ps" => 5,
-      "s.hl" => false,
-    )
-
-    results = Hash.new
-    results_docs = Array.new
-
-    search.documents.each do |doc|
-      d = Hash.new
-      d['id'] = doc.id
-      d['title'] = doc.title
-      d['link'] = doc.link
-      d['year'] = doc.publication_date.year
-      doc.authors.each do |au|
-        d['author'] = au.fullname
-        break
-      end
-      d['venue'] = doc.publication_title  if doc.respond_to?('publication_title')
-      d['volume'] = doc.volume  if doc.respond_to?('volume')
-      d['issue'] = doc.issue  if doc.respond_to?('issue')
-      d['start'] = doc.start_page  if doc.respond_to?('start_page')
-      results_docs << d
-    end
-
-    results['response'] = Hash.new
-    results['response']['more'] = summon_url(query, true)
-    results['response']['all'] = summon_url(query, false)
-    results['response']['advanced'] = advanced_summon_url(query)
-    results['response']['docs'] = results_docs
-    results['response']['numFound'] = search.record_count
-    return results['response']
-  end
-
   def get_eds_raw(query, guest, trusted_ip)
     if ENV["EDS_PROFILE_ID"] == nil
       Rails.logger.warn "EDS search skipped (no EDS_PROFILE_ID available)"
@@ -362,32 +288,6 @@ class Easy
     response[:more] = Eds.native_newspapers_url(query, trusted_ip)
     response[:numFound] = count
     return response
-  end
-
-  def get_summon_newspaper query
-    aid = ENV['SUMMON_ID']
-    akey = ENV['SUMMON_KEY']
-    if aid == nil || akey == nil
-      Rails.logger.warn "Skipped Newspaper search (no SUMMON_KEY available)"
-      return nil
-    end
-
-    @service = Summon::Service.new(:access_id=>aid, :secret_key=>akey)
-    search = @service.search(
-      "s.q" => "#{query}",
-      "s.fvf" => "ContentType,Newspaper Article",
-      "s.ho" => "t",
-      "s.ps" => 1,
-      "s.hl" => false,
-    )
-    eq = CGI.escape(query)
-    results = Hash.new
-    results_docs = Array.new
-    results['response'] = Hash.new
-    more = "http://brown.preview.summon.serialssolutions.com/#!/search?ho=t&fvf=ContentType,Newspaper%20Article,f&l=en&q=#{eq}"
-    results['response']['more'] = more
-    results['response']['numFound'] = search.record_count
-    return results['response']
   end
 
   def self.get_best_bet(query)
