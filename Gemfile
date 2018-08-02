@@ -21,26 +21,8 @@ gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
-# How to disable Turbolinks in Rails 4
-#   http://blog.flightswithfriends.com/post/53943440505/how-to-disable-turbolinks-in-rails-4
-# gem 'turbolinks'
-
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
-
-# group :doc do
-#   # bundle exec rake doc:rails generates the API under doc/api.
-#   gem 'sdoc', require: false
-# end
-
-# Use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.1.2'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano', group: :development
 
 gem 'blacklight', "~> 5.13"
 gem 'blacklight_advanced_search', '~> 5.0'
@@ -52,10 +34,6 @@ gem "omniauth"
 gem "omniauth-shibboleth"
 gem "blacklight-marc", "~> 5.10"
 gem "blacklight_range_limit"
-#gem "blacklight-marc", :path => "/work/blacklight_marc"
-#gem "blacklight-marc", :git => 'https://github.com/lawlesst/blacklight_marc.git', :branch => 'marc-in-json'
-
-gem "summon", "~> 2.0.5"
 
 gem "font-awesome-rails"
 
@@ -67,7 +45,11 @@ end
 
 gem 'handlebars_assets'
 
-gem 'mysql2', :group => [:production]
+group :production do
+  # Rails 4.x must stay within MySQL 0.4
+  # https://github.com/brianmario/mysql2/issues/950#issuecomment-376375844
+  gem 'mysql2', '< 0.5'
+end
 
 gem "rspec-rails", :group => [:development, :test]
 
