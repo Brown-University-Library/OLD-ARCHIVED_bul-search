@@ -159,30 +159,6 @@ function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) 
   return full_url;
 }
 
-function isValidHayAeonLocation( josiah_location ) {
-  /* called by catalog_record_availability.js */
-  // console.log( '- starting isValidHayAeonLocation()' )
-  var hay_found = false;
-  // var non_aeon_locations = [
-  //   "HAY ANNEX TEMP",
-  //   "HAY ARCHIVES MANUSCRIPTS",
-  //   "HAY COURSE RESERVES",
-  //   "HAY MANUSCRIPTS"
-  //   ];
-  var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
-  if ( josiah_location.slice(0, 3) == "HAY" ){
-    // console.log( "- seeing HAY slice" );
-    var index_of_val = non_aeon_locations.indexOf( josiah_location );
-    // console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
-    if ( index_of_val == -1 ) {
-      // console.log( "- hay_found is `true`" );
-      hay_found = true;
-    }
-  }
-  // console.log( '- returning hay_found value of, ```' + hay_found + '```' )
-  return hay_found;
-}
-
 /*
 END Hay Aeon link code
 ======================  */
@@ -219,25 +195,14 @@ function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnum
 
 function isValidHayAeonLocation( josiah_location ) {
   /* called by catalog_record_availability.js */
-  // console.log( '- starting isValidHayAeonLocation()' )
   var hay_found = false;
-  // var non_aeon_locations = [
-  //   "HAY ANNEX TEMP",
-  //   "HAY ARCHIVES MANUSCRIPTS",
-  //   "HAY COURSE RESERVES",
-  //   "HAY MANUSCRIPTS"
-  //   ];
   var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
   if ( josiah_location.slice(0, 3) == "HAY" ){
-    // console.log( "- seeing HAY slice" );
     var index_of_val = non_aeon_locations.indexOf( josiah_location );
-    // console.log( "- indexOf(josiah_location) was `" + index_of_val + "`" );
     if ( index_of_val == -1 ) {
-      // console.log( "- hay_found is `true`" );
       hay_found = true;
     }
   }
-  // console.log( '- returning hay_found value of, ```' + hay_found + '```' )
   return hay_found;
 }
 
