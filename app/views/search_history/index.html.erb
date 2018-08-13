@@ -5,7 +5,7 @@
 <% if has_user_authentication_provider? %>
       <% if !current_user %>
       <h3 data-no-turbolink>
-        You must <%= link_to t('blacklight.header_links.login'), user_omniauth_authorize_path(:shibboleth) %> to save searches.
+        You must <%= link_to t('blacklight.header_links.login'), user_shibboleth_omniauth_authorize_path() %> to save searches.
       </h3>
       <% end %>
 <% end %>
