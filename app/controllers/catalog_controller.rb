@@ -251,6 +251,13 @@ class CatalogController < ApplicationController
 
   def index
     adjust_special_fields()
+
+    if invalid_search()
+      Rails.logger.info("Skipped invalid search: #{params.keys}")
+      render text: "invalid request", status: 400
+      return
+    end
+
     @render_opensearch = true
     relax_max_per_page if api_call?
     ret_val = super
@@ -360,6 +367,18 @@ class CatalogController < ApplicationController
     def api_call?
       format = params[:format]
       return format == "xml" || format == "json"
+    end
+
+    # Returns true if the parameters in the search look bogus.
+    # This is to handle the issues that we've been getting with crawlers
+    # submitting invalid search parameters, like "    f" or "++++search_field".
+    def invalid_search()
+      params.keys.each do |key|
+        if key[0] == " " || key[0] == "+"
+          return true
+        end
+      end
+      false
     end
 
     def relax_max_per_page
