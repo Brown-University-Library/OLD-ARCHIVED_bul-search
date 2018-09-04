@@ -1,10 +1,25 @@
-<a href="<%= reserves_search_path() %>" class="back-to-search" id="backToSearch">
+<a href="<%= reserves_search_path() %>" class="back-to-search" id="backToSearch" data-url="<%= reserves_search_path() %>">
   <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>Back to Search Reserves
 </a>
 
 <script>
+function backToSearch() {
+  var currentUrl = window.location.href;
+  window.history.go(-1);
+  setTimeout(function(){
+    // If the location has not changed in 100 ms, then there is no page
+    // to go back to and we send the user to the Course Reserves Search page.
+    // Source: https://stackoverflow.com/a/27622337/446681
+    if(currentUrl === window.location.href){
+      window.location.href = $("#backToSearch").attr("data-url");
+    }
+  }, 100);
+}
+
 $(document).ready(function(){
-  $("#backToSearch").attr("href", "javascript: history.go(-1)");
+  if (document.referrer != "") {
+    $("#backToSearch").attr("href", "javascript: backToSearch();");
+  }
 });
 </script>
 
