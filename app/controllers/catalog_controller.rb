@@ -253,7 +253,7 @@ class CatalogController < ApplicationController
     adjust_special_fields()
 
     if invalid_search()
-      Rails.logger.info("Skipped invalid search: #{params.keys}")
+      Rails.logger.info("Skipped invalid search for #{request.ip}: #{params.keys}")
       render text: "invalid request", status: 400
       return
     end
