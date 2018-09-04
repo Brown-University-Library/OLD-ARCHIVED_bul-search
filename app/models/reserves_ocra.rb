@@ -23,7 +23,7 @@ class ReservesOcra
       item = response[0]
       course = ReservesCourse.from_hash(item)
       books = (item["books"] || []).map {|x| ReservesBook.from_hash(x)}
-      materials = ReservesMaterials.new(course, books, item["on_panopto"], item["online_items"])
+      materials = ReservesMaterials.new(course, books, item["on_panopto"], item["online_items"], item["panopto_url"])
     else
       nil
     end

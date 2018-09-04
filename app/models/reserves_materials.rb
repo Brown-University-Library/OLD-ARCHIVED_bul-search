@@ -1,6 +1,6 @@
 class ReservesMaterials
   attr_accessor :course, :books, :panopto_items, :online_items, :panopto_url, :online_url
-  def initialize(course, books = [], panopto_items = 0, online_items = 0)
+  def initialize(course, books = [], panopto_items = 0, online_items = 0, panopto_url = null)
     @course = course
     @books = books
     @panopto_items = panopto_items.to_i
@@ -9,7 +9,7 @@ class ReservesMaterials
     @online_url = nil
     if @panopto_items > 0
       # movies and streaming audio
-      @panopto_url = "https://brown.hosted.panopto.com/"
+      @panopto_url = panopto_url
     end
     if @online_items > 0
       @online_url = "https://library.brown.edu/reserves/student/course/?classid=#{@course.classid}"
