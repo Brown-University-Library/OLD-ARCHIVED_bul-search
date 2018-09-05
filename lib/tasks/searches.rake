@@ -36,6 +36,14 @@ namespace :josiah do
       end
     end
   end
+
+  desc "Delete the oldest records in the search table"
+  task "searches_prune" => :environment do |_cmd, args|
+    min_date = (Date.today - 365).to_s
+    count = 1000
+    puts "Deleting #{count} searches older than #{min_date}"
+    prune_searches(min_date, count)
+  end
 end
 
 
@@ -65,6 +73,10 @@ def get_searches_batch(start_id, end_id)
   batch
 end
 
+def prune_searches(min_date, count)
+  sql = "DELETE FROM searches WHERE created_at < '#{min_date}' ORDER BY created_at LIMIT #{count};"
+  ActiveRecord::Base.connection.execute(sql)
+end
 
 def max_searches_id
   # return 50000
