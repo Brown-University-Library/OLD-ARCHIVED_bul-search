@@ -1,6 +1,18 @@
 # -*- encoding : utf-8 -*-
 #
 class StatsController < ApplicationController
+  def env
+    result = {}
+    solr_url = ENV["SOLR_URL"]
+    master_token = ENV["SOLR_URL_MASTER_TOKEN"]
+    if solr_url.include?(master_token)
+      result[:solr] = "master"
+    else
+      result[:solr] = "reader"
+    end
+    render :json => result
+  end
+
   def eds
     if !valid_user?
       render "stats_error", status: 401
