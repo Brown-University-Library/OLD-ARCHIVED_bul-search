@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 #
 class StatsController < ApplicationController
-  def env
+  def server
     result = {}
     solr_url = ENV["SOLR_URL"]
     master_token = ENV["SOLR_URL_MASTER_TOKEN"]
