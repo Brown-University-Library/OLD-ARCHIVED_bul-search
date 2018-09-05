@@ -39,10 +39,11 @@ namespace :josiah do
 
   desc "Delete the oldest records in the search table"
   task "searches_prune" => :environment do |_cmd, args|
-    min_date = (Date.today - 365).to_s
-    count = 1000
-    puts "Deleting #{count} searches older than #{min_date}"
-    prune_searches(min_date, count)
+    months = 6
+    min_date = (Date.today - (months * 30)).to_s
+    batch_size = 1000
+    puts "Deleting #{batch_size} searches older than #{min_date}"
+    prune_searches(min_date, batch_size)
   end
 end
 
@@ -73,8 +74,12 @@ def get_searches_batch(start_id, end_id)
   batch
 end
 
-def prune_searches(min_date, count)
-  sql = "DELETE FROM searches WHERE created_at < '#{min_date}' ORDER BY created_at LIMIT #{count};"
+def prune_searches(min_date, batch_size)
+  # TODO: loop until no more records to delete are found
+  sql = "DELETE FROM searches " +
+    "WHERE created_at < '#{min_date}' AND user_id IS NULL " +
+    "ORDER BY created_at " +
+    "LIMIT #{batch_size};"
   ActiveRecord::Base.connection.execute(sql)
 end
 
