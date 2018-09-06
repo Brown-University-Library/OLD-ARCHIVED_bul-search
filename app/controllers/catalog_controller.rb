@@ -231,7 +231,7 @@ class CatalogController < ApplicationController
       field.solr_parameters = { defType: "edismax" }
     end
 
-    config.add_search_field("callnumber") do |field|
+    config.add_search_field("call_number") do |field|
       field.include_in_simple_select = true
       field.include_in_advanced_search = false
       field.solr_parameters = {qf: "callnumber_ss", defType: "edismax"}
@@ -368,18 +368,8 @@ class CatalogController < ApplicationController
           # search values in Solr.
           params[:q] = "bookplate_code_ss:#{bookplate_regex(params[:q])}"
         end
-      elsif params[:search_field] == "callnumber"
-        # Make sure the value is surrounded in quotes
-        if params[:q][0] != '"'
-          params[:q] = '"' + params[:q]
-        end
-        if params[:q][-1] != '"'
-          params[:q] = params[:q] + '"'
-        end
-        if params[:q][2..7].upcase == "-SIZE "
-          # Drop the N-SIZE prefix since we don't index it.
-          params[:q] = '"' + params[:q][8..-1]
-        end
+      elsif params[:search_field] == "call_number"
+        params[:q] = StringUtils.callnumber_searchable(params[:q])
       end
     end
 
