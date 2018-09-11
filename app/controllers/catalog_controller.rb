@@ -257,7 +257,8 @@ class CatalogController < ApplicationController
   end
 
   def index
-    adjust_special_fields()
+    @altered_search_terms = false
+    @original_q = params[:q]
 
     if invalid_search()
       Rails.logger.info("Skipped invalid search for #{request.ip} (#{request.user_agent}): #{params.keys}")
@@ -265,9 +266,39 @@ class CatalogController < ApplicationController
       return
     end
 
+    adjust_special_fields()
     @render_opensearch = true
     relax_max_per_page if api_call?
     ret_val = super
+
+    if callnumber_search?
+      if @response.documents.count == 0
+        # Try a search without the last token. This is to account for call
+        # numbers that include values that we don't index, see for example
+        # https://search.library.brown.edu/catalog/b2340347
+        # Notice that the "33rd" in the call number "1-SIZE GN33 .G85 1994/1995 33rd"
+        # is not in the MARC data that we get from Sierra.
+        shortened = StringUtils.call_number_shorten(params[:q])
+        if shortened == ""
+          # nothing else to try
+          Rails.logger.info("Call number search failed: #{@original_q}")
+        else
+          # try with the shortened callnumber
+          params[:q] = shortened
+          ret_val = super
+          if @response.documents.count == 0
+            params[:q] = @original_q
+            Rails.logger.info("Call number search failed: #{@original_q}")
+          else
+            @altered_search_terms = true
+            Rails.logger.info("Call number search success on retry: #{shortened} (#{@original_q})")
+          end
+        end
+      else
+        Rails.logger.info("Call number search success: #{@original_q}")
+      end
+    end
+
     restore_max_per_page if api_call?
     ret_val
   end
@@ -368,7 +399,9 @@ class CatalogController < ApplicationController
           # search values in Solr.
           params[:q] = "bookplate_code_ss:#{bookplate_regex(params[:q])}"
         end
-      elsif params[:search_field] == "call_number"
+      elsif callnumber_search?
+        # TODO: set @altered_search_terms to true if we drop the 1-SIZE
+        # from the search terms.
         params[:q] = StringUtils.callnumber_searchable(params[:q])
       end
     end
@@ -453,5 +486,9 @@ class CatalogController < ApplicationController
       end
       regex = "/#{safe_code}.*/"
       regex
+    end
+
+    def callnumber_search?
+      params[:search_field] == "call_number"
     end
 end

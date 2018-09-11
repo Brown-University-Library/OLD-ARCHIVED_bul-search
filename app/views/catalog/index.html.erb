@@ -14,4 +14,17 @@
 <script type="text/javascript">
 // For calling the availability api.
 var availabilityService = '<%= availability_service_url %>';
+
+<% if @altered_search_terms %>
+  // Note that we found a slighly modified version of the call number
+  var infoBox = $("#appliedParams").first();
+  var infoMsg = "Call number has been adjusted from <%= @original_q %>";
+  var html;
+  if (infoBox != null) {
+    html = '<span id="callnumber_tip" class="glyphicon glyphicon-info-sign" title="' + infoMsg + '"></span>';
+    infoBox.append(html);
+    $("#callnumber_tip").tooltip();
+  }
+<% end %>
+
 </script>

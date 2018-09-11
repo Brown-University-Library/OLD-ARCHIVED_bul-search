@@ -44,4 +44,11 @@ class StringUtils
     end
     text
   end
+
+  def self.call_number_shorten(text)
+    tokens = text.split(" ")
+    return "" if tokens.count < 2
+    shorten = tokens[0..-2].join(" ") # drop the last token
+    callnumber_searchable(shorten)
+  end
 end
