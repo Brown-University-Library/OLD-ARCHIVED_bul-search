@@ -156,6 +156,7 @@ $(document).ready(function() {
     };
 
     scope.showEasyBorrowBib(availabilityResponse.items);
+    scope.showHoldingsSummary(availabilityResponse.summary);
   };
 
 
@@ -219,6 +220,31 @@ $(document).ready(function() {
     } else {
       // console.log("ezb bib: no (av:" + hasAvailableItems + ", ezb:" + hasEasyBorrowItems + ")");
     }
+  };
+
+
+  scope.showHoldingsSummary = function(holdings) {
+    if (holdings.length == 0) {
+      return;
+    }
+    var html, i, summary;
+    html = "<h4>Holdings Summary</h4>";
+    html += "<table>";
+    for(i = 0; i < holdings.length; i++) {
+      summary = holdings[i];
+      for(j = 0; j < summary.length; j++) {
+        html += "<tr>";
+        html += '<td width="5%">&nbsp;</td>';
+        html += '<td width="30%">' + summary[j].label + "</td>";
+        html += "<td>" + summary[j].value + "</td>";
+        html += "</tr>";
+      }
+      if (i < (holdings.length-1)) {
+        html += "<tr><td>&nbsp;</td></tr>"; // separator
+      }
+    }
+    html += "</table>";
+    $("#holdingsSummary").first().append(html);
   };
 
 
