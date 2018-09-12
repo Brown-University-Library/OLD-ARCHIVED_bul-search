@@ -1,11 +1,26 @@
+<style>
+  /* https://stackoverflow.com/a/42216111/446681 */
+  .flash {
+    animation: flash .5s;
+  }
+
+  @keyframes flash {
+    50% {
+      background: #edf5a0; /* yellow-ish */
+    }
+    100% {
+      background: transparent;
+    }
+  }
+</style>
+
 <div id="sidebar" class="col-md-3 col-sm-4">
   <%= render 'search_sidebar' %>
 </div>
 
 <div id="content" class="col-md-9 col-sm-8">
   <% unless has_search_parameters? %>
-    <%# if there are no input/search related params, display the "home" partial -%>
-    <%= render 'home' %>
+  <!-- see JavaScript at the bottom -->
   <% else %>
     <%= render 'search_results' %>
   <% end %>
@@ -25,6 +40,13 @@ var availabilityService = '<%= availability_service_url %>';
     infoBox.append(html);
     $("#callnumber_tip").tooltip();
   }
+<% end %>
+
+<% if has_search_parameters? == false %>
+  $(function() {
+    // Flash the input box.
+    $("#q").addClass("flash");
+  });
 <% end %>
 
 </script>
