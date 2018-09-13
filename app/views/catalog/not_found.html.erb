@@ -1,0 +1,18 @@
+<div id="content" class="col-md-9 show-document">
+
+  <% @page_title = "Item not found" -%>
+  <% content_for(:head) do -%>
+    <%= render_link_rel_alternates %>
+    <%= javascript_include_tag 'catalog_record_availability' %>
+  <% end -%>
+
+</div>
+
+<h3>Item not found</h3>
+<div>This item does not exist in the catalog. If you believe this
+is incorrect, please let us know <a href="<%= google_form_url() %>" target="_blank">via the feedback form</a>.
+</div>
+
+
+<div id="sidebar" class="col-md-3">
+</div>

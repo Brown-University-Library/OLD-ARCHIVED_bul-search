@@ -316,6 +316,9 @@ class CatalogController < ApplicationController
     @render_opensearch = true
     r = super
     r
+  rescue Blacklight::Exceptions::RecordNotFound => exception
+    Rails.logger.info("Item not found: #{id}")
+    render "not_found", status: 404
   end
 
   # Blacklight override
