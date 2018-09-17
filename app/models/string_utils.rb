@@ -37,6 +37,8 @@ class StringUtils
 
   # Returns the text in a format suitable for call number search.
   def self.callnumber_searchable(text)
+    # drop the # prefix
+    text = text[0] == "#" ? text[1..-1] : text
     text = surround_quotes(text.strip)
     if text[2..7].upcase == "-SIZE "
       # Drop the N-SIZE prefix since we don't index it.
