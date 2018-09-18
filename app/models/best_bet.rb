@@ -17,6 +17,11 @@ class BestBet
     if match == nil
       match = self.get_from_reserves(query)
     end
+    if ENV["CALLNUMBER_SHORTCUT"] == "true"
+      if match == nil && query.start_with?("#")
+        match = self.get_callnumber(query[1..-1])
+      end
+    end
     match
   rescue StandardError => e
     Rails.logger.error e.message
@@ -88,5 +93,42 @@ class BestBet
     regex = /^[A-Z]{3,5}\s?\d\d\d\d/
     return true if query.upcase.match(regex) != nil
     false
+  end
+
+  def self.get_callnumber(query)
+    blacklight_config = Blacklight.default_configuration
+    searcher = SearchCustom.new(blacklight_config)
+    response, documents, match = searcher.callnumber(query)
+    if documents.count == 1
+      id = documents[0]["id"]
+      title = documents[0]["title_display"]
+      author = self.catalog_author_display(documents[0])
+      return {
+        :name => "Call number: #{match}",
+        :url => "/catalog/#{id}",
+        :description => "Call number for: #{title}/#{author}"
+      }
+    elsif documents.count > 1
+      return {
+        :name => "Call number: #{match}",
+        :url => "/catalog?q=#{query}&search_field=call_number",
+        :description => "Multiple matches were found"
+      }
+    end
+    return nil
+  end
+
+  # This method is duplicated in app/helpers/blacklight_helpers.rb
+  # TODO: Make a single one.
+  def self.catalog_author_display document
+    primary = document['author_display']
+    if primary
+      return primary
+    else
+      added = document['author_addl_display']
+      if added
+        return added[0]
+      end
+    end
   end
 end
