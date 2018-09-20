@@ -23,32 +23,29 @@ class SolrQuery
 
   private
     def default_solr_params(per_page, page)
-      # TODO: get the facet.* and f.* fields from
-      # our configuration rather than hard-coding
-      # them here.
+      # TODO: get the facets from our configuration rather
+      # than hard-coding them here.
+      facets = ["access_facet", "format", "author_facet", "pub_date",
+        "topic_facet", "region_facet", "language_facet", "building_facet"]
+
+      # Note that wt must be a symbol
       params = {
-        :wt => :json,                   # Note that wt must be a symbol
+        :wt => :json,
         "qt" => "search",
         "start" => per_page * (page -1),
         "rows" => per_page,
         "page" => page,
-        "facet.field" => "access_facet",
-        "facet.field" => "format",
-        "facet.field" => "author_facet",
-        "facet.field" => "pub_date",
-        "facet.field" => "topic_facet",
-        "facet.field" => "region_facet",
-        "facet.field" => "language_facet",
-        "facet.field" => "building_facet",
+        "facet.field" => facets,
         "facet" => true,
-        "f.format.facet.limit" => 11,
-        "f.author_facet.facet.limit" => 21,
-        "f.topic_facet.facet.limit" => 21,
-        "f.region_facet.facet.limit" => 21,
-        "f.language_facet.facet.limit" => 21,
         "stats" => true,
         "stats.field" => "pub_date"
       }
+
+      facets.each do |field_name|
+        limit = field_name == "format" ? 11 : 21
+        params["f.#{field_name}.facet.limit"] = limit
+      end
+
       params
     end
 

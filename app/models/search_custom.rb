@@ -39,6 +39,6 @@ class SearchCustom
       return response, docs, callnumber
     end
 
-    return response, docs, shortened
+    return response, docs, StringUtils.drop_quotes(shortened)
   end
 end

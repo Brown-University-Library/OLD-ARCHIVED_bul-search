@@ -32,19 +32,23 @@ class StringUtils
     if text[-1] != '"'
       text = text + '"'
     end
-    text
+    text || ""
+  end
+
+  def self.drop_quotes(text)
+    if text[0] == '"' && text[-1] == '"'
+      text = text[1..-2] # drop the quotes
+    end
+    text || ""
   end
 
   # Returns the text in a format suitable for call number search.
   def self.callnumber_searchable(text)
     # drop the # prefix
-    text = text[0] == "#" ? text[1..-1] : text
+    #text = text[0] == "#" ? text[1..-1] : text
     text = surround_quotes(text.strip)
-    if text[2..7].upcase == "-SIZE "
-      # Drop the N-SIZE prefix since we don't index it.
-      text = '"' + text[8..-1]
-    end
-    text
+    # Drop the N-SIZE prefix since we don't index it.
+    text.gsub(/\d-SIZE\s/,"")
   end
 
   def self.call_number_shorten(text)

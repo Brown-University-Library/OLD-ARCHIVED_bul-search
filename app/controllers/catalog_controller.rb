@@ -258,30 +258,33 @@ class CatalogController < ApplicationController
 
   def callnumber_search()
     @altered_search_terms = false
-    @original_q = params[:q]
+    @new_q = ""
+    original_q = params[:q] || ""
     searcher = SearchCustom.new(blacklight_config)
-    @response, @document_list, match = searcher.callnumber(@original_q)
+    @response, @document_list, match = searcher.callnumber(original_q)
     if @response.documents.count == 0
-      Rails.logger.info("Call number search failed: #{@original_q}")
+      Rails.logger.info("Call number search failed: #{original_q}")
     else
-      if match == @original_q
-        Rails.logger.info("Call number search success: #{@original_q}")
+      if match == original_q
+        Rails.logger.info("Call number search success: #{original_q}")
       else
         @altered_search_terms = true
-        Rails.logger.info("Call number search success on retry: #{match} (#{@original_q})")
+        @new_q = match
+        Rails.logger.info("Call number search success on retry: #{match} (#{original_q})")
       end
     end
-    # Force the UI to display that we are searching by call number.
-    # This is needed then the user issued an "All Fields" search with a value
-    # prefixed with "#"
-    params[:search_field] = "call_number"
-    params[:q] = match
+    if ENV["CALLNUMBER_SHORTCUT"] == "true"
+      # Force the UI to display that we are searching by call number.
+      # This is needed then the user issued an "All Fields" search with a value
+      # prefixed with "#"
+      params[:search_field] = "call_number"
+    end
     render "index"
   end
 
   def index
     @altered_search_terms = false
-    @original_q = ""
+    @new_q = ""
 
     if invalid_search()
       Rails.logger.info("Skipped invalid search for #{request.ip} (#{request.user_agent}): #{params.keys}")
@@ -487,6 +490,11 @@ class CatalogController < ApplicationController
     end
 
     def callnumber_search?
-      params[:search_field] == "call_number" || (params[:q] || "").start_with?("#")
+      if params[:search_field] == "call_number"
+        return true
+      elsif ENV["CALLNUMBER_SHORTCUT"] == "true" && (params[:q] || "").start_with?("#")
+        return true
+      end
+      false
     end
 end
