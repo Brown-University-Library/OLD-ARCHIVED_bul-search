@@ -44,9 +44,12 @@ class StringUtils
 
   # Returns the text in a format suitable for call number search.
   def self.callnumber_searchable(text)
-    # drop the # prefix
-    #text = text[0] == "#" ? text[1..-1] : text
-    text = surround_quotes(text.strip)
+    text = text.strip
+    if wildcard_search?(text)
+      text = "/#{text.gsub("*", "")}.*/"
+    else
+      text = surround_quotes(text)
+    end
     # Drop the N-SIZE prefix since we don't index it.
     text.gsub(/\d-SIZE\s/,"")
   end
@@ -55,6 +58,14 @@ class StringUtils
     tokens = text.split(" ")
     return "" if tokens.count < 2
     shorten = tokens[0..-2].join(" ") # drop the last token
+    if wildcard_search?(text)
+      shorted += "*"
+    end
     callnumber_searchable(shorten)
   end
+
+  def self.wildcard_search?(text)
+    return text.strip.end_with?("*")
+  end
+
 end
