@@ -11,11 +11,16 @@ class SearchCustom
   #   response: The blacklight response (suitable for @response)
   #   docs: The documents found (suitable for @document_list)
   #   match: The callnumber that was found (could be different from the one requested)
-  def callnumber(callnumber)
+  def callnumber(callnumber, facets)
+    facets = facets || {}
     callnumber_searchable = StringUtils.callnumber_searchable(callnumber)
     solr_query = SolrQuery.new(@blacklight_config)
-    q =  "callnumber_ss:#{callnumber_searchable}"
-    response, docs = solr_query.simple_search(q)
+    if callnumber_searchable == ""
+      q = "*:*"
+    else
+      q =  "callnumber_ss:#{callnumber_searchable}"
+    end
+    response, docs = solr_query.search(q, facets)
     if docs.count > 0
       Rails.logger.info("Call number search success: #{callnumber}")
       return response, docs, callnumber
@@ -34,7 +39,7 @@ class SearchCustom
 
     # try with the shortened callnumber
     q =  "callnumber_ss:#{shortened}"
-    response, docs = solr_query.simple_search(q)
+    response, docs = solr_query.search(q, facets)
     if docs.count == 0
       return response, docs, callnumber
     end

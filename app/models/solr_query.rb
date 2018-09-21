@@ -14,10 +14,20 @@ class SolrQuery
     submit_query(solr_params)
   end
 
-  def simple_search(q, per_page = 10, page = 1)
+  # q is the string to search
+  # facets is a hash in the form { "facet1": "value1", "facet2": "value2"}
+  def search(q, facets, per_page = 10, page = 1)
     solr_params = default_solr_params(per_page, page)
     solr_params["q"] = "#{q}"
     solr_params["defType"] = "edismax"
+    if facets.keys.count > 0
+      solr_params["fq"] = []
+      facets.keys.each do |key|
+        facets[key].each do |value|
+          solr_params["fq"] << "#{key}:\"#{value}\""
+        end
+      end
+    end
     submit_query(solr_params)
   end
 

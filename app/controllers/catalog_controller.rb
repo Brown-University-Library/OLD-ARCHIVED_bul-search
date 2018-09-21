@@ -261,7 +261,7 @@ class CatalogController < ApplicationController
     @new_q = ""
     original_q = params[:q] || ""
     searcher = SearchCustom.new(blacklight_config)
-    @response, @document_list, match = searcher.callnumber(original_q)
+    @response, @document_list, match = searcher.callnumber(original_q, params["f"])
     if @response.documents.count == 0
       Rails.logger.info("Call number search failed: #{original_q}")
     else
@@ -303,6 +303,9 @@ class CatalogController < ApplicationController
     ret_val = super
     restore_max_per_page if api_call?
     ret_val
+  rescue => ex
+    Rails.logger.error("Error on search. Params: #{params}. Exception: #{ex}")
+    render "error", status: 500
   end
 
   def show

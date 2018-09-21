@@ -23,8 +23,8 @@ class StringUtils
   # Returns the text passed but surrounded by double quotes.
   # Quotes are only added if they are not there.
   def self.surround_quotes(text)
-    if text[0] == "'" && text[-1] == "'"
-      text = text[1..-2] # drop single quotes
+    if text == ""
+      return ""
     end
     if text[0] != '"'
       text = '"' + text

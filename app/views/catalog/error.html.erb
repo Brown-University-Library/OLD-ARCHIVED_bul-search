@@ -1,0 +1,16 @@
+<div id="content" class="col-md-9 show-document">
+  <% @page_title = "Error on search" -%>
+</div>
+
+<h3>Oops!</h3>
+<div>
+  <p>There was an error executing this search. We've logged the error and we'll look into it.</p>
+  <p>You can also contact us
+    <a href="<%= google_form_url() %>" target="_blank">via the feedback form</a>
+    if you would like to provide more information.</p>
+
+  <p><%= link_to("« Go back to the catalog", catalog_index_path(q: ''), class: "btn btn-primary btn-lg", role: "button") %></p>
+</div>
+
+<div id="sidebar" class="col-md-3">
+</div>
