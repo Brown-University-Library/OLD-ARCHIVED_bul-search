@@ -15,12 +15,15 @@ class SolrQuery
   end
 
   # q is the string to search
-  # facets is a hash in the form { "facet1": "value1", "facet2": "value2"}
-  def search(q, facets, per_page = 10, page = 1)
-    solr_params = default_solr_params(per_page, page)
+  # params is a hash with the value in the Request (as received in
+  # a typical Rails controller)
+  def search(q, params)
+    solr_params = default_solr_params(params)
     solr_params["q"] = "#{q}"
     solr_params["defType"] = "edismax"
+    facets = params["f"] || {}
     if facets.keys.count > 0
+      # facets is a hash in the form {"facet1": "value1", "facet2": "value2"}
       solr_params["fq"] = []
       facets.keys.each do |key|
         facets[key].each do |value|
@@ -32,7 +35,10 @@ class SolrQuery
   end
 
   private
-    def default_solr_params(per_page, page)
+    def default_solr_params(params)
+      per_page = (params["rows"] || "10").to_i
+      page = (params["page"] || "1").to_i
+
       # TODO: get the facets from our configuration rather
       # than hard-coding them here.
       facets = ["access_facet", "format", "author_facet", "pub_date",
@@ -42,7 +48,7 @@ class SolrQuery
       params = {
         :wt => :json,
         "qt" => "search",
-        "start" => per_page * (page -1),
+        "start" => per_page * (page - 1),
         "rows" => per_page,
         "page" => page,
         "facet.field" => facets,

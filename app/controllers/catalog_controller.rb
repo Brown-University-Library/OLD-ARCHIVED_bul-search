@@ -261,7 +261,7 @@ class CatalogController < ApplicationController
     @new_q = ""
     original_q = params[:q] || ""
     searcher = SearchCustom.new(blacklight_config)
-    @response, @document_list, match = searcher.callnumber(original_q, params["f"])
+    @response, @document_list, match = searcher.callnumber(original_q, params)
     if @response.documents.count == 0
       Rails.logger.info("Call number search failed: #{original_q}")
     else
