@@ -1,0 +1,15 @@
+<!-- Blacklight override -->
+<h2><%= t 'blacklight.search.zero_results.title' %></h2>
+
+<div id="documents" class="noresults">
+  <h3>Try modifying your search</h3>
+  <ul>
+    <li>Use fewer keywords to start and then refine your search.</li>
+    <%- if params[:q] and params[:search_field] and params[:search_field] != blacklight_config.default_search_field.try(:key) -%>
+      <li>You are limiting your search by <b><%= search_field_label(params) %></b>,
+      <%= link_to("try searching everything", url_for(params_for_search(:search_field=>blacklight_config.default_search_field.key))) %>
+      </li>
+    <%- end %>
+
+  </ul>
+</div>
