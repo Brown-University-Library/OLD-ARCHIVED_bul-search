@@ -27,7 +27,6 @@ class SearchCustom
       return response, docs, callnumber
     end
 
-    byebug
     if wildcard_search?(callnumber)
       # Don't retry wildcard searches
       return response, docs, callnumber
