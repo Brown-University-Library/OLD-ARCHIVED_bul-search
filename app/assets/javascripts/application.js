@@ -119,7 +119,7 @@ function jcbRequestFullLink( bib, title, author, publisher, callnumber ) {
   var jcb_title = extractTitle( title );
   var jcb_author = extractAuthor( author );
   var jcb_publisher = publisher;  // pre-sliced
-  var jcb_callnumber = callnumber;
+  var jcb_callnumber = encodeURIComponent(callnumber);
   return "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
   // var full_url = "https://jcbl.aeon.atlas-sys.com/aeon.dll?Action=10&Form=30&ReferenceNumber=" + jcb_ref_num + "&ItemTitle=" + jcb_title + "&ItemAuthor=" + jcb_author + "&ItemPublisher=" + jcb_publisher + "&CallNumber=" + jcb_callnumber + "&ItemInfo2=";
   // console.log( '- returning full_url value of, ```' + full_url + '```' )
@@ -152,7 +152,7 @@ function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) 
   var hayA_title = extractTitle( title );
   var hayA_author = extractAuthor( author );
   var hayA_publisher = publisher;  // pre-sliced
-  var hayA_callnumber = callnumber;
+  var hayA_callnumber = encodeURIComponent(callnumber);
   var hayA_location = location;
   var full_url = hayA_root_url + "?Action=10&Form=30" + "&ReferenceNumber=" + hayA_ref_num + "&ItemTitle=" + hayA_title + "&ItemAuthor=" + hayA_author + "&ItemPublisher=" + hayA_publisher + "&CallNumber=" + hayA_callnumber + "&Location=" + hayA_location + "&ItemInfo2=";
   // console.log( '- returning full_url value of, ```' + full_url + '```' )
@@ -186,10 +186,9 @@ function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnum
   var ezRqHay_title = extractTitle( title );
   var ezRqHay_author = extractAuthor( author );
   var ezRqHay_publisher = publisher;  // pre-sliced
-  var ezRqHay_callnumber = callnumber;
+  var ezRqHay_callnumber = encodeURIComponent(callnumber);
   var ezRqHay_location = location;
   var ezRqHay_full_url = ezRqHay_root_url + "?item_bib=" + ezRqHay_bib + "&item_barcode=" + ezRqHay_barcode + "&item_title=" + ezRqHay_title + "&item_author=" + ezRqHay_author + "&item_publisher=" + ezRqHay_publisher + "&item_callnumber=" + ezRqHay_callnumber + "&item_location=" + ezRqHay_location + "&item_digital_version_url=" + "" + "&referring_url=https%3A%2F%2Fsearch.library.brown.edu%2Fcatalog%2F" + ezRqHay_bib;
-  // console.log( '- returning ezRqHay_full_url value of, ```' + ezRqHay_full_url + '```' )
   return ezRqHay_full_url;
 }
 
