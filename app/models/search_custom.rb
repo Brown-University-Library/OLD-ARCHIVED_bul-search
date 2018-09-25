@@ -57,6 +57,9 @@ class SearchCustom
     def callnumber_searchable(text)
       # Drop the N-SIZE prefix since we don't index it.
       text = text.strip.gsub(/\d-SIZE\s/,"")
+      if text == ""
+        return ""
+      end
       if wildcard_search?(text)
         # Make it a Solr RegEx value
         text = "/" + solr_safe_regex(text.gsub("*", "")) + ".*/"
