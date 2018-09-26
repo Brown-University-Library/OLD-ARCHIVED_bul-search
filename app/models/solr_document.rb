@@ -349,6 +349,11 @@ class SolrDocument
   end
 
   # This  method is to support the UI.
+  #
+  # In the past we only showed availability information for BIB records with
+  # items, but now we call the Availability API regardless because it returns
+  # returns BIB level information (e.g. Holdings Summary) that we want
+  # even if the BIB record has no items.
   def show_item_availability?
     true
   end
