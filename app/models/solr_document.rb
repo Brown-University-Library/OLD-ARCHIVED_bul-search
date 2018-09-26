@@ -349,21 +349,8 @@ class SolrDocument
   end
 
   # This  method is to support the UI.
-  # We only show the Availability section on the page
-  # if there are physical books or if there are online books
-  # that are associated with a bookplate (so that we display
-  # which ones were bought with the bookplate).
   def show_item_availability?
-    item_data.each do |item|
-      if !item.online?
-        return true
-      else
-        if item.bookplate_url != ""
-          return true
-        end
-      end
-    end
-    false
+    true
   end
 
   def volume_count
