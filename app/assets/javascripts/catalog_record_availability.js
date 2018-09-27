@@ -229,7 +229,7 @@ $(document).ready(function() {
     }
     var html, i, summary;
     html = "<h5><b>Holdings Summary</b></h5>";
-    html += "<table>";
+    html += "<table style='font-size:90%;'>";
     for(i = 0; i < holdings.length; i++) {
       summary = holdings[i];
       for(j = 0; j < summary.length; j++) {
@@ -243,7 +243,7 @@ $(document).ready(function() {
         html += "<tr><td>&nbsp;</td></tr>"; // separator
       }
     }
-    html += "</table>";
+    html += "</table><br/>";
     $("#holdingsSummary").first().append(html);
   };
 

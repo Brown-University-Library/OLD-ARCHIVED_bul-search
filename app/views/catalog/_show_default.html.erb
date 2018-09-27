@@ -38,6 +38,7 @@
       * Online record: https://search.library.brown.edu/catalog/b2424700
       * Checked out, available via ezb: Request via easyBorrow: https://search.library.brown.edu/catalog/b2743304
       * Online only: https://search.library.brown.edu/catalog/b6940356
+      * Items and holding summary: https://search.library.brown.edu/catalog/b4085432
       * No items, but with holdings summary: https://search.library.brown.edu/catalog/b1462229
      -->
      <div class="holdings-wrapper results">
@@ -60,7 +61,7 @@
            </div>
        <% end %>
 
-       <div id="holdingsSummary" class="results">
+       <div id="holdingsSummary">
        </div>
 
        <% if @document.item_data.count > 0 %>
