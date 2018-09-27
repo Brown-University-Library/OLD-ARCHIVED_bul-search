@@ -27,24 +27,10 @@
     </div> <!-- abstract -->
 <% end %>
 
-
-<% if @document.online_availability.count > 0 %>
-  <div id="online_resources">
-    <h4>Online Resources</h4>
-    <ul>
-    <% @document.online_availability.each do |online| -%>
-        <li><a href="<%= online.url %>"><%= online.label %></a></li>
-    <% end -%>
-    </ul>
-    </div>
-<% end %>
-
-<div id="debugInfo" class="hidden"></div>
-
-<div id="holdingsSummary" class="results">
+<div id="debugInfo" class="hidden">
+  <div>Physical items: <%= @document.item_data.count %>, Online items: <%= @document.online_availability.count %> </div>
 </div>
 
-<% if @document.show_item_availability? %>
   <div id="availability">
     <!--
       Sample bib records usefule for testing:
@@ -52,8 +38,9 @@
       * Online record: https://search.library.brown.edu/catalog/b2424700
       * Checked out, available via ezb: Request via easyBorrow: https://search.library.brown.edu/catalog/b2743304
       * Online only: https://search.library.brown.edu/catalog/b6940356
+      * No items, but with holdings summary: https://search.library.brown.edu/catalog/b1462229
      -->
-     <div class="holdings-wrapper" class="results">
+     <div class="holdings-wrapper results">
        <h4>Availability
          <a id="request-copy-ezb"
           class="hidden btn request-this-link"
@@ -61,12 +48,22 @@
           title="Our copy is not available at the moment, but we can try get it for you from other libraries"
           target="_blank">Request via EasyBorrow</a>
        </h4>
-       <% if @document.item_data.count == 0 && @document.online_availability.count == 0 %>
-          <div>We don't currently have availability information for this item.
-            <a href="http://library.brown.edu/libweb/askalib.php" target="_blank">
-            Contact the library staff<a/> for assistance with this item.</div>
+
+       <% if @document.online_availability.count > 0 %>
+         <div id="online_resources">
+           <h5><b>Online Resources</b></h5>
+           <ul>
+           <% @document.online_availability.each do |online| -%>
+               <li><a href="<%= online.url %>"><%= online.label %></a></li>
+           <% end -%>
+           </ul>
+           </div>
+       <% end %>
+
+       <div id="holdingsSummary" class="results">
        </div>
-       <% else %>
+
+       <% if @document.item_data.count > 0 %>
           <table class="table">
             <tr>
               <th>Location</th>
@@ -103,6 +100,7 @@
        <% end %>
      </div>
   </div>
+<% if @document.item_data.count > 0 || @document.online_availability.count == 0 %>
 <% end %>
 
 <script type="text/javascript">

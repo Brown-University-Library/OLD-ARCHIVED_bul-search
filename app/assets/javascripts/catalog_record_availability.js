@@ -228,7 +228,7 @@ $(document).ready(function() {
       return;
     }
     var html, i, summary;
-    html = "<h4>Holdings Summary</h4>";
+    html = "<h5><b>Holdings Summary</b></h5>";
     html += "<table>";
     for(i = 0; i < holdings.length; i++) {
       summary = holdings[i];
