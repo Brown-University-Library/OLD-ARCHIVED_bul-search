@@ -44,6 +44,7 @@ $(document).ready(function() {
       scope.loadNearbyItems(false);
     }
 
+    scope.showHathiLink(bibData.oclcNum);
     scope.debugMessage("BIB record multi: " + bibData.itemsMultiType)
   };
 
@@ -167,6 +168,34 @@ $(document).ready(function() {
     scope.showAeon();
   };
 
+
+  scope.showHathiLink = function(oclcNum) {
+    if (oclcNum == "") {
+      scope.debugMessage("Skipped call to Hathi");
+      return;
+    }
+    // Source: http://josiah.brown.edu/screens/josiah_helpers.js
+    var url = "http://catalog.hathitrust.org/api/volumes/brief/oclc/" + oclcNum + ".json";
+    var i, item, html;
+    $.getJSON(url, function (ht) {
+      if (ht.items.length == 0) {
+        scope.debugMessage("No Hathi items found for " + oclcNum);
+      } else {
+        for(i = 0; i < ht.items.length; i++) {
+          item = ht.items[i];
+          if (item.rightsCode == 'pd') {
+            var html = "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Full text from Hathi Trust</a>"
+            $('#online_resources').removeClass("hidden");
+            $("#online_resources_links").append(html);
+            //break after first public domain full text link
+            scope.debugMessage("Found public domain Hathi link for " + oclcNum);
+            return;
+          };
+        }
+        scope.debugMessage("No public domain Hathi link found for " + oclcNum);
+      }
+    });
+  };
 
   scope.showAvailability = function(all) {
     var i;

@@ -212,6 +212,14 @@ class SolrDocument
     end
   end
 
+  def oclc_full
+    # Field oclc_t can be empty for some values, we use MARC 001 instead.
+    values = marc.field("001")
+    values.first || ""
+  rescue StandardError
+    ""
+  end
+
   # I'd use the 830 field. It is a controlled heading for the series,
   # so it can act like any of the added author fields. There will be
    #some records that only have 490 and no 830
@@ -348,14 +356,16 @@ class SolrDocument
     end
   end
 
-  # This  method is to support the UI.
-  #
-  # In the past we only showed availability information for BIB records with
-  # items, but now we call the Availability API regardless because it returns
-  # returns BIB level information (e.g. Holdings Summary) that we want
-  # even if the BIB record has no items.
+  # This method is to support the UI.
   def show_item_availability?
-    true
+    item_data.each do |item|
+      if !item.online? || item.bookplate_url != ""
+        # there is a physical item or an online item with
+        # book plate information.
+        return true
+      end
+    end
+    false
   end
 
   def volume_count

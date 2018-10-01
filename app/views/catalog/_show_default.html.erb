@@ -40,6 +40,7 @@
       * Online only: https://search.library.brown.edu/catalog/b6940356
       * Items and holding summary: https://search.library.brown.edu/catalog/b4085432
       * No items, but with holdings summary: https://search.library.brown.edu/catalog/b1462229
+      * One online item (but with a 945 in addition to the 856) http://dblightcit.services.brown.edu/find/catalog/b8112225?debug=true
      -->
      <div class="holdings-wrapper results">
        <h4>Availability
@@ -53,18 +54,25 @@
        <% if @document.online_availability.count > 0 %>
          <div id="online_resources">
            <h5><b>Online Resources</b></h5>
-           <ul>
+           <ul id="online_resources_links">
            <% @document.online_availability.each do |online| -%>
                <li><a href="<%= online.url %>"><%= online.label %></a></li>
            <% end -%>
            </ul>
-           </div>
+         </div>
+       <% else %>
+         <!-- Placeholder for Haiti Trust items (via JavaScript) -->
+         <div id="online_resources" class="hidden">
+           <h5><b>Online Resources</b></h5>
+           <ul id="online_resources_links">
+           </ul>
+         </div>
        <% end %>
 
        <div id="holdingsSummary">
        </div>
 
-       <% if @document.item_data.count > 0 %>
+       <% if @document.show_item_availability? %>
           <table class="table">
             <tr>
               <th>Location</th>
@@ -110,7 +118,8 @@ window.availabilityService = "<%= availability_service_url %>";
 window.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
 
 window.bibData = {};
-window.bibData.showAvailability = <%= @document.show_item_availability? %>;
+window.bibData.showAvailability = true;
+window.bibData.oclcNum = "<%= @document.oclc_full %>";
 window.bibData.bookServicesUrl = "<%= @document.book_services_url %>"
 window.bibData.id = "<%= @document.id %>";
 window.bibData.title = "<%= document[:title_display] %>";
