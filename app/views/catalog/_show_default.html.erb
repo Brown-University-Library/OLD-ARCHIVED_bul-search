@@ -43,13 +43,7 @@
       * One online item (but with a 945 in addition to the 856) http://dblightcit.services.brown.edu/find/catalog/b8112225?debug=true
      -->
      <div class="holdings-wrapper results">
-       <h4>Availability
-         <a id="request-copy-ezb"
-          class="hidden btn request-this-link"
-          href="<%= @document.easyBorrowUrl() %>"
-          title="Our copy is not available at the moment, but we can try get it for you from other libraries"
-          target="_blank">Request via EasyBorrow</a>
-       </h4>
+       <h4>Availability</h4>
 
        <% if @document.online_availability.count > 0 %>
          <div id="online_resources">
@@ -73,7 +67,11 @@
        </div>
 
        <% if @document.show_item_availability? %>
-          <h5><b>At the library</b></h5>
+          <h5><b>At the library</b><a id="request-copy-ezb"
+            class="hidden request-this-link"
+            href="<%= @document.easyBorrowUrl() %>"
+            title="Our copy is not available at the moment, but we can try get it for you from other libraries"
+            target="_blank">Request via EasyBorrow</a></h5>
           <table class="table">
             <tr>
               <th>Location</th>
