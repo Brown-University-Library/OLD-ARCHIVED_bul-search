@@ -175,7 +175,7 @@ $(document).ready(function() {
       return;
     }
     // Source: http://josiah.brown.edu/screens/josiah_helpers.js
-    var url = "http://catalog.hathitrust.org/api/volumes/brief/oclc/" + oclcNum + ".json";
+    var url = "https://catalog.hathitrust.org/api/volumes/brief/oclc/" + oclcNum + ".json";
     var i, item, html;
     $.getJSON(url, function (ht) {
       if (ht.items.length == 0) {
