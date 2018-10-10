@@ -260,6 +260,12 @@ window.itemsData = [];
       <% end %>
   <% end %>
 
+  <% if document.biographical_info != nil %>
+    <dt class="blacklight-field">Biographical data:</dt>
+      <dd class="blacklight-field">
+        <%= document.biographical_info %>
+      </dd>
+  <% end %>
 </dl>
 
 <% if document.has_toc? %>

@@ -417,17 +417,18 @@ class SolrDocument
   end
 
   # Useful for special collections
-  def preferred_citation?
-    values = marc.subfield_values("524","a")
-    values.count > 0
+  def preferred_citation
+    @preferred_citation ||= begin
+      values = marc.subfield_values("524","a")
+      values.first
+    end
   end
 
-  def preferred_citation
-    values = marc.subfield_values("524","a")
-    if values.count > 0
+  # Useful for special collections
+  def biographical_info
+    @biographical_info ||= begin
+      values = marc.subfield_values("545","a")
       values.first
-    else
-      nil
     end
   end
 
