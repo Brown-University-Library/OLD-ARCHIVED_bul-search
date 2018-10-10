@@ -416,6 +416,21 @@ class SolrDocument
     url
   end
 
+  # Useful for special collections
+  def preferred_citation?
+    values = marc.subfield_values("524","a")
+    values.count > 0
+  end
+
+  def preferred_citation
+    values = marc.subfield_values("524","a")
+    if values.count > 0
+      values.first
+    else
+      nil
+    end
+  end
+
   private
 
     def has_marc_data?
