@@ -13,6 +13,7 @@ BulSearch::Application.routes.draw do
   get 'catalog/bookplate/:code' => 'catalog#bookplate'
 
   #easySearch
+  get "easy/about", as: :easy_about
   get "easy/search"
   get 'easy/' => 'easy#home', as: :easyS
   get 'easy/search'

@@ -3,6 +3,10 @@ class EasyController < ApplicationController
   include Blacklight::BlacklightHelperBehavior
   include ApplicationHelper # for trusted_ip?()
 
+  def about
+    render "about"
+  end
+
   def home
     @trusted_ip = trusted_ip?(request.remote_ip)
     @easy_search = true
@@ -13,6 +17,11 @@ class EasyController < ApplicationController
     else
       @has_query = true
       @best_bet = Easy.get_best_bet(@query)
+    end
+    if @query.blank? && params["newhome"] == "yes"
+      render "new_home"
+    else
+      render "home"
     end
   end
 

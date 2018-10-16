@@ -1,0 +1,343 @@
+<div id="easy-find" class="col-md-12">
+  <div id="facets" class="col-md-3">
+    <div id="format-filter">
+      <h4>Format</h3>
+      <ul id="format-list" class="unstyled">
+        <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
+      </ul>
+      <ul id="other-searches" class="list-unstyled">
+        <li class="worldcat">
+          <a class="large" target="_blank" href="<%= worldcat_search(@query) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %><%= t('blacklight.worldcat.heading')%></a>
+          <%= render_info_text t('blacklight.info.sources.worldcat') %>
+        </li>
+        <li>
+          <a data-no-turbolink='true' href="<%= website_search(@query) =%>"><%= image_tag "brown_logo_15.png" %> Library website</a>
+        </li>
+      </ul>
+    </div>
+  </div> <!-- facets -->
+
+  <div id="welcome" class="col-md-9">
+    <div class="well well-lg">
+      <!-- same as render_search_bar but we can pass local parameters -->
+      <%= render "catalog/search_form", home_page: true %>
+    </div>
+  </div>
+
+  <div id="bentos" class="col-md-9">
+    <div class="row">
+      <div id="books" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-book"></i>Books
+        </h3>
+      </div>
+      <div id="summon" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-copy"></i>Journal Articles
+        </h3>
+      </div>
+    </div>
+    <div class="row added-bentos">
+      <hr/>
+    </div>
+    <div class="row">
+      <div id="books" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-film"></i>Video
+        </h3>
+      </div>
+      <div id="summon" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-volume-up"></i>Sound Recording
+        </h3>
+      </div>
+    </div>
+    <div class="row added-bentos">
+      <hr/>
+    </div>
+    <div class="row">
+      <div id="books" class="col-md-6">
+        <h3 class="bento-header">Brown Digital Repository</h3>
+      </div>
+      <div id="summon" class="col-md-6">
+        <h3 class="bento-header">Library website</h3>
+      </div>
+    </div>
+  </div>
+</div> <!-- easy-find -->
+
+<%# Link to JSON data out %>
+<span id="path" class="hidden"><%= data_link(@query) =%></span>
+<span id="catalog-path" class="hidden"><%= catalog_record_url =%></span>
+<span id="summon-more" class="hidden"><%= eds_native_url(@query) %></span>
+
+<%= render_crazy_egg_code %>
+
+<script type="text/javascript">
+  var dataUrl = "<%= data_link(@query) =%>";
+  var numOtherCatalogBoxes = 2;
+  var maxTitleLength = <%= t('blacklight.bento.max_title_length') =%>;
+  var facetFormats = [];
+  $(document).ready(function() {
+    var query = "<%= @query =%>";
+    catalogBoxes(query);
+    summonBox(query);
+    bdrBento(query);
+    addNewspaperArticlesCount(query);
+    //call when all ajax is complete
+    $( document )
+      .ajaxStop(function() {
+        addInfoBoxes();
+        sortFilterFacetList();
+    });
+  });
+
+//sort the returned formats alphabetically and display.
+function sortFilterFacetList() {
+  var sortedList = _.sortBy(facetFormats, function(fv) {return fv.format});
+  _.each(sortedList, function(item) {
+    var elementId = 'more-' + item.format.toLowerCase().replace(/\W/g, '-');
+    var li = '<li id="' + elementId + '"><a href="' + item.more + '">' + item.format + ' (' + item.count + ')</li>';
+    //Add the element if it doesn't exist.
+    if ( $('#' + elementId).length == 0) {
+      $('ul#format-list').append(li);
+    };
+  });
+  $('ul#format-list i.waiting').hide();
+};
+
+//Add the Journal Articles box via EDS.
+function summonBox(query) {
+  var source = '&source=summon';
+  if (isEdsJournals()) {
+    source = "&source=eds";
+  }
+  $.ajax(dataUrl + source, {
+    success: function(response) {
+      $('#summon i.waiting').hide();
+      var summonSet = response;
+      if (summonSet.docs.length > 0) {
+        var rawLink = null;
+        if (isDebug()) {
+          rawLink = summonSet.raw;
+          if (rawLink && (document.location.href.indexOf("dblightcit") != -1)) {
+            rawLink = rawLink.replace("/easy/", "/find/easy/")
+          }
+        }
+        var context = {
+          'docs': summonSet.docs,
+          'total': commaSeparatedNumber(summonSet.numFound),
+          'more': summonSet.more,
+          'raw': rawLink,
+          'advanced': summonSet.advanced,
+          'max_title_length': maxTitleLength
+        };
+        // var html = HandlebarsTemplates['easy/summon_results'](context);
+        // $('#summon').append(html);
+        //add count to facet on left
+        addFormats([{
+          'format': 'Journal Articles',
+          'more': summonSet.more,
+          'count': commaSeparatedNumber(summonSet.numFound)
+        }]);
+      } else {
+        // var html = '<h5>No results were found in peer reviewed with full text access sources. ' +
+        //   'Try <a href="' + summonSet.expandSearch + '">expanding your search</a> to include ' +
+        //   'non-peer reviewed sources and items without full text access.</h5>';
+        // $('#summon').append(html);
+      };
+    },
+    error: function(errorObj, errorType, text) {
+      // Check https://status.ebsco.com/ for outages.
+      var ebscoBaseUrl = "http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&authtype=ip,sso&custid=rock&groupid=main&profile=eds";
+      var html = '<span class="label label-warning">Error </span><h5>Could not connect to EBSCO Discovery Service (EDS) to search for peer reviewed full text sources at this time. ' +
+        'Try <a href="' + ebscoBaseUrl + '" target="_blank">going directly to EBSCO Discovery Service</a>.</h5>';
+      $('#summon').append(html);
+      $('#summon i.waiting').hide();
+    }
+  });
+};
+
+
+//Can call the BDR easy search handler.
+function bdrBento(query) {
+    $.ajax(dataUrl + '&source=bdr', {
+      success: function(response) {
+        $('#bdr-search i.waiting').hide();
+        if (response.docs.length > 0) {
+          var context = {
+            'docs': response.docs,
+            'total': commaSeparatedNumber(response.numFound),
+            'more': response.more,
+            'max_title_length': maxTitleLength
+          };
+          var html = HandlebarsTemplates['easy/bdr_results'](context);
+          $('#bdr-search').append(html);
+          $('#bdr-search h3.bento-header a').attr('href', response.more);
+          $('<li><a href="' + response.more + '">Brown Digital Repository</a>').insertAfter('ul#other-searches .worldcat');
+        } else {
+          $('#bdr-search').append('<h5>No results from the Brown Digital Repository.</h5>');
+        }
+      }
+    });
+};
+
+
+//Adds the books and the dynamic boxes.
+function catalogBoxes(query) {
+    $.ajax(dataUrl, {
+      success: function(response) {
+        $('#books i.waiting').hide();
+        var books = _.filter(response['groups'], function(rset){ return rset['format'] === 'Book'});
+        if (books.length > 0) {
+          var bookSet = books[0];
+          var context = {
+            //'boxID': 'books',
+            'box': "Books",
+            'docs': bookSet.docs,
+            'total': commaSeparatedNumber(bookSet.numFound),
+            'more': bookSet.more,
+            'advanced': bookSet.advanced,
+            'max_title_length': maxTitleLength,
+          };
+          // var html = HandlebarsTemplates['easy/catalog_results'](context);
+          // $('#books').append(html);
+          // $('#books h3.bento-header a').attr('href', bookSet.more);
+        } else {
+          //no results from catalog.
+          var wcUrl = $('#worldcat-search').attr('href');
+          var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
+          $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
+          //$('#format-filter').hide();
+        };
+        //add other formats
+        var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
+        var sortedOther = sortByTopFormat(other);
+        addOthers(sortedOther, numOtherCatalogBoxes);
+        //do the format facet/filter.
+        formats = response['formats'];
+        addFormats(formats);
+      }
+    });
+};
+
+function sortByTopFormat(results) {
+    return _.sortBy(results, function(obj){ return -obj.numFound});
+}
+
+
+//Adds the format facet on the left.
+function addFormats(formats) {
+    _.each(formats, function(item) {
+        facetFormats.push(
+          {'format': item.format, 'count': commaSeparatedNumber(item.count), 'more': item.more}
+        );
+    });
+}
+
+//Add newspaper article count via Summon.
+function addNewspaperArticlesCount(query) {
+  var source = "&source=newspaper_articles";
+  if (isEdsJournals()) {
+    // source = "&source=newspaper_articles_eds"
+    // skip this call for EDS for now
+    return;
+  }
+  $.ajax(dataUrl + source, {
+    success: function(response) {
+      if (response.numFound > 0) {
+        //add count to facet on left
+        addFormats([{
+          'format': 'Newspaper Articles',
+          'more': response.more,
+          'count': commaSeparatedNumber(response.numFound)
+        }]);
+      };
+    }
+  });
+};
+
+
+//Creates a single bento box with given id.
+function addBox(boxID){
+  var bentos = $('#bentos div.added-bentos');
+  bentos.append('<div id="'+boxID+'" class="col-md-6" style="padding-bottom: 0px;"></div>');
+}
+
+//Add the dynamic bento boxes.
+function addOthers(others, num_others) {
+  _.each(others, function(box, index) {
+    box.name = box.format
+    box.id = "bento-"+index;
+    if (index < num_others) {
+        addBox(box.id);
+        //addItemsToBox( box.docs, box.id);
+        //addMoreLink(box.id, box.more, box.numFound)
+        //add other so we know it's not the book box.
+        var context = {
+            'other': true,
+            'box': box.format,
+            'icon': box.icon,
+            'info': box.info,
+            'docs': box.docs,
+            'total': commaSeparatedNumber(box.numFound),
+            'more': box.more,
+            'max_title_length': maxTitleLength
+          };
+        // var html = HandlebarsTemplates['easy/catalog_results'](context);
+        // $("#" + box.id).append(html);
+        //jump links
+        addToJumpLinks(box.id, box.name)
+    };
+  });
+}
+
+//Add info boxes to dynamic bentos.
+function addInfoBoxes() {
+  _.each($('.added-bentos button.info-box'), function(item) {
+    $(item).popover({
+      trigger: 'hover',
+      placement: 'auto'
+   });
+   $(item).popover()
+  });
+};
+
+function addToJumpLinks(id, name) {
+  $('<li><i class="fa fa-arrow-down"></i><a href="#' + id + '">' + name + '</a></li>').insertBefore('#jump-links #dynamic');
+};
+
+//Create a comma separated number
+//http://stackoverflow.com/a/12947816/758157
+function commaSeparatedNumber(val){
+  while (/(\d+)(\d{3})/.test(val.toString())){
+    val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+  }
+  return val;
+}
+
+function isEdsJournals() {
+  <% if ENV['JOURNALS_PROV'] == "eds" %>
+    return true;
+  <% else %>
+    return false;
+  <% end %>
+}
+
+function isDebug() {
+  return (location.search.indexOf("&debug=true") > -1);
+}
+</script>
+
+<!-- Google cse. -->
+<script>
+(function() {
+    var cx = '015192785404496812646:ac4fr7did5y'; // Insert your own Custom Search engine ID here
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+    $('#website i.waiting').hide();
+    var moreLink = $( "#website h3 a" ).attr('href');
+    $('#website').append("<div class=\"more center-block\"><a href=\"" + moreLink + "\">View all results</a></div>");
+})();
+</script>
