@@ -1,0 +1,76 @@
+<a class="sr-only" href="#welcome">Skip to search tools</a>
+
+<div id="easy-find" class="col-md-12">
+  <div id="facets" class="col-md-3">
+    <div id="format-filter">
+      <h2>Format</h2>
+      <ul id="format-list" class="unstyled">
+        <% if @format_stats.count > 0 %>
+          <!-- we've got stats, render them -->
+          <% @format_stats.each do |stats| %>
+            <li><%= link_to(stats[:format] + " (" + number_with_delimiter(stats[:count]) + ")", catalog_url("", f: {format: [stats[:format]]})) %>
+          <% end %>
+        <% else %>
+          <!-- no stats, render the spinner while we load them via AJAX -->
+          <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
+        <% end %>
+      </ul>
+      <ul id="other-searches" class="list-unstyled">
+        <li class="worldcat">
+          <a class="large" target="_blank" href="<%= worldcat_search(@query) =%>" id="worldcat-search"><%= image_tag "worldcat_icon.png" %><%= t('blacklight.worldcat.heading')%></a><%= render_info_text t('blacklight.info.sources.worldcat') %>
+        <li><a href="<%= bdr_search('') %>">Brown Digital Repository</a>
+        <li><a href="<%= website_search(@query) %>"><%= image_tag("brown_logo_15.png") %> Library website</a>
+      </ul>
+    </div>
+  </div> <!-- facets -->
+
+  <div id="welcome" class="col-md-9">
+    <div class="well well-lg">
+      <!-- same as render_search_bar but we can pass local parameters -->
+      <%= render "catalog/search_form", home_page: true %>
+    </div>
+  </div>
+
+  <div id="bentos" class="col-md-9">
+    <div class="row">
+      <div id="books" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-book"></i>Books
+        </h3>
+      </div>
+      <div id="summon" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-copy"></i>Journal Articles
+        </h3>
+      </div>
+    </div>
+    <div class="row added-bentos">
+      <hr/>
+    </div>
+    <div class="row">
+      <div id="books" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-film"></i>Video
+        </h3>
+      </div>
+      <div id="summon" class="col-md-6">
+        <h3 class="bento-header">
+          <i class="fa fa-volume-up"></i>Sound Recording
+        </h3>
+      </div>
+    </div>
+    <div class="row added-bentos">
+      <hr/>
+    </div>
+    <div class="row">
+      <div id="books" class="col-md-6">
+        <h3 class="bento-header">Brown Digital Repository</h3>
+      </div>
+      <div id="summon" class="col-md-6">
+        <h3 class="bento-header">Library website</h3>
+      </div>
+    </div>
+  </div>
+</div> <!-- easy-find -->
+
+<%= render_crazy_egg_code %>

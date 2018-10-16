@@ -52,6 +52,29 @@ class SearchCustom
     return response, docs, callnumber_human(shortened)
   end
 
+  def stats_by_format()
+    Rails.cache.fetch("format_stats", expires_in: 2.minute) do
+      solr_query = SolrQuery.new(@blacklight_config)
+      q = "*:*"
+      params = {per_page: 0}
+      response, docs = solr_query.search(q, params)
+
+      # values is an array in the form ["format1", count1, "format2", count2, ...]
+      values = response["facet_counts"]["facet_fields"]["format"]
+      pairs_count = (values.count/2)
+      stats = []
+      (0..pairs_count-1).each do |i|
+        x = i * 2
+        if values[x] == "3D object"
+          # ignore it
+        else
+          stats << {format: values[x], count: values[x+1]}
+        end
+      end
+      stats.sort_by {|x| x[:format]}
+    end
+  end
+
   private
     # Returns the text in a format suitable for call number search.
     def callnumber_searchable(text)

@@ -8,6 +8,7 @@ class EasyController < ApplicationController
   end
 
   def home
+    @format_stats = []
     @trusted_ip = trusted_ip?(request.remote_ip)
     @easy_search = true
     @query = params[:q]
@@ -19,9 +20,16 @@ class EasyController < ApplicationController
       @best_bet = Easy.get_best_bet(@query)
     end
     if @query.blank? && params["newhome"] == "yes"
-      render "new_home"
+      begin
+        blacklight_config = Blacklight.default_configuration
+        searcher = SearchCustom.new(blacklight_config)
+        @format_stats = searcher.stats_by_format()
+      rescue Exception => ex
+        Rails.logger.error("Error getting format stats: #{ex}")
+      end
+      render "landing"
     else
-      render "home"
+      render "results"
     end
   end
 
