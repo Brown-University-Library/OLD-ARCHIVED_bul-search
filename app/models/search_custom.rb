@@ -56,7 +56,8 @@ class SearchCustom
     Rails.cache.fetch("format_stats", expires_in: 2.minute) do
       solr_query = SolrQuery.new(@blacklight_config)
       q = "*:*"
-      params = {per_page: 0}
+      params = {}
+      params["rows"] = 0
       response, docs = solr_query.search(q, params)
 
       # values is an array in the form ["format1", count1, "format2", count2, ...]
