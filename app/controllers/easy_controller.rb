@@ -19,7 +19,7 @@ class EasyController < ApplicationController
       @has_query = true
       @best_bet = Easy.get_best_bet(@query)
     end
-    if @query.blank? && params["newhome"] == "yes"
+    if @query.blank?
       begin
         blacklight_config = Blacklight.default_configuration
         searcher = SearchCustom.new(blacklight_config)
