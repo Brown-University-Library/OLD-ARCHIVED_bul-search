@@ -4,13 +4,11 @@
       <h2>Format</h2>
       <ul id="format-list" class="unstyled">
         <% if @format_stats.count > 0 %>
-          <!-- we've got stats, render them -->
           <% @format_stats.each do |stats| %>
             <li><%= link_to(stats[:format] + " (" + number_with_delimiter(stats[:count]) + ")", catalog_url("", f: {format: [stats[:format]]})) %>
           <% end %>
         <% else %>
-          <!-- no stats, render the spinner while we load them via AJAX -->
-          <i class="waiting fa fa-circle-o-notch fa-spin fa-1x spinner"></i>
+          <i>Stats by format not available</i>
         <% end %>
       </ul>
       <ul id="other-searches" class="list-unstyled">
