@@ -1,5 +1,3 @@
-<a class="sr-only" href="#welcome">Skip to search tools</a>
-
 <div id="easy-find" class="col-md-12">
   <div id="facets" class="col-md-3">
     <div id="format-filter">
@@ -26,10 +24,43 @@
 
   <div id="welcome" class="col-md-9">
     <div class="well well-lg">
-      <!-- same as render_search_bar but we can pass local parameters -->
-      <%= render "catalog/search_form", home_page: true %>
+
+    <!-- This HTML form is very similar to catalog/_search_form but with enought styling
+         differences to justify a copy here -->
+    <%= form_tag search_action_url, :method => :get, :class => 'search-query-form form-inline clearfix navbar-form' do %>
+      <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
+
+      <h1 style="margin-top: 0px;">Welcome to Josiah</h1>
+      <p>Enter keywords to search library resources</p>
+
+      <div class="input-group col-md-9">
+        <label for="q2" class="sr-only">Search</label>
+        <%= text_field_tag :q, clean_search_term(params[:q]), :placeholder => "", :class => "search_q q form-control", :id => "q2", :autofocus => true %>
+        <span class="dropdown input-group-btn">
+          <button id="searchButton" class="btn btn-primary search-btn" type="submit">
+            <span id="submitText" class="submit-search-text">Search</span>
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+          <span class="glyphicon glyphicon-search"></span>
+          <% if @search_menu == true %>
+            <button class="btn btn-primary dropdown-toggle search-btn" style="border-left-color: #d1a742;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="search">
+              <li><a id="searchAll" href="#">Search All</a></li>
+              <li><a id="searchCatalog" href="#">Search Catalog Only</a></li>
+            </ul>
+          <% end %>
+        </span>
+      </div>
+
+      <p style="padding-top: 10px;">Search for books, articles, periodicals,
+        musical scores, maps, theses and dissertations, sound recordings,
+        videos, the Brown Digital Repository (BDR), the Library website,
+        and more. Learn <%= link_to("about Josiah", easy_about_path()) %>.</p>
+    <% end %> <!-- form -->
     </div>
-  </div>
+  </div> <!-- welcome -->
 
   <div id="bentos" class="col-md-9">
     <div class="row">
@@ -74,3 +105,19 @@
 </div> <!-- easy-find -->
 
 <%= render_crazy_egg_code %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#searchAll").click(function(e) {
+      $("#submitText").text("Search All");
+      e.preventDefault();
+      // $("#searchButton").click()
+    });
+
+    $("#searchCatalog").click(function(e) {
+      $("#submitText").text("Search Catalog");
+      e.preventDefault();
+      // $("#searchButton").click()
+    });
+  });
+</script>

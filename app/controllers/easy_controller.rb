@@ -12,14 +12,10 @@ class EasyController < ApplicationController
     @trusted_ip = trusted_ip?(request.remote_ip)
     @easy_search = true
     @query = params[:q]
+    @has_query = false
     if @query.blank?
-      @has_query = false
-      @query = ''
-    else
-      @has_query = true
-      @best_bet = Easy.get_best_bet(@query)
-    end
-    if @query.blank?
+      # Render the landing page.
+      @query = ""
       begin
         blacklight_config = Blacklight.default_configuration
         searcher = SearchCustom.new(blacklight_config)
@@ -27,8 +23,15 @@ class EasyController < ApplicationController
       rescue Exception => ex
         Rails.logger.error("Error getting format stats: #{ex}")
       end
+      @hide_search_bar = (params["onesearch"] == "yes")
+      @search_menu = (params["searchmenu"] == "yes")
+      @skip_menu_to_id = "welcome"
       render "landing"
     else
+      # Render the results page page.
+      @has_query = true
+      @best_bet = Easy.get_best_bet(@query)
+      @skip_menu_to_id = "bentos"
       render "results"
     end
   end

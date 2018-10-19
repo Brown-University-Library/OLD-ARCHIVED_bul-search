@@ -1,5 +1,3 @@
-<a class="sr-only" href="#bentos">Skip to results</a>
-
 <h1 style="margin-top: 0px; text-align: center;">Josiah</h1>
     <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
@@ -19,11 +17,6 @@
                 </ul>
             </div>
         </div>
-<% if @has_query != true %>
-    <div id="welcome" class="col-md-9">
-    <%= render "index_text" %>
-    </div>
-<% else %>
         <div id="bentos" class="col-md-9">
             <% if @best_bet != nil %>
               <div class="row">
@@ -76,7 +69,6 @@
             </div>
         </div>
     </div>
-<% end %>
 
 <%# Link to JSON data out %>
 <span id="path" class="hidden"><%= data_link(@query) =%></span>

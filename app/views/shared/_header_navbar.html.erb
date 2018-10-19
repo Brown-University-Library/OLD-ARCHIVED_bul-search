@@ -1,5 +1,9 @@
 <%= render_analytics_code %>
 
+<% if @skip_menu_to_id != nil %>
+  <a class="sr-only" href="#<%= @skip_menu_to_id %>">Skip to search tools</a>
+<% end %>
+
 <div id="topmost-nav-links">
   <ul>
     <li><a href="http://library.brown.edu/borrowing/">Find &amp; Borrow</a></li>
@@ -29,13 +33,16 @@
     </div>
   </div>
 
-	  <% if controller_name != 'advanced' %>
-		<div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
-		  <div class="container">
-			  <%= render_search_bar  %>
-		  </div>
-		</div>
-	  <% end %>
+	<div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+	  <div class="container">
+      <% if @hide_search_bar || controller_name == 'advanced' %>
+        <!-- don't render the bar, but keep the skeleton (i.e. search-navbar)
+        to preserve the spacing in the header -->
+      <% else %>
+	       <%= render_search_bar  %>
+      <% end %>
+	  </div>
+	</div>
 
     <div class="collapse navbar-collapse" id="user-util-collapse">
       <%= render :partial=>'/user_util_links' %>
