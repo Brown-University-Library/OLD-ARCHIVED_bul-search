@@ -13,3 +13,5 @@ export EDS_USER_ID=xxx
 export EDS_PASSWORD=xxx
 
 export ESEARCH_KEY='---'
+
+BIB_UTILS_SERVICE=a-url

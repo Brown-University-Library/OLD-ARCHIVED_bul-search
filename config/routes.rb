@@ -45,6 +45,7 @@ BulSearch::Application.routes.draw do
   get 'api/items/shelf_items' => 'api#shelf_items'
 
   # Stats
+  get 'stats/hayQuery' => 'stats#hay_query'
   get 'stats/eds' => 'stats#eds'
   get 'stats/server' => 'stats#server'
 

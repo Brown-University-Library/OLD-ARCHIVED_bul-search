@@ -25,9 +25,20 @@ class StatsController < ApplicationController
     end
   end
 
-  def valid_user?
-    return false if current_user == nil
-     user = "/#{current_user}/"
-     return (ENV["STAT_USERS"] || "").include?(user)
-   end
+  def hay_query
+    @barcode_font = true
+    @results = Rails.cache.fetch("hay_query", expires_in: 20.minute) do
+      url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/hayQuery.json"
+      Rails.logger.info("Loading Hay query data from bibService #{url}")
+      HttpUtil::HttpJson.get(url)
+    end
+    render
+  end
+
+  private
+    def valid_user?
+      return false if current_user == nil
+       user = "/#{current_user}/"
+       return (ENV["STAT_USERS"] || "").include?(user)
+     end
 end
