@@ -23,7 +23,7 @@ class EasyController < ApplicationController
       rescue Exception => ex
         Rails.logger.error("Error getting format stats: #{ex}")
       end
-      @hide_search_bar = (params["onesearch"] == "yes")
+      @hide_search_bar = (params["onesearch"] == "no") ? false : true
       @search_menu = (params["searchmenu"] == "yes")
       @skip_menu_to_id = "welcome"
       render "landing"
