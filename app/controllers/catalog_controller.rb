@@ -320,6 +320,7 @@ class CatalogController < ApplicationController
     end
 
     @render_opensearch = true
+    @bib = id
     r = super
     r
   rescue Blacklight::Exceptions::RecordNotFound => exception

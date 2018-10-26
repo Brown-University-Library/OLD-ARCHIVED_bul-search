@@ -107,4 +107,11 @@ module EasyHelper
     session[:last_easy_search] || nil
   end
 
+  def classic_josiah_link(bib)
+    if bib == nil
+      "http://josiah.brown.edu/"
+    else
+      "http://josiah.brown.edu/record=#{bib}~S7"
+    end
+  end
 end
