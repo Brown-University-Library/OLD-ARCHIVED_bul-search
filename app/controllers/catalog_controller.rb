@@ -320,8 +320,15 @@ class CatalogController < ApplicationController
     end
 
     @render_opensearch = true
-    @bib = id
     r = super
+
+    if @document.millenium_record?
+      @classic_bib = id
+    else
+      # A record that does not exist in Classic Josiah
+      # (e.g. one coming from the BDR)
+    end
+
     r
   rescue Blacklight::Exceptions::RecordNotFound => exception
     Rails.logger.info("Item not found: #{id}")
