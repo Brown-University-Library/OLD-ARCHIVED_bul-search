@@ -222,7 +222,6 @@ class SolrDocument
 
   def publication_run
     @publication_run ||= begin
-      puts "===> getting publication run"
       marc.subfield_values("362", "a").first
     end
   end
