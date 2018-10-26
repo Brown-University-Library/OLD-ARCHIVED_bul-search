@@ -220,6 +220,13 @@ class SolrDocument
     ""
   end
 
+  def publication_run
+    @publication_run ||= begin
+      puts "===> getting publication run"
+      marc.subfield_values("362", "a").first
+    end
+  end
+
   # I'd use the 830 field. It is a controlled heading for the series,
   # so it can act like any of the added author fields. There will be
    #some records that only have 490 and no 830
