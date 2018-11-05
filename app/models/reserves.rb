@@ -31,6 +31,9 @@ class Reserves
         errors << "Could not save class #{course.classid}, #{course.name}."
       end
     end
+  rescue => ex
+    errors << ex.message
+  ensure
     return errors
   end
 

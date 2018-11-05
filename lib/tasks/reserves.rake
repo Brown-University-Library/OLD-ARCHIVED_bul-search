@@ -6,10 +6,10 @@ namespace :josiah do
     puts "Updating cache reserves cache..."
     reserves = Reserves.new
     errors = reserves.cache_update()
-    if errors.count == 0 
+    if errors.count == 0
       puts "OK"
     else
-      puts "Errors updating resrves:"
+      puts "Errors updating reserves:"
       errors.each do |err|
         puts "\t#{err}"
       end
