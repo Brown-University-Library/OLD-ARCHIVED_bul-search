@@ -288,9 +288,29 @@ class CatalogController < ApplicationController
     @new_q = ""
 
     if invalid_search()
-      Rails.logger.info("Skipped invalid search for #{request.ip} (#{request.user_agent}): #{params.keys}")
+      # Stop the request.
+      Rails.logger.info("Skipped invalid search for #{request.ip} (#{request.user_agent}). Params: #{params}")
       render text: "invalid request", status: 400
       return
+    end
+
+    if invalid_page()
+      if params["format"] && params["format"] != "html"
+        # Most likely a crawler. Stop the request.
+        Rails.logger.info("Skipped invalid page for crawler #{request.ip} (#{request.user_agent}). Params: #{params}")
+        render text: "invalid request", status: 400
+        return
+      end
+
+      # Most likely a human. Reset the request to page 1 and give an error
+      # message to the user.
+      Rails.logger.info("Skipped invalid page for human #{request.ip} (#{request.user_agent}). Params: #{params}")
+      page_no = params["page"]
+      flash[:error] = "The page number that you requested (#{page_no}) exceeds the " +
+        "allowed limit, try limiting your search via the facets instead. " +
+        "If you need to access very large page numbers please contact us via the " +
+        "Feedback form."
+      params["page"] = 1
     end
 
     if callnumber_search?
@@ -424,14 +444,25 @@ class CatalogController < ApplicationController
       return format == "xml" || format == "json"
     end
 
-    # Returns true if the parameters in the search look bogus.
-    # This is to handle the issues that we've been getting with crawlers
-    # submitting invalid search parameters, like "    f" or "++++search_field".
+    # Returns true if the parameters in the search look bogus. This is to handle
+    # issues that we've been experiencing when crawlers submit requests that
+    # include invalid search parameters like "    f" or "++++search_field".
     def invalid_search()
       params.keys.each do |key|
         if key[0] == " " || key[0] == "+"
           return true
         end
+      end
+      false
+    end
+
+    # Don't allow users to navigate past page number 1,000. Reaching that far causes
+    # a lot of stress on Solr and most likely no human user will request this.
+    # Most of the requests that meet this criteria (e.g. page = 405698) have been
+    # from crawlers.
+    def invalid_page()
+      if params["page"] && params["page"].to_i > 1000
+        return true
       end
       false
     end
