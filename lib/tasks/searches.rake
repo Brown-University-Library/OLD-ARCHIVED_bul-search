@@ -45,6 +45,14 @@ namespace :josiah do
     puts "Deleting #{batch_size} searches older than #{min_date}"
     prune_searches(min_date, batch_size)
   end
+
+  desc "Returns a count of how many searches are old (and could be deleted)"
+  task "searches_count" => :environment do |_cmd, args|
+    months = 3
+    min_date = (Date.today - (months * 30)).to_s
+    count = count_searches(min_date)
+    puts "Searches older than #{min_date}: #{count}"
+  end
 end
 
 
@@ -81,6 +89,12 @@ def prune_searches(min_date, batch_size)
     "ORDER BY created_at " +
     "LIMIT #{batch_size};"
   ActiveRecord::Base.connection.execute(sql)
+end
+
+def count_searches(min_date)
+  sql = "SELECT count(id) FROM searches WHERE created_at < '#{min_date}' AND user_id IS NULL;"
+  rows = ActiveRecord::Base.connection.exec_query(sql).rows
+  rows[0][0].to_i
 end
 
 def max_searches_id
