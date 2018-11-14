@@ -284,6 +284,11 @@ class CatalogController < ApplicationController
   end
 
   def index
+    # This is needed to prevent turbolinks from re-displaying a previous error message
+    # on the request following a bad request from the same user. This issue only happens
+    # in production (!).
+    flash[:error] = nil
+
     @altered_search_terms = false
     @new_q = ""
 
