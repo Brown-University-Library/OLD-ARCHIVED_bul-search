@@ -39,9 +39,9 @@ namespace :josiah do
 
   desc "Delete the oldest records in the search table"
   task "searches_prune" => :environment do |_cmd, args|
-    months = 6
+    months = 3
     min_date = (Date.today - (months * 30)).to_s
-    batch_size = 1000
+    batch_size = 15000
     puts "Deleting #{batch_size} searches older than #{min_date}"
     prune_searches(min_date, batch_size)
   end
