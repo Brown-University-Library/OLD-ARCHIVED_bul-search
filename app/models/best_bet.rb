@@ -36,7 +36,11 @@ class BestBet
       return nil
     end
 
-    solr = RSolr.connect(:url => solr_url)
+    # The default Ruby's HTTP timeout values are 60 seconds which is too
+    # long and exacerbates server side issues when Solr is slow. Here we
+    # shorten it so that we fail-fast rather than compound the problem.
+    timeout_seconds = 2
+    solr = RSolr.connect(:url => solr_url, :read_timeout => timeout_seconds, :open_timeout => timeout_seconds)
     qp = {
       :wt=>"json",
       "q"=>"\"#{query}\"",
