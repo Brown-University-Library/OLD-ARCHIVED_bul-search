@@ -87,9 +87,9 @@ $(document).ready(function(){
                   <% else %>
                     <% if book.bib == nil %>
                       <!-- render as link -->
-                      <%= link_to(book.callno, catalog_index_path(q: '"' + book.callno_search + '"'), title: "Find this item in the catalog") %>
+                      <%= link_to(book.callno, catalog_index_path(q: book.callno_search, search_field: "call_number"), title: "Find this item in the catalog") %>
                     <% else %>
-                      <!-- don't render as link we already have a link by BIB number -->
+                      <!-- do not render as link - we already have a link by BIB number -->
                       <%= book.callno %>
                     <% end %>
                   <% end %>
