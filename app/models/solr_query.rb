@@ -54,7 +54,7 @@ class SolrQuery
         "facet.field" => facets,
         "facet" => true,
         "stats" => true,
-        "stats.field" => "pub_date"
+        "stats.field" => "pub_date_sort"
       }
 
       facets.each do |field_name|

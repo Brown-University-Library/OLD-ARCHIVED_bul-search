@@ -64,14 +64,24 @@ class CatalogController < ApplicationController
     config.add_facet_field 'access_facet', :label => 'Access', :collapse => false
     config.add_facet_field 'format', :label => 'Format', :limit => true, :collapse => false
     config.add_facet_field 'author_facet', :label => 'Author', :limit => 20
-    #config.add_facet_field 'pub_date', :label => 'Publication Year', :limit => 20, :sort => 'index', :collapse => false
-    config.add_facet_field 'pub_date', :label => 'Publication Year', :range => true
-    # config.add_facet_field 'pub_date_sort', :label => 'Publish Date', :query => {
-    #   :years_5 => { :label => 'within 5 Years', :fq => "pub_date:[#{Time.now.year - 5 } TO *]" },
-    #   :years_10 => { :label => 'within 10 Years', :fq => "pub_date:[#{Time.now.year - 10 } TO *]" },
-    #   :years_25 => { :label => 'within 25 Years', :fq => "pub_date:[#{Time.now.year - 25 } TO *]" },
-    #   :years_more => { :label => 'older than 25 Years', :fq => "pub_date:[#{Time.now.year - 26 } TO *]" }
-    # }
+
+    # Switching from pub_date (string) to pub_date_sort (int) so that the range
+    # is calculated properly. Having a field marked as `:range => true` is what causes
+    # Blacklight to request it as in the stats from Solr (via `stats.field=field_name`)
+    #
+    # See send_and_receive() in /Users/hectorcorrea/.gem/ruby/2.3.5/gems/blacklight-5.19.2/lib/blacklight/solr/repository.rb
+    # for an example.
+    #
+    # The field used as range must be numeric so that the min/max stats are calculated
+    # correctly. When the field is a string field the values are min="1000" and max="987"
+    # which is wrong and also causes Ruby to throw error:
+    #
+    #     Math::DomainError - Numerical argument is out of domain - "log10":
+    #
+    # somewhere along the way when it tries to calculate a range for the publication date
+    # slider based on these incorrect min/max values.
+    #
+    config.add_facet_field 'pub_date_sort', :label => 'Publication Year', :range => true
 
     config.add_facet_field 'topic_facet', :label => 'Topic', :limit => 20
     config.add_facet_field 'region_facet', :label => 'Topic: Region', :limit => 20
