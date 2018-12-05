@@ -39,7 +39,7 @@ BulSearch::Application.routes.draw do
   post 'availability/forward/' => 'availability#forward_many'
 
   # Patron controller
-  get 'patron/checkouts' => 'patron#checkouts'
+  post 'patron/checkouts' => 'patron#checkouts'
 
   # API controller
   get 'api/items/by_location' => 'api#items_by_location'
