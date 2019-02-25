@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="https://fonts.googleapis.com/css?family=Libre+Barcode+128+Text" rel="stylesheet">
+</head>
+
+<body>
+    <style>
+        table {
+            width: 100%;
+        }
+
+        .column {
+            padding-right: 80px;
+        }
+
+        .barcode-large {
+            font-family: "Libre Barcode 128 Text", cursive;
+            font-size: 60px;
+            white-space: nowrap; /* thanks Kerri! */
+        }
+
+        .barcode {
+            font-family: "Libre Barcode 128 Text", cursive;
+            font-size: 30px;
+            white-space: nowrap; /* thanks Kerri! */
+        }
+
+        .callnumber {
+            white-space: nowrap;
+        }
+    </style>
+
+    <table>
+        <col width="33%">
+        <col width="33%">
+        <col width="33%">
+        <tbody>
+            <% @table.each do |row| %>
+                <tr>
+                <% row.each do |cell| %>
+                    <td class="column">
+                        <%= cell["CallNumber"] %><br/>
+                        c. <%= cell["CopyNum"] %><br/>
+                        <hr/>
+                        <span class="barcode-large"><%= cell["BarCode"] %></span><br/>
+                        xxx-nnn zz.nn #n<br/>
+                        XXX XXXXXX XXXXXX <b>xnnnnn</b> XXX</br>
+                        <hr/>
+                        <%= cell["BestTitle"] %><br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        <hr/>
+                        xnnnnn XXX<br/>
+                        <%= cell["CallNumber"] %><br/>
+                        item / bib code goes here<br/>
+                        <%= cell["BestTitle"] %><br/>
+                        <span class="barcode"><%= cell["BarCode"] %></span><br/>
+                    </td>
+                <% end %>
+                </tr>
+            <% end %>
+      </tbody>
+    </table>
+</body>

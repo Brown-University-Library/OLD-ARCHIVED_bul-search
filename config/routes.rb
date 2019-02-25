@@ -48,9 +48,12 @@ BulSearch::Application.routes.draw do
   get 'api/items/shelf_items' => 'api#shelf_items'
 
   # Stats
-  get 'stats/hayQuery' => 'stats#hay_query'
   get 'stats/eds' => 'stats#eds'
   get 'stats/server' => 'stats#server'
+
+  # Hay Flags Project
+  get 'hay/list' => 'hay#list'
+  get 'hay/print' => 'hay#print'
 
   # Legacy
   get 'Search/Results' => "legacy#search_results"
