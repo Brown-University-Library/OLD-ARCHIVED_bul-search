@@ -196,6 +196,19 @@ class CatalogController < ApplicationController
       }
     end
 
+    if ENV["CJK"] == "true"
+      config.add_search_field('author_cjk') do |field|
+        field.solr_parameters = {
+          defType: "edismax",
+          qf: "author_cjk"
+        }
+        field.solr_local_parameters = {
+          :qf => 'author_cjk',
+          :pf => 'author_cfk'
+        }
+      end
+    end
+
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the SOLR field to sort by and
     # whether the sort is ascending or descending (it must be asc or desc
