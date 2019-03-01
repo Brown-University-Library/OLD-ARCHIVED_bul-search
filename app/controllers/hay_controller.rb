@@ -5,7 +5,11 @@ class HayController < ApplicationController
   def list
     @barcode_font = true
     @results = hay_data()
-    render
+    if params["format"] == "json"
+      render :json => @results
+    else
+      render
+    end
   end
 
   def print
@@ -26,16 +30,15 @@ class HayController < ApplicationController
         table = []
         row = []
         i = 0
-        hay_data().each do |result|
+        data = hay_data()
+        data.each do |result|
           row << result
           i += 1
           if i == 3
             table << row
             row = []
+            i = 0
           end
-        end
-        if row.size > 0
-          table << row
         end
         table
     end

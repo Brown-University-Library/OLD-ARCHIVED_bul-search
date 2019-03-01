@@ -11,33 +11,52 @@
 </style>
 
 <h2>Hay Query Test2</h2>
+<a href="<%= hay_print_url() %>">Print Version</a>
 <div>
   <table class="table">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Order</th>
+        <th scope="col">DisplayOrder</th>
+        <th scope="col">OrderNum</th>
+        <th scope="col">CallNumber</th>
+        <th scope="col">CopyNum</th>
+        <th scope="col">Volume</th>
+        <th scope="col">BarCode</th>
         <th scope="col">Code2</th>
-        <th scope="col">Location</th>
-        <th scope="col">Status</th>
-        <th scope="col">Copy</th>
-        <th scope="col">Barcode</th>
-        <th scope="col">Callnumber</th>
+        <th scope="col">ItemStatusCode</th>
+        <th scope="col">BibRecordNum</th>
+        <th scope="col">ItemRecordNum</th>
+        <th scope="col">LocalTag</th>
         <th scope="col">Title</th>
+        <th scope="col">Edition</th>
+        <th scope="col">Publisher</th>
+        <th scope="col">Description</th>
+        <th scope="col">ItemLocation</th>
+        <th scope="col">LocalNotes</th>
+        <th scope="col">BndWidth</th>
       </tr>
     </thead>
     <tbody>
       <% @results.each do |r| %>
-        <tr>
-          <th scope="row"><%= r["RecordNum"] %></th>
+        <tr class="row">
           <td><%= r["DisplayOrder"] %></td>
-          <td><%= r["Code2"] %></td>
-          <td><%= r["LocationCode"] %></td>
-          <td><%= r["StatusCode"] %></td>
-          <td><%= r["CopyNum"] %></td>
-          <td class="barcode"><%= r["BarCode"] %></td>
+          <td><%= r["OrderNum"] %></td>
           <td class="callnumber"><%= r["CallNumber"] %></td>
-          <td><%= r["BestTitle"] %></td>
+          <td><%= r["CopyNum"] %></td>
+          <td><%= r["Volume"] %></td>
+          <td class="barcode"><%= r["BarCode"] %></td>
+          <td><%= r["Code2"] %></td>
+          <td><%= r["ItemStatusCode"] %></td>
+          <td><%= r["BibRecordNum"] %></td>
+          <td><%= r["ItemRecordNum"] %></td>
+          <td><%= r["LocalTag"] %></td>
+          <td><%= r["Title"] %></td>
+          <td><%= r["Edition"] %></td>
+          <td><%= r["Publisher"] %></td>
+          <td><%= r["Description"] %></td>
+          <td><%= r["ItemLocation"] %></td>
+          <td><%= r["LocalNotes"] %></td>
+          <td><%= r["BndWidth"] %></td>
         </tr>
       <% end %>
     </tbody>
