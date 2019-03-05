@@ -11,32 +11,29 @@
 </style>
 
 <h2>Hay Query Test2</h2>
-<a href="<%= hay_print_url() %>">Print Version</a>
-<div>
+<a href="<%= hay_flags_url(format: 'tsv') %>">Download (CSV)</a> | <a href="<%= hay_flags_print_url() %>">Print Version</a>
+<div style="overflow-x: scroll;">
   <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">DisplayOrder</th>
-        <th scope="col">OrderNum</th>
-        <th scope="col">CallNumber</th>
-        <th scope="col">CopyNum</th>
-        <th scope="col">Volume</th>
-        <th scope="col">BarCode</th>
-        <th scope="col">Code2</th>
-        <th scope="col">ItemStatusCode</th>
-        <th scope="col">BibRecordNum</th>
-        <th scope="col">ItemRecordNum</th>
-        <th scope="col">LocalTag</th>
-        <th scope="col">Title</th>
-        <th scope="col">Edition</th>
-        <th scope="col">Publisher</th>
-        <th scope="col">Description</th>
-        <th scope="col">ItemLocation</th>
-        <th scope="col">LocalNotes</th>
-        <th scope="col">BndWidth</th>
+      <tr class="row">
+        <th>DisplayOrder</th>
+        <th>OrderNum</th>
+        <th>CallNumber</th>
+        <th >CopyNum</th>
+        <th >Volume</th>
+        <th >BarCode</th>
+        <th >Code2</th>
+        <th >ItemStatusCode</th>
+        <th >BibRecordNum</th>
+        <th >ItemRecordNum</th>
+        <th >LocalTag</th>
+        <th >Title</th>
+        <th >Edition</th>
+        <th >Publisher</th>
+        <th >Description</th>
+        <th >ItemLocation</th>
+        <th >LocalNotes</th>
+        <th >BndWidth</th>
       </tr>
-    </thead>
-    <tbody>
       <% @results.each do |r| %>
         <tr class="row">
           <td><%= r["DisplayOrder"] %></td>
@@ -47,7 +44,7 @@
           <td class="barcode"><%= r["BarCode"] %></td>
           <td><%= r["Code2"] %></td>
           <td><%= r["ItemStatusCode"] %></td>
-          <td><%= r["BibRecordNum"] %></td>
+          <td><a href="<%= catalog_url(id: r['BibRecordNum']) %>" target="_blank"><%= r['BibRecordNum'] %></a></td>
           <td><%= r["ItemRecordNum"] %></td>
           <td><%= r["LocalTag"] %></td>
           <td><%= r["Title"] %></td>
@@ -59,6 +56,5 @@
           <td><%= r["BndWidth"] %></td>
         </tr>
       <% end %>
-    </tbody>
   </table>
 </div>

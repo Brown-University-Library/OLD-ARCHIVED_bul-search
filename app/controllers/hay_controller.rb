@@ -2,17 +2,20 @@
 #
 require "./lib/http_json.rb"
 class HayController < ApplicationController
-  def list
+  def flags
     @barcode_font = true
     @results = hay_data()
-    if params["format"] == "json"
+    case
+    when params["format"] == "json"
       render :json => @results
+    when params["format"] == "tsv"
+      send_data(to_tsv(@results), :filename => "flags.tsv", :type => "text/tsv")
     else
       render
     end
   end
 
-  def print
+  def flags_print
     @table = hay_data_table()
     render layout: false
   end
@@ -24,6 +27,20 @@ class HayController < ApplicationController
             Rails.logger.info("Loading Hay query data from bibService #{url}")
             HttpUtil::HttpJson.get(url)
         end
+    end
+
+    def to_tsv(data)
+      header = data[0].keys.join("\t")
+      tsv = header + "\tURL\r\n"
+      data.each do |row|
+        values = []
+        row.keys.each do |key|
+          values << row[key]
+        end
+        values << "http://search.library.brown.edu/catalog/#{row['BibRecordNum']}"
+        tsv += values.join("\t") + "\r\n"
+      end
+      tsv
     end
 
     def hay_data_table()

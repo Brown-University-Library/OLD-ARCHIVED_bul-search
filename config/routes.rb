@@ -52,8 +52,8 @@ BulSearch::Application.routes.draw do
   get 'stats/server' => 'stats#server'
 
   # Hay Flags Project
-  get 'hay/list' => 'hay#list', as: :hay_list
-  get 'hay/print' => 'hay#print', as: :hay_print
+  get 'hay/flags' => 'hay#flags', as: :hay_flags
+  get 'hay/flags/print' => 'hay#flags_print', as: :hay_flags_print
 
   # Legacy
   get 'Search/Results' => "legacy#search_results"

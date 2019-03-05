@@ -8,12 +8,19 @@
 
 <body>
     <style>
+        /*
+        This does not work :(
+        Select landscape by default (https://stackoverflow.com/a/1392794/446681)
+        @media print{@page {size: landscape}}
+        */
+
         table {
             width: 100%;
         }
 
         .column {
             padding-right: 80px;
+            font-size: large;
         }
 
         .barcode-large {
@@ -24,7 +31,7 @@
 
         .barcode {
             font-family: "Libre Barcode 128 Text", cursive;
-            font-size: 30px;
+            font-size: 60px;
             white-space: nowrap; /* thanks Kerri! */
         }
 
@@ -50,8 +57,7 @@
                         c. <%= cell["CopyNum"] %> <%= cell["Volume"] %>
                         <hr/>
                         <span class="barcode-large"><%= cell["BarCode"] %></span><br/>
-                        xxx-nnn zz.nn #n<br/>
-                        XXX XXXXXX XXXXXX <b>xnnnnn</b> XXX</br>
+                        <%= cell["DisplayOrder"] %> / <%= cell["ItemLocation"] %> / <%= cell["LocalTag"] %><br/>
                         <hr/>
                         <%= cell["Title"] %><br/>
                         <%= cell["Description"] %><br/>
@@ -59,20 +65,21 @@
                         &nbsp;<br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
-                        <%= cell["DisplayOrder"] %><br/>
                         <%= cell["OrderNum"] %><br/>
                         <%= cell["Code2"] %><br/>
                         <%= cell["ItemStatusCode"] %><br/>
-                        <%= cell["LocalTag"] %><br/>
+
                         <%= cell["Edition"] %><br/>
-                        <%= cell["ItemLocation"] %><br/>
                         <%= cell["LocalNotes"] %><br/>
-                        <%= cell["BndWidth"] %><br/>
+                        <br/>
+                        Bound width: <%= cell["BndWidth"] ? "Yes" : "No" %><br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
                         <hr/>
-                        xnnnnn XXX<br/>
                         <%= cell["CallNumber"] %> c.<%= cell["CopyNum"] %> <%= cell["Volume"] %><br/>
                         <%= cell["ItemRecordNum"] %> / <%= cell["BibRecordNum"] %><br/>
                         <%= cell["Title"] %><br/>
