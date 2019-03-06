@@ -31,7 +31,7 @@ class HayController < ApplicationController
 
     def to_tsv(data)
       header = data[0].keys.join("\t")
-      tsv = header + "\tURL\r\n"
+      tsv = header + "\tJosiahLink\r\n"
       data.each do |row|
         values = []
         row.keys.each do |key|
