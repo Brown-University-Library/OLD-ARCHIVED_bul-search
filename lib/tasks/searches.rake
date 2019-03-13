@@ -37,13 +37,15 @@ namespace :josiah do
     end
   end
 
-  desc "Delete the oldest records in the search table"
+  desc "Delete the oldest records in the search and user tables"
   task "searches_prune" => :environment do |_cmd, args|
     months = 3
     min_date = (Date.today - (months * 30)).to_s
     batch_size = 15000
-    puts "Deleting #{batch_size} searches older than #{min_date}"
+    puts "Deleting searches older than #{min_date} (batch size #{batch_size})"
     prune_searches(min_date, batch_size)
+    puts "Deleting guest users older than #{min_date} (batch size #{batch_size})"
+    prune_users(min_date, batch_size)
   end
 
   desc "Returns a count of how many searches are old (and could be deleted)"
@@ -54,7 +56,6 @@ namespace :josiah do
     puts "Searches older than #{min_date}: #{count}"
   end
 end
-
 
 def process_searches
   max_id = max_searches_id
@@ -83,12 +84,25 @@ def get_searches_batch(start_id, end_id)
 end
 
 def prune_searches(min_date, batch_size)
-  # TODO: loop until no more records to delete are found
-  sql = "DELETE FROM searches " +
+  while count_searches(min_date) > 0 do
+    puts "Deleting batch..."
+    sql = "DELETE FROM searches " +
     "WHERE created_at < '#{min_date}' AND user_id IS NULL " +
     "ORDER BY created_at " +
     "LIMIT #{batch_size};"
-  ActiveRecord::Base.connection.execute(sql)
+    ActiveRecord::Base.connection.execute(sql)
+  end
+end
+
+def prune_users(min_date, batch_size)
+  while count_users(min_date) > 0 do
+    puts "Deleting batch..."
+    sql = "DELETE FROM users " +
+    "WHERE created_at < '#{min_date}' AND guest = 1 " +
+    "ORDER BY created_at " +
+    "LIMIT #{batch_size};"
+    ActiveRecord::Base.connection.execute(sql)
+  end
 end
 
 def count_searches(min_date)
@@ -97,8 +111,13 @@ def count_searches(min_date)
   rows[0][0].to_i
 end
 
+def count_users(min_date)
+  sql = "SELECT count(id) FROM users WHERE created_at < '#{min_date}' AND guest = 1;"
+  rows = ActiveRecord::Base.connection.exec_query(sql).rows
+  rows[0][0].to_i
+end
+
 def max_searches_id
-  # return 50000
   sql = "select max(id) from searches;"
   rows = ActiveRecord::Base.connection.exec_query(sql).rows
   rows[0][0].to_i
