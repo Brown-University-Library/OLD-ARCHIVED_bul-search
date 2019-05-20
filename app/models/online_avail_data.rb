@@ -12,6 +12,9 @@ class OnlineAvailData
       @url = url.gsub(CLASSIC_JOSIAH_URL, NEW_JOSIAH_URL)
     else
       @url = url
+      if !@url.start_with?("http://") && !@url.start_with?("https://")
+        @url = "http://#{@url}"
+      end
     end
     if note == nil && materials == nil
       @label = "Available online"
