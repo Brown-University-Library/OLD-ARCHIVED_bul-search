@@ -27,7 +27,9 @@ gem 'blacklight', "~> 5.13"
 gem 'blacklight_advanced_search', '~> 5.0'
 
 gem "jettywrapper", "~> 1.7"
-gem "devise"
+
+# Older versions have a security vulnerability
+gem "devise", ">= 4.6.0"
 gem "devise-guests", "~> 0.3"
 gem "omniauth"
 gem "omniauth-shibboleth"
@@ -43,6 +45,9 @@ group :development do
 end
 
 gem 'handlebars_assets'
+
+# Older versions have a security vulnerability
+gem "bootstrap-sass", ">= 3.4.1"
 
 group :production do
   # Rails 4.x must stay within MySQL 0.4
