@@ -31,6 +31,7 @@ $(document).ready(function() {
       // We are using .ajax() rather than .getJSON() here to be able
       // to handle errors (https://stackoverflow.com/a/5121811/446681)
       // The timeout value is required for the error() function to be called!
+      console.log( 'apiUrl, ```' + apiUrl + '```' )
       req = $.ajax({url: apiUrl, dataType: "jsonp", timeout: 5000});
       req.success(scope.addAvailability);
       req.error(scope.errAvailability);
@@ -141,6 +142,7 @@ $(document).ready(function() {
 
   scope.addAvailability = function(availabilityResponse) {
     // Realtime status of items (and other item specific information)
+    console.log( 'starting addAvailability()' )
     _.each(availabilityResponse.items, function(avItem) {
       scope.updateItemInfo(avItem);
     });
@@ -210,11 +212,13 @@ $(document).ready(function() {
 
 
   scope.showAeon = function() {
+    console.log( 'starting showAeon()' );
     var i, item, row, barcode, status;
     for(i = 0; i < itemsData.length; i++) {
       item = itemsData[i];
       row = scope.rowForItem(item);
       barcode = null;
+      console.log( 'barcode, `' + barcode + '`' );
       status = null;
       scope.updateItemAeonLinks(row, item, barcode, status);
     }
@@ -285,6 +289,7 @@ $(document).ready(function() {
   // Updates item information (already on the page) with the
   // extra information that we got from the Availability service.
   scope.updateItemInfo = function(avItem) {
+    console.log( 'starting updateItemInfo()' )
     var item, barcode, callnumber, itemRow;
 
     barcode = avItem['barcode'] || "";
@@ -381,18 +386,23 @@ $(document).ready(function() {
 
 
   scope.updateItemAeonLinks = function(row, item, barcode, status) {
+    console.log( 'starting updateItemAeonLinks()' );
     var url, html;
     var location = item.location_name;
+    console.log( 'location, `' + location + '`' );  // not relevant to _annex_-hay-aeon
     var location_prefix = (location || "").slice(0, 3).toUpperCase();
+    console.log( 'location_prefix, `' + location_prefix + '`' );  // not relevant to _annex_-hay-aeon
 
     // JCB Aeon link
     if (location_prefix == "JCB") {
       url = jcbRequestFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number);
       html = '<a href="' + url + '">request-access</a>';
+      // console.log( 'html, ```' + html + '```' );
       row.find(".jcb_url").html(html);
     }
 
     // Hay Aeon link (i.e. "request access")
+    // TODO: _possible_ change from hay google-doc: use item.location-codes `arcms` or `hms`
     if (location_prefix == "HAY") {
       if (isValidHayAeonLocation(location) == true) {
         url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
@@ -403,12 +413,17 @@ $(document).ready(function() {
 
     // Annex Hay Aeon Link (i.e. "request access")
     // qhs = annex hay
+    // if ((item.location_code == "qhs") && (status == "AVAILABLE")) {
+    //   if ( scope.getFormat() != "Archives/Manuscripts" ) {
+    //     url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
+    //     html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
+    //     row.find(".annexhay_easyrequest_url").html(html);
+    //   }
+    // }
     if ((item.location_code == "qhs") && (status == "AVAILABLE")) {
-      if ( scope.getFormat() != "Archives/Manuscripts" ) {
-        url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
-        html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
-        row.find(".annexhay_easyrequest_url").html(html);
-      }
+      url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
+      html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
+      row.find(".annexhay_easyrequest_url").html(html);
     }
   };
 
