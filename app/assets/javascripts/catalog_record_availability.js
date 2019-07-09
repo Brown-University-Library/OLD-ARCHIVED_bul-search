@@ -420,7 +420,9 @@ $(document).ready(function() {
     //     row.find(".annexhay_easyrequest_url").html(html);
     //   }
     // }
-    if ((item.location_code == "qhs") && (status == "AVAILABLE")) {
+
+    // if ( (item.location_code == "qhs") && (status == "AVAILABLE") ) {
+    if ( (item.location_code == "qhs") && (status == "AVAILABLE") && (item.call_number.toUpperCase().includes("RESTRICTED") == false) ) {
       url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
       html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
       row.find(".annexhay_easyrequest_url").html(html);
