@@ -95,7 +95,7 @@ $(document).ready(function() {
           }
 
           // add Annex-Hay `easyrequest_hay` link if necessary
-          if ((item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE")) {
+          if ( (item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE") && (item['callnumber'].toUpperCase().includes("RESTRICTED") == false) ) {
             console.log( 'itemData.format, `' + itemData.format + '`' );
             /* 2019-July: restrictions on "Archives/Manuscripts" items eased */
             // if ( itemData.format != "Archives/Manuscripts" ) {
