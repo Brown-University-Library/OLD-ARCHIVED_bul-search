@@ -92,9 +92,12 @@ $(document).ready(function() {
 
           // add Annex-Hay `easyrequest_hay` link if necessary
           if ((item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE")) {
-            if ( itemData.format != "Archives/Manuscripts" ) {
-              item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
-            }
+            console.log( 'itemData.format, `' + itemData.format + '`' );
+            /* 2019-July: restrictions on "Archives/Manuscripts" items eased */
+            // if ( itemData.format != "Archives/Manuscripts" ) {
+            //   item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+            // }
+            item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
           }
 
         });
