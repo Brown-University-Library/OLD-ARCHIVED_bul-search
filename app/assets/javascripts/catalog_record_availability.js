@@ -402,10 +402,13 @@ $(document).ready(function() {
     }
 
     /* Hay Aeon link (i.e. "request access")
-       - location of HMCF appears as `HAY MICROFLM`` (yes, with that spelling) */
+       - location `HMCF` appears as `HAY MICROFLM`` (yes, with that spelling)
+       - location `HJH` appears as `HAY JOHN-HAY`
+       - `isValidHayAeonLocation()` set in `application.js`
+       */
     // TODO: _possible_ change from hay google-doc: use item.location-codes `arcms` or `hms`
-    if ( location_prefix == "HAY" || location == "HMCF" ) {
-      console.log( 'HAY prefix found.' )
+    if ( location_prefix == "HAY" || location == "HMCF" || location == "HJH" ) {
+      console.log( 'HAY-ish prefix found.' )
       if ( isValidHayAeonLocation(location) == true ) {
         console.log( 'valid hay-aeon location found' )
         url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
