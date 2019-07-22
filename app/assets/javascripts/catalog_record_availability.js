@@ -393,7 +393,7 @@ $(document).ready(function() {
     var location_prefix = (location || "").slice(0, 3).toUpperCase();
     console.log( 'location_prefix, `' + location_prefix + '`' );  // not relevant to _annex_-hay-aeon
 
-    // JCB Aeon link
+    /* JCB Aeon link */
     if (location_prefix == "JCB") {
       url = jcbRequestFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number);
       html = '<a href="' + url + '">request-access</a>';
@@ -401,17 +401,21 @@ $(document).ready(function() {
       row.find(".jcb_url").html(html);
     }
 
-    // Hay Aeon link (i.e. "request access")
+    /* Hay Aeon link (i.e. "request access")
+       - location of HMCF appears as `HAY MICROFLM`` (yes, with that spelling) */
     // TODO: _possible_ change from hay google-doc: use item.location-codes `arcms` or `hms`
-    if (location_prefix == "HAY") {
-      if (isValidHayAeonLocation(location) == true) {
+    if ( location_prefix == "HAY" || location == "HMCF" ) {
+      console.log( 'HAY prefix found.' )
+      if ( isValidHayAeonLocation(location) == true ) {
+        console.log( 'valid hay-aeon location found' )
         url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
-        html = '<a href="' + url + '">request-access</a>';
+        html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
         row.find(".hay_aeon_url").html(html);
       }
     }
 
-    // Annex Hay Aeon Link (i.e. "request access")
+    /* Annex Hay Aeon Link (i.e. "request access") */
+
     // qhs = annex hay
     // if ((item.location_code == "qhs") && (status == "AVAILABLE")) {
     //   if ( scope.getFormat() != "Archives/Manuscripts" ) {
@@ -421,7 +425,6 @@ $(document).ready(function() {
     //   }
     // }
 
-    // if ( (item.location_code == "qhs") && (status == "AVAILABLE") ) {
     if ( (item.location_code == "qhs") && (status == "AVAILABLE") && (item.call_number.toUpperCase().includes("RESTRICTED") == false) ) {
       url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
       html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';

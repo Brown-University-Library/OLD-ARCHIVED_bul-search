@@ -205,6 +205,7 @@ function isValidHayAeonLocation( josiah_location ) {
      - removing "HAY MANUSCRIPTS" from <https://library.brown.edu/hay_aeon_exclusions/hay_aeon_exclusions.js>
      - adding the two "HAY MICRO..." locations below
      */
+  console.log( 'josiah_location being evaluated, `' + josiah_location + '`' );
   console.log( '- INITIAL non_aeon_locations, ```' + hay_aeon_exclusions + '```' )
   var non_aeon_locations = hay_aeon_exclusions.filter(
     function( value, index, arr ){
@@ -213,8 +214,8 @@ function isValidHayAeonLocation( josiah_location ) {
       }
     }
   );
-  non_aeon_locations.push( "HAY MICROFILM" );
-  non_aeon_locations.push( "HAY MICROFLM" );  // not a mistake; see <https://search.library.brown.edu/catalog/b2734709>
+  // non_aeon_locations.push( "HAY MICROFILM" );
+  // non_aeon_locations.push( "HAY MICROFLM" );  // not a mistake; see <https://search.library.brown.edu/catalog/b2734709>
   non_aeon_locations.push( "HAY JOHN-HAY" );
   console.log( '- non_aeon_locations, ```' + non_aeon_locations + '```' )
   // END OF TEMP CODE
@@ -226,7 +227,10 @@ function isValidHayAeonLocation( josiah_location ) {
       hay_found = true;
       // console.log( 'hay_found, `' + hay_found + '`' )
     }
+  } else if (josiah_location == "HMCF") {
+    hay_found = true;
   }
+  console.log( 'hay_found determination, `' + hay_found + '`' );
   return hay_found;
 }
 
