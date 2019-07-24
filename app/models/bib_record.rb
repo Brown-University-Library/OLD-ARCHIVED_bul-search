@@ -46,7 +46,7 @@ class BibRecord
     @new_uniform_title_author_display = ""
     @physical_display = []
     @pub_date = []
-    @pub_date_sort = 0
+    @pub_date_sort = nil
     @online_b = false
     @access_facet = nil
     @format = nil
