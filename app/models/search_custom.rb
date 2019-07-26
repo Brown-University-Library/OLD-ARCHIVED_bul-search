@@ -4,52 +4,70 @@ class SearchCustom
   end
 
   # Issues a search for the indicated call number. Notice that we use a
-  # specific Solr field (callnumber_ss) for this and we take into account
-  # several gotchas.
+  # specific Solr fields (callnumber_ss and callnumber_std_ss) for this
+  # and we take into account several gotchas.
   #
   # Returns three values:
   #   response: The blacklight response (suitable for @response)
   #   docs: The documents found (suitable for @document_list)
   #   match: The callnumber that was found (could be different from the one requested)
+  #
   def callnumber(callnumber, params)
-    params = params || {}
-    search_term = callnumber_searchable(callnumber)
-    solr_query = SolrQuery.new(@blacklight_config)
-    if search_term == ""
-      q = "*:*"
-    else
-      q =  "callnumber_ss:#{search_term}"
-    end
-
-    response, docs = solr_query.search(q, params)
+    callnumber = callnumber.strip
+    response, docs, match = callnumber_search(callnumber, params, "callnumber_ss")
     if docs.count > 0
-      # We are done
-      return response, docs, callnumber
+      # We found a match with the value provided as-is.
+      return response, docs, match
     end
 
     if wildcard_search?(callnumber)
-      # Don't retry wildcard searches
-      return response, docs, callnumber
+      # Try again using the normalized format.
+      # We are done regardless of the result.
+      callnumber = callnumber_normalized(callnumber) + "*"
+      response, docs, match = callnumber_search(callnumber, params, "callnumber_std_ss")
+      return response, docs, match
+    end
+
+    normalized = callnumber_normalized(callnumber)
+    response, docs, match = callnumber_search(normalized, params, "callnumber_std_ss")
+    if docs.count > 0
+      # We found a match with the normalized value.
+      return response, docs, match
     end
 
     # Try a search without the last token. This is to account for call
-    # numbers that include values that we don't index, see for example
-    # https://search.library.brown.edu/catalog/b2340347
-    # Notice that the "33rd" in the call number "1-SIZE GN33 .G85 1994/1995 33rd"
+    # numbers that include values that we don't index. For an example
+    # see record https://search.library.brown.edu/catalog/b2340347, notice
+    # that the "33rd" in the call number "1-SIZE GN33 .G85 1994/1995 33rd"
     # is not in the MARC data that we get from Sierra.
-    shortened = callnumber_shorten(callnumber)
+    #
+    #   TODO: We currently issue two shortened searches. First we shorten the
+    #   value as entered by the user. If that fails, then we shorten the
+    #   normalized value. I believe we can just issue one search using the
+    #   shorten normalized value, but I have not tested that. For now, we'll
+    #   keep them both.
+    #
+    shortened = callnumber_shorten(callnumber, " ")
     if shortened == ""
-      # Nothing else to try
-      return response, docs, callnumber
+      # No short version to retry, we are done.
+      return response, docs, match
     end
 
-    q =  "callnumber_ss:#{shortened}"
-    response, docs = solr_query.search(q, params)
-    if docs.count == 0
-      return response, docs, callnumber
+    response, docs, match = callnumber_search(shortened, params, "callnumber_ss")
+    if docs.count > 0
+      # We found a match with the shortened value.
+      return response, docs, match
     end
 
-    return response, docs, callnumber_human(shortened)
+    shortened = callnumber_shorten(normalized, "|")
+    if shortened == ""
+      # No short version to retry, we are done
+      return response, docs, match
+    end
+
+    # Retry with the shortened normalized call number.
+    response, docs, match = callnumber_search(shortened, params, "callnumber_std_ss")
+    return response, docs, match
   end
 
   def stats_by_format()
@@ -77,6 +95,24 @@ class SearchCustom
   end
 
   private
+    def callnumber_search(callnumber, params, callnumber_field)
+      params = params || {}
+      search_term = callnumber_searchable(callnumber)
+      solr_query = SolrQuery.new(@blacklight_config)
+      if search_term == ""
+        q = "*:*"
+      else
+        q =  "#{callnumber_field}:#{search_term}"
+      end
+
+      response, docs = solr_query.search(q, params)
+      return response, docs, callnumber
+    end
+
+    def callnumber_normalized(callnumber)
+      callnumber.upcase.scan(/\w+|\d+/).join("|")
+    end
+
     # Returns the text in a format suitable for call number search.
     def callnumber_searchable(text)
       # Drop the N-SIZE prefix since we don't index it.
@@ -84,6 +120,7 @@ class SearchCustom
       if text == ""
         return ""
       end
+
       if wildcard_search?(text)
         # Make it a Solr RegEx value
         text = "/" + solr_safe_regex(text.gsub("*", "")) + ".*/"
@@ -95,18 +132,18 @@ class SearchCustom
     end
 
     # Shorten a call number by dropping the last token
-    def callnumber_shorten(text)
-      tokens = text.split(" ")
+    def callnumber_shorten(text, delimiter = " ")
+      tokens = text.split(delimiter)
       return "" if tokens.count < 2
-      shorten = tokens[0..-2].join(" ") # drop the last token
+      shorten = tokens[0..-2].join(delimiter)   # drop the last token
       if wildcard_search?(text)
         shorten += "*"
       end
       callnumber_searchable(shorten)
     end
 
-    # Returns the value in a human friendly way (i.e. removes the values added
-    # in callnumber_searchable())
+    # Returns the value in a human friendly way (i.e. removes
+    # the values added in callnumber_searchable())
     def callnumber_human(text)
       if text.length > 2 && text[0] == '"' && text[-1] == '"'
         # Drop the quotes
@@ -132,7 +169,7 @@ class SearchCustom
           when (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") ||
             (c >= "0" && c <= "9") || c == " " || c == "_"
             safe_value += c
-          when c == "+" || c == "." || c == "*" || c == "/"
+          when c == "+" || c == "." || c == "*" || c == "/" || c == "|"
             safe_value += "\\" + c
           else
             safe_value += "."
