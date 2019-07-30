@@ -23,12 +23,12 @@ class SearchCustom
     if wildcard_search?(callnumber)
       # Try again using the normalized format.
       # We are done regardless of the result.
-      callnumber = callnumber_normalized(callnumber) + "*"
+      callnumber = CallnumberUtils::normalized(callnumber) + "*"
       response, docs, match = callnumber_search(callnumber, params, "callnumber_std_ss")
       return response, docs, match
     end
 
-    normalized = callnumber_normalized(callnumber)
+    normalized = CallnumberUtils::normalized(callnumber)
     response, docs, match = callnumber_search(normalized, params, "callnumber_std_ss")
     if docs.count > 0
       # We found a match with the normalized value.
@@ -107,10 +107,6 @@ class SearchCustom
 
       response, docs = solr_query.search(q, params)
       return response, docs, callnumber
-    end
-
-    def callnumber_normalized(callnumber)
-      callnumber.upcase.scan(/\w+|\d+/).join("|")
     end
 
     # Returns the text in a format suitable for call number search.

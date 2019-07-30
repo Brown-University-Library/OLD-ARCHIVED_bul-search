@@ -211,9 +211,16 @@ function catalogBoxes(query) {
           //no results from catalog.
           var wcUrl = $('#worldcat-search').attr('href');
           var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
-          $('#books').append('<h5>No results.  Try ' + txt + '</h5>');
+          $('#books').append('<h5>No results.</h5><h5>Try ' + txt + '</h5>');
           //$('#format-filter').hide();
         };
+
+        var emptySet = response['groups'].length == 0;
+        if (emptySet) {
+          var cnUrl = "<a href=\"<%= catalog_index_url(q: @query, search_field: 'call_number') =%>\">call number</a>"
+          $('#books').append('<h5>Or try again as a ' + cnUrl + '</h5>');
+        }
+
         //add other formats
         var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
         var sortedOther = sortByTopFormat(other);

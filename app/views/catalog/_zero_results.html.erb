@@ -10,6 +10,8 @@
       <%= link_to("try searching everything", url_for(params_for_search(:search_field=>blacklight_config.default_search_field.key))) %>
       </li>
     <%- end %>
-
+    <%- if params[:q] && params[:search_field] != "call_number" %>
+      <li>Try again as a <a href="<%= catalog_index_url(q: params[:q], search_field: 'call_number') %>">call number search</a>.</li>
+    <%- end %>
   </ul>
 </div>
