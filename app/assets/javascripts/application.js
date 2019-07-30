@@ -197,26 +197,27 @@ function isValidHayAeonLocation( josiah_location ) {
   var hay_found = false;
 
   // original code...
-  // var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
-  // console.log( '- INITIAL non_aeon_locations, ```' + non_aeon_locations + '```' )
+  var non_aeon_locations = hay_aeon_exclusions;  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
+  console.log( '- INITIAL non_aeon_locations, ```' + non_aeon_locations + '```' )
 
   /* TEMP CODE
      TODO: before moving to production, restore the code above after...
      - removing "HAY MANUSCRIPTS" from <https://library.brown.edu/hay_aeon_exclusions/hay_aeon_exclusions.js>
      */
-  console.log( 'josiah_location being evaluated, `' + josiah_location + '`' );
-  console.log( '- INITIAL non_aeon_locations, ```' + hay_aeon_exclusions + '```' )
-  var non_aeon_locations = hay_aeon_exclusions.filter(
-    function( value, index, arr ){
-      if (value != "HAY MANUSCRIPTS") {
-        return value;
-      }
-    }
-  );
+  // console.log( 'josiah_location being evaluated, `' + josiah_location + '`' );
+  // console.log( '- INITIAL non_aeon_locations, ```' + hay_aeon_exclusions + '```' )
+  // var non_aeon_locations = hay_aeon_exclusions.filter(
+  //   function( value, index, arr ){
+  //     if (value != "HAY MANUSCRIPTS") {
+  //       return value;
+  //     }
+  //   }
+  // );
+  //
   // non_aeon_locations.push( "HAY MICROFILM" );
   // non_aeon_locations.push( "HAY MICROFLM" );  // spelling not a mistake; see <https://search.library.brown.edu/catalog/b2734709>
   // non_aeon_locations.push( "HAY JOHN-HAY" );
-  console.log( '- non_aeon_locations, ```' + non_aeon_locations + '```' )
+  // console.log( '- non_aeon_locations, ```' + non_aeon_locations + '```' )
   // END OF TEMP CODE
 
   // console.log( '- josiah_location, ```' + josiah_location + '```' )
