@@ -368,7 +368,7 @@ class CatalogController < ApplicationController
       is_allfields = params[:search_field] == nil || params[:search_field] == "all_fields"
       if is_allfields
         search_url = catalog_index_url(q: params[:q], search_field: "call_number")
-        @retry_option = "Try again using <a href=\"#{search_url}\">call number search</a>."
+        @retry_option = "If you are searching for a call number, try again using the <a href=\"#{search_url}\">call number search</a>."
       else
         field_info = search_field_list.find{|f| f.key == params[:search_field]}
         if field_info
