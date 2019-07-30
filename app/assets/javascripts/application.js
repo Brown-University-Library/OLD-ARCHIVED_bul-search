@@ -141,7 +141,7 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 - `HAY BROADSIDES` - multiple 'HAY BROADSIDES' copies: <http://127.0.0.1:3000/catalog/b3000585>
 - `HAY STAR & HAY LINCOLN` - multiple copies, mixture of two: <http://127.0.0.1:3000/catalog/b1870356>
 - `HAY STAR` - very-long-title handling: <http://127.0.0.1:3000/catalog/b1001443>
-- `HAY MANUSCRIPTS` - _NO_ Aeon link should appear: <http://127.0.0.1:3000/catalog/b2499606>
+- `HAY MANUSCRIPTS` - updated 2019-July; Aeon link now should appear: <http://127.0.0.1:3000/catalog/b2499606>
 - multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
 
 function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) {
@@ -174,7 +174,7 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 - `HAY BROADSIDES` - multiple 'HAY BROADSIDES' copies: <http://127.0.0.1:3000/catalog/b3000585>
 - `HAY STAR & HAY LINCOLN` - multiple copies, mixture of two: <http://127.0.0.1:3000/catalog/b1870356>
 - `HAY STAR` - very-long-title handling: <http://127.0.0.1:3000/catalog/b1001443>
-- `HAY MANUSCRIPTS` - _NO_ Aeon link should appear: <http://127.0.0.1:3000/catalog/b2499606>
+- `HAY MANUSCRIPTS` - updated 2019-July; Aeon link now should appear: <http://127.0.0.1:3000/catalog/b2499606>
 - multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
 
 function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnumber, location ) {
@@ -195,13 +195,41 @@ function easyrequestHayFullLink( bib, barcode, title, author, publisher, callnum
 function isValidHayAeonLocation( josiah_location ) {
   /* called by catalog_record_availability.js */
   var hay_found = false;
-  var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
+
+  // original code...
+  // var non_aeon_locations = hay_aeon_exclusions  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
+  // console.log( '- INITIAL non_aeon_locations, ```' + non_aeon_locations + '```' )
+
+  /* TEMP CODE
+     TODO: before moving to production, restore the code above after...
+     - removing "HAY MANUSCRIPTS" from <https://library.brown.edu/hay_aeon_exclusions/hay_aeon_exclusions.js>
+     */
+  console.log( 'josiah_location being evaluated, `' + josiah_location + '`' );
+  console.log( '- INITIAL non_aeon_locations, ```' + hay_aeon_exclusions + '```' )
+  var non_aeon_locations = hay_aeon_exclusions.filter(
+    function( value, index, arr ){
+      if (value != "HAY MANUSCRIPTS") {
+        return value;
+      }
+    }
+  );
+  // non_aeon_locations.push( "HAY MICROFILM" );
+  // non_aeon_locations.push( "HAY MICROFLM" );  // spelling not a mistake; see <https://search.library.brown.edu/catalog/b2734709>
+  // non_aeon_locations.push( "HAY JOHN-HAY" );
+  console.log( '- non_aeon_locations, ```' + non_aeon_locations + '```' )
+  // END OF TEMP CODE
+
+  // console.log( '- josiah_location, ```' + josiah_location + '```' )
   if ( josiah_location.slice(0, 3) == "HAY" ){
     var index_of_val = non_aeon_locations.indexOf( josiah_location );
     if ( index_of_val == -1 ) {
       hay_found = true;
+      // console.log( 'hay_found, `' + hay_found + '`' )
     }
+  } else if ( josiah_location == "HMCF" || josiah_location == "HJH" ) {
+    hay_found = true;
   }
+  console.log( 'hay_found determination, `' + hay_found + '`' );
   return hay_found;
 }
 

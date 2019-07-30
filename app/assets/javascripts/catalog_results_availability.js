@@ -49,7 +49,7 @@ $(document).ready(function() {
   };
 
 
-  scope.showAvailability = function(data) {
+  scope.showAvailability = function(data) { // could this interfere with `catalog_record_availability.js` -> `scope.showAvailability = function(all) {}`?
     $.each(data, function(bib, context){
       if (context) {
         context['results'] = true;
@@ -85,16 +85,23 @@ $(document).ready(function() {
 
           // add hay aeon link if necessary
           if (item['location'].slice(0, 3) == "HAY") {
+            // console.log( 'location-slice, `' + item['location'].slice(0, 3) + '`' );
+            // console.log( 'isValidHayAeonLocation, `' + isValidHayAeonLocation(item['location']) + '`' );
             if (isValidHayAeonLocation(item['location']) == true) {
+              // console.log( 'item->hay_aeon_url initially, `' + item['hay_aeon_url'] + '`' );
               item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+              // console.log( 'item->hay_aeon_url NOW, `' + item['hay_aeon_url'] + '`' );
             }
           }
 
           // add Annex-Hay `easyrequest_hay` link if necessary
-          if ((item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE")) {
-            if ( itemData.format != "Archives/Manuscripts" ) {
-              item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
-            }
+          if ( (item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE") && (item['callnumber'].toUpperCase().includes("RESTRICTED") == false) ) {
+            console.log( 'itemData.format, `' + itemData.format + '`' );
+            /* 2019-July: restrictions on "Archives/Manuscripts" items eased */
+            // if ( itemData.format != "Archives/Manuscripts" ) {
+            //   item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+            // }
+            item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
           }
 
         });
