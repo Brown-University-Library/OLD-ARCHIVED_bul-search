@@ -303,6 +303,17 @@ class CatalogController < ApplicationController
       # prefixed with "#"
       params[:search_field] = "call_number"
     end
+
+    if @response.documents.count == 0 && params[:q] != nil
+      if params[:q].strip.ends_with?("*")
+        search_url = catalog_index_url(q: params[:q], search_field: nil)
+        @retry_option = "You are limiting your search by <b>Call Number</b>. " +
+          "Try again using <a href=#{search_url}>All Fields</a>."
+      else
+        search_url = catalog_index_url(q: params[:q].strip + "*", search_field: "call_number")
+        @retry_option = "Try again using <a href=\"#{search_url}\">wildcard call number search</a>."
+      end
+    end
     render "index"
   end
 
@@ -314,6 +325,7 @@ class CatalogController < ApplicationController
 
     @altered_search_terms = false
     @new_q = ""
+    @retry_option = nil
 
     if invalid_search()
       # Stop the request.
@@ -351,6 +363,22 @@ class CatalogController < ApplicationController
     relax_max_per_page if api_call?
     ret_val = super
     restore_max_per_page if api_call?
+
+    if @response.documents.count == 0 && params[:q] != nil
+      is_allfields = params[:search_field] == nil || params[:search_field] == "all_fields"
+      if is_allfields
+        search_url = catalog_index_url(q: params[:q], search_field: "call_number")
+        @retry_option = "Try again using <a href=\"#{search_url}\">call number search</a>."
+      else
+        field_info = search_field_list.find{|f| f.key == params[:search_field]}
+        if field_info
+          search_url = catalog_index_url(q: params[:q], search_field: nil)
+          @retry_option = "You are limiting your search by <b>#{field_info.label}</b>. " +
+            "Try again using <a href=#{search_url}>All Fields</a>."
+        end
+      end
+    end
+
     ret_val
   rescue => ex
     Rails.logger.error("Error on search. Params: #{params}. Exception: #{ex}")

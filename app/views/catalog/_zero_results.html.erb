@@ -5,13 +5,8 @@
   <h3>Try modifying your search</h3>
   <ul>
     <li>Use fewer keywords to start and then refine your search.</li>
-    <%- if params[:q] and params[:search_field] and params[:search_field] != blacklight_config.default_search_field.try(:key) -%>
-      <li>You are limiting your search by <b><%= search_field_label(params) %></b>,
-      <%= link_to("try searching everything", url_for(params_for_search(:search_field=>blacklight_config.default_search_field.key))) %>
-      </li>
-    <%- end %>
-    <%- if params[:q] && params[:search_field] != "call_number" %>
-      <li>Try again as a <a href="<%= catalog_index_url(q: params[:q], search_field: 'call_number') %>">call number search</a>.</li>
-    <%- end %>
+    <% if @retry_option %>
+      <li><%= @retry_option.html_safe %>
+    <% end %>
   </ul>
 </div>

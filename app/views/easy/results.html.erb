@@ -210,9 +210,8 @@ function catalogBoxes(query) {
         } else {
           //no results from catalog.
           var wcUrl = $('#worldcat-search').attr('href');
-          var txt = "<a href=\"" + wcUrl + "\">Worldcat</a>"
-          $('#books').append('<h5>No results.</h5><h5>Try ' + txt + '</h5>');
-          //$('#format-filter').hide();
+          var txt = "<a href=\"" + wcUrl + "\">searching in Worldcat</a>"
+          $('#books').append('<h5>No results were found in the catalog.</h5><h5>Try ' + txt + '</h5>');
         };
 
         var emptySet = response['groups'].length == 0;
