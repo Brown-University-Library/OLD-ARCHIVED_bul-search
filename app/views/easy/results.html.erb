@@ -208,17 +208,14 @@ function catalogBoxes(query) {
           $('#books').append(html);
           $('#books h3.bento-header a').attr('href', bookSet.more);
         } else {
-          //no results from catalog.
+          // No books found, offer WorldCat and call number search
           var wcUrl = $('#worldcat-search').attr('href');
-          var txt = "<a href=\"" + wcUrl + "\">searching in Worldcat</a>"
-          $('#books').append('<h5>No results were found in the catalog.</h5><h5>Try ' + txt + '</h5>');
-        };
+          var txt = "<a href=\"" + wcUrl + "\">searching in WorldCat</a>";
+          $('#books').append('<p>No books were found in the catalog. Try ' + txt + '.</p>');
 
-        var emptySet = response['groups'].length == 0;
-        if (emptySet) {
           var cnUrl = "<a href=\"<%= catalog_index_url(q: @query, search_field: 'call_number') =%>\">call number</a>"
-          $('#books').append('<h5>Or try again as a ' + cnUrl + '</h5>');
-        }
+          $('#books').append('<p>Or try again as a ' + cnUrl + '</p>');
+        };
 
         //add other formats
         var other = _.filter(response['groups'], function(rset){ return rset['format'] != 'Book'});
