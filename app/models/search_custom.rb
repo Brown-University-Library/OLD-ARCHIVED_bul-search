@@ -95,6 +95,29 @@ class SearchCustom
   end
 
   private
+    # Drop the N-SIZE prefix since we don't index it.
+    def drop_nsize(text)
+      # In a user entered call number it will be in the form "1-SIZE "
+      text = text.strip.gsub(/\d-SIZE\s/,"")
+      # In a normalized call number it will be in the form "1|SIZE|"
+      text = text.strip.gsub(/\d\|SIZE\|/,"")
+      text
+    end
+
+    # Surrounds a text in quotes (if needed)
+    def quotes(text)
+      return nil if text == nil
+      if text.length < 2
+        return '"' + text + '"'
+      elsif text[0] == '"' && text[text.length-1] == '"'
+        # already has quotes
+        return text
+      else
+        # add quotes
+        return '"' + text + '"'
+      end
+    end
+
     def callnumber_search(callnumber, params, callnumber_field)
       params = params || {}
       search_term = callnumber_searchable(callnumber)
@@ -111,18 +134,12 @@ class SearchCustom
 
     # Returns the text in a format suitable for call number search.
     def callnumber_searchable(text)
-      # Drop the N-SIZE prefix since we don't index it.
-      text = text.strip.gsub(/\d-SIZE\s/,"")
-      if text == ""
-        return ""
-      end
-
+      text = drop_nsize(text)
       if wildcard_search?(text)
         # Make it a Solr RegEx value
         text = "/" + solr_safe_regex(text.gsub("*", "")) + ".*/"
       else
-        # Surround the value in quotes
-        text = '"' + text + '"'
+        text = quotes(text)
       end
       text
     end
