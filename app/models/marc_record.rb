@@ -98,7 +98,7 @@ class MarcRecord
       end
       volume = subfield_value(f_945, "c")
       copy = subfield_value(f_945, "g") || ""
-      if copy == "1"
+      if copy == "1" || copy == "0"
         copy = ""
       elsif copy > "1"
         copy = "c.#{copy}"
