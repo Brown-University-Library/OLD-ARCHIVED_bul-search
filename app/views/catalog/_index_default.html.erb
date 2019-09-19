@@ -1,3 +1,10 @@
+<style>
+  .museum-cover {
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
 <%# default partial to display solr document fields in catalog index view -%>
 <%# Statement of responsiblity and publication date. -%>
 <%= index_item_subheading document %>
@@ -14,6 +21,10 @@
     <% elsif document['id'].start_with?("bdr:") %>
       <span class="thumbnail pull-right">
           <img class="cover-image" src="https://repository.library.brown.edu/viewers/image/thumbnail/<%= document['id'] %>" alt="cover"/>
+      </span>
+    <% elsif document["id"].starts_with?("MP_HAF_") %>
+      <span class="thumbnail pull-right">
+          <img class="cover-image museum-cover" src="<%= museum_thumbnail_url(id: document['id']) %>" alt="thumbnail"/>
       </span>
     <% end %>
 

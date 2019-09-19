@@ -125,6 +125,7 @@
   window.bibData.publisher = "<%= document.marc_imprint() %>";
   window.bibData.itemsMultiType = "<%= @document.items_multi_type %>";
   window.bibData.easyBorrowUrl = "<%= document.easyBorrowUrl() %>";
+  window.bibData.source = "<%= document.record_source() %>";
 
   window.itemsData = [];
   <% @document.item_data.each do |item| %>

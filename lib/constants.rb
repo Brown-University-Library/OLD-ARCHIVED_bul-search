@@ -67,6 +67,10 @@ module Constants
         "Archives/Manuscripts" => {
             icon: "archive",
             info: ""
+        },
+        "Museum Artifact" => {
+            icon: "university",
+            info: "Museum and galleries artifacts"
         }
     }
 

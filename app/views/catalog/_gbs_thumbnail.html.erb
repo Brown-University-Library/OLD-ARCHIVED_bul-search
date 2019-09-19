@@ -1,7 +1,18 @@
-<% if document["id"] && document["id"].starts_with?("bdr:") %>
+<style>
+  .museum-cover {
+    width: 150px;
+    height: 150px;
+  }
+</style>
+<% if document["id"].starts_with?("bdr:") %>
   <span class="gbs thumbnail pull-right">
       <img class="cover-image center-block <%= css_class %>" alt=""
         src="https://repository.library.brown.edu/viewers/image/thumbnail/<%= document['id'] %>"/>
+  </span>
+<% elsif document["id"].starts_with?("MP_HAF_") %>
+  <span class="gbs thumbnail pull-right">
+      <img class="cover-image museum-cover center-block <%= css_class %>" alt=""
+        src="<%= museum_thumbnail_url(id: document['id']) %>"/>
   </span>
 <% else %>
   <span class="gbs thumbnail pull-right hide">

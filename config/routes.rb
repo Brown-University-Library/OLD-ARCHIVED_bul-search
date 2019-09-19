@@ -47,6 +47,9 @@ BulSearch::Application.routes.draw do
   get 'api/items/shelf_item/:id' => 'api#shelf_item'
   get 'api/items/shelf_items' => 'api#shelf_items'
 
+  # Museum integration
+  get 'museum/thumbnail/:id' => 'museum#thumbnail', as: :museum_thumbnail
+
   # Stats
   get 'stats/eds' => 'stats#eds'
   get 'stats/server' => 'stats#server'
