@@ -28,11 +28,12 @@ gem 'blacklight_advanced_search', '~> 5.0'
 
 gem "jettywrapper", "~> 1.7"
 
-# Older versions have a security vulnerability
-gem "devise", ">= 4.6.0"
+# Gems forced to a specific version to address security vulnerabilities
+gem "devise", ">= 4.7.1"
 gem "devise-guests", "~> 0.3"
 gem "omniauth"
 gem "omniauth-shibboleth"
+gem "nokogiri", ">= 1.10.4"
 gem "blacklight-marc", "~> 5.10"
 gem "blacklight_range_limit"
 
