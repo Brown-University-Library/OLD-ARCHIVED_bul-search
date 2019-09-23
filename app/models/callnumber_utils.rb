@@ -1,6 +1,6 @@
 class CallnumberUtils
     def self.normalized(text)
-        text.upcase.scan(/\w+|\d+/).join("|")
+        text.upcase.scan(/[A-Z]+|\d+/).join("|")
     end
 
     def self.is_callnumber?(text)
