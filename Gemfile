@@ -56,8 +56,6 @@ group :production do
   gem 'mysql2', '< 0.5'
 end
 
-gem "rspec-rails", :group => [:development, :test]
-
 # gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'master'
 gem "bulmarc", :git => 'https://bitbucket.org/bul/bulmarc.git', :branch => 'master'
 

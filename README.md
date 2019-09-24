@@ -1,4 +1,4 @@
-Brown University Library discovery tool. This is a Blacklight application that integrates data from our catalog, journals (via EBSCO), institutional repository (BDR) into a single discovery interface.  
+Brown University Library discovery tool. This is a Blacklight application that integrates data from our catalog, journals (via EBSCO), institutional repository (BDR) into a single discovery interface.
 
 
 ## Installation
@@ -57,6 +57,13 @@ You can pass the `--debug-mode` flag to Traject if you just want to see what wil
 ## Without running a local Solr index.
 If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://server.name.brown.edu:8081/solr`.  This will allow you to search the remote index.  You will need to be on the Brown network (in the SciLi?) or connected via VPN to connect to this index.
 
+
+## Unit tests
+There is a rudimentary set of tests to validate a few classes. Take a look at the `./test` folder or you can run them via:
+
+```
+bundle exec rake josiah:tests
+```
 
 ## Articles (EDS)
 If you wish to include articles in the results you will need to set the following settings in your `.env` file:
