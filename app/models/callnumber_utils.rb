@@ -1,5 +1,5 @@
 class CallnumberUtils
-    def self.normalized(text)
+    def self.tokenized(text)
         text.upcase.scan(/[A-Z]+|\d+/).join("|")
     end
 

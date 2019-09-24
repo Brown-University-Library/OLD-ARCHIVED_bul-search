@@ -21,17 +21,17 @@ class SearchCustom
     end
 
     if wildcard_search?(callnumber)
-      # Try again using the normalized format.
+      # Try again using the tokenized format.
       # We are done regardless of the result.
-      callnumber = CallnumberUtils::normalized(callnumber) + "*"
+      callnumber = CallnumberUtils::tokenized(callnumber) + "*"
       response, docs, match = callnumber_search(callnumber, params, "callnumber_std_ss")
       return response, docs, match
     end
 
-    normalized = CallnumberUtils::normalized(callnumber)
-    response, docs, match = callnumber_search(normalized, params, "callnumber_std_ss")
+    tokenized = CallnumberUtils::tokenized(callnumber)
+    response, docs, match = callnumber_search(tokenized, params, "callnumber_std_ss")
     if docs.count > 0
-      # We found a match with the normalized value.
+      # We found a match with the tokenized value.
       return response, docs, match
     end
 
@@ -43,11 +43,11 @@ class SearchCustom
     #
     #   TODO: We currently issue two shortened searches. First we shorten the
     #   value as entered by the user. If that fails, then we shorten the
-    #   normalized value. I believe we can just issue one search using the
-    #   shorten normalized value, but I have not tested that. For now, we'll
+    #   tokenized value. I believe we can just issue one search using the
+    #   shorten tokenized value, but I have not tested that. For now, we'll
     #   keep them both.
     #
-    shortened = callnumber_shorten(callnumber, " ")
+    shortened = callnumber_shorten(callnumber)
     if shortened == ""
       # No short version to retry, we are done.
       return response, docs, match
@@ -59,13 +59,13 @@ class SearchCustom
       return response, docs, match
     end
 
-    shortened = callnumber_shorten(normalized, "|")
+    shortened = CallnumberUtils::tokenized(shortened)
     if shortened == ""
       # No short version to retry, we are done
       return response, docs, match
     end
 
-    # Retry with the shortened normalized call number.
+    # Retry with the shortened tokenized call number.
     response, docs, match = callnumber_search(shortened, params, "callnumber_std_ss")
     return response, docs, match
   end
@@ -99,7 +99,7 @@ class SearchCustom
     def drop_nsize(text)
       # In a user entered call number it will be in the form "1-SIZE "
       text = text.strip.gsub(/\d-SIZE\s/,"")
-      # In a normalized call number it will be in the form "1|SIZE|"
+      # In a tokenized call number it will be in the form "1|SIZE|"
       text = text.strip.gsub(/\d\|SIZE\|/,"")
       text
     end
@@ -145,7 +145,20 @@ class SearchCustom
     end
 
     # Shorten a call number by dropping the last token
-    def callnumber_shorten(text, delimiter = " ")
+    def callnumber_shorten(text)
+      # delimiter = /[\s\.]+/
+      tokens = text.split(" ")
+      return "" if tokens.count < 2
+      shorten = tokens[0..-2].join(" ")   # drop the last token
+      if wildcard_search?(text)
+        shorten += "*"
+      end
+      callnumber_searchable(shorten)
+    end
+
+    # Shorten a call number by dropping the last token
+    def callnumber_tokenized_shorten(text)
+      delimiter = "|"
       tokens = text.split(delimiter)
       return "" if tokens.count < 2
       shorten = tokens[0..-2].join(delimiter)   # drop the last token
