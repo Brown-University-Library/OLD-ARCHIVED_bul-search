@@ -47,7 +47,7 @@ class SolrQuery
       # Note that wt must be a symbol
       params = {
         :wt => :json,
-        "qt" => "search",
+        "qt" => (params["qt"] || "search"),
         "start" => per_page * (page - 1),
         "rows" => per_page,
         "page" => page,
