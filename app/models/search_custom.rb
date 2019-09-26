@@ -40,32 +40,14 @@ class SearchCustom
     # see record https://search.library.brown.edu/catalog/b2340347, notice
     # that the "33rd" in the call number "1-SIZE GN33 .G85 1994/1995 33rd"
     # is not in the MARC data that we get from Sierra.
-    #
-    #   TODO: We currently issue two shortened searches. First we shorten the
-    #   value as entered by the user. If that fails, then we shorten the
-    #   tokenized value. I believe we can just issue one search using the
-    #   shorten tokenized value, but I have not tested that. For now, we'll
-    #   keep them both.
-    #
     shortened = callnumber_shorten(callnumber)
-    if shortened == ""
-      # No short version to retry, we are done.
-      return response, docs, match
-    end
-
-    response, docs, match = callnumber_search(shortened, params, "callnumber_ss")
-    if docs.count > 0
-      # We found a match with the shortened value.
-      return response, docs, match
-    end
-
     shortened = CallnumberUtils::tokenized(shortened)
-    if shortened == ""
-      # No short version to retry, we are done
+    if shortened.split("|").count <= 1
+      # Shortened version is too short (or empty) we don't retry.
       return response, docs, match
     end
 
-    # Retry with the shortened tokenized call number.
+    # Last resort, retry with the shortened tokenized call number.
     response, docs, match = callnumber_search(shortened, params, "callnumber_std_ss")
     return response, docs, match
   end
@@ -147,7 +129,7 @@ class SearchCustom
     # Shorten a call number by dropping the last token
     def callnumber_shorten(text)
       # delimiter = /[\s\.]+/
-      tokens = text.split(" ")
+      tokens = text.split(/[\s\.]+/)
       return "" if tokens.count < 2
       shorten = tokens[0..-2].join(" ")   # drop the last token
       if wildcard_search?(text)
