@@ -19,7 +19,7 @@ class PatronController < ApplicationController
         data = patron_checkouts(patron_id)
         render :json => data
     end
-  
+
     private
       def valid_credentials?(params)
         return params["token"] == ENV["PATRON_TOKEN"]
@@ -27,11 +27,11 @@ class PatronController < ApplicationController
 
       def patron_checkouts(patron_id)
         key = "patron_checkouts_" + patron_id.to_s
-        Rails.cache.fetch(key, expires_in: 2.minute) do
+        Rails.cache.fetch(key, expires_in: 30.minute) do
             url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/patron/checkout/?patronId=#{patron_id}"
             Rails.logger.info("Loading Patron Checkouts from Sierra #{url}")
-            HttpUtil::HttpJson.get(url)
+            items = HttpUtil::HttpJson.get(url)
+            items.sort {|x,y| x["DueDate"] <=> y["DueDate"]}
         end
       end
 end
-  
