@@ -102,6 +102,7 @@ class SearchCustom
 
     def callnumber_search(callnumber, params, callnumber_field)
       params = params || {}
+      params["defType"] = "edismax" # Force edismax since Solr is not configured as such.
       search_term = callnumber_searchable(callnumber)
       solr_query = SolrQuery.new(@blacklight_config)
       if search_term == ""

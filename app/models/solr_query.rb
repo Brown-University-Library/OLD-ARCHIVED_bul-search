@@ -1,8 +1,7 @@
 class SolrQuery
-
   def initialize(blacklight_config)
     @blacklight_config = blacklight_config
-    @solr_url = ENV['SOLR_URL'] || "http://127.0.0.1:8081/solr"
+    @solr_url = ENV['SOLR_URL']
   end
 
   def query(fq_query, sort = nil, per_page = 10, page = 1)
@@ -19,8 +18,7 @@ class SolrQuery
   # a typical Rails controller)
   def search(q, params)
     solr_params = default_solr_params(params)
-    solr_params["q"] = "#{q}"
-    solr_params["defType"] = "edismax"
+    solr_params["q"] = q
     facets = params["f"] || {}
     if facets.keys.count > 0
       # facets is a hash in the form {"facet1": "value1", "facet2": "value2"}
@@ -34,27 +32,52 @@ class SolrQuery
     submit_query(solr_params)
   end
 
+  # This is a strange way to fetch by ID but this is the way the Relevancy tests
+  # had it implement it so for now we'll just preserve it.
+  def search_by_id(id, params)
+    params["fq"] = "id:#{id}"
+    search(nil, params)
+  end
+
+  def search_by_title(title, params)
+    q = "{!qf=$title_qf pf=$title_pf}#{title}"
+    search(q, params)
+  end
+
+  def search_by_author(title, params)
+    q = "{!qf=$author_qf pf=$author_pf}#{title}"
+    search(q, params)
+  end
+
+  def search_by_title_author(title, author, params)
+    q = "_query_:\"{!dismax spellcheck.dictionary=title qf=$title_qf pf=$title_pf}#{title}\" AND _query_:\"{!dismax spellcheck.dictionary=author qf=$author_qf pf=$author_pf}#{author}\""
+    params["defType"] = "lucene"
+    search(q, params)
+  end
+
   private
-    def default_solr_params(params)
-      per_page = (params["rows"] || "10").to_i
-      page = (params["page"] || "1").to_i
+    def default_solr_params(custom)
+      per_page = (custom["rows"] || "10").to_i
+      page = (custom["page"] || "1").to_i
 
       # TODO: get the facets from our configuration rather
       # than hard-coding them here.
-      facets = ["access_facet", "format", "author_facet", "pub_date",
+      facets = ["access_facet", "format", "author_facet", "pub_date_sort",
         "topic_facet", "region_facet", "language_facet", "building_facet"]
 
       # Note that wt must be a symbol
       params = {
         :wt => :json,
-        "qt" => (params["qt"] || "search"),
+        "qt" => (custom["qt"] || "search"),
         "start" => per_page * (page - 1),
         "rows" => per_page,
         "page" => page,
         "facet.field" => facets,
         "facet" => true,
         "stats" => true,
-        "stats.field" => "pub_date_sort"
+        "stats.field" => "pub_date_sort",
+        "fq" => custom["fq"],
+        "defType" => custom["defType"]
       }
 
       facets.each do |field_name|
