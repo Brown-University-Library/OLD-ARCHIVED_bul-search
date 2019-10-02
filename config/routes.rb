@@ -53,6 +53,7 @@ BulSearch::Application.routes.draw do
   # Stats
   get 'stats/eds' => 'stats#eds'
   get 'stats/server' => 'stats#server'
+  get 'stats/solr-master' => 'stats#solr_master'
 
   # Hay Flags Project
   get 'hay/flags' => 'hay#flags', as: :hay_flags

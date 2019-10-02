@@ -1,7 +1,7 @@
 class SolrQuery
-  def initialize(blacklight_config)
+  def initialize(blacklight_config, solr_url = nil)
     @blacklight_config = blacklight_config
-    @solr_url = ENV['SOLR_URL']
+    @solr_url = solr_url || ENV['SOLR_URL']
   end
 
   def query(fq_query, sort = nil, per_page = 10, page = 1)

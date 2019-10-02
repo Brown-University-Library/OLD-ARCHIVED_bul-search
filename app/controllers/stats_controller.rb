@@ -13,6 +13,25 @@ class StatsController < ApplicationController
     render :json => result
   end
 
+  def solr_master
+    result = {}
+    solr_url = ENV["SOLR_URL_WRITE"]
+    solr = SolrQuery.new(Blacklight.default_configuration, solr_url)
+    response, docs = solr.search("blue", {})
+    if docs.count == 0
+      result["status"] = "Error"
+      result["message"] = "No records were found"
+    else
+      result["status"] = "OK"
+    end
+    render json: result
+  rescue => ex
+    Rails.logger.error("Error validating Solr: #{ex}")
+    result["status"] = "Error"
+    result["message"] = "Could not validate master Solr"
+    render json: result
+  end
+
   def eds
     if !valid_user?
       render "stats_error", status: 401
