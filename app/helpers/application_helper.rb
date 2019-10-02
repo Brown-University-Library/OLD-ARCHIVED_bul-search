@@ -6,6 +6,15 @@ module ApplicationHelper
     "".html_safe + ("#{title}: #{text}") + "<br/>".html_safe
   end
 
+  # An enhanced versiof of html_safe that takes into account characters
+  # that cause issued when embedded on a JavaScript string.
+  def js_safe(text)
+    return "" if text == nil
+    text = text.gsub("\\", "%5C")
+    text = text.gsub('"', '\"')
+    text.html_safe
+  end
+
   # We use this to generate a new token every day and embed this
   # value in our forms and prevent spammers from reusing sessions
   # for more than one day. We should eventually track this on a

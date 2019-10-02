@@ -116,7 +116,7 @@
 
   window.bibData = {};
   window.bibData.showAvailability = true;
-  window.bibData.oclcNum = "<%= @document.oclc_full %>";
+  window.bibData.oclcNum = "<%= js_safe(@document.oclc_full) %>";
   window.bibData.bookServicesUrl = "<%= @document.book_services_url %>"
   window.bibData.id = "<%= @document.id %>";
   window.bibData.title = "<%= document[:title_display] %>";
@@ -134,7 +134,7 @@
       barcode: "<%= item.barcode %>",
       location_code: "<%= item.location_code %>",
       location_name: "<%= item.location %>",
-      bookplate_display: "<%= item.bookplate_display.gsub('"', '\"').html_safe %>",
+      bookplate_display: "<%= js_safe(item.bookplate_display) %>",
       bookplate_url: "<%= item.bookplate_url %>",
       call_number: "<%= item.call_number %>",
       volume: "<%= item.volume %>"
