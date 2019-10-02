@@ -1,3 +1,9 @@
+# Issues a request to Solr via RSolr to mimic what Blacklight
+# does on a normal search. We use this class to execute special
+# searches while making sure the response is compatible with
+# what Blacklight normalize returns. The main uses at this time
+# are call number searches (from the Catalog controller) and
+# Relevancy searches (from the Tests)
 class SolrQuery
   def initialize(blacklight_config, solr_url = nil)
     @blacklight_config = blacklight_config

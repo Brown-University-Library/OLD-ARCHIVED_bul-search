@@ -244,6 +244,7 @@ class CatalogController < ApplicationController
     end
 
     # Bookplate code for custom searches
+    # See also adjust_special_fields() below.
     config.add_search_field("bookplate_code") do |field|
       field.include_in_simple_select = true
       field.include_in_advanced_search = false
