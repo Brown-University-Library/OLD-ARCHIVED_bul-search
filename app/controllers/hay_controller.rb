@@ -25,7 +25,7 @@ class HayController < ApplicationController
         Rails.cache.fetch("hay_query", expires_in: 20.minute) do
             url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/hayQuery.json"
             Rails.logger.info("Loading Hay query data from bibService #{url}")
-            HttpUtil::HttpJson.get(url)
+            HttpUtil::HttpJson.get(url, [], 300)
         end
     end
 

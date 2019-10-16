@@ -1,8 +1,11 @@
 module HttpUtil
   class HttpJson
-    def self.get(url, headers = [])
+    def self.get(url, headers = [], timeout = nil)
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
+      if timeout != nil
+        http.read_timeout = timeout
+      end
       if url.start_with?("https://")
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
