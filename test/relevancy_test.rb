@@ -131,7 +131,7 @@ class RelevancyTest < Minitest::Test
     assert position("b4156972", docs) < 5
     # ... 505t match
     response, docs = @solr_query.search_by_title("Carmilla", {})
-    assert position("b4156972", docs) < 5
+    assert position("b4156972", docs) < 10
   end
 
   def test_by_author
