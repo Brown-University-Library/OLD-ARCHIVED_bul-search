@@ -9,6 +9,7 @@ class SearchCustomTest < Minitest::Test
     numbers << "DD237 .K6713 1998 c.2"
     numbers << "2001 S3473 E75s"
     numbers << "ML410.B5 B29"
+    # PENDING REIMPORT OF COMBINED_11.MRC
     numbers << "2-SIZE HB28952 PA"
     numbers << "PQ2607.U8245 D68 1985"
     numbers.each do |q|
@@ -89,8 +90,11 @@ class SearchCustomTest < Minitest::Test
     assert docs.count == 1
     assert match == q
 
+    params = {
+      "qt" => "document", # Force MARC data to be fetched so we can analyze item_data
+      "qf" => "id"        # Required in Solr 7, but ignored because we are searching by a specific field (callnumber_ss)
+    }
     q = "Cabinet Em*"
-    params = {"qt" => "document"}   # force MARC data to be fetched so we can analyze item_data
     response, docs, match = searcher.callnumber(q, params)
     assert docs.count > 1
     docs.each do |doc|

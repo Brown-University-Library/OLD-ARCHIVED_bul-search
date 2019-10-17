@@ -46,7 +46,10 @@ class SolrQuery
   end
 
   def search_by_title(title, params)
-    q = "{!qf=$title_qf pf=$title_pf}#{title}"
+    # Since Solr 7.x, defType must be "lucene" in order to use
+    # !dismax in the `q` paramter.
+    params["defType"] = "lucene"
+    q = "{!dismax qf=$title_qf pf=$title_pf}#{title}"
     search(q, params)
   end
 
@@ -83,7 +86,8 @@ class SolrQuery
         "stats" => true,
         "stats.field" => "pub_date_sort",
         "fq" => custom["fq"],
-        "defType" => custom["defType"]
+        "qf" => custom["qf"],
+        "defType" => (custom["defType"] || "dismax")
       }
 
       facets.each do |field_name|
