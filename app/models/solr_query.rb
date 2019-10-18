@@ -46,20 +46,22 @@ class SolrQuery
   end
 
   def search_by_title(title, params)
-    # Since Solr 7.x, defType must be "lucene" in order to use
-    # !dismax in the `q` paramter.
+    # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
+    # so that we can use `!dismax` in the `q` paramter.
     params["defType"] = "lucene"
-    q = "{!dismax qf=$title_qf pf=$title_pf}#{title}"
+    q = "{!type=dismax qf=$title_qf pf=$title_pf}#{title}"
     search(q, params)
   end
 
-  def search_by_author(title, params)
-    q = "{!qf=$author_qf pf=$author_pf}#{title}"
-    search(q, params)
-  end
+  # def search_by_author(title, params)
+  #   q = "{!qf=$author_qf pf=$author_pf}#{title}"
+  #   search(q, params)
+  # end
 
   def search_by_title_author(title, author, params)
-    q = "_query_:\"{!dismax spellcheck.dictionary=title qf=$title_qf pf=$title_pf}#{title}\" AND _query_:\"{!dismax spellcheck.dictionary=author qf=$author_qf pf=$author_pf}#{author}\""
+    p1 = "_query_:\"{!type=dismax spellcheck.dictionary=title qf=$title_qf pf=$title_pf}#{title}\""
+    p2 = "_query_:\"{!type=dismax spellcheck.dictionary=author qf=$author_qf pf=$author_pf}#{author}\""
+    q = "#{p1} AND #{p2}"
     params["defType"] = "lucene"
     search(q, params)
   end
