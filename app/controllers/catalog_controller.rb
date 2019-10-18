@@ -155,8 +155,10 @@ class CatalogController < ApplicationController
     # solr request handler? The one set in config[:default_solr_parameters][:qt],
     # since we aren't specifying it otherwise.
 
-    config.add_search_field 'all_fields', :label => 'All Fields'
-
+    config.add_search_field 'all_fields' do |field|
+      field.solr_parameters = { defType: "dismax" }
+      field.label = 'All Fields'
+    end
 
     # Now we see how to over-ride Solr request handler defaults, in this
     # case for a BL "search field", which is really a dismax aggregate
@@ -170,7 +172,14 @@ class CatalogController < ApplicationController
       # syntax, as eg {! qf=$title_qf }. This is neccesary to use
       # Solr parameter de-referencing like $title_qf.
       # See: http://wiki.apache.org/solr/LocalParams
+      #
+      # == SOLR-7-MIGRATION ==
+      # In Solr 7 the server will default to Lucene so that we can use Local Parameters
+      # and therefore we set it to DisMax via the `type` Local Parameter.
+      # Notice that setting it via `defType` in the query string does NOT work
+      # for Local Parameters.
       field.solr_local_parameters = {
+        :type => 'dismax',
         :qf => '$title_qf',
         :pf => '$title_pf'
       }
@@ -179,6 +188,7 @@ class CatalogController < ApplicationController
     config.add_search_field('author') do |field|
       field.solr_parameters = { :'spellcheck.dictionary' => 'author' }
       field.solr_local_parameters = {
+        :type => 'dismax',
         :qf => '$author_qf',
         :pf => '$author_pf'
       }
@@ -191,6 +201,7 @@ class CatalogController < ApplicationController
       field.solr_parameters = { :'spellcheck.dictionary' => 'subject' }
       field.qt = 'search'
       field.solr_local_parameters = {
+        :type => 'dismax',
         :qf => '$subject_qf',
         :pf => '$subject_pf'
       }
@@ -233,14 +244,14 @@ class CatalogController < ApplicationController
     #Add pub date for advanced search only.
     config.add_search_field("publication_date") do |field|
       field.include_in_simple_select = false
-      field.solr_parameters = { :qf => "pub_date" }
+      field.solr_parameters = { :qf => "pub_date", defType: "dismax" }
     end
 
     # Location code for custom searches
     config.add_search_field("location_code") do |field|
       field.include_in_simple_select = true
       field.include_in_advanced_search = false
-      field.solr_parameters = { :qf => "location_code_t" }
+      field.solr_parameters = { :qf => "location_code_t", defType: "dismax" }
     end
 
     # Bookplate code for custom searches
