@@ -14,4 +14,14 @@ module UiHelper
     end
     clean
   end
+
+  def truncate_text(text, max_length)
+    if text == nil
+      return ""
+    end
+    if text.length > max_length
+      return text[0..max_length] + "..."
+    end
+    text
+  end
 end

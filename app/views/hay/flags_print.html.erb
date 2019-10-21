@@ -21,6 +21,7 @@
         .column {
             padding-right: 80px;
             font-size: large;
+            vertical-align: top;
         }
 
         .barcode-large {
@@ -59,10 +60,9 @@
                         <span class="barcode-large"><%= cell["BarCode"] %></span><br/>
                         <%= cell["DisplayOrder"] %> / <%= cell["ItemLocation"] %> / <%= cell["LocalTag"] %><br/>
                         <hr/>
-                        <%= cell["Title"] %><br/>
-                        <%= cell["Description"] %><br/>
-                        <%= cell["Publisher"] %><br/>
-                        &nbsp;<br/>
+                        <%= truncate_text(cell["Title"], 150) %><br/>
+                        <%= truncate_text(cell["Description"], 150) %><br/>
+                        <%= truncate_text(cell["Publisher"], 100) %><br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
                         <%= cell["OrderNum"] %><br/>
@@ -70,10 +70,9 @@
                         <%= cell["ItemStatusCode"] %><br/>
 
                         <%= cell["Edition"] %><br/>
-                        <%= cell["LocalNotes"] %><br/>
+                        <%= truncate_text(cell["LocalNotes"], 300) %><br/>
                         <br/>
                         Bound width: <%= cell["BndWidth"] ? "Yes" : "No" %><br/>
-                        &nbsp;<br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
@@ -82,7 +81,7 @@
                         <hr/>
                         <%= cell["CallNumber"] %> c.<%= cell["CopyNum"] %> <%= cell["Volume"] %><br/>
                         <%= cell["ItemRecordNum"] %> / <%= cell["BibRecordNum"] %><br/>
-                        <%= cell["Title"] %><br/>
+                        <%= truncate_text(cell["Title"], 150) %><br/>
                         <span class="barcode"><%= cell["BarCode"] %></span><br/>
                     </td>
                 <% end %>
