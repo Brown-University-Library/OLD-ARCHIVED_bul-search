@@ -33,8 +33,8 @@ class SolrCompare
         numFoundMatch = (numFound4 == numFound7)
         result = "#{numFoundMatch}\t"
 
-        solr4_top10 = res4[:docs].map { |d| d["id" }
-        solr7_top10 = res7[:docs].map { |d| d["id" }
+        solr4_top10 = res4[:docs].map { |d| d["id"] }
+        solr7_top10 = res7[:docs].map { |d| d["id"] }
         top10_matches = compare_ids(solr4_top10, solr7_top10)
         result += "#{top10_matches}\t"
 
