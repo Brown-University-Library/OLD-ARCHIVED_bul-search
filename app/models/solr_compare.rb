@@ -30,7 +30,7 @@ class SolrCompare
     def compare_results(res4, res7)
         numFound4 = res4[:response]["response"]["numFound"]
         numFound7 = res4[:response]["response"]["numFound"]
-        numFoundMatch = numFound4 = =numFound7
+        numFoundMatch = (numFound4 == numFound7)
         result = "#{numFoundMatch}\t"
 
         solr4_top10 = res4[:docs].map { |d| d["id" }
@@ -43,7 +43,7 @@ class SolrCompare
         top5_matches = compare_ids(solr4_top5, solr7_top5)
         result += "#{top5_matches}\t"
 
-        top1_match = solr4_top5[0] == solr7_top5[0]
+        top1_match = (solr4_top5[0] == solr7_top5[0])
         result += "#{top1_match}"
     end
 
