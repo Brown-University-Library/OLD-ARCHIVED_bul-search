@@ -1,0 +1,15 @@
+<span class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <% if @id %>
+        Select another list
+    <% else %>
+        Select a list
+    <% end %>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="<%= pullslips_show_url(171) %>">List 171 (Jordan)</a></li>
+    <li><a href="<%= pullslips_show_url(137) %>">List 137 (Bart)</a></li>
+    <li><a href="<%= pullslips_show_url(200) %>">List 200 (Bart)</a></li>
+  </ul>
+</span>

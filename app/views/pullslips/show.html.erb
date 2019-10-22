@@ -10,9 +10,22 @@
   }
 </style>
 
-<h2>Hay Flags Project</h2>
-<a href="<%= hay_flags_url(format: 'tsv') %>" title="Download data to import into Excel or Google Sheets">Download</a> |
-<a href="<%= hay_flags_print_url() %>">Print Version</a>
+<h2>Pull Slips for List <%= @id %></h2>
+
+<div class="btn-group" role="group" aria-label="...">
+  <a class="btn btn-default"
+    title="Download data to import into Excel or Google Sheets"
+    href="<%= pullslips_show_url(id: @id, format: 'tsv') %>" >Download</a>
+  <a class="btn btn-default"
+    title="Render a version suitable for printing (takes a while on large lists)"
+    target="_blank"
+    href="<%= pullslips_print_url(id: @id) %>">Print Version</a>
+  &nbsp;&nbsp;
+  <%= render "select_list" %>
+</div>
+
+<p>&nbsp;</p>
+
 <div style="overflow-x: scroll;">
   <table class="table">
       <tr class="row">

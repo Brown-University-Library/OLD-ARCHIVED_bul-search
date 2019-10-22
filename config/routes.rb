@@ -56,8 +56,10 @@ BulSearch::Application.routes.draw do
   get 'stats/solr-master' => 'stats#solr_master'
 
   # Hay Flags Project
-  get 'hay/flags' => 'hay#flags', as: :hay_flags
-  get 'hay/flags/print' => 'hay#flags_print', as: :hay_flags_print
+  get 'pullslips/:id/print' => 'pullslips#print', as: :pullslips_print
+  get 'pullslips/:id' => 'pullslips#show', as: :pullslips_show
+  get 'pullslips' => 'pullslips#index', as: :pullslips_index
+  get 'hay/flags', to: redirect('/pullslips')
 
   # Legacy
   get 'Search/Results' => "legacy#search_results"

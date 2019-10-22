@@ -1,10 +1,20 @@
 # -*- encoding : utf-8 -*-
 #
 require "./lib/http_json.rb"
-class HayController < ApplicationController
-  def flags
+class PullslipsController < ApplicationController
+  def index
+    render
+  end
+
+  def show
     @barcode_font = true
-    @results = hay_data()
+    @id = params["id"]
+    if @id.to_i == 0
+      Rails.logger.error("Invalid list ID received #{@id}")
+      @results = []
+    else
+      @results = hay_data(@id)
+    end
     case
     when params["format"] == "json"
       render :json => @results
@@ -15,16 +25,26 @@ class HayController < ApplicationController
     end
   end
 
-  def flags_print
-    @table = hay_data_table()
+  def print
+    @id = params["id"]
+    if @id.to_i == 0
+      Rails.logger.error("Invalid list ID received #{@id}")
+      @results = []
+    else
+      @results = hay_data(@id)
+    end
+    @table = data_to_table(@results)
     render layout: false
   end
 
+  def hay_flags
+  end
+
   private
-    def hay_data()
-        Rails.cache.fetch("hay_query", expires_in: 20.minute) do
-            url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/hayQuery.json"
-            Rails.logger.info("Loading Hay query data from bibService #{url}")
+    def hay_data(id)
+        Rails.cache.fetch("pullslips_#{id}", expires_in: 20.minute) do
+            url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/pullSlips?id=#{id}"
+            Rails.logger.info("Loading Pull Slips from bibService #{url}")
             HttpUtil::HttpJson.get(url, [], 300)
         end
     end
@@ -43,11 +63,10 @@ class HayController < ApplicationController
       tsv
     end
 
-    def hay_data_table()
+    def data_to_table(data)
         table = []
         row = []
         i = 0
-        data = hay_data()
         data.each do |result|
           row << result
           i += 1
