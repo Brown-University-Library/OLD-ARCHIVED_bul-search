@@ -53,10 +53,21 @@ class SolrQuery
     search(q, params)
   end
 
-  # def search_by_author(title, params)
-  #   q = "{!qf=$author_qf pf=$author_pf}#{title}"
-  #   search(q, params)
-  # end
+  def search_by_author(author, params)
+    # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
+    # so that we can use `!dismax` in the `q` paramter.
+    params["defType"] = "lucene"
+    q = "{!type=dismax qf=$author_qf pf=$author_pf}#{author}"
+    search(q, params)
+  end
+
+  def search_by_subject(subject, params)
+    # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
+    # so that we can use `!dismax` in the `q` paramter.
+    params["defType"] = "lucene"
+    q = "{!type=dismax qf=$subject_qf pf=$subject_pf}#{subject}"
+    search(q, params)
+  end
 
   def search_by_title_author(title, author, params)
     p1 = "_query_:\"{!type=dismax spellcheck.dictionary=title qf=$title_qf pf=$title_pf}#{title}\""

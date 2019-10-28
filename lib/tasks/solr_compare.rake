@@ -34,7 +34,7 @@ namespace :josiah do
     # and Solr 7 and compares the results.
     task "solr_compare" => :environment do |_cmd, args|
         solr = SolrCompare.new()
-        results = solr.compare(200000)
+        results = solr.compare(30000)
         results.each do |result|
             puts result
         end
@@ -43,7 +43,7 @@ namespace :josiah do
     # Compares the result of a particular search (by ID) between Solr 4 and Solr 7.
     task "solr_compare_by_id" => :environment do |_cmd, args|
         solr = SolrCompare.new()
-        results = solr.compare_by_id(17184055)
+        results = solr.compare_by_id(17781970)
         results.each do |result|
             puts result
         end

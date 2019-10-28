@@ -17,8 +17,10 @@ class SolrCompare
         def to_s()
             id = @params["id"]
             q = @params["q"]
+            search_field = @params["search_field"]
             str = "#{@num_found4}\t#{@num_found7}\t#{percent_diff()}\t"
             str += "#{@top10_matches}\t#{@top5_matches}\t#{@top1_match}\t"
+            str += "#{search_field}\t"
             str += "(#{q})\t[#{id}]"
             str
         end
@@ -98,39 +100,54 @@ class SolrCompare
         results = []
         searcher = SolrQuery.new(Blacklight.default_configuration, solr_url)
         searches.each do |s|
-            case
-                when s.search_field == "all_fields"
-                    file = cache_file(s.id)
-                    if use_cache && File.exist?(file)
-                        # Read result from cache
-                        result = JSON.parse(File.read(file))
-                    else
-                        # TODO account for facets
-                        params = {}
-
-                        # Run the search
-                        response, docs = searcher.search(s.q, params)
-                        num_found = response["response"]["numFound"]
-                        result = { search: s, response: response, docs: docs }
-
-                        # Force the result to go from Ruby to JSON and back to
-                        # Ruby to make sure the structure of object is identical
-                        # to the one that we will get when we read JSON from
-                        # the cache (otherwise the keys are sometimes strings
-                        # and others symbols.)
-                        result_json = result.to_json
-                        result = JSON.parse(result_json)
-                        if use_cache
-                            # Cache this result
-                            File.write(file, result_json)
-                        end
-                    end
-                    results << result
-                else
-                    Rails.logger.info("solr_compare: Skipped search type #{s.search_field} (#{s.id})")
+            result = run_search(searcher, s, use_cache)
+            if result != nil
+                results << result
             end
         end
         results
+    end
+
+    def run_search(searcher, s, use_cache)
+        file = cache_file(s.id)
+        if use_cache && File.exist?(file)
+            # Read result from cache
+            result = JSON.parse(File.read(file))
+            return result
+        end
+
+        # Run the search
+        params = {}
+        response = nil
+        docs = []
+        if s.search_field == "all_fields"
+            response, docs = searcher.search(s.q, params)
+        elsif s.search_field == "title"
+            response, docs = searcher.search_by_title(s.q, params)
+        elsif s.search_field == "author"
+            response, docs = searcher.search_by_author(s.q, params)
+        elsif s.search_field == "subject"
+            response, docs = searcher.search_by_subject(s.q, params)
+        else
+            Rails.logger.info("solr_compare: Skipped search type #{s.search_field} (#{s.id})")
+            return nil
+        end
+
+        num_found = response["response"]["numFound"]
+        result = { search: s, response: response, docs: docs }
+
+        # Force the result to go from Ruby to JSON and back to
+        # Ruby to make sure the structure of object is identical
+        # to the one that we will get when we read JSON from
+        # the cache (otherwise the keys are sometimes strings
+        # and others symbols.)
+        result_json = result.to_json
+        result = JSON.parse(result_json)
+        if use_cache
+            # Cache this result
+            File.write(file, result_json)
+        end
+        result
     end
 
     def get_saved_searches(count)
@@ -165,18 +182,21 @@ class SolrCompare
         params = nil
         begin
             hash = YAML.load(query_params)
-            if hash["controller"] == "catalog" &&
-                hash["search_field"] == "all_fields" &&
-                (hash["q"] || "").length > 0
+            catalog_search = hash["controller"] == "catalog"
+            has_search_terms = (hash["q"] || "").length > 0
+            search_field = hash["search_field"]
+            valid_field = search_field == "all_fields" || search_field == "author" ||
+                search_field == "title" || search_field == "subject"
+            if catalog_search  && valid_field && has_search_terms
                 params = SearchParams.new()
                 params.id = id
-                params.search_field = hash["search_field"]
+                params.search_field = search_field
                 params.q = hash["q"]
                 # TODO: facets
                 params
             end
         rescue => ex
-            Rails.logger.info("solr_compare: Error parsing search #{id}")
+            Rails.logger.info("solr_compare: Error parsing search #{id}\r\n#{query_params}")
         end
         params
     end
