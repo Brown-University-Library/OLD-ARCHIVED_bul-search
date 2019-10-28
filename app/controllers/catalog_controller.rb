@@ -156,7 +156,10 @@ class CatalogController < ApplicationController
     # since we aren't specifying it otherwise.
 
     config.add_search_field 'all_fields' do |field|
-      field.solr_parameters = { defType: "dismax" }
+      field.solr_parameters = {
+        defType: "dismax",
+        df: "id"  # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
+      }
       field.label = 'All Fields'
     end
 
