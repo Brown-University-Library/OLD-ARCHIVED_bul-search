@@ -4,9 +4,16 @@
   }
 </style>
 
+<div>
+Items: <%= @start + 1 %> - <%= @stop + 1%> |
+<a href="<%= dashboard_show_url('econ') %>">View summary</a> |
+<a href="<%= dashboard_details_url('econ', page: @page_prev) %>">Previous Page</a> |
+<a href="<%= dashboard_details_url('econ', page: @page_next) %>">Next Page</a> |
+</div>
 <div style="overflow-x: scroll;">
   <table class="table">
       <tr class="row">
+        <th>#</th>
         <th>BibRecordNum</th>
         <th>ItemRecordNum</th>
         <th>Title</th>
@@ -14,8 +21,9 @@
         <th >LocationCode</th>
         <th >CallnumberRaw</th>
       </tr>
-      <% @info[:items].each do |r| %>
+      <% @info[:items][@start..@stop].each_with_index do |r, ix| %>
         <tr class="row">
+          <td><%= @start + ix + 1 %></td>
           <td><a href="<%= catalog_url(r['BibRecordNum']) %>"><%= r['BibRecordNum'] %></a></td>
           <td><%= r["ItemRecordNum"] %></td>
           <td><%= r["Title"] %></td>

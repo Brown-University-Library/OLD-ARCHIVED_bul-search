@@ -21,6 +21,18 @@ class DashboardController < ApplicationController
         render text: "Invalid subject"
         return
     end
+
+    @page = (params["page"] || "").to_i
+    @page = (@page < 1) ? 1 : @page
+    @page_size = 1000
+    @start = (@page - 1) * @page_size
+    @stop = (@start - 1 ) + @page_size
+    if @stop > @info[:count] - 1
+      @stop = @info[:count] - 1
+    end
+    @page_next = @page + 1
+    @page_prev = @page -1
+
     case
     when params["format"] == "json"
       render :json => @info[:data]
@@ -40,10 +52,10 @@ class DashboardController < ApplicationController
         key: "econ",
         name: "Economics Pilot",
         list: 344,
-        items: sierra_data(subject),
-        count: 0
+        items: sierra_data(subject)
       }
       info[:count] = info[:items].count
+      info[:percent] = ((info[:count] / 4810620.00) * 100).round(2)
       return info
     end
 
