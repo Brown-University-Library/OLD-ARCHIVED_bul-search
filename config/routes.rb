@@ -55,6 +55,11 @@ BulSearch::Application.routes.draw do
   get 'stats/server' => 'stats#server'
   get 'stats/solr-master' => 'stats#solr_master'
 
+  # Collection Ecosystem Project
+  get 'dashboard/:subject/details' => 'dashboard#details', as: :dashboard_details
+  get 'dashboard/:subject' => 'dashboard#show', as: :dashboard_show
+  get 'dashboard/' => 'dashboard#index', as: :dashboard_index
+
   # Hay Flags Project
   get 'pullslips/:id/print' => 'pullslips#print', as: :pullslips_print
   get 'pullslips/:id' => 'pullslips#show', as: :pullslips_show

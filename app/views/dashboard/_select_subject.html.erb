@@ -1,0 +1,13 @@
+<span class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <% if @subject == nil %>
+        Select another subject
+    <% else %>
+        Select a subject
+    <% end %>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="<%= dashboard_show_url('econ') %>">ECON Pilot</a></li>
+  </ul>
+</span>

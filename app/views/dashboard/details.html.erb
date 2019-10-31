@@ -1,0 +1,28 @@
+<style>
+  .callnumber {
+    white-space: nowrap;
+  }
+</style>
+
+<div style="overflow-x: scroll;">
+  <table class="table">
+      <tr class="row">
+        <th>BibRecordNum</th>
+        <th>ItemRecordNum</th>
+        <th>Title</th>
+        <th >PublishYear</th>
+        <th >LocationCode</th>
+        <th >CallnumberRaw</th>
+      </tr>
+      <% @info[:items].each do |r| %>
+        <tr class="row">
+          <td><a href="<%= catalog_url(r['BibRecordNum']) %>"><%= r['BibRecordNum'] %></a></td>
+          <td><%= r["ItemRecordNum"] %></td>
+          <td><%= r["Title"] %></td>
+          <td><%= r["PublishYear"] %></td>
+          <td><%= r["LocationCode"] %></td>
+          <td class="callnumber"><%= r["CallnumberRaw"] %></td>
+        </tr>
+      <% end %>
+  </table>
+</div>
