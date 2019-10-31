@@ -32,6 +32,7 @@ require "./app/models/solr_compare.rb"
 namespace :josiah do
     # Runs the first N searches from the searches table against Solr 4
     # and Solr 7 and compares the results.
+    desc "Compares Solr search results for the first X number of searches"
     task "solr_compare" => :environment do |_cmd, args|
         solr = SolrCompare.new()
         results = solr.compare(30000)
@@ -41,6 +42,7 @@ namespace :josiah do
     end
 
     # Compares the result of a particular search (by ID) between Solr 4 and Solr 7.
+    desc "Compares Solr search results for a given search ID"
     task "solr_compare_by_id" => :environment do |_cmd, args|
         solr = SolrCompare.new()
         results = solr.compare_by_id(17781970)

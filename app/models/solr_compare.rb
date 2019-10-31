@@ -202,6 +202,6 @@ class SolrCompare
     end
 
     def cache_file(id)
-        "./searches/#{id}.json"
+        "/Users/hectorcorrea/data/bul_searches/#{id}.json"
     end
 end
