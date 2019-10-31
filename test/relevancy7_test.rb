@@ -16,6 +16,13 @@ class Relevancy7Test < Minitest::Test
     assert position("b2724484", docs) < 10
   end
 
+  def test_character_folding
+    # Makes sure character folding (e == é) is enabled.
+    response1, docs = @solr_query.search("san jose", {})
+    response2, docs = @solr_query.search("san josé", {})
+    assert response1["response"]["numFound"] == response2["response"]["numFound"]
+  end
+
   private
     def position(id, docs)
       docs.each_with_index do |doc, ix|
