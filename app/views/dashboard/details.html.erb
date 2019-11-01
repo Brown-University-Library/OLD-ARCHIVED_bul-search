@@ -17,7 +17,8 @@ Items: <%= @start + 1 %> - <%= @stop + 1%> |
         <th>BibRecordNum</th>
         <th>ItemRecordNum</th>
         <th>Title</th>
-        <th >PublishYear</th>
+        <th>PublishYear</th>
+        <th>Publisher</th>
         <th >LocationCode</th>
         <th >CallnumberRaw</th>
       </tr>
@@ -28,6 +29,7 @@ Items: <%= @start + 1 %> - <%= @stop + 1%> |
           <td><%= r["ItemRecordNum"] %></td>
           <td><%= r["Title"] %></td>
           <td><%= r["PublishYear"] %></td>
+          <td><%= r["Publisher"] %></td>
           <td><%= r["LocationCode"] %></td>
           <td class="callnumber"><%= r["CallnumberRaw"] %></td>
         </tr>

@@ -35,9 +35,9 @@ class DashboardController < ApplicationController
 
     case
     when params["format"] == "json"
-      render :json => @info[:data]
+      render :json => @info[:items]
     when params["format"] == "tsv"
-      send_data(to_tsv(@info[:data]), :filename => "#{@info[:key]}.tsv", :type => "text/tsv")
+      send_data(to_tsv(@info[:items]), :filename => "#{@info[:key]}.tsv", :type => "text/tsv")
     else
       render
     end
@@ -51,7 +51,7 @@ class DashboardController < ApplicationController
       info = {
         key: "econ",
         name: "Economics Pilot",
-        list: 344,
+        list: 334,
         items: sierra_data(subject)
       }
       info[:count] = info[:items].count
