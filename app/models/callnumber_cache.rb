@@ -178,7 +178,7 @@ class CallnumberCache < ActiveRecord::Base
     # imported into Solr.
     def self.get_updated_since(start_date, page = 1)
       # get the solr documents from Solr...
-      solr_url = ENV['SOLR_URL'] || "http://127.0.0.1:8081/solr/blacklight-core"
+      solr_url = ENV['SOLR_URL']
       solr = SolrLite::Solr.new(solr_url)
       q = ""
       start_date_time = start_date.to_s + "T00:00:00.0Z"
