@@ -333,6 +333,19 @@ class CatalogController < ApplicationController
   end
 
   def index
+    # == SOLR-7-MIGRATION
+    @solr7 = set_solr_url()
+
+    if params["search_field"] == nil
+      # == SOLR-7-MIGRATION
+      # Need it to make sure the facets for an empty search work
+      # otherwise we get an empty list of facets.
+      #
+      # TODO: The problem with this hack is that it's executing the
+      # search (with no "q") and showing a random list of search results.
+      params["search_field"] = "all_fields"
+    end
+
     # This is needed to prevent turbolinks from re-displaying a previous error message
     # on the request following a bad request from the same user. This issue only happens
     # in production (!).
@@ -401,6 +414,9 @@ class CatalogController < ApplicationController
   end
 
   def show
+    # == SOLR-7-MIGRATION
+    @solr7 = set_solr_url()
+
     id = params[:id] || ""
     if id.length == 9 && !id.start_with?("bdr:") && !id.start_with?("MP_HAF_")
       # if the id includes the checksum digit, redirect to the
@@ -544,6 +560,19 @@ class CatalogController < ApplicationController
 
     def restore_max_per_page
       blacklight_config.max_per_page = 100
+    end
+
+    # == SOLR-7-MIGRATION
+    def set_solr_url()
+      if params.keys.include?("s7")
+        # Use Solr 7
+        blacklight_config.connection_config[:url] = ENV["SOLR7_URL"]
+        return true
+      end
+
+      # Use our default Solr
+      blacklight_config.connection_config[:url] = ENV["SOLR4_URL"]
+      return nil
     end
 
     def spam_attempt?
