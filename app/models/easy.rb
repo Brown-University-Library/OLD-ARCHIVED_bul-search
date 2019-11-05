@@ -167,8 +167,7 @@ class Easy
   end
 
   def get_catalog query
-    # Should match solr.yml for development
-    solr_url = ENV['SOLR_URL'] || "http://127.0.0.1:8081/solr"
+    solr_url = ENV['SOLR_URL']
     solr = RSolr.connect :url => solr_url
 
     if query == '*'
@@ -186,6 +185,8 @@ class Easy
         "q"=>"#{q.gsub('--', '\\-\\-')}",
         "qt" => 'search',
         :spellcheck => false,
+        "defType" => "dismax", # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
+        "df" => "id"           # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
     }
 
     response = solr.get 'select', :params => qp
