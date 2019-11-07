@@ -68,6 +68,11 @@ class PullslipsController < ApplicationController
         row = []
         i = 0
         data.each do |result|
+
+          # Make the barcode readable by our scanners
+          # (no spaces, surround with asterisks)
+          result["BarCode"] = "*" + (result["BarCode"] || "").gsub(" ", "") + "*"
+
           row << result
           i += 1
           if i == 3
