@@ -55,7 +55,7 @@ You can pass the `--debug-mode` flag to Traject if you just want to see what wil
 
 
 ## Without running a local Solr index.
-If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://server.name.brown.edu:8081/solr`.  This will allow you to search the remote index.  You will need to be on the Brown network (in the SciLi?) or connected via VPN to connect to this index.
+If you want to run the Blacklight web application but not build a local Solr index, set SOLR_URL in your `.env` file to `http://server.name.brown.edu:8081/solr`. This will allow you to search the remote index.
 
 
 ## Unit tests
@@ -80,11 +80,9 @@ EDS_PASSWORD=your-password
 If you wish to include repository items in your results you will need to
 set the BDR_SEARCH_URL to a SOLR compatible endpoint
 
-For development you can use the dev public search api endpoint
-http://server.name.brown.edu/api/search/
+For development you can use the dev public search api endpoint: `http://server.name.brown.edu/api/search/`
 
-For Repository links You will need to set BDR_ITEM_URL.  No trailing slash.
-//server.name.brown.edu/studio/item
+For Repository links You will need to set BDR_ITEM_URL.  No trailing slash: `//server.name.brown.edu/studio/item`
 
 
 ## Indexing data (adding documents)
@@ -102,7 +100,7 @@ A sample search of `atomic` will return results.
 
 
 ## Solr management
-Two shell scripts are included in data/ to assist with managing a local Solr index.  `./data/clear_index.sh` will clear your current Solr index.  It uses the environment variables in `.env` for the Solr url.  `./data/solr_commit.sh` will call commit on your index to ensure that any posted documents are added to the index.  Use with caution if you are working with a real Solr index.
+Two shell scripts are included in `data/` to assist with managing a local Solr index.  `./data/clear_index.sh` will clear your current Solr index.  It uses the environment variables in `.env` for the Solr url.  `./data/solr_commit.sh` will call commit on your index to ensure that any posted documents are added to the index.  Use with caution if you are working with a real Solr index.
 
 
 ## Bento Box
