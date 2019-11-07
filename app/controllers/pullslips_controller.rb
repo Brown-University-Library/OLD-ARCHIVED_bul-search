@@ -64,23 +64,30 @@ class PullslipsController < ApplicationController
     end
 
     def data_to_table(data)
-        table = []
-        row = []
-        i = 0
-        data.each do |result|
+      data.each do |item|
+        # Make the barcode readable by our scanners
+        # (no spaces, surround with asterisks)
+        item["BarCode"] = "*" + (item["BarCode"] || "").gsub(" ", "") + "*"
+      end
 
-          # Make the barcode readable by our scanners
-          # (no spaces, surround with asterisks)
-          result["BarCode"] = "*" + (result["BarCode"] || "").gsub(" ", "") + "*"
+      # Force to length of the array be a multiple of 3
+      # (simplifies the algorithm of dumping them into a table with 3 columns)
+      mod = (data.count % 3)
+      if mod == 1
+        data << nil
+        data << nil
+      elsif mod == 2
+        data << nil
+      end
 
-          row << result
-          i += 1
-          if i == 3
-            table << row
-            row = []
-            i = 0
-          end
-        end
-        table
+      pages = data.count / 3
+      table = []
+      (1..pages).each do |page|
+        i = (page-1) * 3
+        row = [data[i], data[i+1], data[i+2]]
+        table << row
+      end
+
+      table
     end
 end

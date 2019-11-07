@@ -53,6 +53,7 @@
             <tbody>
                 <tr>
                 <% row.each do |cell| %>
+                    <% next if cell == nil %>
                     <td class="column">
                         <%= cell["CallNumber"] %><br/>
                         c. <%= cell["CopyNum"] %> <%= cell["Volume"] %>
@@ -72,7 +73,7 @@
                         <%= cell["Edition"] %><br/>
                         <%= truncate_text(cell["LocalNotes"], 300) %><br/>
                         <br/>
-                        Bound width: <%= cell["BndWidth"] ? "Yes" : "No" %><br/>
+                        Bound with: <%= cell["BndWidth"] ? "Yes" : "No" %><br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
