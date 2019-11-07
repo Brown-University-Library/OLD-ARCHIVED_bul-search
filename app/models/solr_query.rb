@@ -26,14 +26,22 @@ class SolrQuery
     solr_params = default_solr_params(params)
     solr_params["q"] = q
     facets = params["f"] || {}
-    if facets.keys.count > 0
-      # facets is a hash in the form {"facet1": "value1", "facet2": "value2"}
-      solr_params["fq"] = []
-      facets.keys.each do |key|
-        facets[key].each do |value|
-          solr_params["fq"] << "#{key}:\"#{value}\""
-        end
-      end
+    if facets.keys.count == 0
+      # nothing to do
+    elsif facets.keys.count == 1
+      key = facets.keys[0]
+      value = facets[key][0]
+      solr_params["fq"] = '{!raw f=' + key + '}' + value
+    else
+      # For now we are not supporting more than one facet
+      #
+      # solr_params["fq"] = []
+      # facets.keys.each do |key|
+      #   facets[key].each do |value|
+      #     solr_params["fq"] << "#{key}:\"#{value}\""
+      #   end
+      # end
+      raise "More than one facet not supported"
     end
     submit_query(solr_params)
   end
@@ -49,6 +57,7 @@ class SolrQuery
     # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
     # so that we can use `!dismax` in the `q` paramter.
     params["defType"] = "lucene"
+    params["sort"] = "score desc, pub_date_sort desc, title_sort asc"
     q = "{!type=dismax qf=$title_qf pf=$title_pf}#{title}"
     search(q, params)
   end
@@ -100,6 +109,7 @@ class SolrQuery
         "stats.field" => "pub_date_sort",
         "fq" => custom["fq"],
         "qf" => custom["qf"],
+        "sort" => custom["sort"],
         "defType" => (custom["defType"] || "dismax")
       }
 
