@@ -34,28 +34,4 @@ class DashboardController < ApplicationController
     @rows = @rows.take(@limit)
     render "details"
   end
-
-  # private
-
-  #   def sierra_data(subject)
-  #       Rails.cache.fetch("dashboard_#{subject}", expires_in: 1.day) do
-  #           url = ENV["BIB_UTILS_SERVICE"] + "/collection/details?subject=#{subject}"
-  #           Rails.logger.info("Loading data from bibService #{url}")
-  #           HttpUtil::HttpJson.get(url, [], 300)
-  #       end
-  #   end
-
-  #   def to_tsv(data)
-  #     header = data[0].keys.join("\t")
-  #     tsv = header + "\tJosiahLink\r\n"
-  #     data.each do |row|
-  #       values = []
-  #       row.keys.each do |key|
-  #         values << row[key]
-  #       end
-  #       values << "http://search.library.brown.edu/catalog/#{row['BibRecordNum']}"
-  #       tsv += values.join("\t") + "\r\n"
-  #     end
-  #     tsv
-  #   end
 end

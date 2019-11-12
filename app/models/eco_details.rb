@@ -8,18 +8,20 @@ class EcoDetails < ActiveRecord::Base
         if subject != "ECON"
             return nil
         end
-        sierra_list = 334
-        counts = summary_counts(sierra_list)
-        data = {
-            name: subject,
-            sierra_list: sierra_list,
-            bib_count: counts[:bib_count],
-            item_count: counts[:item_count],
-            locations: summary_location(sierra_list),
-            callnumbers: summary_callnumber(sierra_list),
-            checkouts: summary_checkout(sierra_list)
-        }
-        data
+
+        Rails.cache.fetch("dashboard_summary_#{subject}", expires_in: 1.day) do
+            sierra_list = 334
+            counts = summary_counts(sierra_list)
+            data = {
+                name: subject,
+                sierra_list: sierra_list,
+                bib_count: counts[:bib_count],
+                item_count: counts[:item_count],
+                locations: summary_location(sierra_list),
+                callnumbers: summary_callnumber(sierra_list),
+                checkouts: summary_checkout(sierra_list)
+            }
+        end
     end
 
     def self.summary_counts(sierra_list)
