@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
   end
 
   def show
-    @info = load_subject(params["subject"])
+    @info = EcoDetails.summary("ECON")
     if @info == nil
         render text: "Invalid subject"
         return
@@ -16,68 +16,46 @@ class DashboardController < ApplicationController
   end
 
   def details
-    @info = load_subject(params["subject"])
-    if @info == nil
-        render text: "Invalid subject"
-        return
+    @rows = []
+    @criteria = nil
+    @sierra_list = 334
+    @limit = 5000
+    case params["key"]
+    when "cn"
+      @criteria = "where call number is #{params["value"]} (limited to first #{@limit} rows)"
+      @rows = EcoDetails.where("sierra_list = ? AND callnumber_norm LIKE ?", @sierra_list, params["value"].downcase + "%")
+    when "loc"
+      @criteria = "where location is #{params["value"]} (limited to first #{@limit} rows)"
+      @rows = EcoDetails.where(sierra_list: @sierra_list, location_code: params["value"])
+    when "ck"
+      @criteria = "where checkout count is #{params["value"]} (limited to first #{@limit} rows)"
+      @rows = EcoDetails.where(sierra_list: @sierra_list, checkout_total: params["value"])
     end
-
-    @page = (params["page"] || "").to_i
-    @page = (@page < 1) ? 1 : @page
-    @page_size = 1000
-    @start = (@page - 1) * @page_size
-    @stop = (@start - 1 ) + @page_size
-    if @stop > @info[:count] - 1
-      @stop = @info[:count] - 1
-    end
-    @page_next = @page + 1
-    @page_prev = @page -1
-
-    case
-    when params["format"] == "json"
-      render :json => @info[:items]
-    when params["format"] == "tsv"
-      send_data(to_tsv(@info[:items]), :filename => "#{@info[:key]}.tsv", :type => "text/tsv")
-    else
-      render
-    end
+    @rows = @rows.take(@limit)
+    render "details"
   end
 
-  private
-    def load_subject(subject)
-      if subject != "econ"
-        return nil
-      end
-      info = {
-        key: "econ",
-        name: "Economics Pilot",
-        list: 334,
-        items: sierra_data(subject)
-      }
-      info[:count] = info[:items].count
-      info[:percent] = ((info[:count] / 4810620.00) * 100).round(2)
-      return info
-    end
+  # private
 
-    def sierra_data(subject)
-        Rails.cache.fetch("dashboard_#{subject}", expires_in: 1.day) do
-            url = ENV["BIB_UTILS_SERVICE"] + "/collection/details?subject=#{subject}"
-            Rails.logger.info("Loading data from bibService #{url}")
-            HttpUtil::HttpJson.get(url, [], 300)
-        end
-    end
+  #   def sierra_data(subject)
+  #       Rails.cache.fetch("dashboard_#{subject}", expires_in: 1.day) do
+  #           url = ENV["BIB_UTILS_SERVICE"] + "/collection/details?subject=#{subject}"
+  #           Rails.logger.info("Loading data from bibService #{url}")
+  #           HttpUtil::HttpJson.get(url, [], 300)
+  #       end
+  #   end
 
-    def to_tsv(data)
-      header = data[0].keys.join("\t")
-      tsv = header + "\tJosiahLink\r\n"
-      data.each do |row|
-        values = []
-        row.keys.each do |key|
-          values << row[key]
-        end
-        values << "http://search.library.brown.edu/catalog/#{row['BibRecordNum']}"
-        tsv += values.join("\t") + "\r\n"
-      end
-      tsv
-    end
+  #   def to_tsv(data)
+  #     header = data[0].keys.join("\t")
+  #     tsv = header + "\tJosiahLink\r\n"
+  #     data.each do |row|
+  #       values = []
+  #       row.keys.each do |key|
+  #         values << row[key]
+  #       end
+  #       values << "http://search.library.brown.edu/catalog/#{row['BibRecordNum']}"
+  #       tsv += values.join("\t") + "\r\n"
+  #     end
+  #     tsv
+  #   end
 end

@@ -5,10 +5,7 @@
 </style>
 
 <div>
-Items: <%= @start + 1 %> - <%= @stop + 1%> |
-<a href="<%= dashboard_show_url('econ') %>">View summary</a> |
-<a href="<%= dashboard_details_url('econ', page: @page_prev) %>">Previous Page</a> |
-<a href="<%= dashboard_details_url('econ', page: @page_next) %>">Next Page</a> |
+Items: <b><%= @criteria %></b>
 </div>
 <div style="overflow-x: scroll;">
   <table class="table">
@@ -22,16 +19,16 @@ Items: <%= @start + 1 %> - <%= @stop + 1%> |
         <th >LocationCode</th>
         <th >CallnumberRaw</th>
       </tr>
-      <% @info[:items][@start..@stop].each_with_index do |r, ix| %>
+      <% @rows.each_with_index do |r, ix| %>
         <tr class="row">
-          <td><%= @start + ix + 1 %></td>
-          <td><a href="<%= catalog_url(r['BibRecordNum']) %>"><%= r['BibRecordNum'] %></a></td>
-          <td><%= r["ItemRecordNum"] %></td>
-          <td><%= r["Title"] %></td>
-          <td><%= r["PublishYear"] %></td>
-          <td><%= r["Publisher"] %></td>
-          <td><%= r["LocationCode"] %></td>
-          <td class="callnumber"><%= r["CallnumberRaw"] %></td>
+          <td><%= ix + 1 %></td>
+          <td><a href="<%= catalog_url( r.josiah_bib_id ) %>"><%= r.josiah_bib_id %></a></td>
+          <td><%= r.item_record_num %></td>
+          <td><%= r.title %></td>
+          <td><%= r.publish_year %></td>
+          <td><%= r.publisher %></td>
+          <td><%= r.location_code %></td>
+          <td class="callnumber"><%= r.callnumber_raw %></td>
         </tr>
       <% end %>
   </table>

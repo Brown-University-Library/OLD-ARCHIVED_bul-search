@@ -1,7 +1,60 @@
+<style>
+    table {
+        border-collapse: collapse;
+        border: 1px solid #ecf0ea;
+    }
+
+    table td {
+        border: 1px solid #ecf0ea;
+    }
+</style>
+
 <h2><%= @info[:name] %></h2>
-<p>Sierra List: <%= @info[:list] %></p>
-<p>Total items: <%= @info[:count] %></p>
-<p>Percent: <%= @info[:percent] %></p>
-<p>Items by location: (pending)</p>
-<p><a href="<%= dashboard_details_url('econ') %>">View details</a></p>
+<p>Sierra List: <%= @info[:sierra_list] %></p>
+<p>Total bibs: <%= @info[:bib_count] %></p>
+<p>Total items: <%= @info[:item_count] %></p>
+
+<h3>By Location</h3>
+<table>
+    <tr>
+        <th>Location</th>
+        <th>Count</th>
+    </tr>
+    <% @info[:locations].each do |loc| %>
+        <tr>
+            <td><a href="<%= dashboard_details_path(key: 'loc', value: loc[:code]) %>"><%= loc[:code] %></a></td>
+            <td><%= loc[:count] %></td>
+        </tr>
+    <% end %>
+</table>
+
+<h3>By Call number</h3>
+<table>
+    <tr>
+        <th>Call number</th>
+        <th>Count</th>
+    </tr>
+    <% @info[:callnumbers].each do |loc| %>
+        <tr>
+            <td><a href="<%= dashboard_details_path(key: 'cn', value: loc[:code]) %>"><%= loc[:code] %></a></td>
+            <td><%= loc[:count] %></td>
+        </tr>
+    <% end %>
+</table>
+
+<h3>By Checkouts</h3>
+<table>
+    <tr>
+        <th>Number of times</th>
+        <th>Count</th>
+    </tr>
+    <% @info[:checkouts].each do |loc| %>
+        <tr>
+            <td><a href="<%= dashboard_details_path(key: 'ck', value: loc[:num]) %>"><%= loc[:num] %></a></td>
+            <td><%= loc[:count] %></td>
+        </tr>
+    <% end %>
+</table>
+
+<h3>Download</h3>
 <p><a href="#">Download data (TSV) (pending)</a></p>

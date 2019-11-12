@@ -2,9 +2,6 @@ source 'https://rubygems.org'
 
 gem 'rails', '~> 4.2.11'
 
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3', :group => [:development, :test]
-
 # Use SCSS for stylesheets
 gem 'sass-rails'
 
@@ -50,11 +47,12 @@ gem 'handlebars_assets'
 # Older versions have a security vulnerability
 gem "bootstrap-sass", ">= 3.4.1"
 
-group :production do
-  # Rails 4.x must stay within MySQL 0.4
-  # https://github.com/brianmario/mysql2/issues/950#issuecomment-376375844
-  gem 'mysql2', '< 0.5'
-end
+# For dev and testing you can use sqlite3 with the following command
+#   gem 'sqlite3', :group => [:development, :test]
+#
+# Rails 4.x must stay within MySQL 0.4
+# https://github.com/brianmario/mysql2/issues/950#issuecomment-376375844
+gem 'mysql2', '< 0.5'
 
 # gem "bulmarc", :git => 'git@bitbucket.org:bul/bulmarc.git', :branch => 'master'
 gem "bulmarc", :git => 'https://bitbucket.org/bul/bulmarc.git', :branch => 'master'
@@ -70,3 +68,6 @@ gem "rb-readline"
 
 gem "dotenv"
 gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-ruby.git'
+
+# Use this when troubleshooting raw (HTTP) queries to Solr.
+# gem 'net-http-spy'
