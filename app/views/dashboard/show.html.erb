@@ -14,6 +14,13 @@
 <p>Total bibs: <%= @info[:bib_count] %></p>
 <p>Total items: <%= @info[:item_count] %></p>
 
+<p>Jump to filter by:
+<a href="#by_subject">subject</a> |
+<a href="#by_location">location</a> |
+<a href="#by_callnumber">callnumber</a> |
+<a href="#by_checkouts">checkouts</a> |
+</p>
+
 <h3>By Fund Codes</h3>
 <table>
     <tr>
@@ -34,6 +41,7 @@
     <% end %>
 </table>
 
+<a href='#' name="by_subject"></a>
 <h3>By Subject ($a)</h3>
 <table>
     <tr>
@@ -49,6 +57,7 @@
 </table>
 
 
+<a href='#' name="by_location"></a
 <h3>By Location</h3>
 <table>
     <tr>
@@ -63,6 +72,8 @@
     <% end %>
 </table>
 
+
+<a href='#' name="by_callnumber"></a
 <h3>By Call number</h3>
 <table>
     <tr>
@@ -77,6 +88,8 @@
     <% end %>
 </table>
 
+
+<a href='#' name="by_checkouts"></a
 <h3>By Checkouts</h3>
 <table>
     <tr>
