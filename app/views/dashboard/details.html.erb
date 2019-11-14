@@ -16,8 +16,11 @@ Items: <b><%= @criteria %></b>
         <th>Title</th>
         <th>PublishYear</th>
         <th>Publisher</th>
-        <th >LocationCode</th>
-        <th >CallnumberRaw</th>
+        <th>LocationCode</th>
+        <th>CallnumberRaw</th>
+        <th>Subject</th>
+        <th>Fund Code</th>
+        <th>Fund Code Master</th>
       </tr>
       <% @rows.each_with_index do |r, ix| %>
         <tr class="row">
@@ -29,6 +32,9 @@ Items: <b><%= @criteria %></b>
           <td><%= r.publisher %></td>
           <td><%= r.location_code %></td>
           <td class="callnumber"><%= r.callnumber_raw %></td>
+          <td><%= r.marc_value %></td>
+          <td><%= r.fund_code %></td>
+          <td><%= r.fund_code_master %></td>
         </tr>
       <% end %>
   </table>

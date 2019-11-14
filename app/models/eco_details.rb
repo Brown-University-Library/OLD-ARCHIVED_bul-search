@@ -19,7 +19,9 @@ class EcoDetails < ActiveRecord::Base
                 item_count: counts[:item_count],
                 locations: summary_location(sierra_list),
                 callnumbers: summary_callnumber(sierra_list),
-                checkouts: summary_checkout(sierra_list)
+                checkouts: summary_checkout(sierra_list),
+                fund_codes: summary_fund_codes(sierra_list),
+                subjects: summary_subjects(sierra_list)
             }
         end
     end
@@ -88,6 +90,40 @@ class EcoDetails < ActiveRecord::Base
         summary = []
         rows.each do |r|
             summary << {num: r[0], count: r[1]}
+        end
+        summary
+    end
+
+    def self.summary_fund_codes(sierra_list)
+        sql = <<-END_SQL.gsub(/\n/, '')
+            SELECT fund_code, fund_code_master, count(fund_code)
+            FROM eco_details
+            WHERE sierra_list = #{sierra_list}
+            GROUP BY fund_code, fund_code_master
+            ORDER BY 3 DESC, 1 ASC;
+        END_SQL
+        rows = ActiveRecord::Base.connection.exec_query(sql).rows
+
+        summary = []
+        rows.each do |r|
+            summary << {fund_code: r[0], fund_code_master: r[1], count: r[2]}
+        end
+        summary
+    end
+
+    def self.summary_subjects(sierra_list)
+        sql = <<-END_SQL.gsub(/\n/, '')
+            SELECT substring_index(marc_value, '|', 2), count(id)
+            FROM eco_details
+            WHERE sierra_list = #{sierra_list}
+            GROUP BY substring_index(marc_value, '|', 2)
+            ORDER BY 2 DESC;
+        END_SQL
+        rows = ActiveRecord::Base.connection.exec_query(sql).rows
+
+        summary = []
+        rows.each do |r|
+            summary << {subject: r[0], count: r[1]}
         end
         summary
     end

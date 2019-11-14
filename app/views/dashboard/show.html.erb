@@ -14,11 +14,46 @@
 <p>Total bibs: <%= @info[:bib_count] %></p>
 <p>Total items: <%= @info[:item_count] %></p>
 
+<h3>By Fund Codes</h3>
+<table>
+    <tr>
+        <th>Fund Code</th>
+        <th>Fund Code (Master)</th>
+        <th>Item Count</th>
+    </tr>
+    <% @info[:fund_codes].each do |loc| %>
+        <tr>
+            <% if !loc[:fund_code].empty? %>
+                <td><a href="<%= dashboard_details_path(key: 'fund', value: loc[:fund_code]) %>"><%= loc[:fund_code] %></a></td>
+            <% else %>
+                <td><a href="<%= dashboard_details_path(key: 'fund', value: '(none)') %>">(none)</a></td>
+            <% end %>
+            <td><%= loc[:fund_code_master] %></td>
+            <td><%= loc[:count] %></td>
+        </tr>
+    <% end %>
+</table>
+
+<h3>By Subject ($a)</h3>
+<table>
+    <tr>
+        <th>Subject</th>
+        <th>Item Count</th>
+    </tr>
+    <% @info[:subjects].each do |loc| %>
+        <tr>
+            <td><%= loc[:subject] %></a></td>
+            <td><%= loc[:count] %></td>
+        </tr>
+    <% end %>
+</table>
+
+
 <h3>By Location</h3>
 <table>
     <tr>
         <th>Location</th>
-        <th>Count</th>
+        <th>Item Count</th>
     </tr>
     <% @info[:locations].each do |loc| %>
         <tr>
@@ -32,7 +67,7 @@
 <table>
     <tr>
         <th>Call number</th>
-        <th>Count</th>
+        <th>Item Count</th>
     </tr>
     <% @info[:callnumbers].each do |loc| %>
         <tr>
@@ -46,7 +81,7 @@
 <table>
     <tr>
         <th>Number of times</th>
-        <th>Count</th>
+        <th>Item Count</th>
     </tr>
     <% @info[:checkouts].each do |loc| %>
         <tr>

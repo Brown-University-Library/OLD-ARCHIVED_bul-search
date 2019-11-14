@@ -30,6 +30,14 @@ class DashboardController < ApplicationController
     when "ck"
       @criteria = "where checkout count is #{params["value"]} (limited to first #{@limit} rows)"
       @rows = EcoDetails.where(sierra_list: @sierra_list, checkout_total: params["value"])
+    when "fund"
+      if params["value"] == "(none)"
+        @criteria = "where there is no fund code (limited to first #{@limit} rows)"
+        @rows = EcoDetails.where(sierra_list: @sierra_list, fund_code: "")
+      else
+        @criteria = "where fund code is #{params["value"]} (limited to first #{@limit} rows)"
+        @rows = EcoDetails.where(sierra_list: @sierra_list, fund_code: params["value"])
+      end
     end
     @rows = @rows.take(@limit)
     render "details"
