@@ -55,15 +55,18 @@
                 <% row.each do |cell| %>
                     <% next if cell == nil %>
                     <td class="column">
+                        <%= cell["ProjectTitle"] %><br/>
+                        #<%= cell["PrintOrder"] %><br/>
                         <%= cell["CallNumber"] %><br/>
                         c. <%= cell["CopyNum"] %> <%= cell["Volume"] %>
                         <hr/>
-                        <span class="barcode-large"><%= cell["BarCode"] %></span><br/>
+                        <span class="barcode-large"><%= cell["BarCodePrint"] %></span><br/>
                         <%= cell["DisplayOrder"] %> / <%= cell["ItemLocation"] %> / <%= cell["LocalTag"] %><br/>
                         <hr/>
                         <%= truncate_text(cell["Title"], 150) %><br/>
                         <%= truncate_text(cell["Description"], 150) %><br/>
                         <%= truncate_text(cell["Publisher"], 100) %><br/>
+                        <br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
                         <%= cell["OrderNum"] %><br/>
@@ -73,6 +76,7 @@
                         <%= cell["Edition"] %><br/>
                         <%= truncate_text(cell["LocalNotes"], 300) %><br/>
                         <br/>
+                        Flag prepared: <%= Date.today %></br>
                         Bound with: <%= cell["BndWidth"] ? "Yes" : "No" %><br/>
                         &nbsp;<br/>
                         &nbsp;<br/>
@@ -83,7 +87,7 @@
                         <%= cell["CallNumber"] %> c.<%= cell["CopyNum"] %> <%= cell["Volume"] %><br/>
                         <%= cell["ItemRecordNum"] %> / <%= cell["BibRecordNum"] %><br/>
                         <%= truncate_text(cell["Title"], 150) %><br/>
-                        <span class="barcode"><%= cell["BarCode"] %></span><br/>
+                        <span class="barcode"><%= cell["BarCodePrint"] %></span><br/>
                     </td>
                 <% end %>
                 </tr>

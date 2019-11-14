@@ -11,15 +11,16 @@
 </style>
 
 <h2>Pull Slips for List <%= @id %></h2>
+<p><%= @ps.title %> as of <%= @ps.list_date.to_time.to_s(:long) %>
 
 <div class="btn-group" role="group" aria-label="...">
   <a class="btn btn-default"
     title="Download data to import into Excel or Google Sheets"
-    href="<%= pullslips_show_url(id: @id, format: 'tsv') %>" >Download</a>
+    href="<%= pullslips_show_url(id: @ps.id, format: 'tsv') %>" >Download</a>
   <a class="btn btn-default"
     title="Render a version suitable for printing (takes a while on large lists)"
     target="_blank"
-    href="<%= pullslips_print_url(id: @id) %>">Print Version</a>
+    href="<%= pullslips_print_url(id: @ps.id) %>">Print Version</a>
   &nbsp;&nbsp;
   <%= render "select_list" %>
 </div>
@@ -32,25 +33,27 @@
         <th>DisplayOrder</th>
         <th>OrderNum</th>
         <th>CallNumber</th>
-        <th >CopyNum</th>
-        <th >Volume</th>
-        <th >BarCode</th>
-        <th >Code2</th>
-        <th >ItemStatusCode</th>
-        <th >BibRecordNum</th>
-        <th >ItemRecordNum</th>
-        <th >LocalTag</th>
-        <th >Title</th>
-        <th >Edition</th>
-        <th >Publisher</th>
-        <th >Description</th>
-        <th >ItemLocation</th>
-        <th >LocalNotes</th>
-        <th >BndWith</th>
+        <th>CopyNum</th>
+        <th>Volume</th>
+        <th>BarCode</th>
+        <th>Code2</th>
+        <th>ItemStatusCode</th>
+        <th>BibRecordNum</th>
+        <th>ItemRecordNum</th>
+        <th>LocalTag</th>
+        <th>Title</th>
+        <th>Edition</th>
+        <th>Publisher</th>
+        <th>Pub. Year</th>
+        <th>Author</th>
+        <th>Description</th>
+        <th>ItemLocation</th>
+        <th>LocalNotes</th>
+        <th>BndWith</th>
       </tr>
-      <% @results.each do |r| %>
+      <% @ps.data.each do |r| %>
         <tr class="row">
-          <td><%= r["DisplayOrder"] %></td>
+          <td><%= r["PrintOrder"] %></td>
           <td><%= r["OrderNum"] %></td>
           <td class="callnumber"><%= r["CallNumber"] %></td>
           <td><%= r["CopyNum"] %></td>
@@ -64,6 +67,8 @@
           <td><%= r["Title"] %></td>
           <td><%= r["Edition"] %></td>
           <td><%= r["Publisher"] %></td>
+          <td><%= r["PubYear"] %></td>
+          <td><%= r["Author"] %></td>
           <td><%= r["Description"] %></td>
           <td><%= r["ItemLocation"] %></td>
           <td><%= r["LocalNotes"] %></td>
