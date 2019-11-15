@@ -14,25 +14,31 @@
         @media print{@page {size: landscape}}
         */
 
+        @media print{
+            @page {size: landscape}
+        }
+
+
         table {
             width: 100%;
         }
 
         .column {
-            padding-right: 80px;
-            font-size: large;
+            column-width: 300px;
+            padding-right: 20px;
+            font-size: 14px;
             vertical-align: top;
         }
 
         .barcode-large {
             font-family: 'Libre Barcode 39 Text', cursive;
-            font-size: 60px;
+            font-size: 35px;
             white-space: nowrap; /* thanks Kerri! */
         }
 
         .barcode {
             font-family: 'Libre Barcode 39 Text', cursive;
-            font-size: 60px;
+            font-size: 35px;
             white-space: nowrap; /* thanks Kerri! */
         }
 
@@ -47,9 +53,6 @@
 
     <% @table.each do |row| %>
         <table>
-            <col width="33%">
-            <col width="33%">
-            <col width="33%">
             <tbody>
                 <tr>
                 <% row.each do |cell| %>

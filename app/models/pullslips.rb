@@ -17,7 +17,7 @@ class Pullslips
     end
 
     def fetch_data(id)
-        Rails.cache.fetch("pullslips_#{id}", expires_in: 20.minute) do
+        Rails.cache.fetch("pullslips_#{id}", expires_in: 1.hour) do
             url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/pullSlips?id=#{id}"
             Rails.logger.info("Loading Pull Slips from bibService #{url}")
             data = HttpUtil::HttpJson.get(url, [], 300)
