@@ -23,6 +23,29 @@ class Relevancy7Test < Minitest::Test
     assert response1["response"]["numFound"] == response2["response"]["numFound"]
   end
 
+  def test_exact_title
+    # In Solr 4 the seach by "all fields" returns item
+    #   bib: b1937161
+    #   title: Into the blue
+    # on the first position which makes sense.
+    #
+    # In Solr 7 is coming on #9 because Solr is ranking books
+    # with title "blue" or "blue ... blue" higher and pushing
+    # "into the blue" down BECAUSE "into" and "the" are stopwords.
+    params = {"f" => {"format" => ["Book"]}}
+    response, docs = @solr_query.search("into the blue", params)
+    pos = position("b1937161", docs)
+    assert pos < 10
+
+    # Search by "title" suffers from the same issue/
+    # This is less than ideal but for now we'll leave
+    # it as-is and we'll address it after we migrate to Solr 7.
+    params["rows"] = 20
+    response, docs = @solr_query.search_by_title("into the blue", params)
+    pos = position("b1937161", docs)
+    assert pos < 20
+  end
+
   private
     def position(id, docs)
       docs.each_with_index do |doc, ix|
