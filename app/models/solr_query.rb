@@ -57,6 +57,7 @@ class SolrQuery
     # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
     # so that we can use `!dismax` in the `q` paramter.
     params["defType"] = "lucene"
+    # params["mm"] = "100%"
     params["sort"] = "score desc, pub_date_sort desc, title_sort asc"
     q = "{!type=dismax qf=$title_qf pf=$title_pf}#{title}"
     search(q, params)
@@ -66,6 +67,7 @@ class SolrQuery
     # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
     # so that we can use `!dismax` in the `q` paramter.
     params["defType"] = "lucene"
+    # params["mm"] = "100%"
     q = "{!type=dismax qf=$author_qf pf=$author_pf}#{author}"
     search(q, params)
   end
@@ -74,6 +76,7 @@ class SolrQuery
     # For Solr 7.x we must force defType to "lucene" (rather than the default DisMax)
     # so that we can use `!dismax` in the `q` paramter.
     params["defType"] = "lucene"
+    # params["mm"] = "100%"
     q = "{!type=dismax qf=$subject_qf pf=$subject_pf}#{subject}"
     search(q, params)
   end
@@ -83,6 +86,7 @@ class SolrQuery
     p2 = "_query_:\"{!type=dismax spellcheck.dictionary=author qf=$author_qf pf=$author_pf}#{author}\""
     q = "#{p1} AND #{p2}"
     params["defType"] = "lucene"
+    # params["mm"] = "100%"
     search(q, params)
   end
 
@@ -110,7 +114,8 @@ class SolrQuery
         "fq" => custom["fq"],
         "qf" => custom["qf"],
         "sort" => custom["sort"],
-        "defType" => (custom["defType"] || "dismax")
+        "defType" => (custom["defType"] || "dismax"),
+        "mm" => custom["mm"]
       }
 
       facets.each do |field_name|
