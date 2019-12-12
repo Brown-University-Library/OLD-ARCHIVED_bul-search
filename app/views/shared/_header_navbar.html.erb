@@ -17,6 +17,9 @@
     <% else %>
       <li><i><a href="<%= my_library_account_url() %>">My Library Account</a></i>
     <% end %>
+    <% if !@solr7 %>
+      <li><a id="s7_link" style="color:#f4f2f2;" href="#" title="[STAFF] Test this search with Solr 7">S7</a>
+    <% end %>
   </ul>
 </div>
 
@@ -32,7 +35,7 @@
     <a class="navbar-brand" href="//library.brown.edu"><span>Brown University Library</span></a>
 
     <% if @solr7 == true %>
-      <span style="background-color: #f9e964; color: #2374f2; font-size: 30px;">Solr 7</span>
+      <span style="background-color: #f9e964; color: #2374f2; font-size: 40px;">Solr 7</span>
     <% end %>
 
     </div>
@@ -60,3 +63,21 @@
 <script>
   var josiahRootUrl = '<%= root_url %>';
 </script>
+
+
+<% if !@solr7 %>
+<script>
+  // Set the Solr URL to include "#s7"
+  $(function() {
+    var s7Url = window.location.toString();
+    if (s7Url.indexOf("?") == -1) {
+      s7Url += "?s7";
+    } else {
+      s7Url += "&s7";
+    }
+    $("#s7_link").attr("href", s7Url);
+  });
+</script>
+<% end %>
+
+
