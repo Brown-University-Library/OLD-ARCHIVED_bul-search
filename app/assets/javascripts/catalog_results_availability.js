@@ -27,8 +27,8 @@ $(document).ready(function() {
           // Make it a normal link (i.e. override the Blacklight POST mechanism)
           // and append the "s7" parameter;
           links[i].removeAttribute("data-context-href");
-          newUrl = links[i].getAttribute("href") + "?s7"
-          links[i].setAttribute("href", newUrl)
+          newUrl = links[i].getAttribute("href") + "?s7";
+          links[i].setAttribute("href", newUrl);
         }
       }
 
@@ -38,8 +38,8 @@ $(document).ready(function() {
         if (url.indexOf("/catalog?") > -1) {
           // It's a search URL.
           // Append the "s7" parameter
-          newUrl = links[i].getAttribute("href") + "&s7"
-          links[i].setAttribute("href", newUrl)
+          newUrl = links[i].getAttribute("href") + "&s7";
+          links[i].setAttribute("href", newUrl);
         }
       }
 
@@ -49,9 +49,16 @@ $(document).ready(function() {
         if (url.indexOf("/catalog?") > -1) {
           // It's a search URL.
           // Append the "s7" parameter
-          newUrl = links[i].getAttribute("href") + "&s7"
-          links[i].setAttribute("href", newUrl)
+          newUrl = links[i].getAttribute("href") + "&s7";
+          links[i].setAttribute("href", newUrl);
         }
+      }
+
+      // Append "s7" to prev/next URLs
+      links = $("div.page_links>a");
+      for(i = 0; i < links.length; i++) {
+        newUrl = links[i].getAttribute("href") + "&s7";
+        links[i].setAttribute("href", newUrl);
       }
     }
   };
