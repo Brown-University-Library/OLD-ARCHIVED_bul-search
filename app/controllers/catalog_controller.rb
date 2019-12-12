@@ -335,6 +335,7 @@ class CatalogController < ApplicationController
   def index
     # == SOLR-7-MIGRATION
     @solr7 = set_solr_url()
+    @trusted_ip = trusted_ip?(request.remote_ip)
 
     if params["search_field"] == nil
       # == SOLR-7-MIGRATION
