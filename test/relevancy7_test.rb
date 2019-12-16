@@ -29,21 +29,22 @@ class Relevancy7Test < Minitest::Test
     #   title: Into the blue
     # on the first position which makes sense.
     #
-    # In Solr 7 is coming on #9 because Solr is ranking books
-    # with title "blue" or "blue ... blue" higher and pushing
+    # In Solr 7 by default this record comes in #9 because Solr is ranking
+    # books with title "blue" or "blue something blue" higher and pushing
     # "into the blue" down BECAUSE "into" and "the" are stopwords.
+    # With the addition of a field title_strict_key_search we are
+    # getting the title back on top. Yay!
     params = {"f" => {"format" => ["Book"]}}
     response, docs = @solr_query.search("into the blue", params)
     pos = position("b1937161", docs)
-    assert pos < 10
+    assert pos < 5
 
-    # Search by "title" suffers from the same issue/
-    # This is less than ideal but for now we'll leave
-    # it as-is and we'll address it after we migrate to Solr 7.
-    params["rows"] = 20
+    # Search by "title" suffers from the same issue by default.
+    # This test make sure we don't revert back to the default Solr 7
+    # behavior.
     response, docs = @solr_query.search_by_title("into the blue", params)
     pos = position("b1937161", docs)
-    assert pos < 20
+    assert pos < 5
   end
 
   private

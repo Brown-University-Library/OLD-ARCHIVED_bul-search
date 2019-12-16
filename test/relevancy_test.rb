@@ -22,9 +22,6 @@ class RelevancyTest < Minitest::Test
   def test_synonyms
     response, docs = @solr_query.search("100", {})
     count1 = response["response"]["numFound"]
-    #
-    # PENDING REIMPORT WITH NEW DEFAULT SYNOMYMS FILE.
-    #
     response, docs = @solr_query.search("hundred", {})
     count2 = response["response"]["numFound"]
     assert count1 == count2
@@ -81,9 +78,11 @@ class RelevancyTest < Minitest::Test
   def test_toc
     # For bib b3176352 one of the chapters in the table of contents is:
     #
-    #   "War against nature and the people of the South / Vandana Shiva : Globalization of India's agriculture"
+    #   "War against nature and the people of the South / Vandana Shiva :
+    #   Globalization of India's agriculture"
     #
-    # In Solr 4 the result around the 11th position whereas in Solr 7 it comes around 4th position,
+    # In Solr 4 the result around the 11th position whereas in Solr 7 it
+    # comes around 4th position,
     response, docs = @solr_query.search("Globalization of India's agriculture", {"rows" => 20})
     assert position("b3176352", docs) < 20
   end
@@ -191,16 +190,13 @@ class RelevancyTest < Minitest::Test
   end
 
   def test_operators
-    #
-    # PENDING REIMPORT???
-    # BIB b3296339 IS BEING FOUND IN POSITION 11 WITH SOLR 7,
-    # NOT SURE IF THIS IS BECAUSE MISSING DATA IN OUR SOLR CORE, A CONFIGURATION SETTING,
-    # OR JUST A PLAIN DIFFERENCE IN THE WAY SOLR 7 IS RANKING THE DOCUMENT.
-    #
     # Should include de gaulle and politics (b3296339)
     # but exclude france (b13507813)
-    response, docs = @solr_query.search("De gaulle +politics -france", {})
-    # assert position("b3296339", docs) < 10
+    #
+    # In Solr 7 b3296339 (The enemy's house divided) comes in position 12
+    # which is still OK.
+    response, docs = @solr_query.search("De gaulle +politics -france", {"rows" => 20})
+    assert position("b3296339", docs) < 20
     assert position("b13507813", docs) == nil
 
     # Should include politics and france
