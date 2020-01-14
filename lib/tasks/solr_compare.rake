@@ -23,7 +23,9 @@ require "./app/models/solr_compare.rb"
 #
 #     mysql -u root -D bul_search_dev;
 #     mysql> delete from searches;
-#     mysql> LOAD DATA INFILE '/path/to/searches.ok.tsv'
+#     mysql> show variables like "local_infile";
+#     mysql> set global local_infile = 1;
+#     mysql> LOAD DATA LOCAL INFILE '/Users/hectorcorrea/dev/bul-search-src/searches.ok.tsv'
 #            INTO TABLE searches FIELDS TERMINATED BY '\t'
 #            ENCLOSED BY '"'
 #            LINES TERMINATED BY '\n' IGNORE 1 ROWS;
