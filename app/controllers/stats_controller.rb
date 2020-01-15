@@ -10,6 +10,7 @@ class StatsController < ApplicationController
     else
       result[:solr] = "reader"
     end
+    result[:s7] = solr_url.include?("josiah7")
     render :json => result
   end
 

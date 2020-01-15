@@ -17,9 +17,6 @@
     <% else %>
       <li><i><a href="<%= my_library_account_url() %>">My Library Account</a></i>
     <% end %>
-    <% if !@solr7 && @new_q != nil && @trusted_ip %>
-      <li><a id="s7_link" style="color:#f4f2f2;" href="#" title="[STAFF] Test this search with Solr 7">S7</a>
-    <% end %>
   </ul>
 </div>
 

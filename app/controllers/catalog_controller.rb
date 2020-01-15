@@ -565,14 +565,20 @@ class CatalogController < ApplicationController
 
     # == SOLR-7-MIGRATION
     def set_solr_url()
-      if params.keys.include?("s7")
+      if params.keys.include?("s7") && ENV["SOLR7_URL"]
         # Use Solr 7
         blacklight_config.connection_config[:url] = ENV["SOLR7_URL"]
         return true
       end
 
       # Use our default Solr
-      blacklight_config.connection_config[:url] = ENV["SOLR4_URL"]
+      if blacklight_config.connection_config[:url]
+        return nil
+      end
+
+      # We should never get here, but rather safe than sorry
+      Rails.logger.warn("Blacklight URL was nil")
+      blacklight_config.connection_config[:url] = ENV["SOLR_URL"]
       return nil
     end
 
