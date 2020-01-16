@@ -85,6 +85,13 @@ class RelevancyTest < Minitest::Test
     # comes around 4th position,
     response, docs = @solr_query.search("Globalization of India's agriculture", {"rows" => 20})
     assert position("b3176352", docs) < 20
+
+    # Finds this record (by title) but it should also find record b2607070
+    # because it has a chapter titles "In Their Own Image"
+    response, docs = @solr_query.search("In their own image", {})
+    assert position("b4084668", docs) < 10
+    # TODO: re-test this once we update the TOC field to not use stop words
+    # assert position("b2607070", docs) < 10
   end
 
   def test_search_titles
