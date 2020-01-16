@@ -8,6 +8,12 @@ class Relevancy7Test < Minitest::Test
   end
 
   def test_stopwords
+    # In Solr 7 we expect this search to find items.
+    # In Solr 4 we got no results because we were using stop
+    # words on titles.
+    response, docs = @solr_query.search("There There", {})
+    assert docs.count > 0
+
     # "at" is a stop word for `text_general` fields in Solr 4
     # and therefore should be a match for this record since
     # the Table of Contents includes "Young at heart".
