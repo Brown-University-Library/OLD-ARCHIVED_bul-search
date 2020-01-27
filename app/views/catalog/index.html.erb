@@ -42,6 +42,36 @@ var availabilityService = '<%= availability_service_url %>';
   }
 <% end %>
 
+<% if @warn_cjk %>
+  // Note that we are using our custom CJK logic
+  var infoBox = $("#appliedParams").first();
+  var infoMsg = "Using CJK search features. Click to disable.";
+  var html, span;
+  if (infoBox != null) {
+    span = '<span id="cjk_tip" class="glyphicon glyphicon-info-sign" title="' + infoMsg + '"></span>';
+    html = '<a style="color:#374b88;" href="#">' + span + '</a>'
+    infoBox.append(html);
+    $("#cjk_tip").tooltip();
+    $("#cjk_tip").on("click", function(){
+      window.location = window.location.href + "&cjk=false";
+    });
+  }
+<% elsif @cjk_search %>
+  // Allow user to enable CJK logic
+  var infoBox = $("#appliedParams").first();
+  var infoMsg = "CJK detected, click to enable CJK search features.";
+  var html, span;
+  if (infoBox != null) {
+    span = '<span id="cjk_tip" class="glyphicon glyphicon-info-sign" title="' + infoMsg + '"></span>';
+    html = '<a href="#">' + span + '</a>'
+    infoBox.append(html);
+    $("#cjk_tip").tooltip();
+    $("#cjk_tip").on("click", function(x){
+      window.location = window.location.href.replace("cjk=false", "");
+    });
+  }
+<% end %>
+
 <% if has_search_parameters? == false %>
   $(function() {
     // Flash the input box.

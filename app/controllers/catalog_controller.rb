@@ -210,19 +210,6 @@ class CatalogController < ApplicationController
       }
     end
 
-    if ENV["CJK"] == "true"
-      config.add_search_field('author_cjk') do |field|
-        field.solr_parameters = {
-          defType: "edismax",
-          qf: "author_cjk"
-        }
-        field.solr_local_parameters = {
-          :qf => 'author_cjk',
-          :pf => 'author_cfk'
-        }
-      end
-    end
-
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the SOLR field to sort by and
     # whether the sort is ascending or descending (it must be asc or desc
@@ -351,6 +338,12 @@ class CatalogController < ApplicationController
     # on the request following a bad request from the same user. This issue only happens
     # in production (!).
     flash[:error] = nil
+
+    @warn_cjk = false
+    @cjk_search = is_cjk_search?(params)
+    if @cjk_search
+      @warn_cjk = switch_to_cjk_search(params)
+    end
 
     @altered_search_terms = false
     @new_q = ""
@@ -602,6 +595,56 @@ class CatalogController < ApplicationController
         Rails.logger.info( "E-mail not sent, qq.com email (#{params[:to]})")
         return true
       end
+      return false
+    end
+
+    def is_cjk_search?(params)
+      if ENV["CJK"] != "true"
+        return false
+      end
+
+      search_field = params[:search_field] || "all_fields"
+      if (search_field == "all_fields" || search_field == "title" || search_field == "author")
+        return StringUtils.cjk?(params[:q])
+      end
+      return false
+    end
+
+    def switch_to_cjk_search(params)
+      if params[:cjk] == "false"
+        # Nothing to do, user explicitly requested no CJK logic
+        return false
+      end
+
+      case (params[:search_field] || "all_fields")
+      when "all_fields"
+        search_field = blacklight_config[:search_fields]["all_fields"]
+        search_field.solr_parameters[:defType] = 'lucene'
+        search_field.solr_local_parameters = {
+          type: "edismax",
+          :qf => 'title_txt_cjk author_txt_cjk',
+          :pf => 'title_txt_cjk author_txt_cjk'
+        }
+        return true
+      when "title"
+        search_field = blacklight_config[:search_fields]["title"]
+        search_field.solr_local_parameters = {
+          type: "edismax",
+          :qf => 'title_txt_cjk',
+          :pf => 'title_txt_cjk'
+        }
+        return true
+      when "author"
+        search_field = blacklight_config[:search_fields]["author"]
+        search_field.solr_local_parameters = {
+          type: "edismax",
+          :qf => 'author_txt_cjk',
+          :pf => 'author_txt_cjk'
+        }
+        return true
+      end
+
+      # nothing to do
       return false
     end
 
