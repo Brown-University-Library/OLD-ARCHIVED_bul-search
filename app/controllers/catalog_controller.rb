@@ -343,6 +343,11 @@ class CatalogController < ApplicationController
     @cjk_search = is_cjk_search?(params)
     if @cjk_search
       @warn_cjk = switch_to_cjk_search(params)
+      if @warn_cjk
+        Rails.logger.info( "CJK search by (#{params[:search_field]})")
+      else
+        Rails.logger.info( "CJK search skipped")
+      end
     end
 
     @altered_search_terms = false
