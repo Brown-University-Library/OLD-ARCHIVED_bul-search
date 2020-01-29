@@ -11,8 +11,7 @@ class ShelfSearchBuilder < Blacklight::SearchBuilder
   end
 
   def search_by_callnumber(solr_parameters)
-    solr_parameters[:fq] ||= []
-    solr_parameters[:fq] << query_for_ids(@ids)
+    solr_parameters[:q]  = query_for_ids(@ids)
     solr_parameters[:fl] ||= []
     solr_parameters[:fl] << "id"
     solr_parameters[:fl] << "callnumber_t"
