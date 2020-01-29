@@ -24,6 +24,9 @@ class ShelfSearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:fl] << "format"
     solr_parameters[:start] = 0
     solr_parameters[:rows] = @ids.count
+    # == SOLR-7-MIGRATION ==
+    # Needed in Solr 7 because the server is set to Lucene
+    solr_parameters[:df] = "id"
   end
 
   def query_for_ids(ids)
