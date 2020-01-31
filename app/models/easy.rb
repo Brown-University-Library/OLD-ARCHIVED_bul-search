@@ -185,9 +185,14 @@ class Easy
         "q"=>"#{q.gsub('--', '\\-\\-')}",
         "qt" => 'search',
         :spellcheck => false,
-        "defType" => "dismax", # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
+        "defType" => "edismax", # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
         "df" => "id"           # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
     }
+
+    if ENV["CJK"] == "true" && StringUtils.cjk?(q)
+      qp[:qf] = 'title_txt_cjk author_txt_cjk'
+      qp[:pf] = 'title_txt_cjk author_txt_cjk'
+    end
 
     response = solr.get 'select', :params => qp
 
