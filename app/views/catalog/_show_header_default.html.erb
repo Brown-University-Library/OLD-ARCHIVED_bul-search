@@ -1,2 +1,6 @@
-<% # TODO: add .html_safe once we fix our data in Solr %>
-<h3 itemprop="name"><%= (document[:title_display] || "") %></h3>
+<% if document[:title_vern_display] %>
+    <h3 itemprop="name"><%= document[:title_vern_display] %></h3>
+    <h4 itemprop="name"><%= (document[:title_display] || "") %></h4>
+<% else %>
+    <h3 itemprop="name"><%= (document[:title_display] || "") %></h3>
+<% end %>
