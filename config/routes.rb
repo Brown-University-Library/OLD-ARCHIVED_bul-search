@@ -56,8 +56,8 @@ BulSearch::Application.routes.draw do
   get 'stats/solr-master' => 'stats#solr_master'
 
   # Collection Ecosystem Project
-  get 'dashboard/:subject/details' => 'dashboard#details', as: :dashboard_details
-  get 'dashboard/:subject' => 'dashboard#show', as: :dashboard_show
+  get 'dashboard/:id/details' => 'dashboard#details', as: :dashboard_details
+  get 'dashboard/:id' => 'dashboard#show', as: :dashboard_show
   get 'dashboard/' => 'dashboard#index', as: :dashboard_index
 
   # Hay Flags Project

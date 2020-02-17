@@ -9,10 +9,10 @@
     }
 </style>
 
-<h2><%= @info[:name] %></h2>
-<p>Sierra List: <%= @info[:sierra_list] %></p>
-<p>Total bibs: <%= @info[:bib_count] %></p>
-<p>Total items: <%= @info[:item_count] %></p>
+<h2><%= @summary.list_name %></h2>
+<p>Sierra List: <%= @summary.sierra_list %> (as of <%= @summary.updated_date %>)</p>
+<p>Total bibs: <%= @summary.bib_count %></p>
+<p>Total items: <%= @summary.item_count %></p>
 
 <p>Jump to filter by:
 <a href="#by_subject">subject</a> |
@@ -28,15 +28,15 @@
         <th>Fund Code (Master)</th>
         <th>Item Count</th>
     </tr>
-    <% @info[:fund_codes].each do |loc| %>
+    <% @summary.fund_codes.each do |fund| %>
         <tr>
-            <% if !loc[:fund_code].empty? %>
-                <td><a href="<%= dashboard_details_path(key: 'fund', value: loc[:fund_code]) %>"><%= loc[:fund_code] %></a></td>
+            <% if !fund["Name"].empty? %>
+                <td><a href="<%= dashboard_details_path(key: 'fund', value: fund['Name']) %>"><%= fund["Name"] %></a></td>
             <% else %>
                 <td><a href="<%= dashboard_details_path(key: 'fund', value: '(none)') %>">(none)</a></td>
             <% end %>
-            <td><%= loc[:fund_code_master] %></td>
-            <td><%= loc[:count] %></td>
+            <td><%= fund["Name"] %></td>
+            <td><%= fund["Count"] %></td>
         </tr>
     <% end %>
 </table>
@@ -48,58 +48,56 @@
         <th>Subject</th>
         <th>Item Count</th>
     </tr>
-    <% @info[:subjects].each do |loc| %>
+    <% @summary.subjects.each do |sub| %>
         <tr>
-            <td><%= loc[:subject] %></a></td>
-            <td><%= loc[:count] %></td>
+            <td><%= sub["Name"] %></a></td>
+            <td><%= sub["Count"] %></td>
         </tr>
     <% end %>
 </table>
 
-
-<a href='#' name="by_location"></a
+<a href='#' name="by_location"></a>
 <h3>By Location</h3>
 <table>
     <tr>
         <th>Location</th>
         <th>Item Count</th>
     </tr>
-    <% @info[:locations].each do |loc| %>
+    <% @summary.locations.each do |loc| %>
         <tr>
-            <td><a href="<%= dashboard_details_path(key: 'loc', value: loc[:code]) %>"><%= loc[:code] %></a></td>
-            <td><%= loc[:count] %></td>
+            <td><a href="<%= dashboard_details_path(key: 'loc', value: loc['Name']) %>"><%= loc["Name"] %></a></td>
+            <td><%= loc["Count"] %></td>
         </tr>
     <% end %>
 </table>
 
-
-<a href='#' name="by_callnumber"></a
+<a href='#' name="by_callnumber"></a>
 <h3>By Call number</h3>
 <table>
     <tr>
         <th>Call number</th>
         <th>Item Count</th>
     </tr>
-    <% @info[:callnumbers].each do |loc| %>
+    <% @summary.callnumbers.each do |call_no| %>
         <tr>
-            <td><a href="<%= dashboard_details_path(key: 'cn', value: loc[:code]) %>"><%= loc[:code] %></a></td>
-            <td><%= loc[:count] %></td>
+            <td><a href="<%= dashboard_details_path(key: 'cn', value: call_no['Name']) %>"><%= call_no["Name"] %></a></td>
+            <td><%= call_no["Count"] %></td>
         </tr>
     <% end %>
 </table>
 
 
-<a href='#' name="by_checkouts"></a
+<a href='#' name="by_checkouts"></a>
 <h3>By Checkouts</h3>
 <table>
     <tr>
         <th>Number of times</th>
         <th>Item Count</th>
     </tr>
-    <% @info[:checkouts].each do |loc| %>
+    <% @summary.checkouts.each do |ck| %>
         <tr>
-            <td><a href="<%= dashboard_details_path(key: 'ck', value: loc[:num]) %>"><%= loc[:num] %></a></td>
-            <td><%= loc[:count] %></td>
+            <td><a href="<%= dashboard_details_path(key: 'ck', value: ck['Name']) %>"><%= ck["Name"] %></a></td>
+            <td><%= ck["Count"] %></td>
         </tr>
     <% end %>
 </table>

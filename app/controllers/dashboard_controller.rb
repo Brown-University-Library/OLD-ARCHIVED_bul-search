@@ -7,18 +7,25 @@ class DashboardController < ApplicationController
   end
 
   def show
-    @info = EcoDetails.summary("ECON")
-    if @info == nil
-        render text: "Invalid subject"
+    list_id = (params["id"] || 0).to_i
+    @summary = EcoSummary.find_by_sierra_list(list_id)
+    if @summary == nil
+        render text: "Invalid list_id"
         return
     end
     render
   end
 
   def details
+    list_id = (params["id"] || 0).to_i
+    @summary = EcoSummary.find_by_sierra_list(list_id)
+    if @summary == nil
+        render text: "Invalid list_id"
+        return
+    end
     @rows = []
     @criteria = nil
-    @sierra_list = 334
+    @sierra_list = @summary.sierra_list
     @limit = 5000
     case params["key"]
     when "cn"

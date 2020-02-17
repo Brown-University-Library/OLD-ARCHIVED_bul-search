@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191113214000) do
+ActiveRecord::Schema.define(version: 20200217120100) do
 
   create_table "bookmarks", force: :cascade do |t|
     t.integer  "user_id",       limit: 4,   null: false
@@ -90,6 +90,21 @@ ActiveRecord::Schema.define(version: 20191113214000) do
   add_index "eco_details", ["fund_code"], name: "index_eco_details_on_fund_code", using: :btree
   add_index "eco_details", ["fund_code_master"], name: "index_eco_details_on_fund_code_master", using: :btree
   add_index "eco_details", ["sierra_list", "bib_record_num"], name: "index_eco_details_on_sierra_list_and_bib_record_num", using: :btree
+
+  create_table "eco_summaries", force: :cascade do |t|
+    t.integer  "sierra_list",      limit: 4
+    t.string   "list_name",        limit: 255
+    t.integer  "bib_count",        limit: 4
+    t.integer  "item_count",       limit: 4
+    t.text     "locations_str",    limit: 65535
+    t.text     "callnumbers_str",  limit: 65535
+    t.text     "checkouts_str",    limit: 65535
+    t.text     "fundcodes_str",    limit: 65535
+    t.text     "subjects_str",     limit: 65535
+    t.datetime "updated_date_gmt"
+  end
+
+  add_index "eco_summaries", ["sierra_list"], name: "index_eco_summaries_on_sierra_list", using: :btree
 
   create_table "libguides_caches", force: :cascade do |t|
     t.string "name",       limit: 50
