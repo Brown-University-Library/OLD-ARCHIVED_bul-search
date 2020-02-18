@@ -5,7 +5,9 @@
 </style>
 
 <div>
-Items: <b><%= @criteria %></b>
+  <p>Items: <b><%= @criteria %></b></p>
+  <!-- TODO: Make the download link honor the current filter -->
+  <p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
 </div>
 <div style="overflow-x: scroll;">
   <table class="table">

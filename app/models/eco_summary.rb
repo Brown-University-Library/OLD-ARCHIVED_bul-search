@@ -1,5 +1,4 @@
 class EcoSummary < ActiveRecord::Base
-
     def updated_date
         self.updated_date_gmt.localtime
     end

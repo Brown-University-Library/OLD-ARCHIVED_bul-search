@@ -18,14 +18,15 @@ class DashboardController < ApplicationController
 
   def details
     list_id = (params["id"] || 0).to_i
-    @summary = EcoSummary.find_by_sierra_list(list_id)
-    if @summary == nil
+    summary = EcoSummary.find_by_sierra_list(list_id)
+    if summary == nil
         render "show_empty"
         return
     end
+
     @rows = []
     @criteria = nil
-    @sierra_list = @summary.sierra_list
+    @sierra_list = summary.sierra_list
     @limit = 5000
     case params["key"]
     when "cn"
@@ -45,7 +46,16 @@ class DashboardController < ApplicationController
         @criteria = "where fund code is #{params["value"]} (limited to first #{@limit} rows)"
         @rows = EcoDetails.where(sierra_list: @sierra_list, fund_code: params["value"])
       end
+    else
+      @criteria = "All"
+      @rows = EcoDetails.where(sierra_list: @sierra_list)
     end
+
+    if params["format"] == "tsv"
+      send_data(EcoDetails.to_tsv(@rows), :filename => "sierra_list_#{list_id}.tsv", :type => "text/tsv")
+      return
+    end
+
     @rows = @rows.take(@limit)
     render "details"
   end

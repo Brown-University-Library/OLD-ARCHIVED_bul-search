@@ -13,6 +13,7 @@
 <p>Sierra List: <%= @summary.sierra_list %> (as of <%= @summary.updated_date %>)</p>
 <p>Total bibs: <%= @summary.bib_count %></p>
 <p>Total items: <%= @summary.item_count %></p>
+<p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
 
 <p>Jump to filter by:
 <a href="#by_subject">subject</a> |
@@ -101,6 +102,3 @@
         </tr>
     <% end %>
 </table>
-
-<h3>Download</h3>
-<p><a href="#">Download data (TSV) (pending)</a></p>
