@@ -10,7 +10,7 @@ class DashboardController < ApplicationController
     list_id = (params["id"] || 0).to_i
     @summary = EcoSummary.find_by_sierra_list(list_id)
     if @summary == nil
-        render text: "Invalid list_id"
+        render "show_empty"
         return
     end
     render
@@ -20,7 +20,7 @@ class DashboardController < ApplicationController
     list_id = (params["id"] || 0).to_i
     @summary = EcoSummary.find_by_sierra_list(list_id)
     if @summary == nil
-        render text: "Invalid list_id"
+        render "show_empty"
         return
     end
     @rows = []
