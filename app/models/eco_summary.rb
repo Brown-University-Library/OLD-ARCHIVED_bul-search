@@ -6,8 +6,16 @@ class EcoSummary < ActiveRecord::Base
 
     def fund_codes
         @fund_codes ||= begin
-            JSON.parse(self.fundcodes_str || "[]")
+            # The "Name" value has both the "code" and the "master"
+            # code values as a single string.
+            # Here we split them into individual values.
+            data = JSON.parse(self.fundcodes_str || "[]")
+            data.map do |fund|
+                code, master = fund["Name"].split("|")
+                {"Name" => code || "", "Master" => master || "", "Count" => fund["Count"]}
+            end
         end
+        @fund_codes
     end
 
     def locations
