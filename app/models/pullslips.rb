@@ -13,7 +13,13 @@ class Pullslips
 
     def list_date
         return "" if @data.count == 0
-        @data[0]["ListDate"]["Time"]
+        @data[0]["ListDate"]["Time"] || ""
+    end
+
+    def list_date_human
+      date = list_date
+      return "" if date == ""
+      date.to_time.to_s(:long)
     end
 
     def fetch_data(id)

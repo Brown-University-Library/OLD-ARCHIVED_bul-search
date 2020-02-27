@@ -11,7 +11,7 @@
 </style>
 
 <h2>Pull Slips for List <%= @id %></h2>
-<p><%= @ps.title %> as of <%= @ps.list_date.to_time.to_s(:long) %>
+<p><%= @ps.title %> as of <%= @ps.list_date_human %>
 
 <div class="btn-group" role="group" aria-label="...">
   <a class="btn btn-default"
