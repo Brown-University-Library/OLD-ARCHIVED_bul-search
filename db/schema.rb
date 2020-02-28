@@ -11,7 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200217120100) do
+ActiveRecord::Schema.define(version: 20200227162000) do
+
+  create_table "best_bet_entries", force: :cascade do |t|
+    t.string "name",        limit: 255
+    t.string "database",    limit: 255
+    t.text   "queries",     limit: 65535
+    t.text   "url",         limit: 65535
+    t.text   "description", limit: 65535
+  end
+
+  add_index "best_bet_entries", ["name"], name: "index_best_bet_entries_on_name", using: :btree
+
+  create_table "best_bet_terms", force: :cascade do |t|
+    t.integer "best_bet_entry_id", limit: 4
+    t.string  "term",              limit: 255
+  end
+
+  add_index "best_bet_terms", ["best_bet_entry_id"], name: "index_best_bet_terms_on_best_bet_entry_id", using: :btree
+  add_index "best_bet_terms", ["term"], name: "index_best_bet_terms_on_term", using: :btree
 
   create_table "bookmarks", force: :cascade do |t|
     t.integer  "user_id",       limit: 4,   null: false

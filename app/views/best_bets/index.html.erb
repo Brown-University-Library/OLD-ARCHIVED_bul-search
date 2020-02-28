@@ -1,0 +1,40 @@
+<style>
+    table {
+        border-collapse: separate;
+        border-spacing: 50px 0;
+    }
+
+    td {
+        vertical-align: top
+        /* padding: 10px 0; */
+    }
+</style>
+
+<h2>Best Bets</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12" >
+            <table>
+                <% @data.each_with_index do |bb, i| %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><a href="<%= bb.url %>" target="_blank"><%= bb.name %></a></td>
+                        <td>
+                            <%= bb.description %><br/>
+                            <% if bb.queries.count == 0 %>
+                                <span><i>(No search terms defined)</i></span>
+                            <% else %>
+                                <i>Search terms</i>
+                                <ul>
+                                <% bb.queries.each do |query| %>
+                                    <li><%= query.term %>
+                                <% end %>
+                                </ul>
+                            <% end %>
+                        </td>
+                    </tr>
+                <% end %>
+            </table>
+        </div>
+    </div>
+</div>
