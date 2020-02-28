@@ -67,7 +67,9 @@ BulSearch::Application.routes.draw do
   get 'hay/flags', to: redirect('/pullslips')
 
   # Best Bets editor
-  get 'bestbets/' => 'best_bets#index' # , as: :best_bets_index
+  get 'bestbets/' => 'best_bets#index', as: :best_bets_index
+  get 'bestbets/:id/edit' => 'best_bets#edit', as: :best_bets_edit
+  post 'bestbets/:id/save' => 'best_bets#save', as: :best_bets_save
 
   # Legacy
   get 'Search/Results' => "legacy#search_results"

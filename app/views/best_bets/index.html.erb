@@ -1,33 +1,63 @@
 <style>
     table {
         border-collapse: separate;
-        border-spacing: 50px 0;
+        /* border-spacing: 50px 0; */
+    }
+
+	 tr:nth-child(even){
+		background: #f0f6f9;
+	}
+
+    tr {
+        border-top: 2px solid;
+    }
+
+    th {
+        vertical-align: top;
+        padding-left: 10px;
+        font-weight: bold;
     }
 
     td {
-        vertical-align: top
-        /* padding: 10px 0; */
+        vertical-align: top;
+        padding-left: 10px;
     }
 </style>
 
 <h2>Best Bets</h2>
+<div style="align:right">
+    <a href="<%= best_bets_index_url(format: 'tsv') %>"
+        type="button"
+        title="Download data in tab-separated format (TSV)"
+        class="btn btn-default"
+        style="float: right;">
+        <span class="glyphicon glyphicon-download-alt"></span></a>
+</div>
 <div class="container">
     <div class="row">
         <div class="col-sm-12" >
             <table>
+                <tr>
+                    <th>#</th>
+                    <th>&nbsp;</th>
+                    <th>Name</th>
+                    <th>Description (and search terms)</th>
+                </tr>
                 <% @data.each_with_index do |bb, i| %>
                     <tr>
-                        <td><%= i + 1 %></td>
-                        <td><a href="<%= bb.url %>" target="_blank"><%= bb.name %></a></td>
+                        <td><a id="<%= bb.id %>" name="<%= bb.id %>"></a><%= i + 1 %></td>
+                        <td><a href="<%= best_bets_edit_url(id: bb.id) %>" type="button" class="btn btn-default btn-xs">Edit</a></td>
+                        <td><a href="<%= bb.url %>" target="_blank" title="Visit this site"><%= bb.name %></a></td>
                         <td>
                             <%= bb.description %><br/>
-                            <% if bb.queries.count == 0 %>
+                            <% if bb.terms.count == 0 %>
                                 <span><i>(No search terms defined)</i></span>
                             <% else %>
                                 <i>Search terms</i>
                                 <ul>
-                                <% bb.queries.each do |query| %>
-                                    <li><%= query.term %>
+                                <% bb.terms.each do |query| %>
+                                    <li><a href="<%= root_url() %>?q=<%= query.term %>"
+                                    title="Test this search term"><%= query.term %></a>
                                 <% end %>
                                 </ul>
                             <% end %>

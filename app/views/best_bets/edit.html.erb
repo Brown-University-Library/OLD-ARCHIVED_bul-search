@@ -1,0 +1,64 @@
+<style>
+    table {
+        border-collapse: separate;
+        border-spacing: 50px 0;
+    }
+
+    td {
+        vertical-align: top
+        /* padding: 10px 0; */
+    }
+</style>
+
+<h2>Best Bets</h2>
+<h3><%= @data.name %></h3>
+<div class="container">
+    <form class="" role="edit" method="POST" action="<%= best_bets_save_url(id: @data.id ) %>">
+        <div class="form-group">
+
+            <label class="" id="name_label">Name</label>
+            <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
+                id="name" name="name" value="<%= @data.name %>">
+
+            <label class="" id="url_label">URL</label>
+            <input type="text" class="form-control" placeholder="URL" aria-describedby="url_label"
+                id="url" name="url" value="<%= @data.url %>">
+
+            <label class="" id="desc_label">Description</label>
+            <textarea class="form-control" rows="8" placeholder="Description" aria-describedby="desc_label"
+                id="description" name="description" ><%= @data.description %></textarea>
+
+            <div id="search_terms_box">
+                <label class="" id="term_label">Search Terms</label>
+                <% @data.terms.each do |term| %>
+                    <input type="text" class="form-control" placeholder="search term" aria-describedby="term_label"
+                    id="term_id_<%= term.id %>" name="term_id_<%= term.id %>" value="<%= term.term %>">
+                <% end %>
+            </div>
+            <a href="#" id="add_search_term" type="button" title="Add another search term"
+                class="btn btn-default">+</a>
+
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+        <button type="reset" class="btn btn ">Cancel</button>
+    </form>
+</div>
+
+<script>
+$(document).ready(function() {
+
+  var next_id = 0;
+  $("#add_search_term").on('click', function(event) {
+    event.preventDefault();
+
+    // Add a new input box for a new search term
+    next_id += 1;
+    var new_term_id = "new_term_id_" + next_id.toString(10);
+    var html = '<input type="text" class="form-control" placeholder="search term" id="id_placeholder" name="id_placeholder" >';
+    html = html.replace(/id_placeholder/g, new_term_id);
+    $("#search_terms_box").append(html);
+
+  });
+
+});
+</script>
