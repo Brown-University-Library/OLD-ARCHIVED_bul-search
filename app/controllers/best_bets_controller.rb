@@ -10,7 +10,7 @@ class BestBetsController < ApplicationController
         end
 
         @page_title = "Best Bets"
-        @data = BestBetEntry.all_ordered()
+        @data = BestBetEntry.all_cached()
         render
     end
 
