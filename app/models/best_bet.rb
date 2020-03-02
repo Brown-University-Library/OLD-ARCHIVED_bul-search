@@ -13,6 +13,14 @@ class BestBet
   def self.get(query = "")
     return nil if query.empty?
     query = query.strip
+
+    if ENV["BEST_BETS_EDIT"] == "true"
+      match = self.get_from_sql(query)
+      if match != nil
+        return match
+      end
+    end
+
     match = self.get_from_solr(query)
     if match == nil
       match = self.get_from_reserves(query)
@@ -26,6 +34,14 @@ class BestBet
   rescue StandardError => e
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n")
+    nil
+  end
+
+  def self.get_from_sql(query)
+    bb = BestBetEntry.search(query)
+    if bb != nil
+      return {name: bb.name, url: bb.url, description: bb.description}
+    end
     nil
   end
 

@@ -45,19 +45,19 @@
                 </tr>
                 <% @data.each_with_index do |bb, i| %>
                     <tr>
-                        <td><a id="<%= bb.id %>" name="<%= bb.id %>"></a><%= i + 1 %></td>
-                        <td><a href="<%= best_bets_edit_url(id: bb.id) %>" type="button" title="Make changes to this BestBet" class="btn btn-default btn-xs">Edit</a></td>
-                        <td><a href="<%= bb.url %>" target="_blank" title="Visit this site"><%= bb.name %></a></td>
+                        <td><a id="<%= bb[:id] %>" name="<%= bb[:id] %>"></a><%= i + 1 %></td>
+                        <td><a href="<%= best_bets_edit_url(id: bb[:id]) %>" type="button" title="Make changes to this BestBet" class="btn btn-default btn-xs">Edit</a></td>
+                        <td><a href="<%= bb[:url] %>" target="_blank" title="Visit this site"><%= bb[:name] %></a></td>
                         <td>
-                            <%= bb.description %><br/>
-                            <% if bb.terms.count == 0 %>
+                            <%= bb[:description] %><br/>
+                            <% if bb[:terms].count == 0 %>
                                 <span><i>(No search terms defined)</i></span>
                             <% else %>
                                 <i>Search terms</i>
                                 <ul>
-                                <% bb.terms.each do |query| %>
-                                    <li><a href="<%= root_url() %>?q=<%= query.term %>"
-                                    title="Test this search term"><%= query.term %></a>
+                                <% bb[:terms].each do |term| %>
+                                    <li><a href="<%= root_url() %>?q=<%= term %>"
+                                    title="Test this search term"><%= term %></a>
                                 <% end %>
                                 </ul>
                             <% end %>

@@ -1,13 +1,12 @@
 class BestBetEntry < ActiveRecord::Base
-    attr_accessor :search_terms
-
     # Returns all the terms associated with a given BestBetEntry
     def terms()
-        @queries ||= begin
+        @terms ||= begin
             BestBetTerm.where(best_bet_entry_id: self.id).order(:term)
         end
     end
 
+    # Delete a BestBetEntry and its associated BestBetTerms
     def delete()
         # Delete the terms first...
         terms().each do |term|
@@ -17,15 +16,68 @@ class BestBetEntry < ActiveRecord::Base
         super
     end
 
-    def self.all_ordered()
+    # Returns an array of hashes with all the BestBetEntries and their search terms.
+    # This is used to display the information in the BestBets home page (/bestbets).
+    #
+    # We are using an array of hashes here (instead of an array of BestBetEntry + BestBetTerms)
+    # because I want to bypass Rails' lazy loading and force it to load all the data into the cache.
+    # TODO: Figure out if there is a Rails-way of doing this.
+    #
+    def self.all_cached()
         Rails.cache.fetch("best_bet_cache", expires_in: 30.minute) do
-            entries = BestBetEntry.all.order(:name)
+            entries = []
+            BestBetEntry.all.order(:name).each do |entry|
+                cache_entry = {
+                    id: entry.id,
+                    name: entry.name,
+                    url: entry.url,
+                    description: entry.description,
+                    terms: []
+                }
+                BestBetTerm.where(best_bet_entry_id: entry.id).order(:term).each do |term|
+                    cache_entry[:terms] << term.term
+                end
+                entries << cache_entry
+            end
             entries
         end
     end
 
-    def self.force_reload()
+    # Searches the cache for a BestBetEntry by term
+    def self.search(term)
+        term = (term || "").strip
+        bb = terms_cached[term]
+        bb
+    end
+
+    # Returns a hash in which each key corresponds to a search term
+    # and its value is the BestBetEntry for that term. For example:
+    #   {
+    #       "pubmed": <BestBetEntry.id 123 Pubmed>,
+    #       "pub med ": <BestBetEntry.id 123 Pubmed>,
+    #       "acm": <BestBetEntry.id 222 ACM Digital Library>
+    #       "us poets": <BestBetEntry.id 333 American Poetry>
+    #   }
+    # This is used to perform searches by term by using Ruby's native
+    # key search.
+    def self.terms_cached()
+        Rails.cache.fetch("best_bet_terms_cache", expires_in: 30.minute) do
+            terms_cache = {}
+            BestBetEntry.all.order(:name).each do |entry|
+                BestBetTerm.where(best_bet_entry_id: entry.id).each do |term|
+                    key = (term.term || "").strip
+                    if key != ""
+                        terms_cache[key] = entry
+                    end
+                end
+            end
+            terms_cache
+        end
+    end
+
+    def self.force_cache_reload()
         Rails.cache.delete("best_bet_cache")
+        Rails.cache.delete("best_bet_terms_cache")
     end
 
     # Updates a BestBetEntry and its related BestBetTerms.
@@ -71,7 +123,7 @@ class BestBetEntry < ActiveRecord::Base
             end
         end
 
-        force_reload()
+        force_cache_reload()
     end
 
     # Imports a hash with the data as downloaded from Google Sheet
@@ -97,21 +149,22 @@ class BestBetEntry < ActiveRecord::Base
                 end
             end
         end
+        force_cache_reload()
     end
 
     # Gathers all the entries and search terms in an array ready for download
     def self.export()
         rows = []
-        BestBetEntry.all.each do |bb|
+        BestBetEntry.all_cached.each do |bb|
             row = []
-            row << bb.name
-            row << bb.database
-            row << bb.description
-            row << bb.url
+            row << bb[:name]
+            row << bb[:database]
+            row << bb[:description]
+            row << bb[:url]
 
             terms = []
-            bb.terms.each do |term|
-                terms << term.term
+            bb[:terms].each do |term|
+                terms << term
             end
             row << terms.join(";")
 
@@ -127,7 +180,9 @@ class BestBetEntry < ActiveRecord::Base
         export().each do |row|
             # Strip \r, \n, and \t from the content since those are
             # our delimiters for the export.
-            row = row.map {|cell| cell.gsub("\n", " ").gsub("\r", " ").gsub("\t", " ")}
+            row = row.map do |cell|
+                (cell || "").gsub("\n", " ").gsub("\r", " ").gsub("\t", " ")
+            end
             tsv << row.join("\t")
         end
         tsv.join("\r\n")
