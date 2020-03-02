@@ -1,26 +1,26 @@
 <style>
     table {
         border-collapse: separate;
-        /* border-spacing: 50px 0; */
     }
 
 	 tr:nth-child(even){
 		background: #f0f6f9;
 	}
 
-    tr {
-        border-top: 2px solid;
-    }
-
     th {
         vertical-align: top;
         padding-left: 10px;
         font-weight: bold;
+        font-size: large;
+        border-bottom-style: solid;
+        border-bottom-width: 2px;
+        border-bottom-color: black;
     }
 
     td {
         vertical-align: top;
         padding-left: 10px;
+        padding-top: 10px;
     }
 </style>
 
@@ -46,7 +46,7 @@
                 <% @data.each_with_index do |bb, i| %>
                     <tr>
                         <td><a id="<%= bb.id %>" name="<%= bb.id %>"></a><%= i + 1 %></td>
-                        <td><a href="<%= best_bets_edit_url(id: bb.id) %>" type="button" class="btn btn-default btn-xs">Edit</a></td>
+                        <td><a href="<%= best_bets_edit_url(id: bb.id) %>" type="button" title="Make changes to this BestBet" class="btn btn-default btn-xs">Edit</a></td>
                         <td><a href="<%= bb.url %>" target="_blank" title="Visit this site"><%= bb.name %></a></td>
                         <td>
                             <%= bb.description %><br/>

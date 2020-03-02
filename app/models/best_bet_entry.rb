@@ -8,13 +8,18 @@ class BestBetEntry < ActiveRecord::Base
         end
     end
 
+    def delete()
+        # Delete the terms first...
+        terms().each do |term|
+            term.delete()
+        end
+        # ...and then the BestBet entry
+        super
+    end
+
     def self.all_ordered()
         Rails.cache.fetch("best_bet_cache", expires_in: 30.minute) do
             entries = BestBetEntry.all.order(:name)
-            # entries.each do |entry|
-            #     entry.search_terms = BestBetTerm.where(best_bet_entry_id: entry.id).order(:term).preload()
-            #     puts "loaded search terms for #{entry.id}"
-            # end
             entries
         end
     end

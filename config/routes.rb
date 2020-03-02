@@ -70,6 +70,7 @@ BulSearch::Application.routes.draw do
   get 'bestbets/' => 'best_bets#index', as: :best_bets_index
   get 'bestbets/:id/edit' => 'best_bets#edit', as: :best_bets_edit
   post 'bestbets/:id/save' => 'best_bets#save', as: :best_bets_save
+  post 'bestbets/:id/delete' => 'best_bets#delete', as: :best_bets_delete
 
   # Legacy
   get 'Search/Results' => "legacy#search_results"
