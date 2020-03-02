@@ -14,6 +14,7 @@ class BestBetEntry < ActiveRecord::Base
         end
         # ...and then the BestBet entry
         super
+        BestBetEntry.force_cache_reload()
     end
 
     # Returns an array of hashes with all the BestBetEntries and their search terms.
