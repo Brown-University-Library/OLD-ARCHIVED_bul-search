@@ -63,11 +63,10 @@ class BestBetsController < ApplicationController
 
     private
         def edit_user?
-            # TODO: remove for production
-            if (request.env["REQUEST_URI"] || "").start_with?("http://localhost:3000/bestbets")
-                return true
-            end
-
+            # For testing locally
+            # if (request.env["REQUEST_URI"] || "").start_with?("http://localhost:3000/bestbets")
+            #     return true
+            # end
             return false if current_user == nil
             user = "/#{current_user}/"
             return (ENV["BEST_BETS_USERS"] || "").include?(user)
