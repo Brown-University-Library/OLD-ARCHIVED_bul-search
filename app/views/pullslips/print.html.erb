@@ -17,7 +17,9 @@
         }
 
         .column {
+            width: 300px;
             column-width: 300px;
+            max-width: 300px;
             padding-right: 20px;
             font-size: 14px;
             vertical-align: top;
@@ -49,7 +51,10 @@
             <tbody>
                 <tr>
                 <% row.each do |cell| %>
-                    <% next if cell == nil %>
+                    <% if cell == nil %>
+                        <td class="column">&nbsp;</td>
+                        <% next %>
+                    <% end %>
                     <td class="column">
                         <%= cell["ProjectTitle"] %><br/>
                         #<%= cell["PrintOrder"] %><br/>

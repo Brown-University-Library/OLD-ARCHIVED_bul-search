@@ -23,19 +23,28 @@ class Pullslips
     end
 
     def fetch_data(id)
-        Rails.cache.fetch("pullslips_#{id}", expires_in: 1.hour) do
-            url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/pullSlips?id=#{id}"
-            Rails.logger.info("Loading Pull Slips from bibService #{url}")
-            data = HttpUtil::HttpJson.get(url, [], 300)
-            data.each_with_index do |item, ix|
-              item["PrintOrder"] = ix + 1
-              item["CallNumber"] = (item["CallNumber"] || "").upcase
-              # Make the barcode readable by our scanners
-              # (no spaces, surround with asterisks)
-              item["BarCodePrint"] = "*" + (item["BarCode"] || "").gsub(" ", "") + "*"
-            end
-            data
+      if id == "-1"
+        return fetch_fake(id)
+      end
+      Rails.cache.fetch("pullslips_#{id}", expires_in: 1.hour) do
+        url = ENV["BIB_UTILS_SERVICE"] + "/bibutils/pullSlips?id=#{id}"
+        Rails.logger.info("Loading Pull Slips from bibService #{url}")
+        data = HttpUtil::HttpJson.get(url, [], 300)
+        data.each_with_index do |item, ix|
+          item["PrintOrder"] = ix + 1
+          item["CallNumber"] = (item["CallNumber"] || "").upcase
+          # Make the barcode readable by our scanners
+          # (no spaces, surround with asterisks)
+          item["BarCodePrint"] = "*" + (item["BarCode"] || "").gsub(" ", "") + "*"
         end
+        data
+      end
+    end
+
+    def fetch_fake(id)
+      a = {"FlagDate"=>{"Time"=>"2020-03-11T00:00:00Z", "Valid"=>true}, "DisplayOrder"=>1, "ProjectTitle"=>"BH LOW CIC PQ_FOR FLAGS (02-14-2020)", "ListDate"=>{"Time"=>"2020-02-14T11:23:02.8-05:00", "Valid"=>true}, "OrderNum"=>"o1478975a", "CallNumber"=>"DG  441 I87 2009", "CopyNum"=>1, "Volume"=>"", "BarCode"=>"3 1236 09290 0466", "Code2"=>"-", "ItemStatusCode"=>"-", "BibRecordNum"=>"b5178167a", "ItemRecordNum"=>"i15182986a", "LocalTag"=>" SPM", "Title"=>"Italy and the classical tradition :", "Edition"=>"", "Publisher"=>"London :Duckworth,2009", "PubYear"=>"2009", "Author"=>"", "Description"=>"x, 269 p. :ill. ;24 cm", "ItemLocation"=>"rock", "LocalNotes"=>"", "BndWith"=>false, "PrintOrder"=>1, "BarCodePrint"=>"*31236092900466*"}
+      b = {"FlagDate"=>{"Time"=>"2020-03-11T00:00:00Z", "Valid"=>true}, "DisplayOrder"=>2, "ProjectTitle"=>"BH LOW CIC PQ_FOR FLAGS (02-14-2020)", "ListDate"=>{"Time"=>"2020-02-14T11:23:02.8-05:00", "Valid"=>true}, "OrderNum"=>"o1348222a", "CallNumber"=>"PQ 2664 U812 P48 X 2005", "CopyNum"=>1, "Volume"=>"", "BarCode"=>"3 1236 01840 4924", "Code2"=>"-", "ItemStatusCode"=>"-", "BibRecordNum"=>"b3673448a", "ItemRecordNum"=>"i13112039a", "LocalTag"=>" SPM", "Title"=>"La petite fille et la cigarette :", "Edition"=>"", "Publisher"=>"[Paris] :Fayard,c2005", "PubYear"=>"2005", "Author"=>"Duteurtre, Benoît, 1960-", "Description"=>"214 p. ;22 cm", "ItemLocation"=>"rock", "LocalNotes"=>"", "BndWith"=>false, "PrintOrder"=>2, "BarCodePrint"=>"*31236018404924*"}
+      [a, b, a, b, a, b, a, b]
     end
 
     def to_tsv()
