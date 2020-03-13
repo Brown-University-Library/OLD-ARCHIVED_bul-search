@@ -37,6 +37,7 @@
             <a href="#" id="add_search_term" type="button" title="Add another search term"
                 class="btn btn-default">+</a>
 
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
         </div>
 
         <% if @edit_user %>
@@ -53,9 +54,10 @@
 $(document).ready(function() {
 
   var next_id = 0;
+
+  // Adds a new input box for a new search term
   $("#add_search_term").on('click', function(event) {
     event.preventDefault();
-    // Add a new input box for a new search term
     next_id += 1;
     var new_term_id = "new_term_id_" + next_id.toString(10);
     var html = '<input type="text" class="form-control" placeholder="search term" id="id_placeholder" name="id_placeholder" >';
@@ -63,6 +65,7 @@ $(document).ready(function() {
     $("#search_terms_box").append(html);
   });
 
+  // Cancels edit and goes back to list view
   $("#cancel_edit").on('click', function(event) {
     event.preventDefault();
     var listUrl = "<%= best_bets_index_url() %>";
@@ -72,6 +75,7 @@ $(document).ready(function() {
     window.location.href = listUrl;
   });
 
+  // Deletes current record
   $("#delete_record").on('click', function(event) {
     event.preventDefault();
     if (confirm("Are you sure you want to delete this BestBet?")) {
