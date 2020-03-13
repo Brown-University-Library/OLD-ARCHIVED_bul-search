@@ -63,10 +63,9 @@ class BestBetsController < ApplicationController
 
     private
         def edit_user?
-            # For testing locally
-            # if (request.env["REQUEST_URI"] || "").start_with?("http://localhost:3000/bestbets")
-            #     return true
-            # end
+            if ENV["LOCALHOST"] == "true"
+                return true
+            end
             return false if current_user == nil
             user = "/#{current_user}/"
             return (ENV["BEST_BETS_USERS"] || "").include?(user)
