@@ -136,6 +136,22 @@ class Callnumber < ActiveRecord::Base
     return {ids: ids, bounds: boundaries(nil, after_rows)}
   end
 
+  # Returns an array of BIB record IDs with call numbers
+  # that are in the call number range provided.
+  def self.get_by_range(cn_from, cn_to)
+    sql = <<-END_SQL.gsub(/\n/, '')
+      select bib, normalized, original
+      from callnumbers
+      where normalized >= "#{cn_from}" and normalized <= "#{cn_to}"
+      order by normalized asc
+    END_SQL
+    rows = ActiveRecord::Base.connection.exec_query(sql).rows
+    bibs = rows.map do |r|
+      {id: r[0], normalized: r[1], original: r[2]}
+    end
+    return bibs
+  end
+
   private
     def self.boundaries(top_rows, bottom_rows)
       top = nil

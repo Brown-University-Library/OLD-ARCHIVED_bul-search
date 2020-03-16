@@ -16,6 +16,29 @@ class DashboardController < ApplicationController
     render
   end
 
+  def new
+    redirect_to dashboard_edit_url(id: "123")
+  end
+
+  def edit
+    @data = OpenStruct.new(:id => params["id"])
+    @edit_user = true
+    render
+  end
+
+  def save
+    redirect_to dashboard_query_url(id: "123")
+  end
+
+  def query
+    @data = Dashboard.collection(params["id"])
+    if @data == nil
+      render "show_empty"
+      return
+    end
+    render "show_local"
+  end
+
   def details
     list_id = (params["id"] || 0).to_i
     summary = EcoSummary.find_by_sierra_list(list_id)

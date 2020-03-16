@@ -1,0 +1,40 @@
+<h2>Edit Dashboard</h2>
+
+<div class="container">
+    <form class="" role="edit" method="POST" action="<%= dashboard_save_url(id: @data.id ) %>">
+        <div class="form-group">
+
+            <label class="" id="name_label">Name</label>
+            <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
+                id="name" name="name" value="">
+
+            <label class="" id="desc_label">Description</label>
+            <textarea class="form-control" rows="8" placeholder="Description" aria-describedby="desc_label"
+                id="description" name="description" ></textarea>
+
+            <div id="search_terms_box">
+                <label class="" id="term_label">Call number ranges</label>
+                <div class="form-inline">
+                    <input type="text" class="form-control" placeholder="search term"
+                        aria-describedby="term_label" id="range_id_1" name="range_id_1" value="">
+                    <input type="text" class="form-control" placeholder="search term"
+                        aria-describedby="term_label" id="range_id_2" name="range_id_2" value="">
+                </div>
+            </div>
+            <a href="#" id="add_range" type="button" title="Add another call number range"
+                class="btn btn-default">+</a>
+
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
+        </div>
+
+        <% if @edit_user %>
+            <button type="submit" class="btn btn-info" title="Save changes to this BestBet">Save</button>
+            <button type="reset" id="cancel_edit" class="btn btn" title="Don't save changes to this BestBet">Cancel</button>
+            <button style="float: right;" type="reset" id="delete_record" class="btn btn-danger" title="Delete this BestBet">Delete</button>
+        <% else %>
+            <p>Must <a href="https://search.library.brown.edu/users/auth/shibboleth">login</a> in order to edit this information.</p>
+        <% end %>
+    </form>
+</div>
+
+
