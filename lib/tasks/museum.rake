@@ -1,4 +1,3 @@
-require "./lib/solr_lite/solr.rb"
 require "./app/models/haffenreffer.rb"
 
 namespace :josiah do

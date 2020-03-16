@@ -1,6 +1,3 @@
-require "./lib/solr_lite/solr.rb"
-require "./lib/solr_lite/search_params.rb"
-
 # Methods to store callnumbers and normalize them in the
 # callnumber SQL table.
 class CallnumberCache < ActiveRecord::Base
@@ -180,11 +177,13 @@ class CallnumberCache < ActiveRecord::Base
       # get the solr documents from Solr...
       solr_url = ENV['SOLR_URL']
       solr = SolrLite::Solr.new(solr_url)
-      q = ""
       start_date_time = start_date.to_s + "T00:00:00.0Z"
-      fq = ["updated_dt:[#{start_date_time} TO *]"]
+      q = "updated_dt:[#{start_date_time} TO *]"
+      fq = []
       facets = []
-      params = SolrLite::SearchParams.new(q, fq, facets, page, SOLR_BATCH_SIZE)
+      params = SolrLite::SearchParams.new(q, fq, facets)
+      params.page = page
+      params.page_size = SOLR_BATCH_SIZE
       params.fl = ["id", "updated_dt", "callnumber_t", "title_display"]
       params.sort = "id asc"
       response = solr.search(params)

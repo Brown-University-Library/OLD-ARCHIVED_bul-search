@@ -1,9 +1,10 @@
 require "./lib/http_json.rb"
 
-# BRD API links
-# https://repository.library.brown.edu/studio/item/bdr%3A297551/?format=json
-# https://repository.library.brown.edu/api/search/?q=ir_collection_name:Dissertations&rows=20
-
+# BibRecord represents a "bibliographic record" in Solr.
+#
+# Although records in Solr are ingested via Traject outside of this codebase
+# we use this class to import records that are not necessarily about bibliographic
+# data (like ETDs or Museum items).
 class BibRecord
   attr_accessor :id, :updated_dt, :oclc, :title_t, :title_display,
     :opensearch_display,
