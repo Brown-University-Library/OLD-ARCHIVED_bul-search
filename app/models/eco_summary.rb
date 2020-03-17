@@ -101,7 +101,56 @@ class EcoSummary < ActiveRecord::Base
         s.save!
 
         ranges = []
-        # TODO: add ranges
+        ranges << {from: "B  518000", to: "B  522400"}
+        ranges << {from: "B  523000", to: "B  523400"}
+        ranges << {from: "B  524000", to: "B  524400"}
+        ranges << {from: "B  525000", to: "B  525400"}
+        ranges << {from: "BF 177900", to: "BF 177900"}
+        ranges << {from: "BL 100000", to: "BL 237000"}
+        ranges << {from: "BL 183000", to: "BL 194500"}
+        ranges << {from: "BL 221600", to: "BL 222900"}
+        ranges << {from: "BR 073100", to: "BR 159900"}
+        ranges << {from: "CD 500100", to: "CD 647100"}
+        ranges << {from: "CE 000100", to: "CE 009700"}
+        ranges << {from: "CJ 000100", to: "CJ 666100"}
+        ranges << {from: "CN 090000", to: "CN 135500"}
+        ranges << {from: "CS 230000", to: "CS 309000"}
+        ranges << {from: "CT 075900", to: "CT 319900"}
+        ranges << {from: "DS 050100", to: "DS 051900"}
+        ranges << {from: "DS 070100", to: "DS 080000"}
+        ranges << {from: "DS 080100", to: "DS 090000"}
+        ranges << {from: "DS 090100", to: "DS 093700"}
+        ranges << {from: "GB 017003", to: "GB 039900"}
+        ranges << {from: "GF 065100", to: "GF 070000"}
+        ranges << {from: "GN 059000", to: "GN 064200"}
+        ranges << {from: "GR 026500", to: "GR 034900"}
+        ranges << {from: "GT 137000", to: "GT 157900"}
+        ranges << {from: "HB 012500", to: "HB 012600"}
+        ranges << {from: "HC 041100", to: "HC 047000"}
+        ranges << {from: "J  050000", to: "J  070300"}
+        ranges << {from: "JQ 067000", to: "JQ 067900"}
+        ranges << {from: "JQ 105000", to: "JQ 106100"}
+        ranges << {from: "JQ 150000", to: "JQ 151900"}
+        ranges << {from: "JQ 152000", to: "JQ 153900"}
+        ranges << {from: "JQ 160000", to: "JQ 169900"}
+        ranges << {from: "JQ 172000", to: "JQ 172900"}
+        ranges << {from: "LA 105000", to: "LA 142900"}
+        ranges << {from: "LG 000100", to: "LG 040000"}
+        ranges << {from: "ML 033000", to: "ML 034500"}
+        ranges << {from: "PL 000100", to: "PL 884400"}
+        ranges << {from: "PL 049100", to: "PL 500000"}
+        ranges << {from: "PL 050100", to: "PL 089800"}
+        ranges << {from: "PL 050100", to: "PL 069900"}
+        ranges << {from: "PL 070100", to: "PL 089800"}
+        ranges << {from: "PL 090100", to: "PL 099800"}
+        ranges << {from: "PL 090100", to: "PL 094900"}
+        ranges << {from: "PL 095000", to: "PL 099800"}
+        ranges << {from: "PL 100100", to: "PL 327900"}
+        ranges << {from: "PL 100100", to: "PL 223900"}
+        ranges << {from: "PL 225000", to: "PL 330000"}
+        ranges << {from: "PL 330100", to: "PL 500000"}
+        ranges << {from: "Z  078700", to: "Z  100000"}
+        ranges << {from: "Z  194600", to: "Z  695307"}
         ranges.each do |range|
             r = EcoRange.new
             r.eco_summary_id = s.id
