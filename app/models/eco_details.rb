@@ -3,6 +3,28 @@ class EcoDetails < ActiveRecord::Base
         "b#{bib_record_num}"
     end
 
+    # Creates a new detail record for a given bib number
+    def self.new_from_bib(eco_summary_id, bib)
+        solr = SolrLite::Solr.new(ENV['SOLR_URL'])
+        doc = solr.get(bib)
+        if doc == nil
+            return nil
+        end
+
+        record = EcoDetails.new()
+        record.eco_summary_id = eco_summary_id
+        record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
+        record.title = doc["title_display"]
+        if (doc["language_facet"] || []).count > 0
+            record.language_code = doc["language_facet"].first[0..2]
+        end
+        record.publish_year = doc["pub_date_sort"]
+        record.author = doc["author_display"]
+        record.save!
+
+        record
+    end
+
     # Creates a tab delimited string for a set of EcoDetails rows
     def self.to_tsv(rows)
         Rails.logger.info("Begin generating TSV for #{rows.count} rows")

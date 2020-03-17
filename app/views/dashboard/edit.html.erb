@@ -1,12 +1,12 @@
 <h2>Edit Dashboard</h2>
 
 <div class="container">
-    <form class="" role="edit" method="POST" action="<%= dashboard_save_url(id: @data.id ) %>">
+    <form class="" role="edit" method="POST" action="<%= dashboard_save_url(id: @summary.id ) %>">
         <div class="form-group">
 
             <label class="" id="name_label">Name</label>
             <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
-                id="name" name="name" value="">
+                id="name" name="name" value="<%= @summary.list_name %>">
 
             <label class="" id="desc_label">Description</label>
             <textarea class="form-control" rows="8" placeholder="Description" aria-describedby="desc_label"
@@ -14,12 +14,14 @@
 
             <div id="search_terms_box">
                 <label class="" id="term_label">Call number ranges</label>
-                <div class="form-inline">
-                    <input type="text" class="form-control" placeholder="search term"
-                        aria-describedby="term_label" id="range_id_1" name="range_id_1" value="">
-                    <input type="text" class="form-control" placeholder="search term"
-                        aria-describedby="term_label" id="range_id_2" name="range_id_2" value="">
-                </div>
+                <% @summary.ranges.each do |range| %>
+                    <div class="form-inline">
+                        <input type="text" class="form-control" placeholder="search term"
+                            aria-describedby="term_label" id="range_id_1" name="range_id_1" value="<%= range.from %>">
+                        <input type="text" class="form-control" placeholder="search term"
+                            aria-describedby="term_label" id="range_id_2" name="range_id_2" value="<%= range.to %>">
+                    </div>
+                <% end %>
             </div>
             <a href="#" id="add_range" type="button" title="Add another call number range"
                 class="btn btn-default">+</a>

@@ -72,5 +72,5 @@ gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-rub
 # Use this when troubleshooting raw (HTTP) queries to Solr.
 # gem 'net-http-spy'
 
-gem "solr_lite", '0.0.16'
+gem "solr_lite", '0.0.17'
 # gem "solr_lite", path: '/Users/hectorcorrea/dev/solr_lite'

@@ -56,10 +56,9 @@ BulSearch::Application.routes.draw do
   get 'stats/solr-master' => 'stats#solr_master'
 
   # Collection Ecosystem Project
-  get 'dashboard/new' => 'dashboard#new'
+  # get 'dashboard/new' => 'dashboard#new'
   get 'dashboard/:id/edit' => 'dashboard#edit', as: :dashboard_edit
-  post 'dashboard/:id/save' => 'dashboard#save', as: :dashboard_save
-  get 'dashboard/:id/query' => 'dashboard#query', as: :dashboard_query
+  # post 'dashboard/:id/save' => 'dashboard#save', as: :dashboard_save
 
   get 'dashboard/:id/details' => 'dashboard#details', as: :dashboard_details
   get 'dashboard/:id' => 'dashboard#show', as: :dashboard_show

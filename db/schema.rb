@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200227162000) do
+ActiveRecord::Schema.define(version: 20200317142400) do
 
   create_table "best_bet_entries", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -102,12 +102,22 @@ ActiveRecord::Schema.define(version: 20200227162000) do
     t.string   "fund_code",                         limit: 255
     t.integer  "fund_code_num",                     limit: 4
     t.string   "fund_code_master",                  limit: 255
+    t.integer  "eco_summary_id",                    limit: 4
   end
 
   add_index "eco_details", ["callnumber_norm"], name: "index_eco_details_on_callnumber_norm", using: :btree
+  add_index "eco_details", ["eco_summary_id"], name: "index_eco_details_on_eco_summary_id", using: :btree
   add_index "eco_details", ["fund_code"], name: "index_eco_details_on_fund_code", using: :btree
   add_index "eco_details", ["fund_code_master"], name: "index_eco_details_on_fund_code_master", using: :btree
   add_index "eco_details", ["sierra_list", "bib_record_num"], name: "index_eco_details_on_sierra_list_and_bib_record_num", using: :btree
+
+  create_table "eco_ranges", force: :cascade do |t|
+    t.integer "eco_summary_id", limit: 4
+    t.string  "from",           limit: 255
+    t.string  "to",             limit: 255
+  end
+
+  add_index "eco_ranges", ["eco_summary_id"], name: "index_eco_ranges_on_eco_summary_id", using: :btree
 
   create_table "eco_summaries", force: :cascade do |t|
     t.integer  "sierra_list",      limit: 4

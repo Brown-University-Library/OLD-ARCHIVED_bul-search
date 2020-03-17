@@ -9,8 +9,25 @@
     }
 </style>
 
-<h2><%= @summary.list_name %></h2>
-<p>Sierra List: <%= @summary.sierra_list %> (as of <%= @summary.updated_date %>)</p>
+<h2><%= @summary.list_full_name %></h2>
+
+<% if @summary.sierra_list %>
+    <p>As of: <%= @summary.updated_date %></p>
+<% end %>
+
+<% if @summary.ranges.count > 0 %>
+    <p>Call number ranges</p>
+    <ul>
+        <% @summary.ranges.each do |range| %>
+            <li><%= range.from %> - <%= range.to %>
+        <% end %>
+    </ul>
+
+    <p>
+        <a href="<%= dashboard_details_path(id: @summary.id ) %>">View</a>
+    </p>
+<% end %>
+
 <p>Total bibs: <%= @summary.bib_count %></p>
 <p>Total items: <%= @summary.item_count %></p>
 <p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>

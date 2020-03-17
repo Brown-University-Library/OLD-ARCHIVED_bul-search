@@ -3,49 +3,32 @@
 require "./lib/http_json.rb"
 class DashboardController < ApplicationController
   def index
+    @summaries = EcoSummary.all
     render
   end
 
   def show
-    list_id = (params["id"] || 0).to_i
-    @summary = EcoSummary.find_by_sierra_list(list_id)
-    if @summary == nil
-        render "show_empty"
-        return
-    end
+    id = (params["id"] || 0).to_i
+    @summary = EcoSummary.find(id)
     render
-  end
-
-  def new
-    redirect_to dashboard_edit_url(id: "123")
+  rescue ActiveRecord::RecordNotFound
+    @summaries = EcoSummary.all
+    render "show_empty"
   end
 
   def edit
-    @data = OpenStruct.new(:id => params["id"])
+    id = (params["id"] || 0).to_i
+    @summary = EcoSummary.find(id)
     @edit_user = true
     render
-  end
-
-  def save
-    redirect_to dashboard_query_url(id: "123")
-  end
-
-  def query
-    @data = Dashboard.collection(params["id"])
-    if @data == nil
-      render "show_empty"
-      return
-    end
-    render "show_local"
+  rescue ActiveRecord::RecordNotFound
+    @summaries = EcoSummary.all
+    render "show_empty"
   end
 
   def details
-    list_id = (params["id"] || 0).to_i
-    summary = EcoSummary.find_by_sierra_list(list_id)
-    if summary == nil
-        render "show_empty"
-        return
-    end
+    id = (params["id"] || 0).to_i
+    summary = EcoSummary.find(id)
 
     @rows = []
     @criteria = nil
@@ -54,7 +37,7 @@ class DashboardController < ApplicationController
     case params["key"]
     when "cn"
       @criteria = "where call number is #{params["value"]} (limited to first #{@limit} rows)"
-      @rows = EcoDetails.where("sierra_list = ? AND callnumber_norm LIKE ?", @sierra_list, params["value"].downcase + "%")
+      @rows = EcoDetails.where("sierra_list = ? AND callnumber_norm LIKE ?", summary.id, params["value"].downcase + "%")
     when "loc"
       @criteria = "where location is #{params["value"]} (limited to first #{@limit} rows)"
       @rows = EcoDetails.where(sierra_list: @sierra_list, location_code: params["value"])
@@ -71,7 +54,7 @@ class DashboardController < ApplicationController
       end
     else
       @criteria = "All"
-      @rows = EcoDetails.where(sierra_list: @sierra_list)
+      @rows = EcoDetails.where(eco_summary_id: summary.id)
     end
 
     if params["format"] == "tsv"
@@ -81,5 +64,8 @@ class DashboardController < ApplicationController
 
     @rows = @rows.take(@limit)
     render "details"
+  rescue ActiveRecord::RecordNotFound
+    @summaries = EcoSummary.all
+    render "show_empty"
   end
 end
