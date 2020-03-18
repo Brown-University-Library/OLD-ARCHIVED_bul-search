@@ -1,9 +1,10 @@
 require "./lib/http_json"
+require "lcsort"
 
-# Calls the callnumber normalize API to normalize callnumbers.
+# Normalizes call numbers so that they can be used for sorting and searching by ranges.
 class CallnumberNormalizer
-  def self.normalize_one(callnumber)
-    normalized = self.normalize_many([callnumber])
+  def self.normalize_one(callnumber, api = false)
+    normalized = self.normalize_many([callnumber], api)
     return nil if normalized.count == 0
     normalized[0][:normalized]
   end
@@ -14,7 +15,30 @@ class CallnumberNormalizer
   # normalize(["a 123", "bb 456 2016"])
   # => [<callnumber: "a 123", normalized: "a  12300">,
   #     <callnumber: "bb 456 2016", normalized: "bb 456">]
-  def self.normalize_many(callnumbers)
+  def self.normalize_many(callnumbers, api = false)
+    if api
+      return self.normalize_many_api(callnumbers)
+    end
+    self.normalize_many_gem(callnumbers)
+  end
+
+  # Normalizes an array of call numbers via the lcsort gem
+  # (local Ruby call)
+  def self.normalize_many_gem(callnumbers)
+    numbers = callnumbers.map { |c| self.clean_callnumber(c)}.compact
+    normalized = []
+    numbers.each do |number|
+      norm = Lcsort.normalize(number)
+      normalized << OpenStruct.new(callnumber: number, normalized: norm)
+    end
+    normalized
+  rescue => e
+    puts e
+    []
+  end
+
+  # Normalizes an array of call numbers via the API (remote HTTP call)
+  def self.normalize_many_api(callnumbers)
     numbers = callnumbers.map { |c| self.clean_callnumber(c)}.compact
     normalized = []
     api_url = ENV["NORMALIZE_API_URL"]

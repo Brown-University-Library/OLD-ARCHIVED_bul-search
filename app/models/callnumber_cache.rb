@@ -89,7 +89,7 @@ class CallnumberCache < ActiveRecord::Base
     callnumbers = solr_docs[0]["callnumber_t"] || []
     callnumbers.each do |callnumber|
       puts "Normalizing #{id}/#{callnumber}"
-      normalized = CallnumberNormalizer.normalize_one(callnumber)
+      normalized = CallnumberNormalizer.normalize_one(callnumber, false)
       if normalized == nil
         normalized = "ERR"
       end

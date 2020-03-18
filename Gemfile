@@ -74,3 +74,5 @@ gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-rub
 
 gem "solr_lite", '0.0.17'
 # gem "solr_lite", path: '/Users/hectorcorrea/dev/solr_lite'
+
+gem "lcsort", '0.9.1'
