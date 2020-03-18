@@ -11,10 +11,8 @@ class SomeIdsSearchBuilder < Blacklight::SearchBuilder
   end
 
   def fetch_ids(solr_parameters)
-    solr_parameters[:fq] ||= []
-    @ids.each do |id|
-      solr_parameters[:fq] << "id:#{id}"
-    end
+    solr_parameters[:q] = @ids.map {|id| "(id:#{id})"}.join(" OR ")
+    solr_parameters[:fq] = []
     solr_parameters[:fl] ||= []
     solr_parameters[:fl] << "id"
     solr_parameters[:fl] << "callnumber_t"
