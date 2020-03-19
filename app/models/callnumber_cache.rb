@@ -103,9 +103,9 @@ class CallnumberCache < ActiveRecord::Base
   def self.normalize_bib(id)
     # Get the call numbers for the bib...
     solr = SolrLite::Solr.new(ENV['SOLR_URL'])
-    doc = solr.get(id, "q", "callnumber_t")
+    doc = solr.get(id, "q", "callnumber_ss")
     raise "ID #{id} not found in Solr." if doc == nil
-    callnumbers = doc["callnumber_t"] || []
+    callnumbers = doc["callnumber_ss"] || []
 
     # ...delete previous records for this bib
     Callnumber.delete_all(bib: id)
@@ -129,13 +129,13 @@ class CallnumberCache < ActiveRecord::Base
       params = SolrLite::SearchParams.new("id:*")
       params.page = page
       params.page_size = solr_batch_size
-      params.fl = ["id", "callnumber_t"]
+      params.fl = ["id", "callnumber_ss"]
       params.sort = "id asc"
       response = solr.search(params)
 
       batch = []
       response.solr_docs.each do |solr_doc|
-        callnumbers = (solr_doc["callnumber_t"] || []).uniq { |c| c.upcase }
+        callnumbers = (solr_doc["callnumber_ss"] || []).uniq { |c| c.upcase }
         callnumbers.each do |callnumber|
           if callnumber.length > 100
             next
@@ -162,13 +162,13 @@ class CallnumberCache < ActiveRecord::Base
       params = SolrLite::SearchParams.new(q)
       params.page = page
       params.page_size = solr_batch_size
-      params.fl = ["id", "updated_dt", "callnumber_t"]
+      params.fl = ["id", "updated_dt", "callnumber_ss"]
       params.sort = "id asc"
       response = solr.search(params)
 
       results = []
       response.solr_docs.each do |doc|
-        callnumbers = (doc["callnumber_t"] || []).uniq {|c| c.upcase }
+        callnumbers = (doc["callnumber_ss"] || []).uniq {|c| c.upcase }
         callnumbers.each do |callnumber|
           results << {bib: doc["id"], callnumber: callnumber}
         end
