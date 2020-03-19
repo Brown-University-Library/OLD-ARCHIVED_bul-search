@@ -74,32 +74,12 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def self.create_sample_lists()
-        create_sample_list_1()
-        create_sample_list_2()
-    end
-
-    def self.create_sample_list_1()
-        s = EcoSummary.new
-        s.list_name = "List One"
-        s.save!
-
-        ranges = []
-        ranges << {from: "NA 028000D800", to: "NA 9999"}
-        ranges << {from: "PQ 809812O380A122 000 2009", to: "PQ 9999"}
-        ranges.each do |range|
-            r = EcoRange.new
-            r.eco_summary_id = s.id
-            r.from = range[:from]
-            r.to = range[:to]
-            r.save!
-        end
-    end
-
-    def self.create_sample_list_2()
+        # Define header...
         s = EcoSummary.new
         s.list_name = "GOBI--2020_01_LC Subject Grouping_EA_review"
         s.save!
 
+        # ...define ranges
         ranges = []
         ranges << {from: "B 125", to: "B 162"}
         ranges << {from: "B 5180", to: "B 5224"}
@@ -159,5 +139,8 @@ class EcoSummary < ActiveRecord::Base
             r.to = range[:to]
             r.save!
         end
+
+        # ...populate it with the bib information for those ranges
+        s.refresh()
     end
 end

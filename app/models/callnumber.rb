@@ -139,10 +139,16 @@ class Callnumber < ActiveRecord::Base
   # Returns an array of BIB record IDs with call numbers
   # that are in the call number range provided.
   def self.get_by_range(cn_from, cn_to)
+    norm_from = CallnumberNormalizer.normalize_one(cn_from)
+    norm_to = CallnumberNormalizer.normalize_one(cn_to)
+    if norm_from == nil || norm_to == nil
+      puts "Invalid call number range #{cn_from} / #{cn_to}"
+      return []
+    end
     sql = <<-END_SQL.gsub(/\n/, '')
       select bib, normalized, original
       from callnumbers
-      where normalized >= "#{cn_from}" and normalized <= "#{cn_to}"
+      where normalized >= "#{norm_from}" and normalized <= "#{norm_to}"
       order by normalized asc
     END_SQL
     rows = ActiveRecord::Base.connection.exec_query(sql).rows
