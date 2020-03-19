@@ -30,39 +30,49 @@ class DashboardController < ApplicationController
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
 
-    @rows = []
-    @criteria = nil
-    @sierra_list = summary.sierra_list
-    @limit = 5000
-    case params["key"]
-    when "cn"
-      @criteria = "where call number is #{params["value"]} (limited to first #{@limit} rows)"
-      @rows = EcoDetails.where("sierra_list = ? AND callnumber_norm LIKE ?", summary.id, params["value"].downcase + "%")
-    when "loc"
-      @criteria = "where location is #{params["value"]} (limited to first #{@limit} rows)"
-      @rows = EcoDetails.where(sierra_list: @sierra_list, location_code: params["value"])
-    when "ck"
-      @criteria = "where checkout count is #{params["value"]} (limited to first #{@limit} rows)"
-      @rows = EcoDetails.where(sierra_list: @sierra_list, checkout_total: params["value"])
-    when "fund"
-      if params["value"] == "(none)"
-        @criteria = "where there is no fund code (limited to first #{@limit} rows)"
-        @rows = EcoDetails.where(sierra_list: @sierra_list, fund_code: "")
-      else
-        @criteria = "where fund code is #{params["value"]} (limited to first #{@limit} rows)"
-        @rows = EcoDetails.where(sierra_list: @sierra_list, fund_code: params["value"])
-      end
-    else
-      @criteria = "All"
-      @rows = EcoDetails.where(eco_summary_id: summary.id)
-    end
-
-    if params["format"] == "tsv"
-      send_data(EcoDetails.to_tsv(@rows), :filename => "sierra_list_#{list_id}.tsv", :type => "text/tsv")
+    range_id = (params["range_id"] || 0).to_i
+    if range_id > 0
+      range = EcoRange.find(range_id)
+      @data = {
+        summary: summary,
+        from: range.from,
+        to: range.to,
+        name: range.name,
+        count: range.count,
+        rows: EcoDetails.where(eco_summary_id: summary.id, eco_range_id: range_id)
+      }
+      render "details_range"
       return
     end
 
-    @rows = @rows.take(@limit)
+    @data = {
+      summary: summary,
+      rows: [],
+      criteria: nil,
+      limit: 5000
+    }
+
+    rows = []
+    case params["key"]
+    when "loc"
+      @data[:criteria] = "where location is #{params["value"]} (limited to first #{@limit} rows)"
+      rows = EcoDetails.where(eco_summary_id: summary.id, location_code: params["value"])
+    when "ck"
+      @data[:criteria] = "where checkout count is #{params["value"]} (limited to first #{@limit} rows)"
+      rows = EcoDetails.where(eco_summary_id: summary.id, checkout_total: params["value"])
+    when "fund"
+      # todo
+    else
+      @data[:criteria] = "All"
+      rows = EcoDetails.where(eco_summary_id: summary.id)
+    end
+
+    @data[:rows] = rows.take(@data[:limit])
+    if params["format"] == "tsv"
+      send_data(EcoDetails.to_tsv(@rows), :filename => "dashboard_#{summary.id}.tsv", :type => "text/tsv")
+      return
+    end
+
     render "details"
   rescue ActiveRecord::RecordNotFound
     @summaries = EcoSummary.all

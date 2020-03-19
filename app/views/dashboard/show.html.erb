@@ -19,7 +19,8 @@
     <p>Call number ranges</p>
     <ul>
         <% @summary.ranges.each do |range| %>
-            <li><%= range.from %> - <%= range.to %>
+            <li><%= range.from %> - <%= range.to %>, count: <%= range.count %>
+            <a href="<%= dashboard_details_path(id: @summary.id, range_id: range.id) %>">link</a>
         <% end %>
     </ul>
 
