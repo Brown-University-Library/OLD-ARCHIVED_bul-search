@@ -1,0 +1,16 @@
+<style>
+  .callnumber {
+    white-space: nowrap;
+  }
+</style>
+
+<h1><%= @data[:summary].list_name %></h1>
+<h2><%= @data[:name] %></h2>
+<div>
+  <p>Call numbers from <b><%= @data[:from] %></b> to <b><%= @data[:to] %></b></p>
+  <p>Count: <%= @data[:count] %></p>
+  <!-- TODO: Make the download link honor the current filter -->
+  <p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
+</div>
+
+<%= render "rows" %>
