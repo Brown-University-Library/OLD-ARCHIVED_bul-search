@@ -11,19 +11,59 @@ class EcoDetails < ActiveRecord::Base
             return 0
         end
 
-        record = EcoDetails.new()
-        record.eco_summary_id = eco_summary_id
-        record.eco_range_id = eco_range_id
-        record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
-        record.title = doc["title_display"]
-        if (doc["language_facet"] || []).count > 0
-            record.language_code = doc["language_facet"].first[0..2]
-        end
-        record.publish_year = doc["pub_date_sort"]
-        record.author = doc["author_display"]
-        record.save!
+        marc_record = MarcRecord.new(doc["marc_display"])
+        items = marc_record.items()
+        if items.count == 0
+            # BIB level information only
+            record = EcoDetails.new()
+            record.eco_summary_id = eco_summary_id
+            record.eco_range_id = eco_range_id
+            record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
+            record.title = doc["title_display"]
+            if (doc["language_facet"] || []).count > 0
+                record.language_code = doc["language_facet"].first[0..2]
+            end
+            record.publish_year = doc["pub_date_sort"]
+            record.author = doc["author_display"]
 
-        return 1
+            # TODO: how should we handle instances with more than one
+            # non-unique call number (e.g. BIB b1012355)
+            callnumbers = (doc["callnumber_ss"] || []).uniq
+            if callnumbers.count > 1
+                puts "BIB #{bib}, with no items, has more than one callnumber #{callnumbers.join(' ^^ ')}"
+            end
+            record.callnumber_raw = callnumbers.first
+            record.callnumber_norm = CallnumberNormalizer.normalize_one(callnumbers.first)
+
+            record.location_code = "NONE"
+            record.save!
+            return 1
+        end
+
+        items.each do |item|
+            record = EcoDetails.new()
+            record.eco_summary_id = eco_summary_id
+            record.eco_range_id = eco_range_id
+
+            # bib info
+            record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
+            record.title = doc["title_display"]
+            if (doc["language_facet"] || []).count > 0
+                record.language_code = doc["language_facet"].first[0..2]
+            end
+            record.publish_year = doc["pub_date_sort"]
+            record.author = doc["author_display"]
+
+            # item info
+            record.item_record_num = item.id
+            record.callnumber_raw = item.call_number
+            record.callnumber_norm = CallnumberNormalizer.normalize_one(item.call_number)
+            record.location_code = item.location_code
+
+            record.save!
+        end
+
+        return items.count
     end
 
     # Creates a tab delimited string for a set of EcoDetails rows
