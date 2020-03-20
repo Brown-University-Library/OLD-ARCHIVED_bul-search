@@ -26,6 +26,7 @@
             <th>From</th>
             <th>To</th>
             <th>Item Count</th>
+            <th>%</th>
         </tr>
         <% @summary.ranges.each do |range| %>
             <tr>
@@ -33,6 +34,8 @@
                 <td><%= range.from %></td>
                 <td><%= range.to %></td>
                 <td><a href="<%= dashboard_details_path(id: @summary.id, range_id: range.id) %>"><%= range.count %></a></td>
+                <td><%= range.percent(@summary.total_items()) %></td>
+                <td><%= range.percent_bar(@summary.total_items()) %></td>
             </tr>
         <% end %>
     </table>
@@ -53,6 +56,8 @@
             <tr>
                 <td><%= loc.code %></td>
                 <td><a href="<%= dashboard_details_path(id: @summary.id, loc_code: loc.code) %>"><%= loc.count %></a></td>
+                <td><%= loc.percent %></td>
+                <td><%= "".ljust(loc.percent, "X") %></td>
             </tr>
         <% end %>
     </table>
@@ -69,6 +74,8 @@
             <tr>
                 <td><%= ck.code %></td>
                 <td><a href="<%= dashboard_details_path(id: @summary.id, ck: ck.code) %>"><%= ck.count %></a></td>
+                <td><%= ck.percent %></td>
+                <td><%= "".ljust(ck.percent, "X") %></td>
             </tr>
         <% end %>
     </table>

@@ -56,41 +56,51 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def total_bibs()
-        sql = <<-END_SQL.gsub(/\n/, '')
-            select count(distinct bib_record_num) as count
-            from eco_details
-            where eco_summary_id = #{id}
-        END_SQL
-        rows = ActiveRecord::Base.connection.exec_query(sql).rows
-        if rows.count == 0
-            return 0
+        @bib_count ||= begin
+            puts "Calculating bib count..."
+            sql = <<-END_SQL.gsub(/\n/, '')
+                select count(distinct bib_record_num) as count
+                from eco_details
+                where eco_summary_id = #{id}
+            END_SQL
+            rows = ActiveRecord::Base.connection.exec_query(sql).rows
+            if rows.count == 0
+                0
+            else
+                rows[0][0]
+            end
         end
-        return rows[0][0]
     end
 
     def total_items()
-        sql = <<-END_SQL.gsub(/\n/, '')
-            select count(distinct id) as count
-            from eco_details
-            where eco_summary_id = #{id}
-        END_SQL
-        rows = ActiveRecord::Base.connection.exec_query(sql).rows
-        if rows.count == 0
-            return 0
+        @item_count ||= begin
+            puts "Calculating item count..."
+            sql = <<-END_SQL.gsub(/\n/, '')
+                select count(distinct id) as count
+                from eco_details
+                where eco_summary_id = #{id}
+            END_SQL
+            rows = ActiveRecord::Base.connection.exec_query(sql).rows
+            if rows.count == 0
+                0
+            else
+                rows[0][0]
+            end
         end
-        return rows[0][0]
     end
 
     def locations()
         sql = <<-END_SQL.gsub(/\n/, '')
             select location_code as location_code, count(*) as count
             from eco_details
+            where eco_summary_id = #{id}
             group by location_code
             order by 2 desc, 1 asc
         END_SQL
         rows = ActiveRecord::Base.connection.exec_query(sql).rows
         data = rows.map do |r|
-            OpenStruct.new(code: r[0], count: r[1])
+            percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
+            OpenStruct.new(code: r[0], count: r[1], percent: percent)
         end
         # data.sort {|a, b| a.count <=> b.count}.reverse
         data
@@ -100,12 +110,14 @@ class EcoSummary < ActiveRecord::Base
         sql = <<-END_SQL.gsub(/\n/, '')
             select checkout_total as checkout_total, count(*) as count
             from eco_details
+            where eco_summary_id = #{id}
             group by checkout_total
             order by 1 desc, 2 asc
         END_SQL
         rows = ActiveRecord::Base.connection.exec_query(sql).rows
         data = rows.map do |r|
-            OpenStruct.new(code: r[0].to_s, count: r[1])
+            percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
+            OpenStruct.new(code: r[0].to_s, count: r[1], percent: percent)
         end
         # data.sort {|a, b| a.count <=> b.count}.reverse
         data
