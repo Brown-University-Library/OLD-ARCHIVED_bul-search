@@ -138,7 +138,7 @@ class Callnumber < ActiveRecord::Base
 
   # Returns an array of BIB record IDs with call numbers
   # that are in the call number range provided.
-  def self.get_by_range(cn_from, cn_to)
+  def self.get_by_range(cn_from, cn_to, uniq = true)
     norm_from = CallnumberNormalizer.normalize_one(cn_from)
     norm_to = CallnumberNormalizer.normalize_one(cn_to)
     if norm_from == nil || norm_to == nil
@@ -155,6 +155,14 @@ class Callnumber < ActiveRecord::Base
     bibs = rows.map do |r|
       {id: r[0], normalized: r[1], original: r[2]}
     end
+
+    # Deduplicate by bib number. This is usually what we want because
+    # with the bib number we then retrieve the entire record (including
+    # all its items) and that loads all the other call numbers.
+    if uniq
+      bibs = bibs.uniq {|b| b[:id]}
+    end
+
     return bibs
   end
 
