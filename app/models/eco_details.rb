@@ -59,6 +59,7 @@ class EcoDetails < ActiveRecord::Base
             record.callnumber_raw = item.call_number
             record.callnumber_norm = CallnumberNormalizer.normalize_one(item.call_number)
             record.location_code = item.location_code
+            record.checkout_total = item.checkout_total
 
             record.save!
         end

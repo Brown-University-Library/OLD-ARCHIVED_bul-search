@@ -12,4 +12,13 @@ namespace :josiah do
     EcoSummary.create_sample_lists()
     puts "Done"
   end
+
+  desc "Re-populate the details information for a given EcoSummary ID"
+  task "ecosystem_refresh", [:id] => :environment do |_cmd, args|
+    id = (args[:id] || "").to_i
+    puts "Refreshing data for EcoSummary #{id}..."
+    summary = EcoSummary.find(id)
+    summary.refresh()
+    puts "Done"
+  end
 end

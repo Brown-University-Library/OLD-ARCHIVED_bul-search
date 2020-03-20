@@ -11,112 +11,71 @@
 
 <h2><%= @summary.list_full_name %></h2>
 
-<% if @summary.sierra_list %>
+<% if @summary.updated_date != "" %>
     <p>As of: <%= @summary.updated_date %></p>
 <% end %>
+<p>Total bibs: <%= @summary.total_bibs() %></p>
+<p>Total items: <%= @summary.total_items() %></p>
+<p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
 
 <% if @summary.ranges.count > 0 %>
-    <p>Call number ranges</p>
-    <ul>
+    <h3>Call number ranges</h3>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Item Count</th>
+        </tr>
         <% @summary.ranges.each do |range| %>
-            <li><%= range.from %> - <%= range.to %>, count: <%= range.count %>
-            <a href="<%= dashboard_details_path(id: @summary.id, range_id: range.id) %>">link</a>
+            <tr>
+                <td><span title="<%= range.name_display %>"><%= truncate(range.name_display, length: 50) %></span></td>
+                <td><%= range.from %></td>
+                <td><%= range.to %></td>
+                <td><a href="<%= dashboard_details_path(id: @summary.id, range_id: range.id) %>"><%= range.count %></a></td>
+            </tr>
         <% end %>
-    </ul>
+    </table>
 
     <p>
         <a href="<%= dashboard_details_path(id: @summary.id ) %>">View</a>
     </p>
 <% end %>
 
-<p>Total bibs: <%= @summary.bib_count %></p>
-<p>Total items: <%= @summary.item_count %></p>
-<p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
+<% if @summary.locations.count > 0 %>
+    <h3>Locations</h3>
+    <table>
+        <tr>
+            <th>Location</th>
+            <th>Item Count</th>
+        </tr>
+        <% @summary.locations.each do |loc| %>
+            <tr>
+                <td><%= loc.code %></td>
+                <td><a href="<%= dashboard_details_path(id: @summary.id, loc_code: loc.code) %>"><%= loc.count %></a></td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>
 
-<p>Jump to filter by:
-<a href="#by_subject">subject</a> |
-<a href="#by_location">location</a> |
-<a href="#by_callnumber">callnumber</a> |
-<a href="#by_checkouts">checkouts</a> |
-</p>
+<% if @summary.checkouts.count > 0 %>
+    <h3>Usage</h3>
+    <table>
+        <tr>
+            <th>Checkout Count</th>
+            <th>Item Count</th>
+        </tr>
+        <% @summary.checkouts.each do |ck| %>
+            <tr>
+                <td><%= ck.code %></td>
+                <td><a href="<%= dashboard_details_path(id: @summary.id, ck: ck.code) %>"><%= ck.count %></a></td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>
 
 <h3>By Fund Codes</h3>
-<table>
-    <tr>
-        <th>Fund Code</th>
-        <th>Fund Code (Master)</th>
-        <th>Item Count</th>
-    </tr>
-    <% @summary.fund_codes.each do |fund| %>
-        <tr>
-            <% if !fund["Name"].empty? %>
-                <td><a href="<%= dashboard_details_path(key: 'fund', value: fund['Name']) %>"><%= fund["Name"] %></a></td>
-            <% else %>
-                <td><a href="<%= dashboard_details_path(key: 'fund', value: '(none)') %>">(none)</a></td>
-            <% end %>
-            <td><%= fund["Name"] %></td>
-            <td><%= fund["Count"] %></td>
-        </tr>
-    <% end %>
-</table>
+<p>(pending)</p>
 
-<a href='#' name="by_subject"></a>
 <h3>By Subject ($a)</h3>
-<table>
-    <tr>
-        <th>Subject</th>
-        <th>Item Count</th>
-    </tr>
-    <% @summary.subjects.each do |sub| %>
-        <tr>
-            <td><%= sub["Name"] %></a></td>
-            <td><%= sub["Count"] %></td>
-        </tr>
-    <% end %>
-</table>
-
-<a href='#' name="by_location"></a>
-<h3>By Location</h3>
-<table>
-    <tr>
-        <th>Location</th>
-        <th>Item Count</th>
-    </tr>
-    <% @summary.locations.each do |loc| %>
-        <tr>
-            <td><a href="<%= dashboard_details_path(key: 'loc', value: loc['Name']) %>"><%= loc["Name"] %></a></td>
-            <td><%= loc["Count"] %></td>
-        </tr>
-    <% end %>
-</table>
-
-<a href='#' name="by_callnumber"></a>
-<h3>By Call number</h3>
-<table>
-    <tr>
-        <th>Call number</th>
-        <th>Item Count</th>
-    </tr>
-    <% @summary.callnumbers.each do |call_no| %>
-        <tr>
-            <td><a href="<%= dashboard_details_path(key: 'cn', value: call_no['Name']) %>"><%= call_no["Name"] %></a></td>
-            <td><%= call_no["Count"] %></td>
-        </tr>
-    <% end %>
-</table>
-
-
-<a href='#' name="by_checkouts"></a>
-<h3>By Checkouts</h3>
-<table>
-    <tr>
-        <th>Number of times</th>
-        <th>Item Count</th>
-    </tr>
-    <% @summary.checkouts.each do |ck| %>
-        <tr>
-            <td><a href="<%= dashboard_details_path(key: 'ck', value: ck['Name']) %>"><%= ck["Name"] %></a></td>
-            <td><%= ck["Count"] %></td>
-        </tr>
-    <% end %>
-</table>
+<p>(pending)</p>

@@ -139,18 +139,38 @@ class Callnumber < ActiveRecord::Base
   # Returns an array of BIB record IDs with call numbers
   # that are in the call number range provided.
   def self.get_by_range(cn_from, cn_to, uniq = true)
+    sql = nil
     norm_from = CallnumberNormalizer.normalize_one(cn_from)
     norm_to = CallnumberNormalizer.normalize_one(cn_to)
     if norm_from == nil || norm_to == nil
-      puts "Invalid call number range #{cn_from} / #{cn_to}"
-      return []
+      norm_from = CallnumberNormalizer.lc_class(cn_from)
+      norm_to = CallnumberNormalizer.lc_class(cn_to)
+      if norm_from == nil || norm_to == nil || (norm_from != norm_to)
+        puts "Invalid call number range #{cn_from} / #{cn_to}"
+        return []
+      end
     end
-    sql = <<-END_SQL.gsub(/\n/, '')
-      select bib, normalized, original
-      from callnumbers
-      where normalized >= "#{norm_from}" and normalized <= "#{norm_to}"
-      order by normalized asc
-    END_SQL
+
+    if norm_from == norm_to
+      puts "Call number range: #{norm_from}"
+      # It's a single range (e.g. "PQ 123" - "PQ 123" or "PQ" - "PQ")
+      sql = <<-END_SQL.gsub(/\n/, '')
+        select bib, normalized, original
+        from callnumbers
+        where normalized like "#{norm_from}%"
+        order by normalized asc
+      END_SQL
+    else
+      puts "Call number range: #{norm_from} -  #{norm_to}"
+      # Typical range (e.g. "PQ 123" - "PQ 789")
+      sql = <<-END_SQL.gsub(/\n/, '')
+        select bib, normalized, original
+        from callnumbers
+        where normalized >= "#{norm_from}" and normalized <= "#{norm_to}"
+        order by normalized asc
+      END_SQL
+    end
+
     rows = ActiveRecord::Base.connection.exec_query(sql).rows
     bibs = rows.map do |r|
       {id: r[0], normalized: r[1], original: r[2]}

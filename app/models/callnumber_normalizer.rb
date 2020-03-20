@@ -32,4 +32,18 @@ class CallnumberNormalizer
     return nil if callnumber.gsub(/[^\w\s\.]/, "") != callnumber
     callnumber
   end
+
+  # Returns the "LC Classification" for the given call number
+  # e.g. for "QA9.58 .D37 2008" it returns "QA"
+  def self.lc_class(callnumber)
+    return nil if callnumber == nil
+
+    reg_ex = /^[A-Z]{1,3}/
+    matches = reg_ex.match(callnumber.upcase)
+    if matches.length == 1
+      return matches[0].to_s
+    end
+
+    return nil
+  end
 end
