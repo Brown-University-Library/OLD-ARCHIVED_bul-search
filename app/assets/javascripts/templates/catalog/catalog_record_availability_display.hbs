@@ -58,7 +58,7 @@
           <!-- triple-stash for annexhay_easyrequest_url to prevent double encoding since Rails already encoded the value -->
           <td>{{ status }}
             {{#if scan}} <a href="{{scan}}" title="Request a scan of a section of this item." class="scan">scan</a> |
-              {{#if item_request_url }} <a href="{{item_request_url}}">item</a> {{else}} <span style="color:gray" title="Due to the COVID-19, item request is currently not available.">item</span> {{/if}}
+              {{#if item_request_url }} <a href="{{item_request_url}}">item</a> {{else}} <span style="color:gray" title="Circulation of physical items is currently suspended. Please request a scan.">item</span> {{/if}}
             {{/if}}
             {{#if jcb_url}} <a href="{{jcb_url}}" class="scan">request-access</a> {{/if}}
             {{#if annexhay_easyrequest_url}} <a href="{{{annexhay_easyrequest_url}}}" class="scan">request-access</a>{{/if}}

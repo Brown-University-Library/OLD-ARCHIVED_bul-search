@@ -381,7 +381,7 @@ $(document).ready(function() {
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
       itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
       if (isCovid) {
-        itemLink = '<span style="color:gray" title="Due to the COVID-19, item request is currently not available.">item</span>';
+        itemLink = '<span style="color:gray" title="Circulation of physical items is currently suspended. Please request a scan.">item</span>';
       }
       html = scanLink + " | " + itemLink;
       row.find(".scan").html(html);
