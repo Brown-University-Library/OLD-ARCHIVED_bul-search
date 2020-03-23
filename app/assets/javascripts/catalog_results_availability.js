@@ -111,6 +111,7 @@ $(document).ready(function() {
 
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
+          var isCovid = true;
           item['map'] = item['map'] + '&title=' + itemData.title;
 
           // add scan|item links
@@ -118,6 +119,9 @@ $(document).ready(function() {
             // Birkin: you can use bibData.format here
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
+            if (isCovid) {
+              item['item_request_url'] = null;
+            }
           } else {
             item['scan'] = null;
             item['item_request_url'] = null;
