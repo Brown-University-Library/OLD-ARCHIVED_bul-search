@@ -4,9 +4,37 @@
         border: 1px solid #ecf0ea;
     }
 
+    table th {
+        border: 1px solid #ecf0ea;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
     table td {
         border: 1px solid #ecf0ea;
+        padding-left: 10px;
+        padding-right: 10px;
     }
+
+    .number_cell {
+        text-align: right;
+    }
+
+    /* Source https://stackoverflow.com/a/47820340/446681 */
+    .bar {
+        width: 300px;
+        height: 20px;
+        /* background-color: rgba(231, 56, 39, 0.5); */
+        overflow: hidden;
+    }
+
+    .progress {
+        /* width: 96%; */
+        height: 100%;
+        background-color: #4c99fb;
+        /* background-color: #e73827; */
+    }
+
 </style>
 
 <h2><%= @summary.list_full_name %></h2>
@@ -26,17 +54,22 @@
             <th>Name</th>
             <th>From</th>
             <th>To</th>
-            <th>Item Count</th>
-            <th>%</th>
+            <th class="number_cell">Item Count</th>
+            <th class="number_cell">%</th>
+            <th>&nbsp;</th>
         </tr>
         <% @summary.ranges.each do |range| %>
             <tr>
                 <td><span title="<%= range.name_display %>"><%= truncate(range.name_display, length: 50) %></span></td>
                 <td><%= range.from %></td>
                 <td><%= range.to %></td>
-                <td><a href="<%= dashboard_details_path(id: @summary.id, range_id: range.id) %>"><%= range.count %></a></td>
-                <td><%= range.percent(@summary.total_items()) %></td>
-                <td><%= range.percent_bar(@summary.total_items()) %></td>
+                <td class="number_cell"><a href="<%= dashboard_details_path(id: @summary.id, range_id: range.id) %>"><%= range.count %></a></td>
+                <td class="number_cell"><%= range.percent(@summary.total_items()) %></td>
+                <td>
+                    <div class="bar">
+	                    <div class="progress" style="width: <%= range.percent(@summary.total_items()) %>%;"></div>
+                    </div>
+                </td>
             </tr>
         <% end %>
     </table>
@@ -51,14 +84,20 @@
     <table>
         <tr>
             <th>Location</th>
-            <th>Item Count</th>
+            <th class="number_cell">Item Count</th>
+            <th class="number_cell">%</th>
+            <th>&nbsp;</th>
         </tr>
         <% @summary.locations.each do |loc| %>
             <tr>
                 <td><%= loc.code %></td>
-                <td><a href="<%= dashboard_details_path(id: @summary.id, loc_code: loc.code) %>"><%= loc.count %></a></td>
-                <td><%= loc.percent %></td>
-                <td><%= "".ljust(loc.percent, "X") %></td>
+                <td class="number_cell"><a href="<%= dashboard_details_path(id: @summary.id, loc_code: loc.code) %>"><%= loc.count %></a></td>
+                <td class="number_cell"><%= loc.percent %></td>
+                <td>
+                    <div class="bar">
+	                    <div class="progress" style="width: <%= loc.percent %>%;"></div>
+                    </div>
+                </td>
             </tr>
         <% end %>
     </table>
