@@ -4,6 +4,8 @@
   }
 </style>
 
+<h2><%= @data[:summary].list_full_name %></h2>
+<%= render "select_summary" %>
 <div>
   <p>Items: <b><%= @data[:criteria] %></b></p>
   <!-- TODO: Make the download link honor the current filter -->
