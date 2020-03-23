@@ -8,6 +8,7 @@ class DashboardController < ApplicationController
   end
 
   def show
+    @summaries = EcoSummary.all
     id = (params["id"] || 0).to_i
     @summary = EcoSummary.find(id)
     render
@@ -27,6 +28,7 @@ class DashboardController < ApplicationController
   end
 
   def details
+    @summaries = EcoSummary.all
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
 

@@ -10,6 +10,7 @@
 </style>
 
 <h2><%= @summary.list_full_name %></h2>
+<%= render "select_summary" %>
 
 <% if @summary.updated_date != "" %>
     <p>As of: <%= @summary.updated_date %></p>
