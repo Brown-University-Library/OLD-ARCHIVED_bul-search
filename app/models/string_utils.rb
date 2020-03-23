@@ -31,4 +31,5 @@ class StringUtils
 
   def self.truncate(str, length)
     (str || "")[0..length]
+  end
 end
