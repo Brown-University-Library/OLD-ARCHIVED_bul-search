@@ -28,4 +28,7 @@ class StringUtils
     return nil if str == nil
     str.chomp(":").chomp(",").chomp(";").strip()
   end
+
+  def self.truncate(str, length)
+    (str || "")[0..length]
 end

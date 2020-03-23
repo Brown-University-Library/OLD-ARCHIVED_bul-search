@@ -19,12 +19,12 @@ class EcoDetails < ActiveRecord::Base
             record.eco_summary_id = eco_summary_id
             record.eco_range_id = eco_range_id
             record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
-            record.title = doc["title_display"]
+            record.title = StringUtils(doc["title_display"], 100)
             if (doc["language_facet"] || []).count > 0
                 record.language_code = doc["language_facet"].first[0..2]
             end
             record.publish_year = doc["pub_date_sort"]
-            record.author = doc["author_display"]
+            record.author = StringUtils(doc["author_display"], 100)
 
             # TODO: how should we handle instances with more than one
             # non-unique call number (e.g. BIB b1012355)
@@ -47,12 +47,12 @@ class EcoDetails < ActiveRecord::Base
 
             # bib info
             record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
-            record.title = doc["title_display"]
+            record.title = StringUtils(doc["title_display"], 100)
             if (doc["language_facet"] || []).count > 0
                 record.language_code = doc["language_facet"].first[0..2]
             end
             record.publish_year = doc["pub_date_sort"]
-            record.author = doc["author_display"]
+            record.author = StringUtils(doc["author_display"], 100)
 
             # item info
             record.item_record_num = item.id
