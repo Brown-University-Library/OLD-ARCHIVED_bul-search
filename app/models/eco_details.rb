@@ -5,6 +5,43 @@ class EcoDetails < ActiveRecord::Base
         "b#{bib_record_num}"
     end
 
+    def location_name
+        Location.get_name(location_code)
+    end
+
+    def self.by_range(range, max)
+        range = EcoRange.find(range.id)
+        count = EcoDetails.where(eco_summary_id: range.eco_summary_id, eco_range_id: range.id).count
+        if max == -1
+            return count, EcoDetails.where(eco_summary_id: range.eco_summary_id, eco_range_id: range.id)
+        end
+        return count, EcoDetails.where(eco_summary_id: range.eco_summary_id, eco_range_id: range.id).take(max)
+    end
+
+    def self.by_location(code, summary_id, max)
+        count = EcoDetails.where(eco_summary_id: summary_id, location_code: code).count
+        if max == -1
+            return count, EcoDetails.where(eco_summary_id: summary_id, location_code: code)
+        end
+        return count, EcoDetails.where(eco_summary_id: summary_id, location_code: code).take(max)
+    end
+
+    def self.by_usage(checkout_total, summary_id, max)
+        count = EcoDetails.where(eco_summary_id: summary_id, checkout_total: checkout_total).count
+        if max == -1
+            return count, EcoDetails.where(eco_summary_id: summary_id, checkout_total: checkout_total)
+        end
+        return count, EcoDetails.where(eco_summary_id: summary_id, checkout_total: checkout_total).take(max)
+    end
+
+    def self.by_summary(summary_id, max)
+        count = EcoDetails.where(eco_summary_id: summary_id).count
+        if max == -1
+            return count, EcoDetails.where(eco_summary_id: summary_id)
+        end
+        return count, EcoDetails.where(eco_summary_id: summary_id).take(max)
+    end
+
     # Creates a new detail record for a given bib number
     def self.new_from_bib(eco_summary_id, eco_range_id, bib)
         solr = SolrLite::Solr.new(ENV['SOLR_URL'])

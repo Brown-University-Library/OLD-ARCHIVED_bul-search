@@ -11,10 +11,8 @@ class Location < ActiveRecord::Base
   end
 
   def self.location_info(code)
-    Rails.logger.info "Location::LocationInfo()"
     return Rails.cache.fetch("location_#{code}", expires_in: 2.minute) do
       begin
-        Rails.logger.info "Location::LocationInfo() get from DB"
         find_by_code(code)
       rescue Exception => e
         Rails.logger.error "Location::LocationInfo(): Could not location from cache: #{e.to_s}"

@@ -15,7 +15,7 @@
         <th>Fund Code</th>
         <th>Fund Code Master</th>
       </tr>
-      <% @data[:rows].each_with_index do |r, ix| %>
+      <% @presenter.rows.each_with_index do |r, ix| %>
         <tr class="row">
           <td><%= ix + 1 %></td>
           <td><a href="<%= catalog_url( r.josiah_bib_id ) %>"><%= r.josiah_bib_id %></a></td>

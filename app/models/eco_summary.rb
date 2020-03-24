@@ -100,9 +100,9 @@ class EcoSummary < ActiveRecord::Base
         rows = ActiveRecord::Base.connection.exec_query(sql).rows
         data = rows.map do |r|
             percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
-            OpenStruct.new(code: r[0], count: r[1], percent: percent)
+            name = Location.get_name(r[0])
+            OpenStruct.new(name: name, code: r[0], count: r[1], percent: percent)
         end
-        # data.sort {|a, b| a.count <=> b.count}.reverse
         data
     end
 

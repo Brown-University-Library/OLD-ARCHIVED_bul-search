@@ -4,11 +4,29 @@
   }
 </style>
 
-<h2><%= @data[:summary].list_full_name %></h2>
-<%= render "select_summary" %>
-<div>
-  <p>Items: <b><%= @data[:criteria] %></b></p>
-  <!-- TODO: Make the download link honor the current filter -->
-  <p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
-</div>
-<%= render "rows" %>
+<div class="row">
+  <h2><%= @presenter.summary.list_name %></h2>
+  <div class="col-sm-12">
+    <%= render "toolbar" %>
+  </div>
+</div> <!-- row -->
+
+<div class="row">
+  <h3><%= @presenter.name %></h3>
+  <% if @presenter.from != nil && @presenter.to != nil %>
+    <p>Call numbers from <b><%= @presenter.from %></b> to <b><%= @presenter.to %></b></p>
+  <% end %>
+  <p>Items: <%= number_with_delimiter(@presenter.count) %>
+  <% if @presenter.is_partial_list? %>
+    <i>. Showing first <%= number_with_delimiter(@presenter.rows.count) %> items,
+    <a href="<%= @presenter.show_all_url %>">view all</a>.</i>
+  <% end %>
+  </p>
+</div> <!-- row -->
+
+<div class="row">
+  <div class="col-sm-12">
+    <%= render "rows" %>
+  </div>
+</div> <!-- row -->
+

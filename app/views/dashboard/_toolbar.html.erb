@@ -1,0 +1,22 @@
+<div style="float: right;align:right">
+    <span class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Select another list
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <% @summaries.each do |summary| %>
+                <li><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></li>
+            <% end %>
+        </ul>
+    </span>
+
+    <% if @presenter %>
+        <a href="<%= @presenter.download_url %>"
+            type="button"
+            title="Download data in tab-separated format (TSV)"
+            class="btn btn-default">
+            <span class="glyphicon glyphicon-download-alt"></span>
+        </a>
+    <% end %>
+</div>
