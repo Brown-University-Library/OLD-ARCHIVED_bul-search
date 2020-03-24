@@ -1,0 +1,36 @@
+<div style="overflow-x: scroll;">
+  <table class="table">
+      <tr class="row">
+        <th>#</th>
+        <th>BibRecordNum</th>
+        <th>ItemRecordNum</th>
+        <th>Title</th>
+        <th>PublishYear</th>
+        <th>Publisher</th>
+        <th>LocationCode</th>
+        <th>CheckoutTotal</th>
+        <th>CallnumberRaw</th>
+        <th>Subject</th>
+        <th>OrderRecordNum</th>
+        <th>Fund Code</th>
+        <th>Fund Code Master</th>
+      </tr>
+      <% @presenter.rows.each_with_index do |r, ix| %>
+        <tr class="row">
+          <td><%= ix + 1 %></td>
+          <td><a href="<%= catalog_url( r.josiah_bib_id ) %>"><%= r.josiah_bib_id %></a></td>
+          <td><%= r.item_record_num %></td>
+          <td><%= r.title %></td>
+          <td><%= r.publish_year %></td>
+          <td><%= r.publisher %></td>
+          <td><%= r.location_code %></td>
+          <td><%= r.checkout_total %></td>
+          <td class="callnumber"><%= r.callnumber_raw %></td>
+          <td><%= r.marc_value %></td>
+          <td><%= r.ord_record_num %></td>
+          <td><%= r.fund_code %></td>
+          <td><%= r.fund_code_master %></td>
+        </tr>
+      <% end %>
+  </table>
+</div>

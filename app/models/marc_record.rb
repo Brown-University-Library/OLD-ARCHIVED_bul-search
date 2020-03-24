@@ -87,6 +87,7 @@ class MarcRecord
       id = subfield_value(f_945, "y")
       bookplate_code = subfield_value(f_945, "f")
       suppressed = subfield_value(f_945, "o") == "n"
+      checkout_total = (subfield_value(f_945, "u") || "").to_i
 
       # callnumber
       part1 = subfield_value(f_945, "a")
@@ -136,6 +137,7 @@ class MarcRecord
         item.volume = volume
         item.call_number = call_number
         item.suppressed = suppressed
+        item.checkout_total = checkout_total
         items << item
       end
     end

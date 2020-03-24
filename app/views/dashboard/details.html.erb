@@ -4,44 +4,29 @@
   }
 </style>
 
-<div>
-  <p>Items: <b><%= @criteria %></b></p>
-  <!-- TODO: Make the download link honor the current filter -->
-  <p><a href="<%= dashboard_details_path(format: 'tsv') %>">Download data (TSV)</a></p>
-</div>
-<div style="overflow-x: scroll;">
-  <table class="table">
-      <tr class="row">
-        <th>#</th>
-        <th>BibRecordNum</th>
-        <th>ItemRecordNum</th>
-        <th>Title</th>
-        <th>PublishYear</th>
-        <th>Publisher</th>
-        <th>LocationCode</th>
-        <th>CheckoutTotal</th>
-        <th>CallnumberRaw</th>
-        <th>Subject</th>
-        <th>OrderRecordNum</th>
-        <th>Fund Code</th>
-        <th>Fund Code Master</th>
-      </tr>
-      <% @rows.each_with_index do |r, ix| %>
-        <tr class="row">
-          <td><%= ix + 1 %></td>
-          <td><a href="<%= catalog_url( r.josiah_bib_id ) %>"><%= r.josiah_bib_id %></a></td>
-          <td><%= r.item_record_num %></td>
-          <td><%= r.title %></td>
-          <td><%= r.publish_year %></td>
-          <td><%= r.publisher %></td>
-          <td><%= r.location_code %></td>
-          <td><%= r.checkout_total %></td>
-          <td class="callnumber"><%= r.callnumber_raw %></td>
-          <td><%= r.marc_value %></td>
-          <td><%= r.ord_record_num %></td>
-          <td><%= r.fund_code %></td>
-          <td><%= r.fund_code_master %></td>
-        </tr>
-      <% end %>
-  </table>
-</div>
+<div class="row">
+  <h2><%= @presenter.summary.list_name %></h2>
+  <div class="col-sm-12">
+    <%= render "toolbar" %>
+  </div>
+</div> <!-- row -->
+
+<div class="row">
+  <h3><%= @presenter.name %></h3>
+  <% if @presenter.from != nil && @presenter.to != nil %>
+    <p>Call numbers from <b><%= @presenter.from %></b> to <b><%= @presenter.to %></b></p>
+  <% end %>
+  <p>Items: <%= number_with_delimiter(@presenter.count) %>
+  <% if @presenter.is_partial_list? %>
+    <i>. Showing first <%= number_with_delimiter(@presenter.rows.count) %> items,
+    <a href="<%= @presenter.show_all_url %>">view all</a>.</i>
+  <% end %>
+  </p>
+</div> <!-- row -->
+
+<div class="row">
+  <div class="col-sm-12">
+    <%= render "rows" %>
+  </div>
+</div> <!-- row -->
+

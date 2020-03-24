@@ -56,6 +56,10 @@ BulSearch::Application.routes.draw do
   get 'stats/solr-master' => 'stats#solr_master'
 
   # Collection Ecosystem Project
+  # get 'dashboard/new' => 'dashboard#new'
+  get 'dashboard/:id/edit' => 'dashboard#edit', as: :dashboard_edit
+  # post 'dashboard/:id/save' => 'dashboard#save', as: :dashboard_save
+
   get 'dashboard/:id/details' => 'dashboard#details', as: :dashboard_details
   get 'dashboard/:id' => 'dashboard#show', as: :dashboard_show
   get 'dashboard/' => 'dashboard#index', as: :dashboard_index
@@ -67,10 +71,10 @@ BulSearch::Application.routes.draw do
   get 'hay/flags', to: redirect('/pullslips')
 
   # Best Bets editor
-  get 'bestbets/' => 'best_bets#index', as: :best_bets_index
   get 'bestbets/:id/edit' => 'best_bets#edit', as: :best_bets_edit
   post 'bestbets/:id/save' => 'best_bets#save', as: :best_bets_save
   post 'bestbets/:id/delete' => 'best_bets#delete', as: :best_bets_delete
+  get 'bestbets/' => 'best_bets#index', as: :best_bets_index
 
   # Legacy
   get 'Search/Results' => "legacy#search_results"

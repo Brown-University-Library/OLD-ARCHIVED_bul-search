@@ -1,11 +1,12 @@
 require "./lib/http_json"
+require "lcsort"
 
-# Calls the callnumber normalize API to normalize callnumbers.
+# Normalizes call numbers so that they can be used for sorting and searching by ranges.
 class CallnumberNormalizer
   def self.normalize_one(callnumber)
-    normalized = self.normalize_many([callnumber])
-    return nil if normalized.count == 0
-    normalized[0][:normalized]
+    clean = self.clean_callnumber(callnumber)
+    return nil if clean == nil
+    Lcsort.normalize(clean)
   end
 
   # Returns an array of objects with the original callnumber
@@ -15,16 +16,10 @@ class CallnumberNormalizer
   # => [<callnumber: "a 123", normalized: "a  12300">,
   #     <callnumber: "bb 456 2016", normalized: "bb 456">]
   def self.normalize_many(callnumbers)
-    numbers = callnumbers.map { |c| self.clean_callnumber(c)}.compact
     normalized = []
-    api_url = ENV["NORMALIZE_API_URL"]
-    raise "NORMALIZE_API_URL is not defined" if api_url == nil
-    url = api_url + "/?callnumber=#{numbers.join(',')}"
-    response = HttpUtil::HttpJson.get(URI.encode(url))
-    response["result"]["items"].each do |item|
-      normalized << OpenStruct.new(
-        :callnumber => item["call_number"],
-        :normalized => item["normalized_call_number"])
+    callnumbers.each do |callnumber|
+      norm = self.normalize_one(callnumber)
+      normalized << OpenStruct.new(callnumber: callnumber, normalized: norm)
     end
     normalized
   rescue => e
@@ -36,5 +31,19 @@ class CallnumberNormalizer
     return nil if callnumber.start_with?("Newspaper ")
     return nil if callnumber.gsub(/[^\w\s\.]/, "") != callnumber
     callnumber
+  end
+
+  # Returns the "LC Classification" for the given call number
+  # e.g. for "QA9.58 .D37 2008" it returns "QA"
+  def self.lc_class(callnumber)
+    return nil if callnumber == nil
+
+    reg_ex = /^[A-Z]{1,3}/
+    matches = reg_ex.match(callnumber.upcase)
+    if matches.length == 1
+      return matches[0].to_s
+    end
+
+    return nil
   end
 end

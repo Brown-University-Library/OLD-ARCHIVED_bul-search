@@ -1,4 +1,3 @@
-require "./lib/solr_lite/solr.rb"
 require "./app/models/etd_import.rb"
 
 namespace :josiah do

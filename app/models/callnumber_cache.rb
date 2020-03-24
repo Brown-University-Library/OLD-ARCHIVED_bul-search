@@ -1,38 +1,43 @@
-require "./lib/solr_lite/solr.rb"
-require "./lib/solr_lite/search_params.rb"
+require "./lib/log_util.rb"
 
 # Methods to store callnumbers and normalize them in the
 # callnumber SQL table.
 class CallnumberCache < ActiveRecord::Base
 
-  # Max number of records to fetch at once when cacheing BIBs/call numbers.
-  SOLR_BATCH_SIZE = 1000
-
-  # Saves to the callnumber table all the BIB id
-  # and original call numbers found in Solr.
-  #
-  # Notice that we are not normalizing the call numbers here. We use
-  # an external Python program for that. (See misc/callnumber_norm/)
-  def self.cache_bib_ids_to_table(blacklight_config, page = 1)
-    puts "Cacheing BIB record IDs (starting on page #{page})..."
+  # Saves to the callnumber table all the BIB ids found in Solr,
+  # their call numbers, and the normalized version of the call
+  # numbers.
+  def self.cache_bib_ids_to_table(page = 1)
+    solr_batch_size = 200000
+    total_pages = nil
     while true
-      puts "processing page #{page}..."
+      puts "Processing page #{page} / #{total_pages}"
+      batch, total_pages = self.get_batch(page, solr_batch_size)
+
       ActiveRecord::Base.connection.execute("START TRANSACTION")
-      batch, total_docs = self.get_batch(blacklight_config, page)
       batch.each do |row|
+        normalized = CallnumberNormalizer.normalize_one(row[:callnumber])
+        if normalized == nil
+          normalized = "NULL"
+        else
+          normalized = '"' + normalized + '"'
+        end
         sql = <<-END_SQL.gsub(/\n/, '')
-          INSERT IGNORE INTO callnumbers(bib, original)
-          VALUES("#{row[:bib]}","#{row[:original]}")
+          INSERT IGNORE INTO callnumbers(bib, original, normalized)
+          VALUES("#{row[:bib]}","#{row[:callnumber]}", #{normalized})
         END_SQL
         ActiveRecord::Base.connection.execute(sql)
       end
       ActiveRecord::Base.connection.execute("COMMIT")
-      last_page = batch.count < SOLR_BATCH_SIZE
-      break if last_page
+
+      break if (page >= total_pages)
       page += 1
     end
   end
 
+  # Saves to the call number table BIB ids in Solr that have
+  # been added since a given date, and normalize their call number
+  # information.
   def self.cache_bib_ids_since(start_date)
     page = 1
     while true
@@ -46,154 +51,125 @@ class CallnumberCache < ActiveRecord::Base
           record = Callnumber.new
           record.bib = bib
           record.original = callnumber
-          record.normalized = nil
+          record.normalized = CallnumberNormalizer.normalize_one(callnumber)
           record.save!
         end
       end
       page += 1
       break if page > num_pages
     end
+    nil
   end
 
   # Saves to a file on disk the SQL INSERT statementes to
-  # add cache all the BIB id and original call numbers found in Solr.
+  # add cache all the BIB ids found in Solr, their original
+  # call numbers, and the normalized version of those call
+  # numbers.
+  #
   # This file can be submitted to MySQL with from the command
   # line with: mysql < callnumbers_upsert.sql
-  #
-  # Notice that we are not normalizing the call numbers here. We use
-  # an external Python program for that. (See misc/callnumber_norm/)
-  def self.cache_bib_ids_to_file(blacklight_config, page = 1)
+  def self.cache_bib_ids_to_file(page = 1)
+    solr_batch_size = 200000
+    total_pages = nil
     filename = "callnumbers_upsert.sql"
     IO.write(filename, "", mode: "w")
     while true
-      batch, total_docs = self.get_batch(blacklight_config, page)
-      sql_tx = "SELECT #{page}, #{page_count(total_docs)};\r\n"
+      puts "Processing page #{page} / #{total_pages}"
+      batch, total_pages = self.get_batch(page, solr_batch_size)
+
+      sql_tx = "SELECT #{page};\r\n"
       sql_tx << "START TRANSACTION;\r\n"
       batch.each do |row|
+        normalized = CallnumberNormalizer.normalize_one(row[:callnumber])
+        if normalized == nil
+          normalized = "NULL"
+        else
+          normalized = '"' + normalized + '"'
+        end
         sql = <<-END_SQL.gsub(/\n/, '')
-          INSERT IGNORE INTO callnumbers(bib, original)
-          VALUES("#{row[:bib]}","#{row[:original]}")
+          INSERT IGNORE INTO callnumbers(bib, original, normalized)
+          VALUES("#{row[:bib]}","#{row[:callnumber]}", #{normalized})
         END_SQL
         sql_tx << sql + ";\r\n"
       end
       sql_tx << "COMMIT;\r\n"
       IO.write(filename, sql_tx, mode: "a")
-      last_page = batch.count < SOLR_BATCH_SIZE
-      break if last_page
+
+      break if (page >= total_pages)
       page += 1
     end
   end
 
-  def self.normalize_one(blacklight_config, id)
-    solr_docs = self.fetch_some_solr_ids(blacklight_config, [id])
-    raise "ID #{id} not found in Solr." if solr_docs.count == 0
-    raise "More than one BIB record found in Solr for ID: #{id}" if solr_docs.count > 1
-    # Process the callnumbers for the BIB record...
-    callnumbers = solr_docs[0]["callnumber_t"] || []
-    callnumbers.each do |callnumber|
-      puts "Normalizing #{id}/#{callnumber}"
-      normalized = CallnumberNormalizer.normalize_one(callnumber)
-      if normalized == nil
-        normalized = "ERR"
-      end
-      records = Callnumber.where(bib: id, original: callnumber)
-      case records.count
-      when 0
-        # add the record to the DB
-        record = Callnumber.new
-        record.original = callnumber
-        record.bib = id
-        record.normalized = normalized
-        record.save!
-      when 1
-        # update the existing record
-        records[0].normalized = normalized
-        records[0].save!
-      else
-        raise "Skipped #{id}/#{callnumber}, more than one row found in the database"
-      end
-    end
-  end
+  def self.normalize_bib(id)
+    # Get the call numbers for the bib...
+    solr = SolrLite::Solr.new(ENV['SOLR_URL'])
+    doc = solr.get(id, "q", "callnumber_ss")
+    raise "ID #{id} not found in Solr." if doc == nil
+    callnumbers = doc["callnumber_ss"] || []
 
-  def self.normalize_pending(blacklight_config)
-    puts "Fetching records to normalize..."
-    records = Callnumber.where(normalized: nil)
-    records.each do |record|
-      begin
-        normalize_one(blacklight_config, record.bib)
-      rescue StandardError => e
-        puts "#{e}, (continuing with the next one)"
-      end
+    # ...delete previous records for this bib
+    Callnumber.delete_all(bib: id)
+
+    # ..and save the normalized records
+    callnumbers.each do |callnumber|
+      normalized = CallnumberNormalizer.normalize_one(callnumber)
+      record = Callnumber.new
+      record.original = callnumber
+      record.bib = id
+      record.normalized = normalized
+      record.save!
     end
   end
 
   private
-    def self.fetch_all_solr_ids(blacklight_config, page, page_size)
-      builder = AllIdsSearchBuilder.new(blacklight_config, page, page_size)
-      repository = Blacklight::SolrRepository.new(blacklight_config)
-      response = repository.search(builder)
-      return response.documents, response["response"]["numFound"]
-    end
-
-    def self.fetch_some_solr_ids(blacklight_config, ids)
-      builder = SomeIdsSearchBuilder.new(blacklight_config, ids)
-      repository = Blacklight::SolrRepository.new(blacklight_config)
-      response = repository.search(builder)
-      response.documents
-    end
-
-    def self.get_batch(blacklight_config, page)
-      batch = []
-      solr_docs, total_docs = self.fetch_all_solr_ids(blacklight_config, page, SOLR_BATCH_SIZE)
-      solr_docs.each do |solr_doc|
-        callnumbers = solr_doc["callnumber_t"] || []
-        callnumbers.uniq { |c| c.upcase }.each do |callnumber|
-          bib = solr_doc["id"].gsub('"', '')
-          if callnumber.length > 100
-            puts "Ignored BIB: #{bib}, call number too long [#{callnumber}]"
-            next
-          end
-          original = callnumber.upcase.gsub('"', '').gsub('\\', '')
-          batch << {bib: bib, original: original}
-        end
-      end
-      return batch, total_docs
-    end
-
-    def self.page_count(total_docs)
-      count = (total_docs / SOLR_BATCH_SIZE).to_i
-      if (total_docs % SOLR_BATCH_SIZE) > 0
-        count += 1
-      end
-      count
-    end
-
-    # Return an array of (bib + callnumbers) that have been updated in
-    # to Solr after a given date.
-    #
-    # We use Solr's field `updated_dt` to determine what records that have been
-    # updated. `updated_dt` indicates the last time the record was updated in
-    # Millennium whereas Solr's `timestamp` indicates the last time the record
-    # was touched in Solr and it almost always means the date the record was
-    # imported into Solr.
-    def self.get_updated_since(start_date, page = 1)
-      # get the solr documents from Solr...
+    # Returns an array of bib + callnumbers for all the Solr docs.
+    def self.get_batch(page, solr_batch_size)
       solr_url = ENV['SOLR_URL']
       solr = SolrLite::Solr.new(solr_url)
-      q = ""
-      start_date_time = start_date.to_s + "T00:00:00.0Z"
-      fq = ["updated_dt:[#{start_date_time} TO *]"]
-      facets = []
-      params = SolrLite::SearchParams.new(q, fq, facets, page, SOLR_BATCH_SIZE)
-      params.fl = ["id", "updated_dt", "callnumber_t", "title_display"]
+      params = SolrLite::SearchParams.new("id:*")
+      params.page = page
+      params.page_size = solr_batch_size
+      params.fl = ["id", "callnumber_ss"]
       params.sort = "id asc"
       response = solr.search(params)
 
-      # Extract the BIB + callnumber from each solr_doc
-      # (a BIB record can have more than one callnumber)
+      batch = []
+      response.solr_docs.each do |solr_doc|
+        callnumbers = (solr_doc["callnumber_ss"] || []).uniq { |c| c.upcase }
+        callnumbers.each do |callnumber|
+          if callnumber.length > 100
+            next
+          end
+          callnumber = callnumber.upcase.gsub('"', '').gsub('\\', '')
+          batch << {bib: solr_doc["id"], callnumber: callnumber}
+        end
+      end
+      return batch, response.num_pages
+    end
+
+    # Returns an array of bib + callnumbers for all the Solr docs
+    # that have been updated after a given data.
+    #
+    # We use Solr's field `updated_dt` to determine what records that have been
+    # updated because this field indicates the last time the record was updated
+    # in Sierra. Field `timestamp` indicates the last time the record was
+    # imported into Solr.
+    def self.get_updated_since(start_date, page = 1, solr_batch_size = 1000)
+      solr_url = ENV['SOLR_URL']
+      solr = SolrLite::Solr.new(solr_url)
+      start_date_time = start_date.to_s + "T00:00:00.0Z"
+      q = "updated_dt:[#{start_date_time} TO *]"
+      params = SolrLite::SearchParams.new(q)
+      params.page = page
+      params.page_size = solr_batch_size
+      params.fl = ["id", "updated_dt", "callnumber_ss"]
+      params.sort = "id asc"
+      response = solr.search(params)
+
       results = []
       response.solr_docs.each do |doc|
-        (doc["callnumber_t"] || []).each do |callnumber|
+        callnumbers = (doc["callnumber_ss"] || []).uniq {|c| c.upcase }
+        callnumbers.each do |callnumber|
           results << {bib: doc["id"], callnumber: callnumber}
         end
       end

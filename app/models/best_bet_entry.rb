@@ -23,6 +23,7 @@ class BestBetEntry < ActiveRecord::Base
     # We are using an array of hashes here (instead of an array of BestBetEntry + BestBetTerms)
     # because I want to bypass Rails' lazy loading and force it to load all the data into the cache.
     # TODO: Figure out if there is a Rails-way of doing this.
+    #       See https://blog.bigbinary.com/2013/07/01/preload-vs-eager-load-vs-joins-vs-includes.html
     #
     def self.all_cached()
         Rails.cache.fetch("best_bet_cache", expires_in: 30.minute) do
