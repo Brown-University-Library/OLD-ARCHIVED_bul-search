@@ -70,9 +70,15 @@
                     <td><%= range.from %></td>
                     <td><%= range.to %></td>
                     <td class="number_cell">
-                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"><%= range.count ? range.count : "N/A" %></a>
+                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"><%= range.count ? number_with_delimiter(range.count) : "N/A" %></a>
                     </td>
-                    <td class="number_cell"><%= range.percent(@presenter.summary.total_items()) %></td>
+                    <td class="number_cell">
+                        <% if range.percent(@presenter.summary.total_items()) > 0 %>
+                            <%= range.percent(@presenter.summary.total_items()) %>&nbsp;%
+                        <% else %>
+                            &nbsp;
+                        <% end %>
+                    </td>
                     <td>
                         <div class="bar">
                             <div class="progress" style="width: <%= range.percent(@presenter.summary.total_items()) %>%;"></div>
@@ -97,8 +103,16 @@
             <% @presenter.summary.locations.each do |loc| %>
                 <tr>
                     <td><%= loc.code == loc.name ? loc.code : "#{loc.name} (#{loc.code})" %></td>
-                    <td class="number_cell"><a href="<%= dashboard_details_path(id: @presenter.summary.id, loc_code: loc.code) %>"><%= loc.count %></a></td>
-                    <td class="number_cell"><%= loc.percent %></td>
+                    <td class="number_cell">
+                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, loc_code: loc.code) %>"><%= number_with_delimiter(loc.count) %></a>
+                    </td>
+                    <td class="number_cell">
+                        <% if loc.percent > 0 %>
+                            <%= loc.percent %>&nbsp;%
+                        <% else %>
+                            &nbsp;
+                        <% end %>
+                    </td>
                     <td>
                         <div class="bar">
                             <div class="progress" style="width: <%= loc.percent %>%;"></div>
@@ -123,8 +137,16 @@
             <% @presenter.summary.checkouts.each do |ck| %>
                 <tr>
                     <td><%= ck.code %></td>
-                    <td class="number_cell"><a href="<%= dashboard_details_path(id: @presenter.summary.id, ck: ck.code) %>"><%= ck.count %></a></td>
-                    <td class="number_cell"><%= ck.percent %></td>
+                    <td class="number_cell">
+                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, ck: ck.code) %>"><%= number_with_delimiter(ck.count) %></a>
+                    </td>
+                    <td class="number_cell">
+                        <% if ck.percent > 0 %>
+                            <%= ck.percent %>&nbsp;%
+                        <% else %>
+                            &nbsp;
+                        <% end %>
+                    </td>
                     <td>
                         <div class="bar">
                             <div class="progress" style="width: <%= ck.percent %>%;"></div>
