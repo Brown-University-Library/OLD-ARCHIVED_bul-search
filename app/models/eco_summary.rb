@@ -147,6 +147,28 @@ class EcoSummary < ActiveRecord::Base
         save!
     end
 
+    def refresh_range(range_id)
+        # Delete previous details for this range...
+        EcoDetails.delete_all(eco_summary_id: id, eco_range_id: range_id)
+
+        # ...fetch items for the call number range and re-save them
+        # TODO: optimize this code to insert in batches
+        range = ranges().find {|r| r.id == range_id}
+        if range != nil
+            bibs = Callnumber.get_by_range(range.from, range.to)
+            items_count = 0
+            bibs.each do |bib|
+                items_count += EcoDetails.new_from_bib(id, range.id, bib[:id])
+            end
+            range.count = items_count
+            range.save!
+
+            # ...make sure the summary reflects the change
+            self.updated_date_gmt = Time.now.utc
+            save!
+        end
+    end
+
     def self.create_sample_lists()
         # Tiny test list
         ranges = []

@@ -21,4 +21,14 @@ namespace :josiah do
     summary.refresh()
     puts "Done"
   end
+
+  desc "Re-populate the details information for a given EcoRange ID"
+  task "ecosystem_refresh_range", [:range_id] => :environment do |_cmd, args|
+    range_id = (args[:range_id] || "").to_i
+    puts "Refreshing data for EcoRange #{range_id}..."
+    id = EcoRange.find(range_id).eco_summary_id
+    summary = EcoSummary.find(id)
+    summary.refresh_range(range_id)
+    puts "Done"
+  end
 end
