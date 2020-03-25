@@ -69,7 +69,9 @@
                     <td><span title="<%= range.name_display %>"><%= truncate(range.name_display, length: 50) %></span></td>
                     <td><%= range.from %></td>
                     <td><%= range.to %></td>
-                    <td class="number_cell"><a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"><%= range.count %></a></td>
+                    <td class="number_cell">
+                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"><%= range.count ? range.count : "N/A" %></a>
+                    </td>
                     <td class="number_cell"><%= range.percent(@presenter.summary.total_items()) %></td>
                     <td>
                         <div class="bar">
