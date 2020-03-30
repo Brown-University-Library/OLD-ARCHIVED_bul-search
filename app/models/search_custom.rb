@@ -14,6 +14,28 @@ class SearchCustom
   #
   def callnumber(callnumber, params)
     callnumber = callnumber.strip
+
+    if params[:search_field] == "call_number_range"
+      is_range = false
+      cn_from = ""
+      cn_to = ""
+      tokens = callnumber.split("-")
+      if tokens.count == 2
+        is_range, cn_from, cn_to = CallnumberNormalizer.normalize_range(tokens[0], tokens[1])
+      elsif tokens.count == 1
+        is_range, cn_from, cn_to = CallnumberNormalizer.normalize_range(tokens[0], tokens[0])
+      end
+
+      if is_range
+        response, docs, match = callnumber_range_search(cn_from, cn_to, params)
+        return response, docs, match
+      end
+
+      # If it is not call number range then we let it run as a normal call number search.
+      # The search will most likely fail but we will get a zero results response that
+      # we can display to the user.
+    end
+
     response, docs, match = callnumber_search(callnumber, params, "callnumber_ss")
     if docs.count > 0
       # We found a match with the value provided as-is.
@@ -115,12 +137,28 @@ class SearchCustom
       return response, docs, callnumber
     end
 
+    def callnumber_range_search(cn_from, cn_to, params)
+      params = params || {}
+      params["defType"] = "edismax" # Force edismax since Solr is not configured as such.
+      solr_query = SolrQuery.new(@blacklight_config)
+
+      q = "callnumber_norm_ss:[#{cn_from} TO #{cn_to}]"
+      if cn_from == cn_to
+        cn_regex = "/" + StringUtils.solr_safe_regex(cn_from) + ".*/"
+        q = "callnumber_norm_ss:#{cn_regex}"
+      end
+
+      response, docs = solr_query.search(q, params)
+      match = cn_from + " - " + cn_to
+      return response, docs, match
+    end
+
     # Returns the text in a format suitable for call number search.
     def callnumber_searchable(text)
       text = drop_nsize(text)
       if wildcard_search?(text)
         # Make it a Solr RegEx value
-        text = "/" + solr_safe_regex(text.gsub("*", "")) + ".*/"
+        text = "/" + StringUtils.solr_safe_regex(text.gsub("*", "")) + ".*/"
       else
         text = quotes(text)
       end
@@ -167,23 +205,5 @@ class SearchCustom
 
     def wildcard_search?(text)
       return text.strip.end_with?("*")
-    end
-
-    # TODO: move this to a shared class so it's not duplicated with
-    # bookplate_regex in catalog_controller.rb
-    def solr_safe_regex(value)
-      safe_value = ""
-      value.each_char do |c|
-        case
-          when (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") ||
-            (c >= "0" && c <= "9") || c == " " || c == "_"
-            safe_value += c
-          when c == "+" || c == "." || c == "*" || c == "/" || c == "|"
-            safe_value += "\\" + c
-          else
-            safe_value += "."
-        end
-      end
-      safe_value
     end
 end

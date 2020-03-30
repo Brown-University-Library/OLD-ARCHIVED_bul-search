@@ -263,6 +263,12 @@ class CatalogController < ApplicationController
       field.solr_parameters = {qf: "callnumber_ss", defType: "edismax"}
     end
 
+    config.add_search_field("call_number_range") do |field|
+      field.include_in_simple_select = true
+      field.include_in_advanced_search = false
+      field.solr_parameters = {qf: "callnumber_norm_ss", defType: "edismax"}
+    end
+
   end  # end of `configure_blacklight do |config|`
 
   def ourl_service
@@ -298,12 +304,6 @@ class CatalogController < ApplicationController
         @new_q = match
         Rails.logger.info("Call number search success on retry: #{match} (#{original_q})")
       end
-    end
-    if ENV["CALLNUMBER_SHORTCUT"] == "true"
-      # Force the UI to display that we are searching by call number.
-      # This is needed then the user issued an "All Fields" search with a value
-      # prefixed with "#"
-      params[:search_field] = "call_number"
     end
 
     if @response.documents.count == 0 && params[:q] != nil
@@ -456,7 +456,10 @@ class CatalogController < ApplicationController
         if q.length <= 3
           data = []
         else
-          data = get_opensearch_response
+          # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
+          field = text
+          extra = {df: "id"}
+          data = get_opensearch_response(field, params, extra)
         end
       end
       format.json do
@@ -653,11 +656,6 @@ class CatalogController < ApplicationController
       return false
     end
 
-    def is_regex?(code)
-      return false if code == nil
-      code.start_with?("/") && code.end_with?("/")
-    end
-
     # Converts a given bookplate code to a regex that we can to send Solr
     # to retrive items with it. For example "bookplateBloomingdaleLymanG"
     # becomes "/bookplateBloomingdaleLymanG.*/"
@@ -668,29 +666,14 @@ class CatalogController < ApplicationController
     # the bookplate code is "bookplate 054106_purchased_2005" or
     # "bookplate 054106_purchased_2012"
     def bookplate_regex(code)
-      return code if is_regex?(code)
-      safe_code = ""
-      code.each_char do |c|
-        case
-          when (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") ||
-            (c >= "0" && c <= "9") || c == " " || c == "_"
-            safe_code += c
-          when c == "+"
-            safe_code += "%5C%2B"     # Regex escaped and URL encoded
-          when c == "." || c == "*"
-            safe_code += "%5C#{c}"    # Regex escaped, should I encode these too?
-          else
-            safe_code += "."
-        end
-      end
+      return code if StringUtils.is_solr_regex?(code)
+      safe_code = StringUtils.solr_safe_regex(code)
       regex = "/#{safe_code}.*/"
       regex
     end
 
     def callnumber_search?
-      if params[:search_field] == "call_number"
-        return true
-      elsif ENV["CALLNUMBER_SHORTCUT"] == "true" && (params[:q] || "").start_with?("#")
+      if params[:search_field] == "call_number" || params[:search_field] == "call_number_range"
         return true
       end
       false

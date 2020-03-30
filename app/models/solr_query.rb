@@ -26,22 +26,13 @@ class SolrQuery
     solr_params = default_solr_params(params)
     solr_params["q"] = q
     facets = params["f"] || {}
-    if facets.keys.count == 0
-      # nothing to do
-    elsif facets.keys.count == 1
-      key = facets.keys[0]
-      value = facets[key][0]
-      solr_params["fq"] = '{!raw f=' + key + '}' + value
-    else
-      # For now we are not supporting more than one facet
-      #
-      # solr_params["fq"] = []
-      # facets.keys.each do |key|
-      #   facets[key].each do |value|
-      #     solr_params["fq"] << "#{key}:\"#{value}\""
-      #   end
-      # end
-      raise "More than one facet not supported"
+    if facets.keys.count > 0
+      solr_params["fq"] = []
+      facets.keys.each do |key|
+        facets[key].each do |value|
+          solr_params["fq"] << '{!raw f=' + key + '}' + value
+        end
+      end
     end
     submit_query(solr_params)
   end

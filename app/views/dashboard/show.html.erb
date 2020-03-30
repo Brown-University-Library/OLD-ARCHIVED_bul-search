@@ -60,15 +60,21 @@
                 <th>Name</th>
                 <th>From</th>
                 <th>To</th>
+                <th class="number_cell">Bibs</th>
                 <th class="number_cell">Items</th>
                 <th class="number_cell">%</th>
                 <th>&nbsp;</th>
             </tr>
             <% @presenter.summary.ranges.each do |range| %>
                 <tr>
-                    <td><span title="<%= range.name_display %>"><%= truncate(range.name_display, length: 50) %></span></td>
+                    <td>
+                        <span title="<%= range.name_display %>"><%= truncate(range.name_display, length: 50) %></span>
+                    </td>
                     <td><%= range.from %></td>
                     <td><%= range.to %></td>
+                    <td>
+                        <a href="<%= catalog_index_url(q: range.from + ' - ' + range.to, search_field: 'call_number_range') %>">browse</a>
+                    </td>
                     <td class="number_cell">
                         <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"><%= range.count ? number_with_delimiter(range.count) : "N/A" %></a>
                     </td>

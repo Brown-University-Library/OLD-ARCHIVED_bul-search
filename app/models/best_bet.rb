@@ -25,11 +25,6 @@ class BestBet
     if match == nil
       match = self.get_from_reserves(query)
     end
-    if ENV["CALLNUMBER_SHORTCUT"] == "true"
-      if match == nil && query.start_with?("#")
-        match = self.get_callnumber(query[1..-1])
-      end
-    end
     match
   rescue StandardError => e
     Rails.logger.error e.message
