@@ -1,24 +1,13 @@
 namespace :josiah do
-  desc "Gets information about the keys stored in the `searches` table"
-  task "searches_stats" => :environment do |_cmd, args|
-    params = []
-    process_searches do |batch|
-      batch.each do |search|
-        search[:values].keys.each do |key|
-          if key != "_" && !params.include?(key)
-            puts "#{key} (#{search[:id]})"
-            params << key
-          end
-        end
-      end
-    end
-    puts "====="
-    puts params
-  end
-
   desc "Parses `searches` table and populates `searches_params` table"
   task "searches_parse_params" => :environment do |_cmd, args|
     count = 0
+    # This code does not clean the current data before parsing new
+    # searches and therefore running it more than once will create
+    # duplicates in the searches_params table.
+    #
+    # Truncate data in searches_params before running this code.
+    #
     process_searches do |batch|
       batch.each do |search|
         values = clean_search_values(search[:values])
@@ -57,17 +46,24 @@ namespace :josiah do
     count = count_users(min_date)
     puts "Users older than #{min_date}: #{count}"
   end
+
+  desc "Outputs to the console the main columns from searches_params"
+  task "searches_report" => :environment do |_cmd, args|
+    output_searches_params()
+  end
+
 end
 
 def process_searches
-  max_id = max_searches_id
-  start_id = 1
-  end_id = start_id + 10
+  batch_size = 1000
+  max_id = max_searches_id()
+  start_id = min_searches_id()
+  end_id = start_id + batch_size
   while start_id <= max_id
     batch = get_searches_batch(start_id, end_id)
     yield batch
-    start_id += 10
-    end_id += 10
+    start_id += batch_size
+    end_id += batch_size
   end
 end
 
@@ -77,10 +73,34 @@ def get_searches_batch(start_id, end_id)
   rows = ActiveRecord::Base.connection.exec_query(sql).rows
   batch = []
   rows.each do |row|
-    id = row[0].to_i
-    query_params = row[1]
-    hash = YAML.load(query_params)
-    batch << {id: id, values: hash}
+    begin
+      id = row[0].to_i
+      query_params = row[1]
+      hash = YAML.load(query_params)
+      batch << {id: id, values: hash}
+    rescue Exception => ex
+      puts "Error - row: #{row}, #{ex}"
+    end
+  end
+  batch
+end
+
+def output_searches_params
+  sql = "select id, search_id, q, search_field, action, controller from searches_params where q is not null;"
+  rows = ActiveRecord::Base.connection.exec_query(sql).rows
+  batch = []
+  rows.each do |row|
+    begin
+      id = row[0].to_i
+      search_id = row[1].to_i
+      q = (row[2] || "(empty)")[0..80]
+      field = row[3]
+      action = row[4]
+      controller = row[5]
+      puts "#{id}\t#{search_id}\t#{q}\t#{field}\t#{action}\t#{controller}"
+    rescue Exception => ex
+      puts "Error on row: #{row}, #{ex}"
+    end
   end
   batch
 end
@@ -113,6 +133,12 @@ end
 
 def count_users(min_date)
   sql = "SELECT count(id) FROM users WHERE created_at < '#{min_date}' AND guest = 1;"
+  rows = ActiveRecord::Base.connection.exec_query(sql).rows
+  rows[0][0].to_i
+end
+
+def min_searches_id
+  sql = "select min(id) from searches;"
   rows = ActiveRecord::Base.connection.exec_query(sql).rows
   rows[0][0].to_i
 end
