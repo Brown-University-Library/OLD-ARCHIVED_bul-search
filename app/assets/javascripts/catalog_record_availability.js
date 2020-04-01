@@ -3,6 +3,8 @@
 $(document).ready(function() {
   var scope = {};
 
+  var isCovid = true;
+
   // Get the data from the global variables into local variables.
   // Ideally these should be scope.x but for convenience they are just x.
   var bibData = window.bibData;                         // defined in _show_default.html.erb
@@ -131,6 +133,9 @@ $(document).ready(function() {
 
 
   scope.addBookServicesLink = function() {
+    if (isCovid) {
+      return;
+    }
     // hidden by default
     var li = '<li id="book_services_link" class="hidden">';
     var helpInfo = "Request this item to be paged (Faculty and Grad/Med students only)";
@@ -376,7 +381,6 @@ $(document).ready(function() {
 
   scope.updateItemScanStatus = function(row, avItem, barcode) {
     var scanLink, itemLink, html;
-    var isCovid = true;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
       itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
