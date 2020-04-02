@@ -134,6 +134,10 @@ $(document).ready(function() {
 
   scope.addBookServicesLink = function() {
     if (isCovid) {
+      var li = '<li id="book_services_link" class="hidden">';
+      var a = '<a href="#" title="This service has been temporarily suspended" data-toggle="modal" data-target="#covidModal">Request This</a>';
+      var html = li + a;
+      $("div.panel-body>ul.nav").append(html);
       return;
     }
     // hidden by default

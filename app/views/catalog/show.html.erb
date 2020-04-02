@@ -55,11 +55,18 @@
         <h4 class="modal-title">Availability during COVID-19</h4>
       </div>
       <div class="modal-body">
-        <p>We regret the need to suspend Library services related to delivering
-        physical materials as well as scanning and digitization.</p>
-        <p>For help requesting this item please contact Bart at 1-800-BART-4U
-        or email us at <a href="mailto:rock@brown.edu">rock@brown.edu</a>.
-        For Special Collections you can reach us at <a href="mailto:hay@brown.edu">hay@brown.edu</a>.</p>
+        <p>Because onsite access to the libraries is not possible,
+        we are not able to retrieve or scan material at this time;
+        however, we can help you locate digital material that is
+        comparable to physical items.</p>
+
+        <p>Contact us at
+        <a href="mailto:rock@brown.edu?subject=Help+finding+Josiah+record+<%= @document.id %>&body=Link+to+record+https://search.library.brown.edu/catalog/<%= @document.id %>">rock@brown.edu</a>.
+        </p>
+
+        <p>For Special Collections you can reach us at
+        <a href="mailto:hay@brown.edu?subject=Help+finding+Josiah+record+<%= @document.id %>&body=Link+to+record+https://search.library.brown.edu/catalog/<%= @document.id %>"">hay@brown.edu</a>.
+        </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

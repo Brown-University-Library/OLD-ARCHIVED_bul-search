@@ -120,6 +120,7 @@ $(document).ready(function() {
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
             if (isCovid) {
+              item['scan'] = null;
               item['item_request_url'] = null;
             }
           } else {
