@@ -1,10 +1,14 @@
-<% if @solr7 == true %>
 <style>
-  .show-document {
-    background-color: #fdf7d6;
+  .covid-info-box {
+    background-color: #f9f947;
+    text-align: center;
+    border: 1px solid black;
+    padding-top: 7px;
+  }
+  .covid-info-box>p {
+    font-size: 20px;
   }
 </style>
-<% end %>
 
 <div id="content" class="col-md-9 show-document">
   <%= render 'previous_next_doc' %>
@@ -17,6 +21,11 @@
 
   <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
     <div id="doc_<%= @document.id.to_s.parameterize %>">
+      <% if @is_covid %>
+        <div class="covid-info-box">
+          <p>The library is currently closed. <a id="contact-us" href="#" data-toggle="modal" data-target="#covidModal">Contact us</a> for help with this item.</p>
+        </div>
+      <% end %>
       <% # bookmark/folder functions -%>
       <%= render_document_partials @document, blacklight_config.view_config(:show).partials %>
     </div>
@@ -35,4 +44,27 @@
 
 <div id="sidebar" class="col-md-3">
    <%= render_document_sidebar_partial %>
+</div>
+
+<div id="covidModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Availability during COVID-19</h4>
+      </div>
+      <div class="modal-body">
+        <p>We regret the need to suspend Library services related to delivering
+        physical materials as well as scanning and digitization.</p>
+        <p>For help requesting this item please contact Bart at 1-800-BART-4U
+        or email us at <a href="mailto:rock@brown.edu">rock@brown.edu</a>.
+        For Special Collections you can reach us at <a href="mailto:hay@brown.edu">hay@brown.edu</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
 </div>

@@ -413,6 +413,8 @@ class CatalogController < ApplicationController
   end
 
   def show
+    @is_covid = params["covid"] == "true"
+
     # == SOLR-7-MIGRATION
     @solr7 = set_solr_url()
 

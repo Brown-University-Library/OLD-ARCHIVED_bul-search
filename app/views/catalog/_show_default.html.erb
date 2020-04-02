@@ -110,6 +110,8 @@
 </div>
 
 <script type="text/javascript">
+  window.isCovid = <%= @is_covid == true %>;
+
   /* Push the data that we need to a few global variables */
   window.availabilityService = "<%= availability_service_url %>";
   window.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
