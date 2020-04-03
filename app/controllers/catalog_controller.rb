@@ -319,32 +319,8 @@ class CatalogController < ApplicationController
     render "index"
   end
 
-  def clean_sort_value(value)
-    return nil if value == nil
-    case
-    when value == "score desc, pub_date_sort desc, title_sort asc"
-      # relevance
-      return value
-    when value == "pub_date_sort desc, title_sort asc"
-      # year (most recent first)
-      return value
-    when value == "pub_date_sort asc, title_sort asc"
-      # year (oldest first)
-      return value
-    when value == "author_sort asc, title_sort asc"
-      # author
-      return value
-    when value == "title_sort asc, pub_date_sort desc"
-      # title
-      return value
-    end
-    # Should we skip these requests altogether?
-    Rails.logger.info("Ignored invalid sort value: #{value}")
-    return nil
-  end
-
   def index
-    @is_covid = params["covid"] == "true"
+    @is_covid = (ENV["COVID"] == "true")
 
     # == SOLR-7-MIGRATION
     @solr7 = set_solr_url()
@@ -441,7 +417,7 @@ class CatalogController < ApplicationController
   end
 
   def show
-    @is_covid = params["covid"] == "true"
+    @is_covid = (ENV["COVID"] == "true")
 
     # == SOLR-7-MIGRATION
     @solr7 = set_solr_url()
@@ -561,6 +537,30 @@ class CatalogController < ApplicationController
     def api_call?
       format = params[:format]
       return format == "xml" || format == "json"
+    end
+
+    def clean_sort_value(value)
+      return nil if value == nil
+      case
+      when value == "score desc, pub_date_sort desc, title_sort asc"
+        # relevance
+        return value
+      when value == "pub_date_sort desc, title_sort asc"
+        # year (most recent first)
+        return value
+      when value == "pub_date_sort asc, title_sort asc"
+        # year (oldest first)
+        return value
+      when value == "author_sort asc, title_sort asc"
+        # author
+        return value
+      when value == "title_sort asc, pub_date_sort desc"
+        # title
+        return value
+      end
+      # Should we skip these requests altogether?
+      Rails.logger.info("Ignored invalid sort value: #{value}")
+      return nil
     end
 
     # Returns true if the parameters in the search look bogus. This is to handle
