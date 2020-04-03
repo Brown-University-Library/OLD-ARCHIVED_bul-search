@@ -319,6 +319,30 @@ class CatalogController < ApplicationController
     render "index"
   end
 
+  def clean_sort_value(value)
+    return nil if value == nil
+    case
+    when value == "score desc, pub_date_sort desc, title_sort asc"
+      # relevance
+      return value
+    when value == "pub_date_sort desc, title_sort asc"
+      # year (most recent first)
+      return value
+    when value == "pub_date_sort asc, title_sort asc"
+      # year (oldest first)
+      return value
+    when value == "author_sort asc, title_sort asc"
+      # author
+      return value
+    when value == "title_sort asc, pub_date_sort desc"
+      # title
+      return value
+    end
+    # Should we skip these requests altogether?
+    Rails.logger.info("Ignored invalid sort value: #{value}")
+    return nil
+  end
+
   def index
     @is_covid = params["covid"] == "true"
 
@@ -335,6 +359,8 @@ class CatalogController < ApplicationController
       # search (with no "q") and showing a random list of search results.
       params["search_field"] = "all_fields"
     end
+
+    params["sort"] = clean_sort_value(params["sort"])
 
     # This is needed to prevent turbolinks from re-displaying a previous error message
     # on the request following a bad request from the same user. This issue only happens
