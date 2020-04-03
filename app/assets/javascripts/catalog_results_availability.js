@@ -3,6 +3,8 @@
 $(document).ready(function() {
   var scope = {};
 
+  var isCovid = (window.isCovid === true);
+
   // Get the data from the global variables into local variables.
   // Ideally these should be scope.x but for convenience they are just x.
   var bibsData = window.bibsData;                       // defined in _search_results.html.erb

@@ -320,6 +320,8 @@ class CatalogController < ApplicationController
   end
 
   def index
+    @is_covid = params["covid"] == "true"
+
     # == SOLR-7-MIGRATION
     @solr7 = set_solr_url()
     @trusted_ip = trusted_ip?(request.remote_ip)

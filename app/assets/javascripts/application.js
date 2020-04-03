@@ -145,6 +145,10 @@ Reference Josiah pages: TODO- update these to search.library.brown.edu urls
 - multiple results page: <http://127.0.0.1:3000/catalog?utf8=%E2%9C%93&search_field=all_fields&q=The+capture+of+Jefferson+Davis>  */
 
 function hayAeonFullLink( bib, title, author, publisher, callnumber, location ) {
+  if((typeof window.isCovid !== 'undefined') && (window.isCovid !== null) && (window.isCovid)) {
+    return "https://brown.libanswers.com/form?queue_id=3794";
+  }
+
   /* called by catalog_record_availability.js */
   // console.log( '- starting hayAeonFullLink()' );
   var hayA_root_url = "https://brown.aeon.atlas-sys.com/logon/";
