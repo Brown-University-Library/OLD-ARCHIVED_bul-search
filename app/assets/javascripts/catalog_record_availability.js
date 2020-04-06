@@ -201,8 +201,24 @@ $(document).ready(function() {
             //break after first public domain full text link
             scope.debugMessage("Found public domain Hathi link for " + oclcNum);
             return;
-          };
+          }
         }
+
+        var hathiEmergency = (window.josiahObject.getUrlParameter("hathi") == "emergency");
+        if (hathiEmergency) {
+          // See if we can find out a temporary link for the Hathi version
+          for(i = 0; i < ht.items.length; i++) {
+            item = ht.items[i];
+            if (item.rightsCode == 'ic') {
+              var html = "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Temporary Digital Access from Hathi Trust</a>"
+              $('#online_resources').removeClass("hidden");
+              $("#online_resources_links").append(html);
+              scope.debugMessage("Temporary Hathi link for " + oclcNum);
+              return;
+            }
+          }
+        }
+
         scope.debugMessage("No public domain Hathi link found for " + oclcNum);
       }
     });
