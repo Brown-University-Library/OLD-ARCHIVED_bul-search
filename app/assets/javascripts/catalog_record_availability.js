@@ -47,7 +47,11 @@ $(document).ready(function() {
       scope.loadNearbyItems(false);
     }
 
-    scope.showHathiLink(bibData.oclcNum);
+    if (window.josiahObject.getUrlParameter("hathi") == "emergency") {
+      scope.showHathiEmergencyLinks(bibData.oclcNums);
+    } else {
+      scope.showHathiLink(bibData.oclcNum);
+    }
     scope.debugMessage("BIB record multi: " + bibData.itemsMultiType)
   };
 
@@ -203,26 +207,103 @@ $(document).ready(function() {
             return;
           }
         }
-
-        var hathiEmergency = (window.josiahObject.getUrlParameter("hathi") == "emergency");
-        if (hathiEmergency) {
-          // See if we can find out a temporary link for the Hathi version
-          for(i = 0; i < ht.items.length; i++) {
-            item = ht.items[i];
-            if (item.rightsCode == 'ic') {
-              var html = "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Temporary Digital Access from Hathi Trust</a>"
-              $('#online_resources').removeClass("hidden");
-              $("#online_resources_links").append(html);
-              scope.debugMessage("Temporary Hathi link for " + oclcNum);
-              return;
-            }
-          }
-        }
-
         scope.debugMessage("No public domain Hathi link found for " + oclcNum);
       }
     });
   };
+
+  // Hathi documentation:
+  //     https://www.hathitrust.org/hathifiles
+  //     https://www.hathitrust.org/bib_api
+  //
+  // Examples:
+  //     https://catalog.hathitrust.org/api/volumes/brief/oclc/ocm40783780.json
+  //     https://catalog.hathitrust.org/api/volumes/brief/json/oclc:ocm40783780;oclc:40783780;
+  //
+  // Hathi typical links:
+  //     Normal case             https://search.library.brown.edu/catalog/b4041408
+  //
+  // Hathi emergency links:
+  //     Single link             https://search.library.brown.edu/catalog/b3019671
+  //     Multiple OCLC numbers   https://search.library.brown.edu/catalog/b2301113
+  //     Multiple volumes        https://search.library.brown.edu/catalog/b1841334
+  scope.showHathiEmergencyLinks = function(oclcNums) {
+    var i, oclcNumString, url;
+
+    if (oclcNums.length == 0) {
+      scope.debugMessage("Skipped call to Hathi (no OCLC numbers available)");
+      return;
+    }
+
+    oclcNumString = "";
+    for(i = 0; i < oclcNums.length; i++) {
+      oclcNumString += "oclc:" + oclcNums[i] + ";"
+    }
+
+    // Call the Hathi API with one or many OCLC numbers
+    // https://www.hathitrust.org/bib_api
+    //
+    url = "https://catalog.hathitrust.org/api/volumes/brief/json/" + oclcNumString;
+    $.getJSON(url, function (ht) {
+      var items, i, item, itemFound, html;
+      if (!ht.hasOwnProperty(oclcNumString) || (ht[oclcNumString].items.length == 0)) {
+        scope.debugMessage("No Hathi items found for " + oclcNumString);
+        return;
+      }
+
+      html = "";
+      itemFound = false;
+      items = ht[oclcNumString].items;
+
+      // See if we got a public domain link from Hathi
+      for(i = 0; i < items.length; i++) {
+        item = items[i];
+        if (item.rightsCode == 'pd') {
+          itemFound = true;
+          if (item.enumcron == false) {
+            // If this is not a chronology bail out as soon as we find one link
+            html = "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Full text from Hathi Trust</a>";
+            break;
+          } else {
+            // Append this chronology to the list
+            html += "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Full text from Hathi Trust - " + item.enumcron + "</a>";
+          }
+        }
+      }
+
+      if (itemFound) {
+        $('#online_resources').removeClass("hidden");
+        $("#online_resources_links").append(html);
+        scope.debugMessage("Found public domain Hathi link for " + oclcNumString);
+        return;
+      }
+
+      // See if we can find out a temporary link for the Hathi version
+      for(i = 0; i < items.length; i++) {
+        item = items[i];
+        if (item.rightsCode == 'ic') {
+          itemFound = true;
+          if (item.enumcron == false) {
+            // If this is not a chronology bail out as soon as we find one link
+            html = "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Temporary Digital Access from Hathi Trust</a>";
+            break;
+          } else {
+            // Append this chronology to the list
+            html += "<li><a id=\"hathi\" href=\"" + item.itemURL + "\" target=\"_blank;\">Temporary Digital Access from Hathi Trust - " + item.enumcron + "</a>";
+          }
+        }
+      }
+
+      if (itemFound) {
+        $('#online_resources').removeClass("hidden");
+        $("#online_resources_links").append(html);
+        scope.debugMessage("Temporary Hathi link for " + oclcNumString);
+        return;
+      }
+
+      scope.debugMessage("No Hathi link found for " + oclcNumString);
+    }); // $.getJSON
+  }; // scope.showHathiEmergencyLinks
 
   scope.showAvailability = function(all) {
     var i;

@@ -119,6 +119,7 @@
   window.bibData = {};
   window.bibData.showAvailability = true;
   window.bibData.oclcNum = "<%= js_safe(@document.oclc_full) %>";
+  window.bibData.oclcNums = <%= js_safe_strings(@document.oclc_all) %>;
   window.bibData.bookServicesUrl = "<%= @document.book_services_url %>"
   window.bibData.id = "<%= @document.id %>";
   window.bibData.title = "<%= document[:title_display] %>";

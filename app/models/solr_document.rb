@@ -220,6 +220,14 @@ class SolrDocument
     ""
   end
 
+  # Returns an array with all the unique OCLC numbers
+  def oclc_all
+    all = marc.field("001") + self.fetch('oclc_t', [])
+    all.uniq
+  rescue StandardError
+    []
+  end
+
   def publication_run
     @publication_run ||= begin
       marc.subfield_values("362", "a").first

@@ -6,12 +6,21 @@ module ApplicationHelper
     "".html_safe + ("#{title}: #{text}") + "<br/>".html_safe
   end
 
-  # An enhanced versiof of html_safe that takes into account characters
-  # that cause issued when embedded on a JavaScript string.
+  # An enhanced version of html_safe that takes into account characters
+  # that cause issues when embedded on a JavaScript string.
   def js_safe(text)
     return "" if text == nil
     text = text.gsub("\\", "%5C")
     text = text.gsub('"', '\"')
+    text.html_safe
+  end
+
+  # An enhanced version of html_safe that works with arrays of strings
+  # and takes into account (via js_safe) characters that cause issues
+  # when embedded on a JavaScript string.
+  def js_safe_strings(array)
+    return "" if array == nil
+    text = "[" + array.map {|x| '"' + js_safe(x) + '"'}.join(",") + "]"
     text.html_safe
   end
 
