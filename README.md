@@ -11,7 +11,7 @@ brew install chruby
 ruby-install ruby 2.3.5
 ```
 
-Download and install Solr 7 and create a Solr core for our data:
+Download and install Solr 7, create a Solr core for our data, and customize the schema for this project (via the script in bul-traject)
 ```
 cd
 curl http://archive.apache.org/dist/lucene/solr/7.5.0/solr-7.5.0.zip > solr-7.5.0.zip
@@ -19,6 +19,10 @@ unzip solr-7.5.0.zip
 cd ./solr-7.5.0/bin
 ./solr start
 ./solr create -c josiah7
+
+curl https://raw.githubusercontent.com/Brown-University-Library/bul-traject/master/solr7/define_schema.sh > define_schema.sh
+chmod u+x define_schema.sh
+./define_schema.sh
 ```
 
 
@@ -68,6 +72,15 @@ curl "http://localhost:8983/solr/josiah7/select?q=*%3A*&wt=json&indent=true"
 ```
 
 You can pass the `--debug-mode` flag to Traject if you just want to see what will be imported but not import it to Solr.
+
+
+## Sample Records (without Traject)
+If you want to skip Traject for testing purposes you can use the Solr `post` utility to import the sample data directly into Solr:
+
+```
+cd bul-search
+post -c josiah7 ./data/bul_sample.json
+```
 
 
 ## Unit tests
