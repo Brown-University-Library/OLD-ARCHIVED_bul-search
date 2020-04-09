@@ -211,14 +211,13 @@ class CatalogController < ApplicationController
     end
 
     # "sort results by" select (pulldown)
-    # label in pulldown is followed by the name of the SOLR field to sort by and
-    # whether the sort is ascending or descending (it must be asc or desc
-    # except in the relevancy case).
+    # Make sure to white-list in clean_sort_value() any field added here
     config.add_sort_field 'score desc, pub_date_sort desc, title_sort asc', :label => 'relevance'
     config.add_sort_field 'pub_date_sort desc, title_sort asc', :label => 'year (most recent first)'
     config.add_sort_field 'pub_date_sort asc, title_sort asc', :label => 'year (oldest first)'
     config.add_sort_field 'author_sort asc, title_sort asc', :label => 'author'
     config.add_sort_field 'title_sort asc, pub_date_sort desc', :label => 'title'
+    config.add_sort_field 'callnumber_norm_ss asc', :label => 'call number'
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
@@ -556,6 +555,9 @@ class CatalogController < ApplicationController
         return value
       when value == "title_sort asc, pub_date_sort desc"
         # title
+        return value
+      when value == "callnumber_norm_ss asc"
+        # call number
         return value
       end
       # Should we skip these requests altogether?
