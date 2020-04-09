@@ -9,6 +9,7 @@ Download and install Ruby 2.3.5:
 brew install ruby-install
 brew install chruby
 ruby-install ruby 2.3.5
+chruby 2.3.5
 ```
 
 Download and install Solr 7, create a Solr core for our data, and customize the schema for this project (via the script in bul-traject)
