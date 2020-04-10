@@ -123,24 +123,25 @@ class EcoSummary < ActiveRecord::Base
         data
     end
 
-    # Reloads the details for the current EcoSummary which means
-    # getting the list of bib records that match the call number
-    # ranges for this EcoSummary.
+    # Reloads the EcoDetails for the current EcoSummary by refreshing
+    # the data of each of the ranges for the summary.
     def refresh()
-        # Delete previous details for this list...
-        EcoDetails.delete_all("eco_summary_id = #{id}")
-
-        # ...and fetch those records again based on the current
-        # call number ranges.
-        # TODO: optimize this code to insert in batches
+        # Refresh each of the ranges...
         ranges().each do |range|
-            bibs = Callnumber.get_by_range(range.from, range.to)
-            items_count = 0
-            bibs.each do |bib|
-                items_count += EcoDetails.new_from_bib(id, range.id, bib[:id])
-            end
-            range.count = items_count
-            range.save!
+            refresh_range(range.id)
+        end
+
+        # Delete orphan details
+        # (from ranges that might not exist anymore)
+        sql = <<-END_SQL.gsub(/\n/, '')
+          DELETE eco_details
+          FROM eco_details
+            LEFT OUTER JOIN eco_ranges ON eco_details.eco_range_id = eco_ranges.id
+          WHERE eco_details.eco_summary_id = #{id} AND eco_ranges.id IS NULL;
+        END_SQL
+        orphan_count = ActiveRecord::Base.connection.exec_delete(sql, nil, [])
+        if orphan_count > 0
+          Rails.logger.info("Deleted #{orphan_count} from eco_summary.id #{id}")
         end
 
         self.updated_date_gmt = Time.now.utc
@@ -148,25 +149,34 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def refresh_range(range_id)
-        # Delete previous details for this range...
+        # Delete previous detail records for this range
         EcoDetails.delete_all(eco_summary_id: id, eco_range_id: range_id)
 
-        # ...fetch items for the call number range and re-save them
-        # TODO: optimize this code to insert in batches
         range = ranges().find {|r| r.id == range_id}
-        if range != nil
-            bibs = Callnumber.get_by_range(range.from, range.to)
+        if range == nil
+            # Range has been deleted, nothing to do.
+        else
+            # Fetch items for the call number range and save them in the details table.
             items_count = 0
-            bibs.each do |bib|
-                items_count += EcoDetails.new_from_bib(id, range.id, bib[:id])
+            is_range, range_from, range_to = CallnumberNormalizer.normalize_range(range.from, range.to)
+            if is_range
+              Callnumber.process_by_range(range.from, range.to) do |bibs|
+                EcoDetails.transaction do
+                  bibs.each do |bib|
+                    items_count += EcoDetails.new_from_bib(id, range.id, bib, range_from, range_to)
+                  end
+                end
+              end
+            else
+              Rails.logger.warn("refresh_range: Not a valid range (#{range.from}, #{range.to}). Range ID: #{range_id}")
             end
             range.count = items_count
             range.save!
-
-            # ...make sure the summary reflects the change
-            self.updated_date_gmt = Time.now.utc
-            save!
         end
+
+        # ...make sure the summary reflects the change
+        self.updated_date_gmt = Time.now.utc
+        save!
     end
 
     def self.create_sample_lists()
@@ -257,8 +267,6 @@ class EcoSummary < ActiveRecord::Base
         ranges << {from: "Z 787", to: "Z 1000", name: "Bibliography.  Library Science / Libraries"}
         ranges << {from: "Z 1946", to: "Z 6953.7", name: "Bibliography.  Library Science / Bibliography.  Books and reading"}
         self.create_sample_list("GOBI--2020_01_LC Subject Grouping_EA_review", ranges)
-
-
     end
 
     def self.create_sample_list(name, ranges)
@@ -275,6 +283,8 @@ class EcoSummary < ActiveRecord::Base
             r.save!
         end
 
+        # Don't populate them right away since it takes a long time.
+        #
         # Populate it with the bib information for the ranges
         # s.refresh()
     end

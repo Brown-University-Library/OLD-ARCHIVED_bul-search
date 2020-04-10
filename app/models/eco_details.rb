@@ -42,22 +42,19 @@ class EcoDetails < ActiveRecord::Base
         return count, EcoDetails.where(eco_summary_id: summary_id).take(max)
     end
 
-    # Creates a new detail record for a given bib number
-    def self.new_from_bib(eco_summary_id, eco_range_id, bib)
-        solr = SolrLite::Solr.new(ENV['SOLR_URL'])
-        doc = solr.get(bib)
-        if doc == nil
-            return 0
-        end
-
+    # Creates a new detail record for a given bib (a bib is a Solr document)
+    def self.new_from_bib(eco_summary_id, eco_range_id, bib, range_from, range_to)
+        doc = bib
+        id = doc["id"]
         marc_record = MarcRecord.new(doc["marc_display"])
+
+        # If we don't have items, create a single detail record for the BIB.
         items = marc_record.items()
         if items.count == 0
-            # BIB level information only
             record = EcoDetails.new()
             record.eco_summary_id = eco_summary_id
             record.eco_range_id = eco_range_id
-            record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
+            record.bib_record_num = id[1..-1].to_i # the numeric part of the bib
             record.title = StringUtils.truncate(doc["title_display"], 100)
             if (doc["language_facet"] || []).count > 0
                 record.language_code = doc["language_facet"].first[0..2]
@@ -65,27 +62,27 @@ class EcoDetails < ActiveRecord::Base
             record.publish_year = doc["pub_date_sort"]
             record.author = StringUtils.truncate(doc["author_display"], 100)
 
-            # TODO: how should we handle instances with more than one
-            # non-unique call number (e.g. BIB b1012355)
             callnumbers = (doc["callnumber_ss"] || []).uniq
+            best = Callnumber.best_for_range(callnumbers, range_from, range_to)
             if callnumbers.count > 1
-                puts "BIB #{bib}, with no items, has more than one callnumber #{callnumbers.join(' ^^ ')}"
+                puts "BIB #{id}, #{best[:raw]} <= #{callnumbers.join(' ^^ ')}"
             end
-            record.callnumber_raw = callnumbers.first
-            record.callnumber_norm = CallnumberNormalizer.normalize_one(callnumbers.first)
+            record.callnumber_raw = best[:raw]
+            record.callnumber_norm = best[:norm]
 
-            record.location_code = "NONE"
+            record.location_code = marc_record.subfield_values("998", "a").first || "NONE"
             record.save!
             return 1
         end
 
+        # Create one detail record for each item in the BIB.
         items.each do |item|
             record = EcoDetails.new()
             record.eco_summary_id = eco_summary_id
             record.eco_range_id = eco_range_id
 
             # bib info
-            record.bib_record_num = bib[1..-1].to_i # the numeric part of the bib
+            record.bib_record_num = id[1..-1].to_i # the numeric part of the bib
             record.title = StringUtils.truncate(doc["title_display"], 100)
             if (doc["language_facet"] || []).count > 0
                 record.language_code = doc["language_facet"].first[0..2]
@@ -114,7 +111,8 @@ class EcoDetails < ActiveRecord::Base
             line = []
             line << "#{i+1}\t#{row.josiah_bib_id}\t#{row.item_record_num}\t#{row.title}"
             line << "#{row.publish_year}\t#{row.publisher}\t#{row.location_code}"
-            line << "#{row.checkout_total}\t#{row.callnumber_raw}\t#{row.marc_value}"
+            line << "#{row.checkout_total}\t#{row.callnumber_raw}\t#{row.callnumber_norm}"
+            line << "#{row.marc_value}"
             line << "#{row.ord_record_num}\t#{row.fund_code}\t#{row.fund_code_master}"
             lines << line.join("\t")
             if (i % 5000) == 0
@@ -123,10 +121,11 @@ class EcoDetails < ActiveRecord::Base
         end
         Rails.logger.info("== processed #{rows.count} rows...")
 
-        str = "#\tbib\titem\ttitle\t" +
-            "pub_year\tpublisher\tloc_code\t" +
-            "checkouts\tcall_no\tsubject\t" +
-            "order\tfund\tfund_master\r\n"
+        str = "#\tbib\titem\ttitle" +
+            "\tpub_year\tpublisher\tloc_code" +
+            "\tcheckouts\tcall_no\tcall_no_norm" +
+            "\tsubject" +
+            "\torder\tfund\tfund_master\r\n"
         str += lines.join("\r\n")
 
         Rails.logger.info("Generating TSV string for #{rows.count} rows")

@@ -5,6 +5,51 @@ class Callnumber < ActiveRecord::Base
   # Number of books on the shelf to show before/after the current book.
   NEARBY_BATCH_SIZE = 5
 
+  # Returns the best call number an array of call numbers and a
+  # given range. This is useful when a record has many call
+  # numbers and we are interested in the call number for a given
+  # range.
+  #
+  # For example, bib record https://search.library.brown.edu/catalog/b7953880
+  # has two call numbers "KF3467" and "HD6060.5.U6". If the range is
+  # "HD" to "HD" the second one would be returned.
+  def self.best_for_range(call_numbers, norm_from, norm_to)
+    normalized = []
+    call_numbers.each do |raw|
+        norm = CallnumberNormalizer.normalize_one(raw)
+        if Callnumber.in_range?(norm, norm_from, norm_to)
+            # returns the first call number that can be normalized
+            # and it's in the indicated range
+            return {raw: raw, norm: norm}
+        end
+        normalized << {raw: raw, norm: norm}
+    end
+
+    if normalized.count > 0
+        # returns the first call number that can be normalized
+        return normalized.first
+    end
+
+    # return the first one
+    return {raw: call_numbers.first, norm: nil}
+  end
+
+
+  # Returns true if a normalized call number is within
+  # a given call number range
+  def self.in_range?(norm, norm_from, norm_to)
+    return false if norm == nil
+
+    # Handle single class range (e.g. HB to HB)
+    if norm_from == norm_to
+      return norm.start_with?(norm_from)
+    end
+
+    # Typcal ranges (e.g. T 56.8 to	T 58.3)
+    norm >= norm_from && norm <= norm_to
+  end
+
+
   # Returns an array of BIB record IDs with call numbers
   # that are near to the bib_id provided.
   def self.nearby_ids(bib_id)
@@ -136,49 +181,37 @@ class Callnumber < ActiveRecord::Base
     return {ids: ids, bounds: boundaries(nil, after_rows)}
   end
 
-  # Returns an array of BIB record IDs with call numbers
-  # that are in the call number range provided.
-  def self.get_by_range(cn_from, cn_to, uniq = true)
+  # Fetches the bib records that match a given call number range
+  # and yields so that the caller can process them.
+  def self.process_by_range(cn_from, cn_to)
     is_range, norm_from, norm_to = CallnumberNormalizer.normalize_range(cn_from, cn_to)
     if !is_range
-      puts "Invalid call number range #{cn_from} / #{cn_to}"
-      return []
+      Rails.logger.warn("process_by_range: Invalid call number range #{cn_from} / #{cn_to}")
+      yield []
     end
 
-    sql = nil
+    solr_url = ENV['SOLR_URL']
+    solr = SolrLite::Solr.new(solr_url)
+    params = SolrLite::SearchParams.new("callnumber_norm_ss:[#{norm_from} TO #{norm_to}]")
     if norm_from == norm_to
-      puts "Call number range: #{norm_from}"
-      # It's a single range (e.g. "PQ 123" - "PQ 123" or "PQ" - "PQ")
-      sql = <<-END_SQL.gsub(/\n/, '')
-        select bib, normalized, original
-        from callnumbers
-        where normalized like "#{norm_from}%"
-        order by normalized asc
-      END_SQL
-    else
-      puts "Call number range: #{norm_from} -  #{norm_to}"
-      # Typical range (e.g. "PQ 123" - "PQ 789")
-      sql = <<-END_SQL.gsub(/\n/, '')
-        select bib, normalized, original
-        from callnumbers
-        where normalized >= "#{norm_from}" and normalized <= "#{norm_to}"
-        order by normalized asc
-      END_SQL
+      cn_regex = "/" + StringUtils.solr_safe_regex(norm_from) + ".*/"
+      params.q = "callnumber_norm_ss:#{cn_regex}"
     end
 
-    rows = ActiveRecord::Base.connection.exec_query(sql).rows
-    bibs = rows.map do |r|
-      {id: r[0], normalized: r[1], original: r[2]}
+    page = 0
+    while true
+      page += 1
+      params.page = page
+      params.page_size = 1000
+      params.sort = "callnumber_norm_ss asc"
+      params.fl = ["*"]
+      response = solr.search(params)
+      Rails.logger.info("process_by_range: (#{norm_from}, #{norm_to}). Page: #{page}/#{response.num_pages}")
+      yield response.solr_docs
+      if (page * params.page_size) > response.num_found
+        break
+      end
     end
-
-    # Deduplicate by bib number. This is usually what we want because
-    # with the bib number we then retrieve the entire record (including
-    # all its items) and that loads all the other call numbers.
-    if uniq
-      bibs = bibs.uniq {|b| b[:id]}
-    end
-
-    return bibs
   end
 
   private
