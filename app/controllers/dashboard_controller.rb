@@ -5,6 +5,7 @@ require "./app/presenters/dashboard_details_presenter.rb"
 
 class DashboardController < ApplicationController
   def index
+    @page_title = "Dashboard"
     @summaries = EcoSummary.all
     render
   end
@@ -13,6 +14,7 @@ class DashboardController < ApplicationController
     @summaries = EcoSummary.all
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
+    @page_title = summary.list_name
     @presenter = DashboardDetailsPresenter.new(summary, nil, nil, nil)
     @presenter.download_url = dashboard_details_url(id: id, format: 'tsv')
     render
@@ -24,6 +26,7 @@ class DashboardController < ApplicationController
   def edit
     id = (params["id"] || 0).to_i
     @summary = EcoSummary.find(id)
+    @page_title = summary.list_name
     @edit_user = true
     render
   rescue ActiveRecord::RecordNotFound
@@ -40,6 +43,7 @@ class DashboardController < ApplicationController
     rows = []
     count = 0
     summary = EcoSummary.find(id)
+    @page_title = summary.list_name
     @presenter = nil
 
     range_id = (params["range_id"] || 0).to_i
