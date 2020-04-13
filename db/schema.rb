@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200319140000) do
+ActiveRecord::Schema.define(version: 20200410162800) do
 
   create_table "best_bet_entries", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -119,6 +119,8 @@ ActiveRecord::Schema.define(version: 20200319140000) do
     t.string  "from",           limit: 255
     t.string  "to",             limit: 255
     t.integer "count",          limit: 4
+    t.integer "bib_count",      limit: 4
+    t.integer "item_count",     limit: 4
   end
 
   add_index "eco_ranges", ["eco_summary_id"], name: "index_eco_ranges_on_eco_summary_id", using: :btree

@@ -6,14 +6,19 @@ class EcoRange < ActiveRecord::Base
         "--"
     end
 
-    def percent(total)
-        return 0 if count == nil
-        (count * 100) / total
+    def summary
+        @summary ||= EcoSummary.find(eco_summary_id)
     end
 
-    def percent_bar(total)
-        num = percent(total)
-        return "" if num == 0
-        "".ljust(num, "X")
+    def bib_percent
+        total = (summary.bib_count || 0)
+        return 0 if total == 0
+        ((bib_count || 0) * 100) / total
+    end
+
+    def item_percent
+        total = (summary.item_count || 0)
+        return 0 if total == 0
+        ((item_count || 0) * 100) / total
     end
 end

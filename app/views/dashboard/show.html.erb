@@ -72,22 +72,24 @@
                     </td>
                     <td><%= range.from %></td>
                     <td><%= range.to %></td>
-                    <td>
-                        <a href="<%= catalog_index_url(q: range.from + ' - ' + range.to, search_field: 'call_number_range') %>">browse</a>
+                    <td class="number_cell">
+                        <a href="<%= catalog_index_url(q: range.from + ' - ' + range.to, search_field: 'call_number_range') %>"
+                            title="View these bib records in the catalog"><%= range.bib_count ? number_with_delimiter(range.bib_count) : "N/A" %></a>
                     </td>
                     <td class="number_cell">
-                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"><%= range.count ? number_with_delimiter(range.count) : "N/A" %></a>
+                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"
+                            title="View a downloadable list of the individual items"><%= range.item_count ? number_with_delimiter(range.item_count) : "N/A" %></a>
                     </td>
                     <td class="number_cell">
-                        <% if range.percent(@presenter.summary.total_items()) > 0 %>
-                            <%= range.percent(@presenter.summary.total_items()) %>&nbsp;%
+                        <% if range.item_percent > 0 %>
+                            <%= range.item_percent %>&nbsp;%
                         <% else %>
                             &nbsp;
                         <% end %>
                     </td>
                     <td>
                         <div class="bar">
-                            <div class="progress" style="width: <%= range.percent(@presenter.summary.total_items()) %>%;"></div>
+                            <div class="progress" style="width: <%= range.item_percent %>%;"></div>
                         </div>
                     </td>
                 </tr>

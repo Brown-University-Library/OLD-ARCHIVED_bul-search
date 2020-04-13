@@ -56,37 +56,11 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def total_bibs()
-        @bib_count ||= begin
-            puts "Calculating bib count..."
-            sql = <<-END_SQL.gsub(/\n/, '')
-                select count(distinct bib_record_num) as count
-                from eco_details
-                where eco_summary_id = #{id}
-            END_SQL
-            rows = ActiveRecord::Base.connection.exec_query(sql).rows
-            if rows.count == 0
-                0
-            else
-                rows[0][0]
-            end
-        end
+        self.bib_count || 0
     end
 
     def total_items()
-        @item_count ||= begin
-            puts "Calculating item count..."
-            sql = <<-END_SQL.gsub(/\n/, '')
-                select count(distinct id) as count
-                from eco_details
-                where eco_summary_id = #{id}
-            END_SQL
-            rows = ActiveRecord::Base.connection.exec_query(sql).rows
-            if rows.count == 0
-                0
-            else
-                rows[0][0]
-            end
-        end
+        self.item_count || 0
     end
 
     def locations()
@@ -128,7 +102,7 @@ class EcoSummary < ActiveRecord::Base
     def refresh()
         # Refresh each of the ranges...
         ranges().each do |range|
-            refresh_range(range.id)
+            refresh_range(range.id, false)
         end
 
         # Delete orphan details
@@ -146,9 +120,25 @@ class EcoSummary < ActiveRecord::Base
 
         self.updated_date_gmt = Time.now.utc
         save!
+
+        refresh_counts()
     end
 
-    def refresh_range(range_id)
+    def refresh_counts()
+        bibs_count = 0
+        items_count = 0
+        ranges().each do |range|
+            bibs_count += range.bib_count
+            items_count += range.item_count
+        end
+
+        self.bib_count = bibs_count
+        self.item_count = items_count
+        self.updated_date_gmt = Time.now.utc
+        save!
+    end
+
+    def refresh_range(range_id, update_counts = true)
         # Delete previous detail records for this range
         EcoDetails.delete_all(eco_summary_id: id, eco_range_id: range_id)
 
@@ -158,6 +148,7 @@ class EcoSummary < ActiveRecord::Base
         else
             # Fetch items for the call number range and save them in the details table.
             items_count = 0
+            bibs_count = 0
             is_range, range_from, range_to = CallnumberNormalizer.normalize_range(range.from, range.to)
             if is_range
               Callnumber.process_by_range(range.from, range.to) do |bibs|
@@ -165,18 +156,24 @@ class EcoSummary < ActiveRecord::Base
                   bibs.each do |bib|
                     items_count += EcoDetails.new_from_bib(id, range.id, bib, range_from, range_to)
                   end
+                  bibs_count += bibs.count
                 end
               end
             else
               Rails.logger.warn("refresh_range: Not a valid range (#{range.from}, #{range.to}). Range ID: #{range_id}")
             end
-            range.count = items_count
+            range.item_count = items_count
+            range.bib_count = bibs_count
             range.save!
         end
 
         # ...make sure the summary reflects the change
         self.updated_date_gmt = Time.now.utc
         save!
+
+        if update_counts
+            refresh_counts()
+        end
     end
 
     def self.create_sample_lists()
