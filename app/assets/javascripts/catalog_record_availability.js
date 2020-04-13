@@ -47,7 +47,7 @@ $(document).ready(function() {
       scope.loadNearbyItems(false);
     }
 
-    if (window.josiahObject.getUrlParameter("hathi") == "emergency") {
+    if (isCovid) {
       scope.showHathiEmergencyLinks(bibData.oclcNums);
     } else {
       scope.showHathiLink(bibData.oclcNum);
