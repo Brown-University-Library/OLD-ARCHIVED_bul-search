@@ -77,7 +77,7 @@
                     <td data-sort-by-text="<%= range.from_norm %>"><%= range.from %></td>
                     <td><%= range.to %></td>
                     <td class="number_cell">
-                        <a href="<%= catalog_index_url(q: range.from + ' - ' + range.to, search_field: 'call_number_range') %>"
+                        <a href="<%= catalog_index_url(q: range.from + ' - ' + range.to, search_field: 'call_number_range', sort: 'callnumber_norm_ss asc') %>"
                             title="View these bib records in the catalog"><%= range.bib_count ? number_with_delimiter(range.bib_count) : "N/A" %></a>
                     </td>
                     <td class="number_cell" data-sort-by-number="<%= range.item_count %>">
@@ -225,7 +225,7 @@ function sortTable(tableId, colNumber) {
     var rows = table.rows;
     var th = rows[0].getElementsByTagName("TH")[colNumber];
     var descending = (th.dataset.sortDirection == "desc");
-    var i, x_col, y_col, x, y, shouldSwitch;
+    var i, xElement, yElement, x, y, shouldSwitch;
     var switching = true;
 
     /* Make a loop that will continue until
