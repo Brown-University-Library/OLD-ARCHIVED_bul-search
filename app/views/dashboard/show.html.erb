@@ -59,7 +59,7 @@
 <div class="row">
     <div class="col-sm-12">
         <h3>Call number ranges</h3>
-        <table>
+        <table id="callnumberTable">
             <tr>
                 <th>Name</th>
                 <th>From</th>
@@ -71,16 +71,16 @@
             </tr>
             <% @presenter.summary.ranges.each do |range| %>
                 <tr>
-                    <td>
+                    <td data-sort-by-text="<%= range.name_display %>">
                         <span title="<%= range.name_display %>"><%= truncate(range.name_display, length: 50) %></span>
                     </td>
-                    <td><%= range.from %></td>
+                    <td data-sort-by-text="<%= range.from_norm %>"><%= range.from %></td>
                     <td><%= range.to %></td>
                     <td class="number_cell">
                         <a href="<%= catalog_index_url(q: range.from + ' - ' + range.to, search_field: 'call_number_range') %>"
                             title="View these bib records in the catalog"><%= range.bib_count ? number_with_delimiter(range.bib_count) : "N/A" %></a>
                     </td>
-                    <td class="number_cell">
+                    <td class="number_cell" data-sort-by-number="<%= range.item_count %>">
                         <a href="<%= dashboard_details_path(id: @presenter.summary.id, range_id: range.id) %>"
                             title="View a downloadable list of the individual items"><%= range.item_count ? number_with_delimiter(range.item_count) : "N/A" %></a>
                     </td>
@@ -105,7 +105,7 @@
 <div class="row">
     <div class="col-sm-12">
         <h3>Locations</h3>
-        <table>
+        <table id="locationTable">
             <tr>
                 <th>Location</th>
                 <th class="number_cell">Items</th>
@@ -114,8 +114,8 @@
             </tr>
             <% @presenter.summary.locations.each do |loc| %>
                 <tr>
-                    <td><%= loc.code == loc.name ? loc.code : "#{loc.name} (#{loc.code})" %></td>
-                    <td class="number_cell">
+                    <td data-sort-by-text="<%= loc.name %>"><%= loc.code == loc.name ? loc.code : "#{loc.name} (#{loc.code})" %></td>
+                    <td class="number_cell" data-sort-by-number="<%= loc.count %>">
                         <a href="<%= dashboard_details_path(id: @presenter.summary.id, loc_code: loc.code) %>"><%= number_with_delimiter(loc.count) %></a>
                     </td>
                     <td class="number_cell">
@@ -139,7 +139,7 @@
 <div class="row">
     <div class="col-sm-12">
         <h3>Usage</h3>
-        <table>
+        <table id="usageTable">
             <tr>
                 <th>Checkout Count</th>
                 <th class="number_cell">Items</th>
@@ -148,8 +148,8 @@
             </tr>
             <% @presenter.summary.checkouts.each do |ck| %>
                 <tr>
-                    <td><%= ck.code %></td>
-                    <td class="number_cell">
+                    <td data-sort-by-number="<%= ck.code.to_i %>"><%= ck.code %></td>
+                    <td data-sort-by-number="<%= ck.count %>" class="number_cell">
                         <a href="<%= dashboard_details_path(id: @presenter.summary.id, ck: ck.code) %>"><%= number_with_delimiter(ck.count) %></a>
                     </td>
                     <td class="number_cell">
@@ -169,3 +169,120 @@
         </table>
     </div>
 </div> <!-- row -->
+
+
+<script>
+$(document).ready(function(){
+    setupSortColumn("callnumberTable", 0, "asc", false);
+    setupSortColumn("callnumberTable", 1, "desc", true);
+    setupSortColumn("callnumberTable", 4, "desc", false);
+
+    setupSortColumn("locationTable", 0, "asc", false);
+    setupSortColumn("locationTable", 1, "asc", true);
+
+    setupSortColumn("usageTable", 0, "desc", false);
+    setupSortColumn("usageTable", 1, "asc", true);
+});
+
+function setupSortColumn(tableId, colNumber, direction, defaultSort) {
+    var header = document.getElementById(tableId).rows[0];
+    var column = header.getElementsByTagName("TH")[colNumber];
+    var columnId = tableId + "_col_" + colNumber.toString();
+    var sortLink = "<a href='#' id='" + columnId + "' title='Click to sort'>" + column.innerHTML + "</a>";
+    var sortIcon;
+
+    if (defaultSort) {
+        sortIcon = "<span style='font-size: 12px;' class='glyphicon glyphicon-sort'></span>";
+    } else {
+        sortIcon = "<span style='font-size: 12px;' class='hidden glyphicon glyphicon-sort'></span>";
+    }
+
+    // Sets the default sort direction for the column,
+    // adds a link to the header to allow user to click to sort,
+    // and wire the link to call the sortTable() function.
+    column.setAttribute("data-sort-direction", direction);
+    column.innerHTML = sortLink + "&nbsp;" + sortIcon;
+    $("#" + columnId).on("click", function(e) {
+        var i, th;
+        e.preventDefault();
+        // Sort the data...
+        sortTable(tableId, colNumber);
+        // ...and make sure this column is marked as the one we are sorting on
+        for(i = 0; i < header.getElementsByTagName("TH").length; i++) {
+            th = header.getElementsByTagName("TH")[i]
+            if (i == colNumber) {
+                $(th).find("span").removeClass("hidden");
+            } else {
+                $(th).find("span").addClass("hidden");
+            }
+        }
+    });
+}
+
+// Source: https://www.w3schools.com/howto/howto_js_sort_table.asp
+function sortTable(tableId, colNumber) {
+    var table = document.getElementById(tableId);
+    var rows = table.rows;
+    var th = rows[0].getElementsByTagName("TH")[colNumber];
+    var descending = (th.dataset.sortDirection == "desc");
+    var i, x_col, y_col, x, y, shouldSwitch;
+    var switching = true;
+
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            xElement = rows[i].getElementsByTagName("TD")[colNumber];
+            yElement = rows[i + 1].getElementsByTagName("TD")[colNumber];
+
+            if (xElement.dataset.hasOwnProperty("sortByNumber")) {
+                x = parseInt(xElement.dataset.sortByNumber, 10)
+                y = parseInt(yElement.dataset.sortByNumber, 10)
+            } else {
+                x = xElement.dataset.sortByText.toLowerCase();
+                y = yElement.dataset.sortByText.toLowerCase();
+            }
+
+            if (descending) {
+                // Check if the two rows should switch place:
+                if (x < y) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                // Check if the two rows should switch place:
+                if (x > y) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        } // for
+
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+
+    } // while
+
+    // Reverse the sorting direction for the next round.
+    if (descending) {
+        th.dataset.sortDirection = "asc";
+    } else {
+        th.dataset.sortDirection = "desc";
+    }
+}
+</script>

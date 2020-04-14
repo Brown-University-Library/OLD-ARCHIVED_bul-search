@@ -1,4 +1,8 @@
 class EcoRange < ActiveRecord::Base
+    def from_norm
+        CallnumberNormalizer.normalize_one(from)
+    end
+
     def name_display
         if name != nil && name.strip != ""
             return name

@@ -86,7 +86,7 @@ class EcoSummary < ActiveRecord::Base
             from eco_details
             where eco_summary_id = #{id}
             group by checkout_total
-            order by 1 desc, 2 asc
+            order by 2 desc, 1 asc
         END_SQL
         rows = ActiveRecord::Base.connection.exec_query(sql).rows
         data = rows.map do |r|
