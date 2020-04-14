@@ -1,6 +1,4 @@
 class BestBetsController < ApplicationController
-    # skip_before_filter :verify_authenticity_token
-
     def index
         @page_title = "Best Bets"
         @edit_user = edit_user?
@@ -23,7 +21,7 @@ class BestBetsController < ApplicationController
         id = params[:id]
         @edit_user = edit_user?
         if !@edit_user
-            raise "Invalid user"
+            raise "Invalid user: #{current_user}."
         end
         @data = BestBetEntry.find(id)
         @page_title = "Best Bets - #{@data.name}"
@@ -36,7 +34,7 @@ class BestBetsController < ApplicationController
     def save()
         @edit_user = edit_user?
         if !@edit_user
-            raise "Invalid user"
+            raise "Invalid user: #{current_user}."
         end
         id = params["id"]
         BestBetEntry.save_form(params)
@@ -50,7 +48,7 @@ class BestBetsController < ApplicationController
     def delete()
         @edit_user = edit_user?
         if !@edit_user
-            raise "Invalid user"
+            raise "Invalid user: #{current_user}."
         end
         id = params["id"]
         bb = BestBetEntry.find(id)
