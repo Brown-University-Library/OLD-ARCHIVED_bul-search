@@ -13,7 +13,7 @@ namespace :josiah do
     puts "Done"
   end
 
-  desc "Re-populate the details information for a given EcoSummary ID"
+  desc "Repopulates information for a given collection ID"
   task "ecosystem_refresh", [:id] => :environment do |_cmd, args|
     id = (args[:id] || "").to_i
     puts "Refreshing data for EcoSummary #{id}..."
@@ -22,13 +22,13 @@ namespace :josiah do
     puts "Done"
   end
 
-  desc "Re-populate the details information for a given EcoRange ID"
-  task "ecosystem_refresh_range", [:range_id] => :environment do |_cmd, args|
-    range_id = (args[:range_id] || "").to_i
-    puts "Refreshing data for EcoRange #{range_id}..."
-    id = EcoRange.find(range_id).eco_summary_id
-    summary = EcoSummary.find(id)
-    summary.refresh_range(range_id)
-    puts "Done"
+  desc "Repopulates information for the next pending collection"
+  task "ecosystem_catchup" => :environment do |_cmd, args|
+    done = EcoSummary.refresh_next()
+    if done
+      puts "All caught up!"
+    else
+      puts "Collections are still pending."
+    end
   end
 end

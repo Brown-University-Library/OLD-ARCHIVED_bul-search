@@ -1,4 +1,12 @@
 <style>
+    .warning-msg {
+        background-color: #f7f7b9;
+    }
+
+    .info-msg {
+        background-color: #cbe5f4;
+    }
+
     table {
         border-collapse: collapse;
         border: 1px solid #ecf0ea;
@@ -41,9 +49,26 @@
     <h2><%= @presenter.summary.list_full_name %></h2>
     <div class="col-sm-12">
         <%= render "toolbar" %>
-        <% if @presenter.summary.updated_date != "" %>
-            <p>As of: <%= @presenter.summary.updated_date %></p>
+
+        <% if @presenter.summary.status == "UPDATED" %>
+            <p class="warning-msg">This collection has been updated and <b><i>needs to be recalculated.</i></b>
+            Collections are automatically recalculated every half an hour. Please
+            check again later today.
+            <% if @presenter.summary.refreshed_at != nil %>
+                (<%= @presenter.summary.refreshed_at.localtime %>)
+            <% end %>
+            </p>
+        <% elsif @presenter.summary.status == "CALCULATING" %>
+            <p class="info-msg">This collection is in the process of <b><i>being recalculated.</i></b>
+            The data below is not the latest. Please check again later today.
+            <% if @presenter.summary.refreshed_at != nil %>
+                <%= @presenter.summary.refreshed_at.localtime %>
+            <% end %>
+            </p>
+        <% elsif @presenter.summary.status == "OK" %>
+            <p>As of: <%= @presenter.summary.refreshed_at.localtime %></p>
         <% end %>
+
         <p>Total bibs: <%= number_with_delimiter(@presenter.summary.total_bibs()) %></p>
         <p>Total items: <%= number_with_delimiter(@presenter.summary.total_items()) %>
         |

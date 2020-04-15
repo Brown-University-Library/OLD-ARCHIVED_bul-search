@@ -1,25 +1,25 @@
 <h2>Edit Dashboard</h2>
 
 <div class="container">
-    <form class="" role="edit" method="POST" action="">
+    <form class="" role="edit" method="POST" action="<%= dashboard_save_url(id: @presenter.summary.id) %>">
         <div class="form-group">
 
             <label class="" id="name_label">Name</label>
             <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
-                id="name" name="name" value="<%= @summary.list_name %>">
+                id="name" name="name" value="<%= @presenter.summary.list_name %>">
 
             <label class="" id="desc_label">Description</label>
             <textarea class="form-control" rows="8" placeholder="Description" aria-describedby="desc_label"
-                id="description" name="description" ></textarea>
+                id="description" name="description" ><%= @presenter.summary.description %></textarea>
 
-            <div id="search_terms_box">
+            <div id="cn_ranges">
                 <label class="" id="term_label">Call number ranges</label>
-                <% @summary.ranges.each do |range| %>
+                <% @presenter.summary.ranges.each do |range| %>
                     <div class="form-inline">
                         <input type="text" class="form-control" placeholder="search term"
-                            aria-describedby="term_label" id="range_id_1" name="range_id_1" value="<%= range.from %>">
+                            aria-describedby="term_label" id="cn_range_<%= range.id %>_from" name="cn_range_<%= range.id %>_from" value="<%= range.from %>">
                         <input type="text" class="form-control" placeholder="search term"
-                            aria-describedby="term_label" id="range_id_2" name="range_id_2" value="<%= range.to %>">
+                            aria-describedby="term_label" id="cn_range_<%= range.id %>_to" name="cn_range_<%= range.id %>_to" value="<%= range.to %>">
                     </div>
                 <% end %>
             </div>
@@ -29,14 +29,31 @@
             <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
         </div>
 
-        <% if @edit_user %>
+        <% if @presenter.edit_user %>
             <button type="submit" class="btn btn-info" title="Save changes to this BestBet">Save</button>
             <button type="reset" id="cancel_edit" class="btn btn" title="Don't save changes to this BestBet">Cancel</button>
             <button style="float: right;" type="reset" id="delete_record" class="btn btn-danger" title="Delete this BestBet">Delete</button>
         <% else %>
-            <p>Must <a href="https://search.library.brown.edu/users/auth/shibboleth">login</a> in order to edit this information.</p>
+            <p>Must be <a href="https://search.library.brown.edu/users/auth/shibboleth">loged in </a> in order to edit this information.</p>
         <% end %>
     </form>
 </div>
 
+<script>
+$(document).ready(function(){
+    var nextId = 0;
+
+    $("#add_range").on("click", function(e) {
+        var html;
+        html = '<div class="form-inline">';
+        html += '<input type="text" class="form-control" id="cn_new_nextId_from" name="cn_new_nextId_from">';
+        html += '<input type="text" class="form-control" id="cn_new_nextId_to" name="cn_new_nextId_to">';
+        html += '</div>';
+
+        nextId += 1;
+        html = html.replace(/nextId/g, nextId.toString());
+        $("#cn_ranges").append(html);
+    });
+});
+</script>
 

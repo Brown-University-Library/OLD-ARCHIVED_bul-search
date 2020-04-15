@@ -11,12 +11,26 @@
         </ul>
     </span>
 
-    <% if @presenter %>
-        <a href="<%= @presenter.download_url %>"
-            type="button"
-            title="Download data in tab-separated format (TSV)"
-            class="btn btn-default">
-            <span class="glyphicon glyphicon-download-alt"></span>
-        </a>
-    <% end %>
+    <a href="<%= @presenter.shib_url(dashboard_new_url) %>"
+        type="button"
+        title="Create a new list"
+        class="btn btn-default">
+        <span class="glyphicon glyphicon-file"></span>
+    </a>
+
+    <span>&nbsp;&nbsp;</span>
+
+    <a href="<%= @presenter.shib_url(@presenter.download_url) %>"
+        type="button"
+        title="Download data in tab-separated format (TSV)"
+        class="btn btn-default">
+        <span class="glyphicon glyphicon-download-alt"></span>
+    </a>
+
+    <a href="<%= @presenter.shib_url(dashboard_edit_url(id: @presenter.summary.id)) %>"
+        type="button"
+        title="Edit this list"
+        class="btn btn-default">
+        <span class="glyphicon glyphicon-edit"></span>
+    </a>
 </div>

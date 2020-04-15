@@ -1,9 +1,56 @@
+# status:
+#       OK - data is up to date, nothing else to do.
+#       UPDATED - data has been updated, needs to be recalculated.
+#       CALCULATING - data is being recalculated.
 class EcoSummary < ActiveRecord::Base
-    def updated_date
-        if self.updated_date_gmt == nil
-            return ""
+    def save_from_request(params)
+
+        self.list_name = params["name"]
+        self.description = params["description"]
+        self.status = "UPDATED"
+        self.updated_at = Time.now
+        save
+
+        ranges = params.keys.select {|k| k.start_with?("cn_range_") && k.end_with?("_from")}
+        ranges.each do |key|
+            range_id = key.gsub("cn_range_", "").gsub("_from", "").to_i
+            r = EcoRange.find(range_id)
+
+            cn_from = (params[key] || "").strip
+            cn_to = (params[key.gsub("_from", "_to")] || "").strip
+            cn_name = (params[key.gsub("_from", "_name")] || "").strip
+
+            # Empty range, delete it.
+            if cn_from == "" && cn_to == ""
+                r.delete
+                next
+            end
+
+            r.from = safe_range_from_value(cn_from, cn_to)
+            r.to = safe_range_to_value(cn_from, cn_to)
+            r.name = cn_name
+            r.save
         end
-        self.updated_date_gmt.localtime
+
+        new_ranges = params.keys.select {|k| k.start_with?("cn_new_") && k.end_with?("_from")}
+        new_ranges.each do |key|
+            cn_from = (params[key] || "").strip
+            cn_to = (params[key.gsub("_from", "_to")] || "").strip
+            cn_name = (params[key.gsub("_from", "_name")] || "").strip
+
+            # Empty range, don't save it.
+            if cn_from == "" && cn_to == ""
+                next
+            end
+
+            r = EcoRange.new
+            r.eco_summary_id = self.id
+            r.from = safe_range_from_value(cn_from, cn_to)
+            r.to = safe_range_to_value(cn_from, cn_to)
+            r.name = cn_name
+            r.save
+        end
+
     end
 
     def list_full_name
@@ -97,12 +144,36 @@ class EcoSummary < ActiveRecord::Base
         data
     end
 
+    def self.refresh_next()
+        up_to_date = true
+        self.all.each do |summary|
+            if summary.status == "OK"
+                next
+            end
+
+            up_to_date = false
+            if summary.status == "CALCULATING"
+                # Already calculating, nothing else to do.
+                break
+            end
+
+            # Kick it off and stop.
+            summary.refresh()
+            break
+        end
+        return up_to_date
+    end
+
     # Reloads the EcoDetails for the current EcoSummary by refreshing
     # the data of each of the ranges for the summary.
     def refresh()
+        self.status = "CALCULATING"
+        self.refreshed_at = Time.now
+        save!
+
         # Refresh each of the ranges...
         ranges().each do |range|
-            refresh_range(range.id, false)
+            refresh_range(range.id)
         end
 
         # Delete orphan details
@@ -118,9 +189,6 @@ class EcoSummary < ActiveRecord::Base
           Rails.logger.info("Deleted #{orphan_count} from eco_summary.id #{id}")
         end
 
-        self.updated_date_gmt = Time.now.utc
-        save!
-
         refresh_counts()
     end
 
@@ -134,11 +202,12 @@ class EcoSummary < ActiveRecord::Base
 
         self.bib_count = bibs_count
         self.item_count = items_count
-        self.updated_date_gmt = Time.now.utc
+        self.status = "OK"
+        self.refreshed_at = Time.now
         save!
     end
 
-    def refresh_range(range_id, update_counts = true)
+    def refresh_range(range_id)
         # Delete previous detail records for this range
         EcoDetails.delete_all(eco_summary_id: id, eco_range_id: range_id)
 
@@ -165,14 +234,6 @@ class EcoSummary < ActiveRecord::Base
             range.item_count = items_count
             range.bib_count = bibs_count
             range.save!
-        end
-
-        # ...make sure the summary reflects the change
-        self.updated_date_gmt = Time.now.utc
-        save!
-
-        if update_counts
-            refresh_counts()
         end
     end
 
@@ -269,6 +330,9 @@ class EcoSummary < ActiveRecord::Base
     def self.create_sample_list(name, ranges)
         s = EcoSummary.new
         s.list_name = name
+        s.status = "UPDATED"
+        s.created_at = Time.now
+        s.updated_at = Time.now
         s.save!
 
         ranges.each do |range|
@@ -285,4 +349,27 @@ class EcoSummary < ActiveRecord::Base
         # Populate it with the bib information for the ranges
         # s.refresh()
     end
+
+    private
+        # Given a pair of from/to values returns a "safe" value
+        # to use as a "from" value. At least one of the values
+        # must not be empty.
+        def safe_range_from_value(cn_from, cn_to)
+            if cn_from == "" && cn_to != ""
+                # We only have a "to" value, use that.
+                return cn_to
+            end
+            cn_from
+        end
+
+        # Given a pair of from/to values returns a "safe" value
+        # to use as a "to" value. At least one of the values
+        # must not be empty.
+        def safe_range_to_value(cn_from, cn_to)
+            if cn_from != "" && cn_to == ""
+                # We only have a "from" value, use that.
+                return cn_from
+            end
+            cn_to
+        end
 end

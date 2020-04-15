@@ -1,9 +1,25 @@
 <div class="row">
     <h2>Collection Ecosystem Dashboard</h2>
+
+    <div style="float: right;align:right">
+        <a href="<%= @new_dashboard_url %>"
+            type="button"
+            title="Create a new list"
+            class="btn btn-default">
+            <span class="glyphicon glyphicon-file"></span>
+        </a>
+    </div>
+
     <div class="col-sm-12">
         <ul>
             <% @summaries.each do |summary| %>
-                <li><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></li>
+                <li><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a>
+                    <% if summary.status == "UPDATED" %>
+                    (out of date)
+                    <% elsif summary.status == "CALCULATING" %>
+                    (recalculating)
+                    <% end %>
+                </li>
             <% end %>
         </ul>
     </div>

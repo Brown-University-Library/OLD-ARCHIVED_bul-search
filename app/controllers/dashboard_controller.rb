@@ -7,6 +7,12 @@ class DashboardController < ApplicationController
   def index
     @page_title = "Dashboard"
     @summaries = EcoSummary.all
+    @new_dashboard_url = ""
+    if edit_user?
+      @new_dashboard_url = dashboard_new_url()
+    else
+      "https://search.library.brown.edu/users/auth/shibboleth?target=" + dashboard_new_url()
+    end
     render
   end
 
@@ -15,8 +21,9 @@ class DashboardController < ApplicationController
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
     @page_title = summary.list_name
-    @presenter = DashboardDetailsPresenter.new(summary, nil, nil, nil)
+    @presenter = DashboardDetailsPresenter.new(summary)
     @presenter.download_url = dashboard_details_url(id: id, format: 'tsv')
+    @presenter.edit_user = edit_user?
     render
   rescue ActiveRecord::RecordNotFound
     Rails.logger.error("Summary not found (#{id})")
@@ -24,10 +31,14 @@ class DashboardController < ApplicationController
   end
 
   def edit
+    if !edit_user?
+        raise "Invalid user: #{current_user}."
+    end
     id = (params["id"] || 0).to_i
-    @summary = EcoSummary.find(id)
+    summary = EcoSummary.find(id)
+    @presenter = DashboardDetailsPresenter.new(summary)
+    @presenter.edit_user = true
     @page_title = summary.list_name
-    @edit_user = true
     render
   rescue ActiveRecord::RecordNotFound
     Rails.logger.error("Summary not found (#{id})")
@@ -84,9 +95,44 @@ class DashboardController < ApplicationController
       return
     end
 
+    @presenter.edit_user = edit_user?
     render "details"
   rescue ActiveRecord::RecordNotFound
     Rails.logger.error("Summary not found (#{id})")
     redirect_to dashboard_index_url()
   end
+
+  def new
+    if !edit_user?
+      raise "Invalid user: #{current_user}."
+    end
+    summary = EcoSummary.new()
+    summary.list_name = "#{current_user}'s new list"
+    summary.description = ""
+    summary.status = "UPDATED"
+    summary.created_at = Time.now
+    summary.updated_at = Time.now
+    summary.save
+    redirect_to dashboard_edit_url(id: summary.id)
+  end
+
+  def save
+    id = (params["id"] || 0).to_i
+    summary = EcoSummary.find(id)
+    summary.save_from_request(params)
+    redirect_to dashboard_show_url(id: id)
+  rescue ActiveRecord::RecordNotFound
+    Rails.logger.error("Summary not found (#{id})")
+    redirect_to dashboard_index_url()
+  end
+
+  private
+    def edit_user?
+        if ENV["LOCALHOST"] == "true"
+            return true
+        end
+        return false if current_user == nil
+        user = "/#{current_user}/"
+        return (ENV["DASHBOARD_USERS"] || "").include?(user)
+    end
 end
