@@ -5,5 +5,8 @@ class AddColumnsToEcoSummaries < ActiveRecord::Migration
         add_column :eco_summaries, :refreshed_at, :datetime
         add_column :eco_summaries, :created_at, :datetime
         add_column :eco_summaries, :updated_at, :datetime
+        add_column :eco_summaries, :created_by, :string
+        add_column :eco_summaries, :updated_by, :string
+        add_column :eco_summaries, :public, :integer
     end
   end

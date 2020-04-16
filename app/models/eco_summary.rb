@@ -3,12 +3,14 @@
 #       UPDATED - data has been updated, needs to be recalculated.
 #       CALCULATING - data is being recalculated.
 class EcoSummary < ActiveRecord::Base
-    def save_from_request(params)
+    def save_from_request(params, current_user)
 
         self.list_name = params["name"]
         self.description = params["description"]
         self.status = "UPDATED"
         self.updated_at = Time.now
+        self.updated_by = current_user
+        self.public = (params["public"] == "yes") ? 1 : 0
         save
 
         ranges = params.keys.select {|k| k.start_with?("cn_range_") && k.end_with?("_from")}
@@ -332,7 +334,8 @@ class EcoSummary < ActiveRecord::Base
         s.list_name = name
         s.status = "UPDATED"
         s.created_at = Time.now
-        s.updated_at = Time.now
+        s.created_by = 'hector_correa@brown.edu'
+        s.public = 1
         s.save!
 
         ranges.each do |range|
@@ -344,10 +347,9 @@ class EcoSummary < ActiveRecord::Base
             r.save!
         end
 
-        # Don't populate them right away since it takes a long time.
-        #
-        # Populate it with the bib information for the ranges
-        # s.refresh()
+        # Notice that we don't populate them right away since it
+        # takes a long time. Instead we let the cronjob populate
+        # them on schedule.
     end
 
     private

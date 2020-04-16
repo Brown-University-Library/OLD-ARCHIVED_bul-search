@@ -5,8 +5,21 @@ require "./app/presenters/dashboard_details_presenter.rb"
 
 class DashboardController < ApplicationController
   def index
+    edit_user = edit_user?
     @page_title = "Dashboard"
-    @summaries = EcoSummary.all
+    @summaries = []
+
+    EcoSummary.all.each do |s|
+      if s.public
+        @summaries << s
+        next
+      end
+      if edit_user && s.created_by == safe_current_user
+        @summaries << s
+        next
+      end
+    end
+
     @new_dashboard_url = ""
     if edit_user?
       @new_dashboard_url = dashboard_new_url()
@@ -32,7 +45,7 @@ class DashboardController < ApplicationController
 
   def edit
     if !edit_user?
-        raise "Invalid user: #{current_user}."
+        raise "Invalid user: #{safe_current_user}."
     end
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
@@ -104,22 +117,26 @@ class DashboardController < ApplicationController
 
   def new
     if !edit_user?
-      raise "Invalid user: #{current_user}."
+      raise "Invalid user: #{safe_current_user}."
     end
     summary = EcoSummary.new()
-    summary.list_name = "#{current_user}'s new list"
+    summary.list_name = "#{safe_current_user}'s new list"
     summary.description = ""
     summary.status = "UPDATED"
     summary.created_at = Time.now
-    summary.updated_at = Time.now
+    summary.created_by = safe_current_user
+    summary.public = 0
     summary.save
     redirect_to dashboard_edit_url(id: summary.id)
   end
 
   def save
+    if !edit_user?
+      raise "Invalid user: #{safe_current_user}."
+    end
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
-    summary.save_from_request(params)
+    summary.save_from_request(params, safe_current_user)
     redirect_to dashboard_show_url(id: id)
   rescue ActiveRecord::RecordNotFound
     Rails.logger.error("Summary not found (#{id})")
@@ -127,12 +144,19 @@ class DashboardController < ApplicationController
   end
 
   private
+    def safe_current_user
+      if ENV["LOCALHOST"] == "true"
+        return "josiah@localhost"
+    end
+    current_user
+  end
+
     def edit_user?
-        if ENV["LOCALHOST"] == "true"
-            return true
-        end
-        return false if current_user == nil
-        user = "/#{current_user}/"
-        return (ENV["DASHBOARD_USERS"] || "").include?(user)
+      if ENV["LOCALHOST"] == "true"
+          return true
+      end
+      return false if current_user == nil
+      user = "/#{current_user}/"
+      return (ENV["DASHBOARD_USERS"] || "").include?(user)
     end
 end

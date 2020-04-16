@@ -141,6 +141,9 @@ ActiveRecord::Schema.define(version: 20200415141300) do
     t.datetime "refreshed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "created_by",       limit: 255
+    t.string   "updated_by",       limit: 255
+    t.integer  "public",           limit: 4
   end
 
   add_index "eco_summaries", ["sierra_list"], name: "index_eco_summaries_on_sierra_list", using: :btree

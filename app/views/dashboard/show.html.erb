@@ -78,6 +78,10 @@
             <a href="<%= dashboard_details_url(id: @presenter.summary.id, all: 'yes') %>">View all</a>
         <% end %>
         </p>
+
+        <p>Owner: <%= @presenter.summary.created_by%>
+        (<%= @presenter.summary.public == 1 ? "public" : "private" %>)
+        </p>
     </div>
 </div> <!-- row -->
 

@@ -13,9 +13,9 @@
 
     <a href="<%= @presenter.shib_url(dashboard_new_url) %>"
         type="button"
-        title="Create a new list"
+        title="Create a new definition"
         class="btn btn-default">
-        <span class="glyphicon glyphicon-file"></span>
+        <span class="glyphicon glyphicon-file"></span> New
     </a>
 
     <span>&nbsp;&nbsp;</span>
@@ -29,8 +29,8 @@
 
     <a href="<%= @presenter.shib_url(dashboard_edit_url(id: @presenter.summary.id)) %>"
         type="button"
-        title="Edit this list"
+        title="Edit the definition for this collection"
         class="btn btn-default">
-        <span class="glyphicon glyphicon-edit"></span>
+        <span class="glyphicon glyphicon-edit"></span> Edit
     </a>
 </div>
