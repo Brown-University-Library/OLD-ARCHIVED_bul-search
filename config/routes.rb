@@ -57,8 +57,10 @@ BulSearch::Application.routes.draw do
 
   # Collection Ecosystem Project
   get 'dashboard/new' => 'dashboard#new', as: :dashboard_new
+  get 'dashboard/copy/:id' => 'dashboard#copy', as: :dashboard_copy
   get 'dashboard/:id/edit' => 'dashboard#edit', as: :dashboard_edit
   post 'dashboard/:id/edit' => 'dashboard#save', as: :dashboard_save
+  post 'dashboard/:id/delete' => 'dashboard#delete', as: :dashboard_delete
 
   get 'dashboard/:id/details' => 'dashboard#details', as: :dashboard_details
   get 'dashboard/:id' => 'dashboard#show', as: :dashboard_show

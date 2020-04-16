@@ -3,8 +3,33 @@
 #       UPDATED - data has been updated, needs to be recalculated.
 #       CALCULATING - data is being recalculated.
 class EcoSummary < ActiveRecord::Base
-    def save_from_request(params, current_user)
 
+    # Create a copy of an EcoSummary and its related EcoRanges
+    def self.copy(id, current_user)
+        original = EcoSummary.find(id)
+        summary = EcoSummary.new()
+        summary.list_name = "Copy of #{original.list_name}"
+        summary.description = original.description
+        summary.status = "UPDATED"
+        summary.created_at = Time.now
+        summary.created_by = current_user
+        summary.public = 0
+        summary.save!
+
+        original.ranges.each do |range|
+            r = EcoRange.new
+            r.eco_summary_id = summary.id
+            r.from = range.from
+            r.to = range.to
+            r.name = range.name
+            r.save!
+        end
+
+        summary
+    end
+
+    # Update an EcoSummary with the data tha comes in a web request
+    def save_from_request(params, current_user)
         self.list_name = params["name"]
         self.description = params["description"]
         self.status = "UPDATED"
@@ -55,49 +80,47 @@ class EcoSummary < ActiveRecord::Base
 
     end
 
+    def status_message
+        case
+            when self.status == "OK"
+                return "OK"
+            when self.status == "UPDATED"
+                return "Queued"
+            when self.status == "CALCULATING"
+                return "Recalculating"
+        end
+        return "Unknown"
+    end
+
+    def status_tooltip
+        case
+            when self.status == "OK"
+                return "Collection data is up to date"
+            when self.status == "UPDATED"
+                return "Collection is queued to be recalculated, data is currently stale."
+            when self.status == "CALCULATING"
+                return "Data is being recalculated for this collection."
+        end
+        return "Unknown"
+    end
+
+    def status_icon
+        case
+            when self.status == "OK"
+                return "glyphicon glyphicon-ok"
+            when self.status == "UPDATED"
+                return "glyphicon glyphicon-hourglass"
+            when self.status == "CALCULATING"
+                return "glyphicon glyphicon-cog"
+        end
+        return "Unknown"
+    end
+
     def list_full_name
         if sierra_list == nil
             return list_name
         end
         "#{list_name} (Sierra List #{sierra_list})"
-    end
-
-    def fund_codes
-        @fund_codes ||= begin
-            # The "Name" value has both the "code" and the "master"
-            # code values as a single string.
-            # Here we split them into individual values.
-            data = JSON.parse(self.fundcodes_str || "[]")
-            data.map do |fund|
-                code, master = fund["Name"].split("|")
-                {"Name" => code || "", "Master" => master || "", "Count" => fund["Count"]}
-            end
-        end
-        @fund_codes
-    end
-
-    def locations
-        @locations ||= begin
-            JSON.parse(self.locations_str || "[]")
-        end
-    end
-
-    def subjects
-        @subjects ||= begin
-            JSON.parse(self.subjects_str || "[]")
-        end
-    end
-
-    def callnumbers
-        @callnumbers ||= begin
-            JSON.parse(self.callnumbers_str || "[]")
-        end
-    end
-
-    def checkouts
-        @checkouts ||= begin
-            JSON.parse(self.checkouts_str || "[]")
-        end
     end
 
     def ranges()
@@ -146,6 +169,7 @@ class EcoSummary < ActiveRecord::Base
         data
     end
 
+    # Refresh the next EcoSummary that is with status = "UPDATED"
     def self.refresh_next()
         up_to_date = true
         self.all.each do |summary|
@@ -194,6 +218,7 @@ class EcoSummary < ActiveRecord::Base
         refresh_counts()
     end
 
+    # Updates the counts in the EcoSummary by aggregating the totals from the EcoRanges
     def refresh_counts()
         bibs_count = 0
         items_count = 0
@@ -209,6 +234,7 @@ class EcoSummary < ActiveRecord::Base
         save!
     end
 
+    # Recalculate the EcoDetails for a given EcoRange
     def refresh_range(range_id)
         # Delete previous detail records for this range
         EcoDetails.delete_all(eco_summary_id: id, eco_range_id: range_id)

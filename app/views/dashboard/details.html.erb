@@ -5,10 +5,9 @@
 </style>
 
 <div class="row">
-  <h2><%= @presenter.summary.list_name %></h2>
-  <div class="col-sm-12">
-    <%= render "toolbar" %>
-  </div>
+  <a href="<%= dashboard_index_url() %>">Collection EcoSystem Dashboard</a> -
+  <a href="<%= dashboard_show_url(id: @presenter.summary.id) %>"><%= @presenter.summary.list_name %></a>
+  <h2>Details for: <%= @presenter.summary.list_name %> <%= render "toolbar_show" %></h2>
 </div> <!-- row -->
 
 <div class="row">

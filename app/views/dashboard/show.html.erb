@@ -46,12 +46,11 @@
 </style>
 
 <div class="row">
-    <h2><%= @presenter.summary.list_full_name %></h2>
+    <a href="dashboard_index_url()">Collection EcoSystem Dashboard</a>
+    <h2><%= @presenter.summary.list_full_name %> <%= render "toolbar_show" %></h2>
     <div class="col-sm-12">
-        <%= render "toolbar" %>
-
         <% if @presenter.summary.status == "UPDATED" %>
-            <p class="warning-msg">This collection has been updated and <b><i>needs to be recalculated.</i></b>
+            <p class="warning-msg">This collection has been updated and <b><i>needs to be recalculated.</i></b><br/>
             Collections are automatically recalculated every half an hour. Please
             check again later today.
             <% if @presenter.summary.refreshed_at != nil %>
@@ -59,7 +58,7 @@
             <% end %>
             </p>
         <% elsif @presenter.summary.status == "CALCULATING" %>
-            <p class="info-msg">This collection is in the process of <b><i>being recalculated.</i></b>
+            <p class="info-msg">This collection is in the process of <b><i>being recalculated.</i></b><br/>
             The data below is not the latest. Please check again later today.
             <% if @presenter.summary.refreshed_at != nil %>
                 <%= @presenter.summary.refreshed_at.localtime %>

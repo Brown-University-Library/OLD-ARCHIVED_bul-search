@@ -1,27 +1,51 @@
-<div class="row">
-    <h2>Collection Ecosystem Dashboard</h2>
+<style>
+    table {
+        border-collapse: collapse;
+        border: 1px solid #ecf0ea;
+    }
 
-    <div style="float: right;align:right">
-        <a href="<%= @new_dashboard_url %>"
-            type="button"
-            title="Create a new definition"
-            class="btn btn-default">
-            <span class="glyphicon glyphicon-file"></span> New
-        </a>
-    </div>
+    table th {
+        border: 1px solid #ecf0ea;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    table td {
+        border: 1px solid #ecf0ea;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+</style>
+
+<div class="row">
+    <h2>Collection Ecosystem Dashboard
+        <div style="float: right;align:right">
+            <a href="<%= @new_dashboard_url %>"
+                type="button"
+                title="Create a new definition"
+                class="btn btn-default">
+                <span class="glyphicon glyphicon-file"></span> New
+            </a>
+        </div>
+    </h2>
 
     <div class="col-sm-12">
-        <ul>
+        <table>
+            <tr>
+                <th>Owner</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
             <% @summaries.each do |summary| %>
-                <li><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a>
-                    <% if summary.status == "UPDATED" %>
-                    (out of date)
-                    <% elsif summary.status == "CALCULATING" %>
-                    (recalculating)
-                    <% end %>
-                </li>
+                <tr>
+                    <td><%= summary.public == 1 ? "Public" : "Private" %></td>
+                    <td><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
+                    <td>
+                        <span title="<%= summary.status_tooltip %>" class="<%= summary.status_icon %>"></span>
+                    </td>
+                </tr>
             <% end %>
-        </ul>
+        </table>
     </div>
 </div>
 

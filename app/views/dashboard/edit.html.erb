@@ -1,9 +1,9 @@
-<h2>Edit Collection Definition</h2>
+Collection EcoSystem Dashboard - <%= @presenter.summary.list_name %>
+<form class="" role="edit" method="POST" action="<%= dashboard_save_url(id: @presenter.summary.id) %>">
+    <h2>Edit Collection Definition <%= render "toolbar_edit" %></h2>
 
-<div class="container">
-    <form class="" role="edit" method="POST" action="<%= dashboard_save_url(id: @presenter.summary.id) %>">
+    <div class="container">
         <div class="form-group">
-
             <label class="" id="name_label">Name</label>
             <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
                 id="name" name="name" value="<%= @presenter.summary.list_name %>">
@@ -37,19 +37,13 @@
             </div>
             <a href="#" id="add_range" type="button" title="Add another call number range"
                 class="btn btn-default">+</a>
-
             <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
         </div>
 
-        <% if @presenter.edit_user %>
-            <button type="submit" class="btn btn-info" title="Save changes to this definition">Save</button>
-            <button type="button" id="cancel_edit" class="btn btn" title="Don't save changes to this definition">Cancel</button>
-            <!-- <button style="float: right;" type="reset" id="delete_record" class="btn btn-danger" title="Delete this BestBet">Delete</button> -->
-        <% else %>
-            <p>Must be <a href="https://search.library.brown.edu/users/auth/shibboleth">loged in </a> in order to edit this information.</p>
-        <% end %>
-    </form>
-</div>
+        <button style="float: right;" type="reset" id="delete_record" class="btn btn-danger"
+            title="Delete this definition and all its data">Delete</button>
+    </div>
+</form>
 
 <!-- source https://sharecodex.com/how-to-create-confirm-dialog-yes-no-with-bootsrap-modal/ -->
 <div class="modal" id="confirmModal" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true" data-backdrop="false">
@@ -90,6 +84,28 @@ function confirmYesNo(options) {
 
 $(document).ready(function(){
     var nextId = 0;
+
+    $("#delete_record").on("click", function(e) {
+        e.preventDefault();
+        var options = {
+            message: "Are you sure you want to delete this definition and all its data?",
+            executeYes: function() {
+                var deleteUrl = "<%= dashboard_delete_url(id: @presenter.summary.id) %>";
+                var req = req = $.ajax({url: deleteUrl, method: "POST"});
+                req.success(function() {
+                    debugger;
+                    window.location.href = "<%= dashboard_index_url() %>";
+                });
+                req.error(function() {
+                    alert("Could not delete this definition");
+                });
+            },
+            executeNo: function() {
+                // do nothing
+            }
+        };
+        confirmYesNo(options);
+    });
 
     $("#cancel_edit").on("click", function(e) {
         e.preventDefault();

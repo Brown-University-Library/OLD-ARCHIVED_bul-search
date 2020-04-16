@@ -58,6 +58,17 @@ class DashboardController < ApplicationController
     redirect_to dashboard_index_url()
   end
 
+  def delete
+    if !edit_user?
+      raise "Invalid user: #{safe_current_user}."
+    end
+    id = (params["id"] || 0).to_i
+    EcoSummary.delete(id)
+    EcoRange.delete_all(eco_summary_id: id)
+    # TODO: delete details
+    render status: 200, :json => "{\"message\": \"deleted\"}"
+  end
+
   def details
     @summaries = EcoSummary.all
 
@@ -127,6 +138,16 @@ class DashboardController < ApplicationController
     summary.created_by = safe_current_user
     summary.public = 0
     summary.save
+    redirect_to dashboard_edit_url(id: summary.id)
+  end
+
+  def copy
+    if !edit_user?
+      raise "Invalid user: #{safe_current_user}."
+    end
+
+    id = (params["id"] || 0).to_i
+    summary = EcoSummary.copy(id, current_user)
     redirect_to dashboard_edit_url(id: summary.id)
   end
 

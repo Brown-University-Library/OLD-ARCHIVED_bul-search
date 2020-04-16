@@ -1,0 +1,22 @@
+<div style="float: right;align:right">
+    <a href="<%= @presenter.shib_url(@presenter.download_url) %>"
+        type="button"
+        title="Download data in tab-separated format (TSV)"
+        class="btn btn-default">
+        <span class="glyphicon glyphicon-download-alt"></span>
+    </a>
+
+    <a href="<%= @presenter.shib_url(dashboard_copy_url(id: @presenter.summary.id)) %>"
+        type="button"
+        title="Crate a copy of this definition"
+        class="btn btn-default">
+        <span class="glyphicon glyphicon-share"></span> Copy
+    </a>
+
+    <a href="<%= @presenter.shib_url(dashboard_edit_url(id: @presenter.summary.id)) %>"
+        type="button"
+        title="Edit the definition for this collection"
+        class="btn btn-default">
+        <span class="glyphicon glyphicon-edit"></span> Edit
+    </a>
+</div>
