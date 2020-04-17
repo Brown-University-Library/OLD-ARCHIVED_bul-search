@@ -3,9 +3,74 @@
 #       UPDATED - data has been updated, needs to be recalculated.
 #       CALCULATING - data is being recalculated.
 class EcoSummary < ActiveRecord::Base
+    def can_view?(current_user)
+        current_user = EcoSummary.safe_current_user(current_user)
+        if public == 1
+            return true
+        end
+        created_by == current_user
+    end
+
+    def can_edit?(current_user)
+        current_user = EcoSummary.safe_current_user(current_user)
+        if EcoSummary.edit_user?(current_user)
+            return public == 1 || created_by == current_user
+        end
+        return false
+    end
+
+    def self.can_new?(current_user)
+        current_user = EcoSummary.safe_current_user(current_user)
+        EcoSummary.edit_user?(current_user)
+    end
+
+    def self.edit_user?(current_user)
+        if ENV["LOCALHOST"] == "true"
+            return true
+        end
+        return false if current_user == nil
+        user_token = "/#{current_user}/"
+        return (ENV["DASHBOARD_USERS"] || "").include?(user_token)
+    end
+
+    def self.editors(current_user)
+        current_user = EcoSummary.safe_current_user(current_user)
+        if !self.edit_user?(current_user)
+            # Not sure if we should hide the editors to all other non-editors
+            return []
+        end
+        data = []
+        (ENV["DASHBOARD_USERS"] || "").split("/").each do |user|
+            if (user != "")
+                data << user
+            end
+        end
+        data
+    end
+
+    def self.new_for_user(current_user)
+        current_user = EcoSummary.safe_current_user(current_user)
+        summary = EcoSummary.new()
+        summary.list_name = "#{current_user}'s new list"
+        summary.description = ""
+        summary.status = "UPDATED"
+        summary.created_at = Time.now
+        summary.created_by = current_user
+        summary.public = 1
+        summary.save
+        summary
+    end
+
+    def self.safe_current_user(current_user)
+        if ENV["LOCALHOST"] == "true"
+          return "josiah@localhost"
+        end
+        current_user
+    end
 
     # Create a copy of an EcoSummary and its related EcoRanges
     def self.copy(id, current_user)
+        current_user = EcoSummary.safe_current_user(current_user)
         original = EcoSummary.find(id)
         summary = EcoSummary.new()
         summary.list_name = "Copy of #{original.list_name}"
@@ -13,7 +78,7 @@ class EcoSummary < ActiveRecord::Base
         summary.status = "UPDATED"
         summary.created_at = Time.now
         summary.created_by = current_user
-        summary.public = 0
+        summary.public = 1
         summary.save!
 
         original.ranges.each do |range|
@@ -77,7 +142,6 @@ class EcoSummary < ActiveRecord::Base
             r.name = cn_name
             r.save
         end
-
     end
 
     def status_message
