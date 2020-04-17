@@ -12,8 +12,6 @@ class DashboardController < ApplicationController
     EcoSummary.all.each do |summary|
       if summary.can_view?(current_user)
         @summaries << summary
-      else
-        # skip it
       end
     end
 

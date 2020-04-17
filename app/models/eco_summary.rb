@@ -3,81 +3,77 @@
 #       UPDATED - data has been updated, needs to be recalculated.
 #       CALCULATING - data is being recalculated.
 class EcoSummary < ActiveRecord::Base
-    def can_view?(current_user)
-        current_user = EcoSummary.safe_current_user(current_user)
+    def can_view?(user)
         if public == 1
             return true
         end
-        created_by == current_user
+        created_by == EcoSummary.safe_user_id(user)
     end
 
-    def can_edit?(current_user)
-        current_user = EcoSummary.safe_current_user(current_user)
-        if EcoSummary.edit_user?(current_user)
-            return public == 1 || created_by == current_user
+    def can_edit?(user)
+        if EcoSummary.edit_user?(user)
+            return public == 1 || created_by == EcoSummary.safe_user_id(user)
         end
         return false
     end
 
-    def self.can_new?(current_user)
-        current_user = EcoSummary.safe_current_user(current_user)
-        EcoSummary.edit_user?(current_user)
+    def self.can_new?(user)
+        EcoSummary.edit_user?(user)
     end
 
-    def self.edit_user?(current_user)
+    def self.edit_user?(user)
         if ENV["LOCALHOST"] == "true"
             return true
         end
-        return false if current_user == nil
-        user_token = "/#{current_user}/"
+        return false if user == nil
+        user_token = "/#{EcoSummary.safe_user_id(user)}/"
         return (ENV["DASHBOARD_USERS"] || "").include?(user_token)
     end
 
-    def self.editors(current_user)
-        current_user = EcoSummary.safe_current_user(current_user)
-        if !self.edit_user?(current_user)
+    def self.editors(user)
+        if !self.edit_user?(user)
             # Not sure if we should hide the editors to all other non-editors
             return []
         end
         data = []
-        (ENV["DASHBOARD_USERS"] || "").split("/").each do |user|
-            if (user != "")
-                data << user
-            end
+        (ENV["DASHBOARD_USERS"] || "").split("/").each do |user_id|
+            data << user_id
         end
         data
     end
 
-    def self.new_for_user(current_user)
-        current_user = EcoSummary.safe_current_user(current_user)
+    def self.new_for_user(user)
+        user_name = EcoSummary.safe_user_id(user)
         summary = EcoSummary.new()
-        summary.list_name = "#{current_user}'s new list"
+        summary.list_name = "#{user_name}'s new list"
         summary.description = ""
         summary.status = "UPDATED"
         summary.created_at = Time.now
-        summary.created_by = current_user
+        summary.created_by = user_name
         summary.public = 1
         summary.save
         summary
     end
 
-    def self.safe_current_user(current_user)
+    def self.safe_user_id(user)
         if ENV["LOCALHOST"] == "true"
           return "josiah@localhost"
         end
-        current_user
+        if user == nil
+            return ""
+        end
+        user.to_s
     end
 
     # Create a copy of an EcoSummary and its related EcoRanges
-    def self.copy(id, current_user)
-        current_user = EcoSummary.safe_current_user(current_user)
+    def self.copy(id, user)
         original = EcoSummary.find(id)
         summary = EcoSummary.new()
         summary.list_name = "Copy of #{original.list_name}"
         summary.description = original.description
         summary.status = "UPDATED"
         summary.created_at = Time.now
-        summary.created_by = current_user
+        summary.created_by = EcoSummary.safe_user_id(user)
         summary.public = 1
         summary.save!
 
@@ -94,12 +90,12 @@ class EcoSummary < ActiveRecord::Base
     end
 
     # Update an EcoSummary with the data tha comes in a web request
-    def save_from_request(params, current_user)
+    def save_from_request(params, user)
         self.list_name = params["name"]
         self.description = params["description"]
         self.status = "UPDATED"
         self.updated_at = Time.now
-        self.updated_by = current_user
+        self.updated_by = EcoSummary.safe_user_id(user)
         self.public = (params["public"] == "yes") ? 1 : 0
         save
 
