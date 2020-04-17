@@ -15,6 +15,10 @@
         padding-left: 10px;
         padding-right: 10px;
     }
+
+    h3 {
+        font-size: 20px;
+    }
 </style>
 
 <div class="row">
@@ -50,3 +54,23 @@
 </div>
 
 
+<div class="row">
+    <% if @editors.count > 0 %>
+        <h3>Users with edit access</h3>
+        <p>Public collections can be viewed by any patron,
+        but only the following users can edit them. Private
+        collections are only visible and editable by their owner.</p>
+        <div class="col-sm-12">
+            <table>
+                <tr>
+                    <th>User</th>
+                </tr>
+                <% @editors.each do |user| %>
+                    <tr>
+                        <td><%= user %></td>
+                    </tr>
+                <% end %>
+            </table>
+        </div>
+    <% end %>
+</div>
