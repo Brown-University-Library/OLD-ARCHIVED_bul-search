@@ -8,15 +8,12 @@ Collection EcoSystem Dashboard - <%= @presenter.summary.list_name %>
             <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
                 id="name" name="name" value="<%= @presenter.summary.list_name %>">
 
-            <label class="" id="public_label">Public list?</label>
-            <% if @presenter.summary.public == 1 %>
-                <label class="radio-inline"><input type="radio" id="public1" name="public" value="yes" checked>Yes</label>
-                <label class="radio-inline"><input type="radio" id="public2" name="public" value="no">No</label>
-            <% else %>
-                <label class="radio-inline"><input type="radio" id="public1" name="public" value="yes">Yes</label>
-                <label class="radio-inline"><input type="radio" id="public2" name="public" value="no" checked>No</label>
-            <% end %>
-            <br/>
+            <!-- <label class="" id="public_label">Public list?</label>
+            <label class="radio-inline"><input type="radio" id="public1" name="public" value="yes" checked>Yes</label>
+            <label class="radio-inline"><input type="radio" id="public2" name="public" value="no">No</label>
+            <label class="radio-inline"><input type="radio" id="public1" name="public" value="yes">Yes</label>
+            <label class="radio-inline"><input type="radio" id="public2" name="public" value="no" checked>No</label>
+            <br/> -->
 
             <label class="" id="desc_label">Description</label>
             <textarea class="form-control" rows="8" placeholder="Description" aria-describedby="desc_label"

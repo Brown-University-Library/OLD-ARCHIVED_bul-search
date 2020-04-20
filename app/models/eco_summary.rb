@@ -96,7 +96,7 @@ class EcoSummary < ActiveRecord::Base
         self.status = "UPDATED"
         self.updated_at = Time.now
         self.updated_by = EcoSummary.safe_user_id(user)
-        self.public = (params["public"] == "yes") ? 1 : 0
+        self.public = 1 # (params["public"] == "yes") ? 1 : 0
         save
 
         ranges = params.keys.select {|k| k.start_with?("cn_range_") && k.end_with?("_from")}
