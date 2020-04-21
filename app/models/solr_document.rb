@@ -357,13 +357,21 @@ class SolrDocument
 
   def online_availability
     @online_availability ||= begin
+      links = []
       if has_marc_data?
-        online_availability_from_marc
+        links = online_availability_from_marc
+        if links.count == 0
+          # This is to handle links in Solr not represented in the MARC data.
+          # (e.g. link to BDR items not represented in the 856|u). We should
+          # eventually store those in MARC too but we are not there yet.
+          links = online_availability_from_solr
+        end
       else
         # We don't have MARC data when fetching search results.
         # We should eventually change that, but for now that's how things work.
-        online_availability_from_solr
+        links = online_availability_from_solr
       end
+      links
     rescue StandardError => e
       Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
       []
