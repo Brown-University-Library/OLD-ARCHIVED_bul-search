@@ -185,7 +185,7 @@ class Easy
         "q"=>"#{q.gsub('--', '\\-\\-')}",
         "qt" => 'search',
         :spellcheck => false,
-        "defType" => "edismax", # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
+        "defType" => "dismax", # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
         "df" => "id"           # == SOLR-7-MIGRATION == Needed in Solr 7 because the server is set to Lucene
     }
 
