@@ -112,6 +112,10 @@ class Easy
     "#{cat_url}?f[format][]=#{enc_format}&q=#{eq}"
   end
 
+  def catalog_callnumber_url(query)
+    "#{catalog_base_url}?search_field=call_number&q=#{CGI.escape(query)}"
+  end
+
   def advanced_catalog_url(query, format)
     #Link to advanced search
     url = catalog_base_url.gsub("/catalog/", "/advanced/")
@@ -203,25 +207,11 @@ class Easy
     response['grouped']['format']['groups'].each do |grp|
         format = grp['groupValue']
         grp_h = {}
-        #Pluralize most formats.
-        # if !format.nil? and format != 'Music'
-        #   format = format + 's'
-        # end
         grp_h['format'] = format
         grp_h['numFound'] = grp['doclist']['numFound']
         grp_h['docs'] = []
         grp['doclist']['docs'].each do |doc|
-            doc['link'] = catalog_link doc['id']
-            #Don't show pub_dates for Journals.  Not relevant.
-            if format == 'Journal'
-              doc.delete('pub_date')
-            end
-            #Take first value of pub_date
-            if doc.has_key?("pub_date")
-              doc['pub_date'] = doc['pub_date'][0]
-            end
-            doc['author_text'] = catalog_author_display(doc)
-            grp_h['docs'] << doc
+            grp_h['docs'] << bento_doc(doc, format)
         end
         #Link to more results.
         grp_h['more'] = format_filter_url(query, format)
@@ -234,6 +224,25 @@ class Easy
         #info text
         grp_h['info'] = info_text(format)
         groups << grp_h
+    end
+
+    if groups.count == 0
+      # See if we get any results as a call number search
+      blacklight_config = Blacklight.default_configuration
+      searcher = SearchCustom.new(blacklight_config)
+      params = {}
+      response, document_list, match = searcher.callnumber(query, params)
+      if document_list.count > 0
+        group = {}
+        group['format'] = document_list.first["format"] || "Book"
+        group['numFound'] = document_list.count
+        group['docs'] = document_list.map {|doc| bento_doc(doc, nil)}
+        group['more'] = catalog_callnumber_url(query)
+        group['advanced'] = nil
+        group['icon'] = nil
+        group['info'] = nil
+        groups << group
+      end
     end
 
     out_data['groups'] = groups
@@ -252,6 +261,23 @@ class Easy
     out_data['formats'] = formats
 
     return out_data
+  end
+
+  def bento_doc(doc, format)
+    if format == nil
+      format = doc['format']
+    end
+    doc['link'] = catalog_link doc['id']
+    #Don't show pub_dates for Journals.  Not relevant.
+    if format == 'Journal'
+      doc.delete('pub_date')
+    end
+    #Take first value of pub_date
+    if doc.has_key?("pub_date")
+      doc['pub_date'] = doc['pub_date'][0]
+    end
+    doc['author_text'] = catalog_author_display(doc)
+    doc
   end
 
   def get_eds_raw(query, guest, trusted_ip)
