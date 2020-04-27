@@ -171,6 +171,7 @@ class Easy
   end
 
   def get_catalog query
+    call_number_matches = false
     solr_url = ENV['SOLR_URL']
     solr = RSolr.connect :url => solr_url
 
@@ -233,6 +234,7 @@ class Easy
       params = {}
       response, document_list, match = searcher.callnumber(query, params)
       if document_list.count > 0
+        call_number_matches = true
         group = {}
         group['format'] = document_list.first["format"] || "Book"
         group['numFound'] = document_list.count
@@ -252,9 +254,13 @@ class Easy
         (format, count) = fgrp
         d = {
             'format'=>format,
-            'count'=>count,
-            'more'=>format_filter_url(query, format)
+            'count'=>count
         }
+        if call_number_matches
+          d['more'] = catalog_callnumber_url(query)
+        else
+          d['more'] = format_filter_url(query, format)
+        end
         formats << d
     end
 
