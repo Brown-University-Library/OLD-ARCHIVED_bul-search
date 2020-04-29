@@ -9,6 +9,28 @@ class EcoDetails < ActiveRecord::Base
         Location.get_name(location_code)
     end
 
+    def subjects_list
+        @subject_tokens ||= (self.subjects || "").split("|")
+    end
+
+    def subjects_display
+        return "" if subjects_list.count == 0
+        subjects_list.first || ""
+    end
+
+    def subjects_tooltip
+        (self.subjects || "")
+    end
+
+    def subjects_tooltip?
+        return subjects_list.count > 1
+    end
+
+    def date_display(value)
+        return "" if value == nil
+        value.to_date
+    end
+
     def self.by_range(range, max)
         range = EcoRange.find(range.id)
         count = EcoDetails.where(eco_summary_id: range.eco_summary_id, eco_range_id: range.id).count
@@ -43,10 +65,15 @@ class EcoDetails < ActiveRecord::Base
     end
 
     # Creates a new detail record for a given bib (a bib is a Solr document)
+    #
+    #   item_create_date    945|z
+    #   bib_create_date     907|c
+    #   bib_catalog_date    998|b
     def self.new_from_bib(eco_summary_id, eco_range_id, bib, range_from, range_to)
         doc = bib
         id = doc["id"]
         marc_record = MarcRecord.new(doc["marc_display"])
+        subjects = marc_record.subjects()
 
         # If we don't have items, create a single detail record for the BIB.
         items = marc_record.items()
@@ -61,6 +88,8 @@ class EcoDetails < ActiveRecord::Base
             end
             record.publish_year = doc["pub_date_sort"]
             record.author = StringUtils.truncate(doc["author_display"], 100)
+            record.bib_create_date = marc_record.created_date()
+            record.bib_catalog_date = marc_record.cataloged_date()
 
             callnumbers = (doc["callnumber_ss"] || []).uniq
             best = Callnumber.best_for_range(callnumbers, range_from, range_to)
@@ -71,6 +100,9 @@ class EcoDetails < ActiveRecord::Base
             record.callnumber_norm = best[:norm]
 
             record.location_code = marc_record.subfield_values("998", "a").first || "NONE"
+            if subjects.count > 0
+                record.subjects = subjects.join("|")
+            end
             record.save!
             return 1
         end
@@ -89,6 +121,8 @@ class EcoDetails < ActiveRecord::Base
             end
             record.publish_year = doc["pub_date_sort"]
             record.author = StringUtils.truncate(doc["author_display"], 100)
+            record.bib_create_date = marc_record.created_date()
+            record.bib_catalog_date = marc_record.cataloged_date()
 
             # item info
             record.item_record_num = item.id
@@ -96,7 +130,11 @@ class EcoDetails < ActiveRecord::Base
             record.callnumber_norm = CallnumberNormalizer.normalize_one(item.call_number)
             record.location_code = item.location_code
             record.checkout_total = item.checkout_total
-
+            record.checkout_2015_plus = item.checkout_2015_plus
+            record.item_create_date = item.created_date
+            if subjects.count > 0
+                record.subjects = subjects.join("|")
+            end
             record.save!
         end
 
@@ -111,9 +149,12 @@ class EcoDetails < ActiveRecord::Base
             line = []
             line << "#{i+1}\t#{row.josiah_bib_id}\t#{row.item_record_num}\t#{row.title}"
             line << "#{row.publish_year}\t#{row.publisher}\t#{row.location_code}"
-            line << "#{row.checkout_total}\t#{row.callnumber_raw}\t#{row.callnumber_norm}"
-            line << "#{row.marc_value}"
-            line << "#{row.ord_record_num}\t#{row.fund_code}\t#{row.fund_code_master}"
+            line << "#{row.checkout_total}\t#{row.checkout_2015_plus}"
+            line << "#{row.date_display(row.bib_create_date)}"
+            line << "#{row.date_display(row.bib_catalog_date)}"
+            line << "#{row.date_display(row.item_create_date)}"
+            line << "#{row.callnumber_raw}\t#{row.callnumber_norm}"
+            line << "#{row.subjects}"
             lines << line.join("\t")
             if (i % 5000) == 0
                 Rails.logger.info("== processed #{i} rows...")
@@ -123,9 +164,12 @@ class EcoDetails < ActiveRecord::Base
 
         str = "#\tbib\titem\ttitle" +
             "\tpub_year\tpublisher\tloc_code" +
-            "\tcheckouts\tcall_no\tcall_no_norm" +
-            "\tsubject" +
-            "\torder\tfund\tfund_master\r\n"
+            "\tcheckouts\tcheckouts2015" +
+            "\tbib_create" +
+            "\tbib_catalog" +
+            "\titem_create" +
+            "\tcall_no\tcall_no_norm" +
+            "\tsubjects\r\n"
         str += lines.join("\r\n")
 
         Rails.logger.info("Generating TSV string for #{rows.count} rows")

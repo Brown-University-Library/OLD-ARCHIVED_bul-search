@@ -1,7 +1,8 @@
 class ItemData
   attr_reader :id, :barcode
-  attr_accessor :location_code, :bookplate_code, :call_number, :copy, :volume,
-    :suppressed, :checkout_total
+  attr_accessor :location_code, :bookplate_code, :call_number,
+    :created_date, :copy, :volume, :suppressed,
+    :checkout_total, :checkout_2015_plus
   attr_writer :bookplate_url, :bookplate_display
 
   def initialize(id, barcode)
@@ -9,6 +10,8 @@ class ItemData
     @barcode = clean_barcode(barcode)
     @suppressed = false
     @checkout_total = 0
+    @checkout_2015_plus = 0
+    @created_date = nil
   end
 
   def bookplate_url

@@ -81,13 +81,10 @@ class MarcRecord
 
       f_945 = marc_field["945"]
 
-      # TODO: pick up the location name from our local SQL table.
       location_code = subfield_value(f_945, "l")
       barcode = subfield_value(f_945, "i")
       id = subfield_value(f_945, "y")
       bookplate_code = subfield_value(f_945, "f")
-      suppressed = subfield_value(f_945, "o") == "n"
-      checkout_total = (subfield_value(f_945, "u") || "").to_i
 
       # callnumber
       part1 = subfield_value(f_945, "a")
@@ -127,6 +124,7 @@ class MarcRecord
         i += 1
       end
 
+      suppressed = subfield_value(f_945, "o") == "n"
       if !suppressed
         item = ItemData.new(id, barcode)
         item.location_code = location_code
@@ -136,11 +134,63 @@ class MarcRecord
         item.copy = copy
         item.volume = volume
         item.call_number = call_number
-        item.suppressed = suppressed
-        item.checkout_total = checkout_total
+        item.suppressed = false
+        item.checkout_total = (subfield_value(f_945, "u") || "").to_i
+        item.checkout_2015_plus = (subfield_value(f_945, "w") || "").to_i
+        item.created_date = marc_string_to_date(subfield_value(f_945, "z"))
         items << item
       end
     end
     items
+  end
+
+  def created_date()
+    date_value("907", "c")
+  end
+
+  def cataloged_date()
+    date_value("998", "b")
+  end
+
+  def date_value(field_code, subfield_code)
+    values = subfield_values(field_code, subfield_code)
+    return nil if values.count == 0
+    values.each do |value|
+      date = marc_string_to_date(value)
+      if date != nil
+        # Return the first valid date
+        return date
+      end
+    end
+    nil
+  end
+
+  def marc_string_to_date(marc_date)
+    return nil if marc_date == nil
+    Date.strptime(marc_date,"%m-%d-%y")
+  rescue ArgumentError
+    nil
+  end
+
+  def subjects()
+    values = []
+    #
+    # Values taken from bulmarc (/lib/bulmarc/record.rb)
+    #
+    # "600abcdfklmnopqrtvxyz"
+    # "610abfklmnoprstvxyz"
+    # "611abcdefgklnpqstvxyz"
+    # "630adfgklmnoprstvxyz"
+    # "650abcvxyz"
+    # "651avxyz"
+    #
+    # TODO: handle multiple subfields
+    values += subfield_values("600", "a")
+    values += subfield_values("610", "a")
+    values += subfield_values("611", "a")
+    values += subfield_values("630", "a")
+    values += subfield_values("650", "a")
+    values += subfield_values("651", "a")
+    values
   end
 end

@@ -196,37 +196,119 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def locations()
-        sql = <<-END_SQL.gsub(/\n/, '')
-            select location_code as location_code, count(*) as count
-            from eco_details
-            where eco_summary_id = #{id}
-            group by location_code
-            order by 2 desc, 1 asc
-        END_SQL
-        rows = ActiveRecord::Base.connection.exec_query(sql).rows
-        data = rows.map do |r|
-            percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
-            name = Location.get_name(r[0])
-            OpenStruct.new(name: name, code: r[0], count: r[1], percent: percent)
+        Rails.cache.fetch("ecosystem_#{self.id}_locations", expires_in: 5.minute) do
+            begin
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select location_code as location_code, count(*) as count
+                    from eco_details
+                    where eco_summary_id = #{id}
+                    group by location_code
+                    order by 2 desc, 1 asc
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+                data = rows.map do |r|
+                    percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
+                    name = Location.get_name(r[0])
+                    OpenStruct.new(name: name, code: r[0], count: r[1], percent: percent)
+                end
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in locations() for #{self.id}: #{e.to_s}"
+                []
+            end
         end
-        data
     end
 
     def checkouts()
-        sql = <<-END_SQL.gsub(/\n/, '')
-            select checkout_total as checkout_total, count(*) as count
-            from eco_details
-            where eco_summary_id = #{id}
-            group by checkout_total
-            order by 2 desc, 1 asc
-        END_SQL
-        rows = ActiveRecord::Base.connection.exec_query(sql).rows
-        data = rows.map do |r|
-            percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
-            OpenStruct.new(code: r[0].to_s, count: r[1], percent: percent)
+        Rails.cache.fetch("ecosystem_#{self.id}_checkouts", expires_in: 5.minute) do
+            begin
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select checkout_total as checkout_total, count(*) as count
+                    from eco_details
+                    where eco_summary_id = #{id}
+                    group by checkout_total
+                    order by 2 desc, 1 asc
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+                data = rows.map do |r|
+                    percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
+                    OpenStruct.new(code: r[0].to_s, count: r[1], percent: percent)
+                end
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in checkouts() for #{self.id}: #{e.to_s}"
+                []
+            end
         end
-        # data.sort {|a, b| a.count <=> b.count}.reverse
-        data
+    end
+
+    def checkouts_2015()
+        Rails.cache.fetch("ecosystem_#{self.id}_checkouts_2015", expires_in: 5.minute) do
+            begin
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select checkout_2015_plus as checkout_total, count(*) as count
+                    from eco_details
+                    where eco_summary_id = #{id}
+                    group by checkout_2015_plus
+                    order by 2 desc, 1 asc
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+                data = rows.map do |r|
+                    percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
+                    OpenStruct.new(code: r[0].to_s, count: r[1], percent: percent)
+                end
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in checkouts_2015() for #{self.id}: #{e.to_s}"
+                []
+            end
+        end
+    end
+
+    def acquisitions_bib()
+        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_bib", expires_in: 5.minute) do
+            begin
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select year(bib_create_date) as year, count(distinct bib_record_num) as count
+                    from eco_details
+                    where eco_summary_id = #{id}
+                    group by year(bib_create_date)
+                    order by 2 desc, 1 asc
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+                data = rows.map do |r|
+                    percent = (total_bibs == 0) ? 0 : ((r[1] * 100) / total_bibs)
+                    OpenStruct.new(year: r[0].to_s, count: r[1], percent: percent)
+                end
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in acquisitions_bib() for #{self.id}: #{e.to_s}"
+                []
+            end
+        end
+    end
+
+    def acquisitions_item()
+        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_item", expires_in: 5.minute) do
+            begin
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select year(item_create_date) as year, count(distinct item_record_num) as count
+                    from eco_details
+                    where eco_summary_id = #{id}
+                    group by year(item_create_date)
+                    order by 2 desc, 1 asc
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+                data = rows.map do |r|
+                    percent = (total_items == 0) ? 0 : ((r[1] * 100) / total_items)
+                    OpenStruct.new(year: r[0].to_s, count: r[1], percent: percent)
+                end
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in acquisitions_item() for #{self.id}: #{e.to_s}"
+                []
+            end
+        end
     end
 
     # Refresh the next EcoSummary that is with status = "UPDATED"
@@ -292,6 +374,12 @@ class EcoSummary < ActiveRecord::Base
         self.status = "OK"
         self.refreshed_at = Time.now
         save!
+
+        Rails.cache.delete("ecosystem_#{self.id}_locations")
+        Rails.cache.delete("ecosystem_#{self.id}_checkouts")
+        Rails.cache.delete("ecosystem_#{self.id}_checkouts_2015")
+        Rails.cache.delete("ecosystem_#{self.id}_acquisitions_bib")
+        Rails.cache.delete("ecosystem_#{self.id}_acquisitions_item")
     end
 
     # Recalculate the EcoDetails for a given EcoRange

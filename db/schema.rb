@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200415141300) do
+ActiveRecord::Schema.define(version: 20200427160000) do
 
   create_table "best_bet_entries", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -104,6 +104,11 @@ ActiveRecord::Schema.define(version: 20200415141300) do
     t.string   "fund_code_master",                  limit: 255
     t.integer  "eco_summary_id",                    limit: 4
     t.integer  "eco_range_id",                      limit: 4
+    t.integer  "checkout_2015_plus",                limit: 4
+    t.datetime "item_create_date"
+    t.datetime "bib_create_date"
+    t.datetime "bib_catalog_date"
+    t.text     "subjects",                          limit: 65535
   end
 
   add_index "eco_details", ["callnumber_norm"], name: "index_eco_details_on_callnumber_norm", using: :btree
