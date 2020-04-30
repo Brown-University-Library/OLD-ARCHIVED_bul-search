@@ -54,11 +54,6 @@ class MarcRecord
         values << tokens.join(" > ")
       end
     end
-    puts "================================"
-    puts "#{field_code}|#{subfield_codes}"
-    puts values
-    puts "================================"
-    # byebug
     values
   end
 
