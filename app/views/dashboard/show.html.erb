@@ -42,11 +42,10 @@
         background-color: #4c99fb;
         /* background-color: #e73827; */
     }
-
 </style>
 
 <div class="row">
-    <a href="dashboard_index_url()">Collection EcoSystem Dashboard</a>
+    <a href="<%= dashboard_index_url() %>">Collection EcoSystem Dashboard</a>
     <h2><%= @presenter.summary.list_full_name %> <%= render "toolbar_show" %></h2>
     <div class="col-sm-12">
         <% if @presenter.summary.status == "UPDATED" %>
@@ -85,9 +84,22 @@
 </div> <!-- row -->
 
 <div class="row">
-    <div class="col-sm-12">
+
+  <!-- Nav tabs -->
+  <ul id="navTabs" class="nav nav-tabs" role="tablist">
+    <li class="active"><a href="#callNumbersTab" role="tab" data-toggle="tab">Call Numbers</a></li>
+    <li><a href="#locationsTab" role="tab" data-toggle="tab">Locations</a></li>
+    <li><a href="#acquisitionsBibTab" role="tab" data-toggle="tab">Acquisitions (bib)</a></li>
+    <li><a href="#acquisitionsItemTab" role="tab" data-toggle="tab">Acquisitions (item)</a></li>
+    <li><a href="#usageAllTab" role="tab" data-toggle="tab">Usage (all)</a></li>
+    <li><a href="#usage2015Tab" role="tab" data-toggle="tab">Usage (2015+)</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div class="tab-pane active" id="callNumbersTab">
         <h3>Call number ranges</h3>
-        <table id="callnumberTable">
+        <table id="callNumbersTable">
             <tr>
                 <th>Name</th>
                 <th>From</th>
@@ -128,13 +140,10 @@
             <% end %>
         </table>
     </div>
-</div> <!-- row -->
 
-<div class="row" id="locationsTop10">
-    <div class="col-sm-12">
-        <h3>Locations (top 10)</h3>
-        <p>(<a href="#" id="locationsViewAll">view all locations</a>)</p>
-        <table id="locationsTop10Table">
+    <div class="tab-pane" id="locationsTab">
+        <h3>Locations</h3>
+        <table id="locationsTable">
             <tr>
                 <th>Location</th>
                 <th class="number_cell">Items</th>
@@ -160,51 +169,13 @@
                         </div>
                     </td>
                 </tr>
-                <% break if ix == 9 %>
             <% end %>
         </table>
     </div>
-</div> <!-- row -->
 
-<div class="row hidden" id="locationsAll">
-    <div class="col-sm-12">
-        <h3>Locations (all)</h3>
-        <p>(<a href="#" id="locationsViewTop10">view top 10 locations</a>)</p>
-        <table id="locationsAllTable">
-            <tr>
-                <th>Location</th>
-                <th class="number_cell">Items</th>
-                <th class="number_cell">%</th>
-                <th>&nbsp;</th>
-            </tr>
-            <% @presenter.summary.locations.each do |loc| %>
-                <tr>
-                    <td data-sort-by-text="<%= loc.name %>"><%= loc.code == loc.name ? loc.code : "#{loc.name} (#{loc.code})" %></td>
-                    <td class="number_cell" data-sort-by-number="<%= loc.count %>">
-                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, loc_code: loc.code) %>"><%= number_with_delimiter(loc.count) %></a>
-                    </td>
-                    <td class="number_cell">
-                        <% if loc.percent > 0 %>
-                            <%= loc.percent %>&nbsp;%
-                        <% else %>
-                            &nbsp;
-                        <% end %>
-                    </td>
-                    <td>
-                        <div class="bar">
-                            <div class="progress" style="width: <%= loc.percent %>%;"></div>
-                        </div>
-                    </td>
-                </tr>
-            <% end %>
-        </table>
-    </div>
-</div> <!-- row -->
-
-<div class="row" id="acquisitionsBib">
-    <div class="col-sm-12">
-        <h3>Acquisitions (<%= number_with_delimiter(@presenter.summary.total_bibs) %> bibs)</h3>
-        <p>As reported in MARC 907|c (<a href="#" id="acqViewItem">view by item</a>)</p>
+    <div class="tab-pane" id="acquisitionsBibTab">
+        <h3>Acquisitions by year (<%= number_with_delimiter(@presenter.summary.total_bibs) %> bibs)</h3>
+        <p>As reported in MARC 907|c</p>
         <table id="acquisitionsBibTable">
             <tr>
                 <th>Year</th>
@@ -234,12 +205,10 @@
             <% end %>
         </table>
     </div>
-</div> <!-- row -->
 
-<div class="row hidden" id="acquisitionsItem">
-    <div class="col-sm-12">
-        <h3>Acquisitions (<%= number_with_delimiter(@presenter.summary.total_items) %> items)</h3>
-        <p>As reported in MARC 945|z (<a href="#" id="acqViewBib">view by bib</a>)</p>
+    <div class="tab-pane" id="acquisitionsItemTab">
+        <h3>Acquisitions by year (<%= number_with_delimiter(@presenter.summary.total_items) %> items)</h3>
+        <p>As reported in MARC 945|z</p>
         <table id="acquisitionsItemTable">
             <tr>
                 <th>Year</th>
@@ -269,13 +238,11 @@
             <% end %>
         </table>
     </div>
-</div> <!-- row -->
 
-<div class="row" id="usageAll">
-    <div class="col-sm-12">
+    <div class="tab-pane" id="usageAllTab">
         <h3>Usage (all)</h3>
-        <p>As reported in MARC 945|u (<a href="#" id="usageView2015">view since 2015</a>)</p>
-        <table id="usageTable">
+        <p>As reported in MARC 945|u</p>
+        <table id="usageAllTable">
             <tr>
                 <th>Checkout Count</th>
                 <th class="number_cell">Items</th>
@@ -304,10 +271,8 @@
             <% end %>
         </table>
     </div>
-</div> <!-- row -->
 
-<div class="row hidden" id="usage2015">
-    <div class="col-sm-12">
+    <div class="tab-pane" id="usage2015Tab">
         <h3>Usage (since 2015)</h3>
         <p>As reported in MARC 945|w (<a href="#" id="usageViewAll">view all</a>)</p>
         <table id="usage2015Table">
@@ -339,7 +304,8 @@
             <% end %>
         </table>
     </div>
-</div> <!-- row -->
+  </div>
+</div>
 
 <div class="row">
     <p>&nbsp;</p>
@@ -347,52 +313,12 @@
 
 <script>
 $(document).ready(function(){
+    setupSortColumn("callNumbersTable", 0, "asc", false);
+    setupSortColumn("callNumbersTable", 1, "desc", true);
+    setupSortColumn("callNumbersTable", 4, "desc", false);
 
-    $("#locationsViewTop10").on("click", function(e) {
-        e.preventDefault();
-        $("#locationsTop10").removeClass("hidden");
-        $("#locationsAll").addClass("hidden");
-    });
-
-    $("#locationsViewAll").on("click", function(e) {
-        e.preventDefault();
-        $("#locationsAll").removeClass("hidden");
-        $("#locationsTop10").addClass("hidden");
-    });
-
-    $("#acqViewItem").on("click", function(e) {
-        e.preventDefault();
-        $("#acquisitionsItem").removeClass("hidden");
-        $("#acquisitionsBib").addClass("hidden");
-    });
-
-    $("#acqViewBib").on("click", function(e) {
-        e.preventDefault();
-        $("#acquisitionsBib").removeClass("hidden");
-        $("#acquisitionsItem").addClass("hidden");
-    });
-
-    $("#usageViewAll").on("click", function(e) {
-        e.preventDefault();
-        $("#usageAll").removeClass("hidden");
-        $("#usage2015").addClass("hidden");
-    });
-
-    $("#usageView2015").on("click", function(e) {
-        e.preventDefault();
-        $("#usage2015").removeClass("hidden");
-        $("#usageAll").addClass("hidden");
-    });
-
-    setupSortColumn("callnumberTable", 0, "asc", false);
-    setupSortColumn("callnumberTable", 1, "desc", true);
-    setupSortColumn("callnumberTable", 4, "desc", false);
-
-    setupSortColumn("locationsAllTable", 0, "asc", false);
-    setupSortColumn("locationsAllTable", 1, "asc", true);
-
-    setupSortColumn("locationsTop10Table", 0, "asc", false);
-    setupSortColumn("locationsTop10Table", 1, "asc", true);
+    setupSortColumn("locationsTable", 0, "asc", false);
+    setupSortColumn("locationsTable", 1, "asc", true);
 
     setupSortColumn("acquisitionsBibTable", 0, "desc", false);
     setupSortColumn("acquisitionsBibTable", 1, "asc", true);
@@ -400,8 +326,8 @@ $(document).ready(function(){
     setupSortColumn("acquisitionsItemTable", 0, "desc", false);
     setupSortColumn("acquisitionsItemTable", 1, "asc", true);
 
-    setupSortColumn("usageTable", 0, "desc", false);
-    setupSortColumn("usageTable", 1, "asc", true);
+    setupSortColumn("usageAllTable", 0, "desc", false);
+    setupSortColumn("usageAllTable", 1, "asc", true);
 
     setupSortColumn("usage2015Table", 0, "desc", false);
     setupSortColumn("usage2015Table", 1, "asc", true);
