@@ -36,7 +36,7 @@ class MarcRecord
   # all of them. If multiple subfield codes are
   # indicated (e.g. "abc") their values are concatenated
   # with " > ".
-  def subfield_values(field_code, subfield_codes)
+  def subfield_values(field_code, subfield_codes, allow_many = false)
     values = []
     fields = field(field_code)
     fields.each do |field|
@@ -47,6 +47,10 @@ class MarcRecord
           value = (subfield[key] || "").strip
           if value != ""
             tokens << value
+            # This check is to preserve backwards compatibility
+            # for when we did not expect multi-values
+            # (e.g. many 998|a in a single field)
+            break if !allow_many
           end
         end
       end
@@ -183,12 +187,12 @@ class MarcRecord
   def subjects()
     # Definitions taken from bulmarc (/lib/bulmarc/record.rb)
     values = []
-    values += subfield_values("600", "abcdfklmnopqrtvxyz")
-    values += subfield_values("610", "abfklmnoprstvxyz")
-    values += subfield_values("611", "abcdefgklnpqstvxyz")
-    values += subfield_values("630", "adfgklmnoprstvxyz")
-    values += subfield_values("650", "abcvxyz")
-    values += subfield_values("651", "avxyz")
+    values += subfield_values("600", "abcdfklmnopqrtvxyz", true)
+    values += subfield_values("610", "abfklmnoprstvxyz", true)
+    values += subfield_values("611", "abcdefgklnpqstvxyz", true)
+    values += subfield_values("630", "adfgklmnoprstvxyz", true)
+    values += subfield_values("650", "abcvxyz", true)
+    values += subfield_values("651", "avxyz", true)
     values
   end
 end
