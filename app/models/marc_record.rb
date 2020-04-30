@@ -28,27 +28,40 @@ class MarcRecord
   end
 
   # Receives a field code (e.g. "504") and subfield
-  # code (e.g. "a") and returns an array with the
-  # the string values for all fields that match the
-  # field_code and subfield_code. For example if there
-  # are many fields with code "028" and subfield "a"
-  # it will return an array with all of them.
-  def subfield_values(field_code, subfield_code)
+  # code (e.g. "a" or "abc") and returns an array
+  # with the the string values for all fields that
+  # match the field_code and subfield_codes. For
+  # example if there are many fields with code "504"
+  # and subfield "a" it will return an array with
+  # all of them. If multiple subfield codes are
+  # indicated (e.g. "abc") their values are concatenated
+  # with " > ".
+  def subfield_values(field_code, subfield_codes)
     values = []
     fields = field(field_code)
     fields.each do |field|
+      tokens = []
       field["subfields"].each do |subfield|
-        if subfield.keys.first == subfield_code
-          subfield.values.each do |value|
-            if value != nil
-              values << value.strip
-            end
+        key = subfield.keys.first
+        if subfield_codes.include?(key)
+          value = (subfield[key] || "").strip
+          if value != ""
+            tokens << value
           end
         end
       end
+      if tokens.count > 0
+        values << tokens.join(" > ")
+      end
     end
+    puts "================================"
+    puts "#{field_code}|#{subfield_codes}"
+    puts values
+    puts "================================"
+    # byebug
     values
   end
+
 
   # Receives a field object and a subfield code (e.g. "a") and
   # and returns the first value found. The field object is
@@ -173,24 +186,14 @@ class MarcRecord
   end
 
   def subjects()
+    # Definitions taken from bulmarc (/lib/bulmarc/record.rb)
     values = []
-    #
-    # Values taken from bulmarc (/lib/bulmarc/record.rb)
-    #
-    # "600abcdfklmnopqrtvxyz"
-    # "610abfklmnoprstvxyz"
-    # "611abcdefgklnpqstvxyz"
-    # "630adfgklmnoprstvxyz"
-    # "650abcvxyz"
-    # "651avxyz"
-    #
-    # TODO: handle multiple subfields
-    values += subfield_values("600", "a")
-    values += subfield_values("610", "a")
-    values += subfield_values("611", "a")
-    values += subfield_values("630", "a")
-    values += subfield_values("650", "a")
-    values += subfield_values("651", "a")
+    values += subfield_values("600", "abcdfklmnopqrtvxyz")
+    values += subfield_values("610", "abfklmnoprstvxyz")
+    values += subfield_values("611", "abcdefgklnpqstvxyz")
+    values += subfield_values("630", "adfgklmnoprstvxyz")
+    values += subfield_values("650", "abcvxyz")
+    values += subfield_values("651", "avxyz")
     values
   end
 end
