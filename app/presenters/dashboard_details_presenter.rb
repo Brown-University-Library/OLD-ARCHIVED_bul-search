@@ -1,6 +1,6 @@
 class DashboardDetailsPresenter
     attr_accessor :summary, :name, :count, :rows, :from, :to,
-        :download_url, :show_all_url, :edit_user
+        :download_url, :show_all_url, :edit_user, :can_delete
 
     def initialize(summary, name = nil, count = nil, rows = nil)
         @rows = rows
@@ -12,6 +12,7 @@ class DashboardDetailsPresenter
         @download_url = nil
         @show_all_url = nil
         @edit_user = false
+        @can_delete = false
     end
 
     def is_partial_list?

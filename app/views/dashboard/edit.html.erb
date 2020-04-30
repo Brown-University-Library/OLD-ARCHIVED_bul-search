@@ -37,8 +37,11 @@ Collection EcoSystem Dashboard - <%= @presenter.summary.list_name %>
             <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
         </div>
 
-        <button style="float: right;" type="reset" id="delete_record" class="btn btn-danger"
-            title="Delete this definition and all its data">Delete</button>
+        <% if @presenter.can_delete %>
+            <button style="float: right;" type="reset"
+                id="delete_record" class="btn btn-danger"
+                title="Delete this definition and all its data">Delete</button>
+        <% end %>
     </div>
 </form>
 

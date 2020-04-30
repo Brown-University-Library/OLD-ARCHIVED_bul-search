@@ -17,6 +17,10 @@ class EcoSummary < ActiveRecord::Base
         return false
     end
 
+    def can_delete?(user)
+        EcoSummary.edit_user?(user) && created_by == EcoSummary.safe_user_id(user)
+    end
+
     def self.can_new?(user)
         EcoSummary.edit_user?(user)
     end

@@ -53,6 +53,7 @@ class DashboardController < ApplicationController
       @page_title = summary.list_name
       @presenter = DashboardDetailsPresenter.new(summary)
       @presenter.edit_user = true
+      @presenter.can_delete = summary.can_delete?(current_user)
       render
     else
       Rails.logger.error("User #{current_user} does not have access to edit summary #{id}")
@@ -66,7 +67,7 @@ class DashboardController < ApplicationController
   def delete
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
-    if summary.can_edit?(current_user)
+    if summary.can_delete?(current_user)
       Rails.logger.info("Delete dashboard #{id} by user #{current_user}.")
       EcoSummary.delete(id)
       EcoRange.delete_all(eco_summary_id: id)
