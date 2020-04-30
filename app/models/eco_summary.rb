@@ -200,7 +200,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def locations()
-        Rails.cache.fetch("ecosystem_#{self.id}_locations", expires_in: 5.minute) do
+        Rails.cache.fetch("ecosystem_#{self.id}_locations", expires_in: 25.minute) do
             begin
                 sql = <<-END_SQL.gsub(/\n/, '')
                     select location_code as location_code, count(*) as count
@@ -224,7 +224,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def checkouts()
-        Rails.cache.fetch("ecosystem_#{self.id}_checkouts", expires_in: 5.minute) do
+        Rails.cache.fetch("ecosystem_#{self.id}_checkouts", expires_in: 25.minute) do
             begin
                 sql = <<-END_SQL.gsub(/\n/, '')
                     select checkout_total as checkout_total, count(*) as count
@@ -247,7 +247,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def checkouts_2015()
-        Rails.cache.fetch("ecosystem_#{self.id}_checkouts_2015", expires_in: 5.minute) do
+        Rails.cache.fetch("ecosystem_#{self.id}_checkouts_2015", expires_in: 25.minute) do
             begin
                 sql = <<-END_SQL.gsub(/\n/, '')
                     select checkout_2015_plus as checkout_total, count(*) as count
@@ -270,7 +270,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def acquisitions_bib()
-        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_bib", expires_in: 5.minute) do
+        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_bib", expires_in: 25.minute) do
             begin
                 sql = <<-END_SQL.gsub(/\n/, '')
                     select year(bib_create_date) as year, count(distinct bib_record_num) as count
@@ -293,7 +293,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def acquisitions_item()
-        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_item", expires_in: 5.minute) do
+        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_item", expires_in: 25.minute) do
             begin
                 sql = <<-END_SQL.gsub(/\n/, '')
                     select year(item_create_date) as year, count(distinct item_record_num) as count
