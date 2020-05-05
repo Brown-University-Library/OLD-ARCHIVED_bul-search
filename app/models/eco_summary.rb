@@ -297,40 +297,43 @@ class EcoSummary < ActiveRecord::Base
     end
 
     # Refresh the next EcoSummary that is with status = "UPDATED"
+    # Makes sure there is only one calculation going on at the same time.
     def self.refresh_next()
-        up_to_date = true
-        self.all.each do |summary|
-            if summary.status == "OK"
-                next
-            end
-
-            up_to_date = false
-            if summary.status == "CALCULATING"
-                # Already calculating, nothing else to do.
-                break
-            end
-
-            # Kick it off and stop.
-            summary.refresh()
-            break
+        summary = EcoSummary.where(status: "CALCULATING").first
+        if summary != nil
+            Rails.logger.info("EcoSummary.refresh_next - already calculating #{summary.id}")
+            return false
         end
-        return up_to_date
+
+        summary = EcoSummary.where(status: "UPDATED").order(updated_at: :asc).first
+        if summary != nil
+            Rails.logger.info("EcoSummary.refresh_next - starting #{summary.id}")
+            summary.refresh()
+            return false
+        end
+
+        # Nothing left to process
+        Rails.logger.info("EcoSummary.refresh_next - nothing is pending")
+        return true
     end
 
     # Reloads the EcoDetails for the current EcoSummary by refreshing
     # the data of each of the ranges for the summary.
     def refresh()
+        Rails.logger.info("EcoSummary.refresh for #{self.id} started")
         self.status = "CALCULATING"
         self.refreshed_at = Time.now
         save!
 
         # Refresh each of the ranges...
         ranges().each do |range|
+            Rails.logger.info("EcoSummary.refresh for #{self.id} - processing range #{range.id}")
             refresh_range(range.id)
         end
 
         # Delete orphan details
         # (from ranges that might not exist anymore)
+        Rails.logger.info("EcoSummary.refresh for #{self.id} - deleting orphans")
         sql = <<-END_SQL.gsub(/\n/, '')
           DELETE eco_details
           FROM eco_details
@@ -339,11 +342,16 @@ class EcoSummary < ActiveRecord::Base
         END_SQL
         orphan_count = ActiveRecord::Base.connection.exec_delete(sql, nil, [])
         if orphan_count > 0
-          Rails.logger.info("Deleted #{orphan_count} from eco_summary.id #{id}")
+          Rails.logger.info("EcoSummary.refresh for #{self.id} - deleted #{orphan_count} orphans")
         end
 
+        Rails.logger.info("EcoSummary.refresh for #{self.id} - calculating acquisitions")
         refresh_acquisitions()
+
+        Rails.logger.info("EcoSummary.refresh for #{self.id} - calculating counts")
         refresh_counts()
+
+        Rails.logger.info("EcoSummary.refresh for #{self.id} completed")
     end
 
     def refresh_acquisitions()
