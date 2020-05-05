@@ -270,26 +270,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def acquisitions_bib()
-        Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_bib", expires_in: 25.minute) do
-            begin
-                sql = <<-END_SQL.gsub(/\n/, '')
-                    select year(bib_create_date) as year, count(distinct bib_record_num) as count
-                    from eco_details
-                    where eco_summary_id = #{id}
-                    group by year(bib_create_date)
-                    order by 2 desc, 1 asc
-                END_SQL
-                rows = ActiveRecord::Base.connection.exec_query(sql).rows
-                data = rows.map do |r|
-                    percent = (total_bibs == 0) ? 0 : ((r[1] * 100) / total_bibs)
-                    OpenStruct.new(year: r[0].to_s, count: r[1], percent: percent)
-                end
-                data
-            rescue Exception => e
-                Rails.logger.error "Error in acquisitions_bib() for #{self.id}: #{e.to_s}"
-                []
-            end
-        end
+        EcoAcquisitions.where(eco_summary_id: self.id, acq_type: "bib").order(year: :desc)
     end
 
     def acquisitions_item()
@@ -361,7 +342,69 @@ class EcoSummary < ActiveRecord::Base
           Rails.logger.info("Deleted #{orphan_count} from eco_summary.id #{id}")
         end
 
+        refresh_acquisitions()
         refresh_counts()
+    end
+
+    def refresh_acquisitions()
+        # Delete previous data
+        sql = <<-END_SQL
+            DELETE FROM eco_acquisitions
+            WHERE eco_summary_id = #{self.id};
+        END_SQL
+        ActiveRecord::Base.connection.exec_delete(sql, nil, [])
+
+        # Calculate new breakdown by year/format
+        # https://www.tarynpivots.com/post/how-to-rotate-rows-into-columns-in-mysql/
+        sql = <<-END_SQL
+            SELECT
+                year(bib_create_date) as year,                                                  # 0
+                count(id) as total,                                                             # 1
+                sum(case when is_online = 1 then 1 else 0 end) as online,                       # 2
+                sum(case when format = "Book" then 1 else 0 end) as book,                       # 3
+                sum(case when format = "Periodical Title" then 1 else 0 end) as periodical,     # 4
+                sum(case when format = "Sound Recording" then 1 else 0 end) as sound,           # 5
+                sum(case when format = "Video" then 1 else 0 end) as video,                     # 6
+                sum(case when format = "Musical Score" then 1 else 0 end) as score,             # 7
+                sum(case when format = "Thesis/Dissertation" then 1 else 0 end) as etd,         # 8
+                sum(case when format = "Map" then 1 else 0 end) as map,                         # 9
+                sum(case when format = "Computer File " then 1 else 0 end) as file,             # 10
+                sum(case when format = "Visual Material" then 1 else 0 end) as visual,          # 11
+                sum(case when format = "Archives/Manuscripts" then 1 else 0 end) as archive,    # 12
+                sum(case when format = "3D object" then 1 else 0 end) as object,                # 13
+                sum(case when format = "Mixed Material" then 1 else 0 end) as mixed             # 14
+            FROM eco_details
+            WHERE eco_summary_id = #{self.id}
+            GROUP BY year(bib_create_date)
+            ORDER BY 1 DESC;
+        END_SQL
+        rows = ActiveRecord::Base.connection.exec_query(sql).rows
+
+        # Save the breakdown
+        rows.each do |r|
+            acq = EcoAcquisitions.new
+            acq.eco_summary_id = self.id
+            acq.acq_type = "bib"
+            acq.year = r[0]
+            acq.total = r[1]
+            acq.online = r[2]
+            acq.book = r[3]
+            acq.periodical = r[4]
+            acq.sound = r[5]
+            acq.video = r[6]
+            acq.score = r[7]
+            acq.etd = r[8]
+            acq.map = r[9]
+            acq.file = r[10]
+            acq.visual = r[11]
+            acq.archive = r[12]
+            acq.object = r[13]
+            acq.mixed = r[14]
+            acq.unknown = acq.total - (acq.book + acq.periodical + acq.sound +
+                acq.video + acq.score + acq.etd + acq.map + acq.file +
+                acq.visual + acq.archive + acq.object + acq.mixed)
+            acq.save
+        end
     end
 
     # Updates the counts in the EcoSummary by aggregating the totals from the EcoRanges
@@ -400,12 +443,12 @@ class EcoSummary < ActiveRecord::Base
             bibs_count = 0
             is_range, range_from, range_to = CallnumberNormalizer.normalize_range(range.from, range.to)
             if is_range
-              Callnumber.process_by_range(range.from, range.to) do |bibs|
+              Callnumber.process_by_range(range.from, range.to) do |docs|
                 EcoDetails.transaction do
-                  bibs.each do |bib|
-                    items_count += EcoDetails.new_from_bib(id, range.id, bib, range_from, range_to)
+                  docs.each do |doc|
+                    items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to)
                   end
-                  bibs_count += bibs.count
+                  bibs_count += docs.count
                 end
               end
             else

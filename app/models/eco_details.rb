@@ -64,13 +64,8 @@ class EcoDetails < ActiveRecord::Base
         return count, EcoDetails.where(eco_summary_id: summary_id).take(max)
     end
 
-    # Creates a new detail record for a given bib (a bib is a Solr document)
-    #
-    #   item_create_date    945|z
-    #   bib_create_date     907|c
-    #   bib_catalog_date    998|b
-    def self.new_from_bib(eco_summary_id, eco_range_id, bib, range_from, range_to)
-        doc = bib
+    # Creates a new detail record for a given Solr document
+    def self.new_from_solr_doc(eco_summary_id, eco_range_id, doc, range_from, range_to)
         id = doc["id"]
         marc_record = MarcRecord.new(doc["marc_display"])
         subjects = marc_record.subjects()
@@ -103,6 +98,9 @@ class EcoDetails < ActiveRecord::Base
             if subjects.count > 0
                 record.subjects = subjects.join("|")
             end
+
+            record.is_online = doc["online_b"] || false
+            record.format = doc["format"] || "UNKNOWN"
             record.save!
             return 1
         end
@@ -135,6 +133,9 @@ class EcoDetails < ActiveRecord::Base
             if subjects.count > 0
                 record.subjects = subjects.join("|")
             end
+
+            record.is_online = doc["online_b"] || false
+            record.format = doc["format"] || "UNKNOWN"
             record.save!
         end
 
@@ -149,6 +150,7 @@ class EcoDetails < ActiveRecord::Base
             line = []
             line << "#{i+1}\t#{row.josiah_bib_id}\t#{row.item_record_num}\t#{row.title}"
             line << "#{row.publish_year}\t#{row.publisher}\t#{row.location_code}"
+            line << "#{row.format}\t#{row.is_online}"
             line << "#{row.checkout_total}\t#{row.checkout_2015_plus}"
             line << "#{row.date_display(row.bib_create_date)}"
             line << "#{row.date_display(row.bib_catalog_date)}"
@@ -164,6 +166,7 @@ class EcoDetails < ActiveRecord::Base
 
         str = "#\tbib\titem\ttitle" +
             "\tpub_year\tpublisher\tloc_code" +
+            "\tformat\tonline"
             "\tcheckouts\tcheckouts2015" +
             "\tbib_create" +
             "\tbib_catalog" +

@@ -1,4 +1,10 @@
 module ApplicationHelper
+
+  def number_not_empty(number)
+    return "" if number == 0
+    return number_with_delimiter(number)
+  end
+
   def html_title_line(title, text)
     return "" if text.blank?
     # This weird concatenation is to make sure Rails

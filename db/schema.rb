@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200427160000) do
+ActiveRecord::Schema.define(version: 20200504160000) do
 
   create_table "best_bet_entries", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -55,6 +55,29 @@ ActiveRecord::Schema.define(version: 20200427160000) do
   add_index "callnumbers", ["bib"], name: "index_callnumbers_on_bib", using: :btree
   add_index "callnumbers", ["normalized"], name: "index_callnumbers_on_normalized", using: :btree
   add_index "callnumbers", ["original"], name: "index_callnumbers_on_original", using: :btree
+
+  create_table "eco_acquisitions", force: :cascade do |t|
+    t.integer "eco_summary_id", limit: 4
+    t.string  "acq_type",       limit: 255
+    t.integer "year",           limit: 4
+    t.integer "total",          limit: 4
+    t.integer "online",         limit: 4
+    t.integer "book",           limit: 4
+    t.integer "periodical",     limit: 4
+    t.integer "sound",          limit: 4
+    t.integer "video",          limit: 4
+    t.integer "score",          limit: 4
+    t.integer "etd",            limit: 4
+    t.integer "map",            limit: 4
+    t.integer "file",           limit: 4
+    t.integer "visual",         limit: 4
+    t.integer "archive",        limit: 4
+    t.integer "object",         limit: 4
+    t.integer "mixed",          limit: 4
+    t.integer "unknown",        limit: 4
+  end
+
+  add_index "eco_acquisitions", ["eco_summary_id", "acq_type", "year"], name: "index_eco_acquisitions_on_eco_summary_id_and_acq_type_and_year", using: :btree
 
   create_table "eco_details", force: :cascade do |t|
     t.integer  "sierra_list",                       limit: 4
@@ -109,6 +132,8 @@ ActiveRecord::Schema.define(version: 20200427160000) do
     t.datetime "bib_create_date"
     t.datetime "bib_catalog_date"
     t.text     "subjects",                          limit: 65535
+    t.string   "format",                            limit: 255
+    t.boolean  "is_online",                                       default: false
   end
 
   add_index "eco_details", ["callnumber_norm"], name: "index_eco_details_on_callnumber_norm", using: :btree

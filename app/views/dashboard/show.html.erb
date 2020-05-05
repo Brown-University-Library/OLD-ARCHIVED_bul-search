@@ -28,6 +28,36 @@
         text-align: right;
     }
 
+    .number_cell_fixed {
+        text-align: right;
+        vertical-align: bottom;
+        width: 90px;
+    }
+
+    .group_col_left {
+        border-left: 2px solid;
+        border-top: 2px solid;
+        border-bottom: 2px solid;
+    }
+
+    .group_col_middle {
+        border-top: 2px solid;
+        border-bottom: 2px solid;
+    }
+
+    .group_col_right {
+        border-right: 2px solid;
+        border-top: 2px solid;
+        border-bottom: 2px solid;
+    }
+
+    .group_col_all {
+        border-right: 2px solid;
+        border-left: 2px solid;
+        border-top: 2px solid;
+        border-bottom: 2px solid;
+    }
+
     /* Source https://stackoverflow.com/a/47820340/446681 */
     .bar {
         width: 300px;
@@ -178,29 +208,43 @@
         <p>As reported in MARC 907|c</p>
         <table id="acquisitionsBibTable">
             <tr>
-                <th>Year</th>
-                <th class="number_cell">Bibs</th>
-                <th class="number_cell">%</th>
-                <th>&nbsp;</th>
+                <th class="number_cell_fixed">Year</th>
+                <th class="number_cell_fixed">Bibs</th>
+                <th class="number_cell_fixed">%</th>
+                <th class="number_cell_fixed">Online</th>
+                <th class="number_cell_fixed group_col_left">Book</th>
+                <th class="number_cell_fixed group_col_middle">Periodical</th>
+                <th class="number_cell_fixed group_col_middle">Sound</th>
+                <th class="number_cell_fixed group_col_middle">Video</th>
+                <th class="number_cell_fixed group_col_middle">Score</th>
+                <th class="number_cell_fixed group_col_middle">Thesis</th>
+                <th class="number_cell_fixed group_col_middle">Map</th>
+                <th class="number_cell_fixed group_col_middle">File</th>
+                <th class="number_cell_fixed group_col_middle">Visual</th>
+                <th class="number_cell_fixed group_col_middle">Archive</th>
+                <th class="number_cell_fixed group_col_middle">3D</th>
+                <th class="number_cell_fixed group_col_middle">Mixed</th>
+                <th class="number_cell_fixed group_col_right">Unknown</th>
             </tr>
             <% @presenter.summary.acquisitions_bib.each do |acq| %>
                 <tr>
-                    <td data-sort-by-number="<%= acq.year %>"><%= acq.year %></td>
-                    <td data-sort-by-number="<%= acq.count %>" class="number_cell">
-                        <a href="<%= dashboard_details_path(id: @presenter.summary.id, yr: acq.year) %>"><%= number_with_delimiter(acq.count) %></a>
-                    </td>
-                    <td class="number_cell">
-                        <% if acq.percent > 0 %>
-                            <%= acq.percent %>&nbsp;%
-                        <% else %>
-                            &nbsp;
-                        <% end %>
-                    </td>
-                    <td>
-                        <div class="bar">
-                            <div class="progress" style="width: <%= acq.percent %>%;"></div>
-                        </div>
-                    </td>
+                    <td data-sort-by-number="<%= acq.year %>" class="number_cell_fixed"><%= acq.year %></td>
+                    <td data-sort-by-number="<%= acq.total %>" class="number_cell_fixed"><%= number_with_delimiter(acq.total) %></td>
+                    <td data-sort-by-number="<%= acq.percent(@presenter.summary.total_bibs()) %>" class="number_cell_fixed"><%= acq.percent(@presenter.summary.total_bibs()) %>%</td>
+                    <td data-sort-by-number="<%= acq.online %>" class="number_cell_fixed"><%= number_with_delimiter(acq.online) %></td>
+                    <td data-sort-by-number="<%= acq.book %>" class="number_cell_fixed"><%= number_not_empty(acq.book) %></td>
+                    <td data-sort-by-number="<%= acq.periodical %>" class="number_cell_fixed"><%= number_not_empty(acq.periodical) %></td>
+                    <td data-sort-by-number="<%= acq.sound %>" class="number_cell_fixed"><%= number_not_empty(acq.sound) %></td>
+                    <td data-sort-by-number="<%= acq.video %>" class="number_cell_fixed"><%= number_not_empty(acq.video) %></td>
+                    <td data-sort-by-number="<%= acq.score %>" class="number_cell_fixed"><%= number_not_empty(acq.score) %></td>
+                    <td data-sort-by-number="<%= acq.etd %>" class="number_cell_fixed"><%= number_not_empty(acq.etd) %></td>
+                    <td data-sort-by-number="<%= acq.map %>" class="number_cell_fixed"><%= number_not_empty(acq.map) %></td>
+                    <td data-sort-by-number="<%= acq.file %>" class="number_cell_fixed"><%= number_not_empty(acq.file) %></td>
+                    <td data-sort-by-number="<%= acq.visual %>" class="number_cell_fixed"><%= number_not_empty(acq.visual) %></td>
+                    <td data-sort-by-number="<%= acq.archive %>" class="number_cell_fixed"><%= number_not_empty(acq.archive) %></td>
+                    <td data-sort-by-number="<%= acq.object %>" class="number_cell_fixed"><%= number_not_empty(acq.object) %></td>
+                    <td data-sort-by-number="<%= acq.mixed %>" class="number_cell_fixed"><%= number_not_empty(acq.mixed) %></td>
+                    <td data-sort-by-number="<%= acq.unknown %>" class="number_cell_fixed"><%= number_not_empty(acq.unknown) %></td>
                 </tr>
             <% end %>
         </table>
@@ -320,8 +364,8 @@ $(document).ready(function(){
     setupSortColumn("locationsTable", 0, "asc", false);
     setupSortColumn("locationsTable", 1, "asc", true);
 
-    setupSortColumn("acquisitionsBibTable", 0, "desc", false);
-    setupSortColumn("acquisitionsBibTable", 1, "asc", true);
+    setupSortColumn("acquisitionsBibTable", 0, "desc", true);
+    setupSortColumn("acquisitionsBibTable", 1, "asc", false);
 
     setupSortColumn("acquisitionsItemTable", 0, "desc", false);
     setupSortColumn("acquisitionsItemTable", 1, "asc", true);

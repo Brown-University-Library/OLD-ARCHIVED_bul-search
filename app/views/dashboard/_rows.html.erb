@@ -8,6 +8,8 @@
         <th>Pub Year</th>
         <th>Publisher</th>
         <th>Location</th>
+        <th>Format</th>
+        <th>Online</th>
         <th>Checkout (All)</th>
         <th>Checkouts (2015+)</th>
         <th>Bib Created</th>
@@ -25,6 +27,8 @@
           <td><%= r.publish_year %></td>
           <td><%= r.publisher %></td>
           <td><%= r.location_code %></td>
+          <td><%= r.format %></td>
+          <td><%= r.is_online ? "Yes" : "No" %></td>
           <td><%= r.checkout_total %></td>
           <td><%= r.checkout_2015_plus %></td>
           <td><%= r.date_display(r.bib_create_date) %></td>
