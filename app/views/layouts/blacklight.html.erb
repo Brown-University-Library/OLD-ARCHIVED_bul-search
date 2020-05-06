@@ -43,6 +43,15 @@
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <% if @bootstrap_tabs %>
+      <!-- This is needed for bootstrap tabs to work,
+      otherwise we get "$(...).tab is not a function".
+      But this also breaks the default modal functionality
+      in Bootstrap and therefore we only load it on very
+      specific pages until we figure out the root of the
+      problem. -->
+      <script src="/assets/bootstrap.v3_4_1.min.js"></script>
+    <% end %>
   </head>
   <body class="<%= render_body_class %>">
   <%= render :partial => 'shared/header_navbar' %>

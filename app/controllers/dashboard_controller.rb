@@ -31,6 +31,7 @@ class DashboardController < ApplicationController
     summary = EcoSummary.find(id)
     if summary.can_view?(current_user)
       Rails.logger.info("Show dashboard #{id} for user #{current_user}.")
+      @bootstrap_tabs = true
       @page_title = summary.list_name
       @presenter = DashboardDetailsPresenter.new(summary)
       @presenter.download_url = dashboard_details_url(id: id, format: 'tsv')

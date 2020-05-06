@@ -32,10 +32,6 @@
 //= require bootstrap/popover
 //= require infobox
 
-// Needed for Bootstrap tabs
-// (otherwise we get "$(...).tab is not a function")
-//= require bootstrap.min
-
 //= require analytics
 
 
