@@ -14,6 +14,13 @@
       <img class="cover-image museum-cover center-block <%= css_class %>" alt=""
         src="<%= museum_thumbnail_url(id: document['id']) %>"/>
   </span>
+<% elsif document["id"] == "b8590483" %>
+  <span class="gbs thumbnail pull-right">
+      <img style="width: 175px;" class="cover-image center-block <%= css_class %>"
+        alt="QR code for isabelhealthcare.com"
+        title="Scan this QR Code to visit www.isabelhealthcare.com"
+        src="<%= image_url('isabel_qr.jpg') %>"/>
+  </span>
 <% else %>
   <span class="gbs thumbnail pull-right hide">
       <img class="cover-image center-block <%= css_class %> hide" alt="" data-isbn="<%= isbn %>" data-oclc="<%= oclc %>" data-lccn="<%= lccn %>">
