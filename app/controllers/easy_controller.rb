@@ -4,10 +4,12 @@ class EasyController < ApplicationController
   include ApplicationHelper # for trusted_ip?()
 
   def about
+    @new_header = (params["nh"] == "y")
     render "about"
   end
 
   def home
+    @new_header = (params["nh"] == "y")
     @format_stats = []
     @trusted_ip = trusted_ip?(request.remote_ip)
     @easy_search = true
@@ -37,6 +39,7 @@ class EasyController < ApplicationController
   end
 
   def search
+    @new_header = (params["nh"] == "y")
     beginTime = Time.now
     trusted_ip = trusted_ip?(request.remote_ip)
     guest_user = current_user == nil
@@ -72,6 +75,7 @@ class EasyController < ApplicationController
   end
 
   def not_found()
+    @new_header = (params["nh"] == "y")
     flash[:error] = "The page that you are looking for was not found"
     render "home", status: 404
   end

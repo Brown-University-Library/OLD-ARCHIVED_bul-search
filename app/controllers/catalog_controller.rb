@@ -288,6 +288,7 @@ class CatalogController < ApplicationController
   end
 
   def callnumber_search()
+    @new_header = (params["nh"] == "y")
     @altered_search_terms = false
     @new_q = ""
     original_q = params[:q] || ""
@@ -319,6 +320,7 @@ class CatalogController < ApplicationController
   end
 
   def index
+    @new_header = (params["nh"] == "y")
     @is_covid = (ENV["COVID"] == "true")
 
     # == SOLR-7-MIGRATION
@@ -416,6 +418,7 @@ class CatalogController < ApplicationController
   end
 
   def show
+    @new_header = (params["nh"] == "y")
     @is_covid = (ENV["COVID"] == "true")
 
     # == SOLR-7-MIGRATION

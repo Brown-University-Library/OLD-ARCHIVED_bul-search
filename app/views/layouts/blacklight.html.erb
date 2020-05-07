@@ -58,6 +58,10 @@
       -->
       <script type="text/javascript" src="<%= root_url %>bootstrap.v3_4_1.min.html"></script>
     <% end %>
+
+    <% if @new_header %>
+      <link rel="stylesheet" href="https://library.brown.edu/common/css/bul_patterns.css" />
+    <% end %>
   </head>
   <body class="<%= render_body_class %>">
   <%= render :partial => 'shared/header_navbar' %>

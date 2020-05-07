@@ -1,58 +1,205 @@
 <%= render_analytics_code %>
 
-<% if @skip_menu_to_id != nil %>
-  <a class="sr-only" href="#<%= @skip_menu_to_id %>">Skip to search tools</a>
-<% end %>
+<% if @new_header %>
+  <!-- begin bul_pl_header -->
+  <div id="bul_pl_header_begin">
+      <a href="#bul_pl_header_end" id="bul_pl_skip_header">Skip header</a>
+      <div id="bul_pl_header_container">
+          <header id="bul_pl_universal_header">
+              <div id="bul_pl_brand">
+                  <a href="https://brown.edu" role="button" aria-label="Brown home"><img id="bul_pl_brown_shield_header_svg" style="height : 75px ; " alt="Brown University" src="https://library.brown.edu/common/images/BUL_logo.svg" /></a>
+              </div>
+              <div id="bul_pl_logo_text" style="font : 1.5rem CircularStd ; ">
+                  <a href="https://library.brown.edu/">University Library</a>
+              </div>
+              <nav id="bul_pl_header_links">
+                  <div id="bul_pl_header_text">
+                      <a href="https://library.brown.edu/libweb/proxy.php">Off-Campus Access</a>
+                      <a href="https://library.brown.edu/libweb/my_library_account_login.php">My Library Account</a>
+                  </div>
+                  <noscript>
+                      <div>
+                          <a href="https://search.library.brown.edu" id="bul_pl_noscript_search">Search</a>
+                          <link rel="stylesheet" type="text/css" href="https://library.brown.edu/common/css/bul_patterns_noscript.css" />
+                      </div>
+                  </noscript>
+                  <div id="bul_pl_header_modal_trigger_container">
+                      <!-- these a elements needs an href attribute to keep it in the tab rotation -->
+                      <a href="javascript:;" class="bul_pl_header_modal_trigger" role="button" aria-label="Search the Library"> <span id="bul_pl_search_icon">&#9906;</span> </a>
+                  </div>
+                  <div id="bul_pl_header_links_icon_separator">
+                  </div>
+                  <div id="bul_pl_header_menu_trigger_container">
+                      <a href="javascript:;" class="bul_pl_header_menu_trigger" role="button" aria-label="menu links"><noscript><a href="https://library.brown.edu/"></noscript><span id="bul_pl_hamburger_icon">&#9776;</span> <noscript></a></noscript> </a>
+                  </div>
+                  <div class="bul_pl_header_modal">
+                      <div class="bul_pl_header_modal-content">
+                          <span class="bul_pl_header_modal_close-button" role="button">×</span>
+                          <div class="bul_pl_header_modal_text">
+                              <form method="get" action="https://search.library.brown.edu/" name="searchForm" id="searchForm" class="search">
+                                  <input name="utf8" type="hidden" value="✓">
+                                  <div id="bul_pl_searchForm_lookfor_container">
+                                      <input id="bul_pl_searchForm_lookfor" type="text" name="q" placeholder="Search the Library" onfocus="if (value =='Search the Library'){value =''}" aria-label="Search the Library"> <button id="bul_pl_search_button"><span>Search &rarr;</span> </button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="bul_pl_header_menu">
+                      <div class="bul_pl_header_menu-content">
+                          <span class="bul_pl_header_menu_close-button" role="button">×</span> <img id="bul_pl_brown_shield_menu_svg" style="height : 44px ; " alt="Brown University" src="https://library.brown.edu/common/images/BUL_logo.svg" />
+                          <div id="bul_pl_header_menu_text">
+                              <ul>
+                                  <li class="bul_pl_header_show_tiny_screen"><a href="https://search.library.brown.edu/libweb/proxy.php">Search</a></li>
+                                  <li class="bul_pl_header_show_small_screen"><a href="https://library.brown.edu/libweb/proxy.php">Off-Campus Access</a></li>
+                                  <li class="bul_pl_header_show_small_screen"><a href="https://library.brown.edu/libweb/my_library_account_login.php">My Library Account</a></li>
+                                  <li><a href="https://library.brown.edu/borrowing/">Borrow, Request, & Renew</a></li>
+                                  <li><a href="https://library.brown.edu/info/ajdb">Articles, Journals, & Databases</a></li>
+                                  <li><a href="https://library.brown.edu/about/specialists.php">Research Help</a></li>
+                                  <li><a href="https://library.brown.edu/libweb/hours.php">Hours & Locations</a></li>
+                                  <li><a href="https://brownlibrary.lwcal.com/#view/all">Events</a></li>
+                                  <li><a href="https://library.brown.edu/libweb/askalib.php">Ask a Question Now</a></li>
 
-<div id="topmost-nav-links">
-  <ul>
-    <li><a href="http://library.brown.edu/borrowing/">Find &amp; Borrow</a></li>
-    <li><a href="http://library.brown.edu/info/ajdb">Articles, Journals, &amp; Databases</a></li>
-    <li><a href="http://library.brown.edu/about/specialists.php">Research Help</a></li>
-    <li><a href="http://library.brown.edu/libweb/hours.php">Hours, Locations, &amp; Events</a></li>
-    <li><a href="http://library.brown.edu/libweb/askalib.php">Ask a Question Now</a></li>
-    <li><a href="http://library.brown.edu/libweb/proxy.php">Off-Campus Access</a></li>
-    <% if current_user == nil %>
-      <li><a href="<%= my_library_account_url() %>">My Library Account</a>
-    <% else %>
-      <li><i><a href="<%= my_library_account_url() %>">My Library Account</a></i>
-    <% end %>
-  </ul>
-</div>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </nav>
 
-<div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#user-util-collapse">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="//library.brown.edu"><span>Brown University Library</span></a>
+              <script>
 
-    <% if @solr7 == true %>
-      <span style="background-color: #f9e964; color: #2374f2; font-size: 40px;">Solr 7</span>
-    <% end %>
+                  // When the user scrolls down 42px from the top of the document, resize the header's font size
 
-    </div>
+                  window.onscroll = function() {bul_pl_header_scrollFunction()};
+
+                  function bul_pl_header_scrollFunction() {
+                  if (document.body.scrollTop > 42 || document.documentElement.scrollTop > 42) {
+                      document.getElementById("bul_pl_universal_header").style.height = "48px";
+                      document.getElementById("bul_pl_universal_header").style.padding = "0px 0px 12px 25px";
+                      document.getElementById("bul_pl_brown_shield_header_svg").style.height = "45px";
+                      document.getElementById("bul_pl_header_links").style.margin = "2ex 40px 0 0";
+                      document.getElementById("bul_pl_logo_text").style.margin = "20px 0px 0px 0px";
+                      document.getElementById("bul_pl_logo_text").style.font = "1rem CircularStd";
+
+                  } else {
+                      document.getElementById("bul_pl_universal_header").style.height = "85px";
+                      document.getElementById("bul_pl_universal_header").style.padding = "12px 0px 12px 25px";
+                      document.getElementById("bul_pl_brown_shield_header_svg").style.height = "75px";
+                      document.getElementById("bul_pl_header_links").style.margin = "4ex 40px 0 0";
+                      document.getElementById("bul_pl_logo_text").style.margin = "33px 0px 0px 43px";
+                      document.getElementById("bul_pl_logo_text").style.font = "1.5rem CircularStd";
+                  }
+                  }
+
+                  // show/hide the modal/search and side/menu panes
+
+                  var bul_pl_header_modal = document.querySelector(".bul_pl_header_modal");
+                  var bul_pl_header_modal_trigger = document.querySelector(".bul_pl_header_modal_trigger");
+                  var bul_pl_header_modal_closeButton = document.querySelector(".bul_pl_header_modal_close-button");
+
+                  var bul_pl_header_menu = document.querySelector(".bul_pl_header_menu");
+                  var bul_pl_header_menu_trigger = document.querySelector(".bul_pl_header_menu_trigger");
+                  var bul_pl_header_menu_closeButton = document.querySelector(".bul_pl_header_menu_close-button");
+
+                  function bul_pl_header_toggleModal() {
+                      bul_pl_header_modal.classList.toggle("bul_pl_header_modal_show");
+                      document.getElementById("bul_pl_searchForm_lookfor").focus();
+                  }
+
+                  function bul_pl_header_toggleMenu() {
+                      bul_pl_header_menu.classList.toggle("bul_pl_header_menu_show");
+                  }
+
+                  bul_pl_header_modal_trigger.addEventListener("click", bul_pl_header_toggleModal);
+                  bul_pl_header_modal_closeButton.addEventListener("click", bul_pl_header_toggleModal);
+
+                  bul_pl_header_menu_trigger.addEventListener("click", bul_pl_header_toggleMenu);
+                  bul_pl_header_menu_closeButton.addEventListener("click", bul_pl_header_toggleMenu);
+              </script>
+          </header>
+          <div id="bul_pl_header_end">
+          </div>
+      </div>
+  </div>
+  <!-- end bul_pl_header -->
+
+  <!-- begin bul_pl_subheader -->
+  <div id='bul_pl_subheader' style='background-color : #eed4aa ; ' >
+      <div id='bul_pl_subheader_site_title'>
+      <a href='https://search.library.brown.edu' style='color : var(--brown_brown) ;'>Josiah Search</a>
+      <a href='subheader_end' id='bul_pl_skip_subheader'>Skip 10 subheader links</a>
+      </div>
+      <nav id='bul_pl_subheader_Josiah_Search_menu' class='bul_pl_subheader_nav_menu'>
+      <div id='bul_pl_subheader_site_links'>
+          <div id='bul_pl_subheader_trigram'>
+                  <label for='bul_pl_subheader_trigram_checkbox' class='bul_pl_subheader_trigram_toggle'>
+                  &#9776;
+                  </label>
+                  <input type='checkbox' id='bul_pl_subheader_trigram_checkbox' class='bul_pl_subheader_trigram_toggle'>
+                  <ul class='bul_pl_subheader_trigram_menu_contents'><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/catalog?q=' style='text-decoration : none ; color : var(--brown_brown) ;'>Catalog</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/reserves/search' style='text-decoration : none ; color : var(--brown_brown) ;'>Reserves</a></li><li class='bul_pl_subheader_single_link'><a href='https://docs.google.com/forms/d/e/1FAIpQLSfJzCWiV06MFF8mkJ7uhhnv_FeWAoKdlxIXMHAAwn7LIv4_UA/viewform?usp=pp_url&amp;entry.707592340&amp;entry.1473753199&amp;entry.1930188522&amp;entry.1267373353&amp;entry.1478665067=https%3A%2F%2Fsearch.library.brown.edu%2F' style='text-decoration : none ; color : var(--brown_brown) ;'>Feedback</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/bookmarks' style='text-decoration : none ; color : var(--brown_brown) ;'>Bookmarks</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/saved_searches' style='text-decoration : none ; color : var(--brown_brown) ;'>Saved Searches</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/search_history' style='text-decoration : none ; color : var(--brown_brown) ;'>My History</a></li><li class='bul_pl_subheader_single_link'><a href='http://josiah.brown.edu/' style='text-decoration : none ; color : var(--brown_brown) ;'>Classic Josiah</a></li><li class='bul_pl_subheader_single_link'><a href='http://library.brown.edu/libweb/askalib.php' style='text-decoration : none ; color : var(--brown_brown) ;'>Help</a></li><li class='bul_pl_subheader_links_trigger'><a href='javascript:;' onclick='javascript:void(0)' style='text-decoration : none ; color : var(--brown_brown) ;'>Advanced Search&nbsp;&nbsp;&dtrif;</a><div class='bul_pl_subheader_sublinks_container'><ul class='bul_pl_subheader_sublinks'><li><a href='https://search.library.brown.edu/advanced?action=home&amp;controller=easy'>Library Catalog</a></li><li><a href='http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;authtype=ip,sso&amp;custid=rock&amp;groupid=main&amp;profile=eds&amp;cli0=RV&amp;clv0=Y&amp;cli1=FT&amp;clv1=Y&amp;bquery=&amp;type=1&amp;setup=1'>Journal Articles</a></li></ul></div></li></ul>
+          </div>
+          <ul id='bul_pl_subheader_links'>
+          <li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/catalog?q=' style='text-decoration : none ; color : var(--brown_brown) ;'>Catalog</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/reserves/search' style='text-decoration : none ; color : var(--brown_brown) ;'>Reserves</a></li><li class='bul_pl_subheader_single_link'><a href='https://docs.google.com/forms/d/e/1FAIpQLSfJzCWiV06MFF8mkJ7uhhnv_FeWAoKdlxIXMHAAwn7LIv4_UA/viewform?usp=pp_url&amp;entry.707592340&amp;entry.1473753199&amp;entry.1930188522&amp;entry.1267373353&amp;entry.1478665067=https%3A%2F%2Fsearch.library.brown.edu%2F' style='text-decoration : none ; color : var(--brown_brown) ;'>Feedback</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/bookmarks' style='text-decoration : none ; color : var(--brown_brown) ;'>Bookmarks</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/saved_searches' style='text-decoration : none ; color : var(--brown_brown) ;'>Saved Searches</a></li><li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/search_history' style='text-decoration : none ; color : var(--brown_brown) ;'>My History</a></li><li class='bul_pl_subheader_single_link'><a href='http://josiah.brown.edu/' style='text-decoration : none ; color : var(--brown_brown) ;'>Classic Josiah</a></li><li class='bul_pl_subheader_single_link'><a href='http://library.brown.edu/libweb/askalib.php' style='text-decoration : none ; color : var(--brown_brown) ;'>Help</a></li><li class='bul_pl_subheader_links_trigger'><a href='javascript:;' onclick='javascript:void(0)' style='text-decoration : none ; color : var(--brown_brown) ;'>Advanced Search&nbsp;&nbsp;&dtrif;</a><div class='bul_pl_subheader_sublinks_container'><ul class='bul_pl_subheader_sublinks'><li><a href='https://search.library.brown.edu/advanced?action=home&amp;controller=easy'>Library Catalog</a></li><li><a href='http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;authtype=ip,sso&amp;custid=rock&amp;groupid=main&amp;profile=eds&amp;cli0=RV&amp;clv0=Y&amp;cli1=FT&amp;clv1=Y&amp;bquery=&amp;type=1&amp;setup=1'>Journal Articles</a></li></ul></div></li>
+          </ul>
+      </div>
+      </nav>
+  </div>
+  <!-- end bul_pl_subheader -->
+<% else %>
+  <% if @skip_menu_to_id != nil %>
+    <a class="sr-only" href="#<%= @skip_menu_to_id %>">Skip to search tools</a>
+  <% end %>
+
+  <div id="topmost-nav-links">
+    <ul>
+      <li><a href="http://library.brown.edu/borrowing/">Find &amp; Borrow</a></li>
+      <li><a href="http://library.brown.edu/info/ajdb">Articles, Journals, &amp; Databases</a></li>
+      <li><a href="http://library.brown.edu/about/specialists.php">Research Help</a></li>
+      <li><a href="http://library.brown.edu/libweb/hours.php">Hours, Locations, &amp; Events</a></li>
+      <li><a href="http://library.brown.edu/libweb/askalib.php">Ask a Question Now</a></li>
+      <li><a href="http://library.brown.edu/libweb/proxy.php">Off-Campus Access</a></li>
+      <% if current_user == nil %>
+        <li><a href="<%= my_library_account_url() %>">My Library Account</a>
+      <% else %>
+        <li><i><a href="<%= my_library_account_url() %>">My Library Account</a></i>
+      <% end %>
+    </ul>
   </div>
 
-	<div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
-	  <div class="container">
-      <% if @hide_search_bar || controller_name == 'advanced' %>
-        <!-- don't render the bar, but keep the skeleton (i.e. search-navbar)
-        to preserve the spacing in the header -->
-      <% else %>
-	       <%= render_search_bar  %>
-      <% end %>
-	  </div>
-	</div>
+  <div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#user-util-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="//library.brown.edu"><span>Brown University Library</span></a>
 
-    <div class="collapse navbar-collapse" id="user-util-collapse">
-      <%= render :partial=>'/user_util_links' %>
+      <% if @solr7 == true %>
+        <span style="background-color: #f9e964; color: #2374f2; font-size: 40px;">Solr 7</span>
+      <% end %>
+
+      </div>
     </div>
-</div>
+
+    <div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <% if @hide_search_bar || controller_name == 'advanced' %>
+          <!-- don't render the bar, but keep the skeleton (i.e. search-navbar)
+          to preserve the spacing in the header -->
+        <% else %>
+          <%= render_search_bar  %>
+        <% end %>
+      </div>
+    </div>
+
+      <div class="collapse navbar-collapse" id="user-util-collapse">
+        <%= render :partial=>'/user_util_links' %>
+      </div>
+  </div>
+<% end %>
 
 <!-- Ideally this would go into the default layout for the application,
   but since we are using the layout from the blacklight gem I am using
@@ -60,21 +207,3 @@
 <script>
   var josiahRootUrl = '<%= root_url %>';
 </script>
-
-
-<% if !@solr7 %>
-<script>
-  // Set the Solr URL to include "#s7"
-  $(function() {
-    var s7Url = window.location.toString();
-    if (s7Url.indexOf("?") == -1) {
-      s7Url += "?s7";
-    } else {
-      s7Url += "&s7";
-    }
-    $("#s7_link").attr("href", s7Url);
-  });
-</script>
-<% end %>
-
-

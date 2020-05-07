@@ -100,10 +100,10 @@
         <p>Total bibs: <%= number_with_delimiter(@presenter.summary.total_bibs()) %></p>
         <p>Total items: <%= number_with_delimiter(@presenter.summary.total_items()) %>
         |
-        <% if @presenter.summary.total_items() > 1000 %>
-            <a href="<%= dashboard_details_url(id: @presenter.summary.id) %>">View first 1,000</a>
-        <% else %>
+        <% if @presenter.summary.status == "OK" && @presenter.summary.total_items() < 1000 %>
             <a href="<%= dashboard_details_url(id: @presenter.summary.id, all: 'yes') %>">View all</a>
+        <% else %>
+            <a href="<%= dashboard_details_url(id: @presenter.summary.id) %>">View first 1,000</a>
         <% end %>
         </p>
 
