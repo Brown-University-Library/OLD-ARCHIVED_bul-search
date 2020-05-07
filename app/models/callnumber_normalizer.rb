@@ -47,9 +47,18 @@ class CallnumberNormalizer
 
     norm_from = CallnumberNormalizer.lc_class(cn_from)
     norm_to = CallnumberNormalizer.lc_class(cn_to)
-    if norm_from != nil && norm_to != nil && (norm_from == norm_to)
-      # It's a single LC class, e.g. "HB" to "HB"
-      return true, norm_from, norm_to
+    if norm_from != nil && norm_to != nil
+      if (norm_from == norm_to)
+        # It's a single LC class, e.g. "HB" to "HB"
+        return true, norm_from, norm_to
+      else
+        # It's an LC class range (e.g. "PN" to "PR")
+        norm_from = CallnumberNormalizer.normalize_one(cn_from + "0")
+        norm_to = CallnumberNormalizer.normalize_one(cn_to + "9999")
+        if norm_from != nil && norm_to != nil
+          return true, norm_from, norm_to
+        end
+      end
     end
 
     # Not a valid range
