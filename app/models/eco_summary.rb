@@ -452,11 +452,15 @@ class EcoSummary < ActiveRecord::Base
             is_range, range_from, range_to = CallnumberNormalizer.normalize_range(range.from, range.to)
             if is_range
               Callnumber.process_by_range(range.from, range.to) do |docs|
-                EcoDetails.transaction do
-                  docs.each do |doc|
-                    items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to)
-                  end
-                  bibs_count += docs.count
+                begin
+                    EcoDetails.transaction do
+                        docs.each do |doc|
+                            items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to)
+                        end
+                        bibs_count += docs.count
+                    end
+                rescue => ex
+                  Rails.logger.error("refresh_range: Error processing range (#{range.from}, #{range.to}). Exception #{ex.to_s}")
                 end
               end
             else

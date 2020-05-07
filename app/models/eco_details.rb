@@ -94,7 +94,7 @@ class EcoDetails < ActiveRecord::Base
             record.callnumber_raw = best[:raw]
             record.callnumber_norm = best[:norm]
 
-            record.location_code = marc_record.subfield_values("998", "a").first || "NONE"
+            record.location_code = safe_location_code(marc_record.subfield_values("998", "a").first || "NONE", id)
             if subjects.count > 0
                 record.subjects = subjects.join("|")
             end
@@ -126,7 +126,7 @@ class EcoDetails < ActiveRecord::Base
             record.item_record_num = item.id
             record.callnumber_raw = item.call_number
             record.callnumber_norm = CallnumberNormalizer.normalize_one(item.call_number)
-            record.location_code = item.location_code
+            record.location_code = safe_location_code(item.location_code || "NONE", id)
             record.checkout_total = item.checkout_total
             record.checkout_2015_plus = item.checkout_2015_plus
             record.item_create_date = item.created_date
@@ -140,6 +140,14 @@ class EcoDetails < ActiveRecord::Base
         end
 
         return items.count
+    end
+
+    def self.safe_location_code(code, bib)
+        if (code || "").length > 5
+            Rails.logger.error("BIB: #{bib} has an invalid location code: #{code}")
+            return code[0..4]
+        end
+        return code
     end
 
     # Creates a tab delimited string for a set of EcoDetails rows
