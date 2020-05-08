@@ -204,41 +204,4 @@ class EcoDetails < ActiveRecord::Base
         end # file
         Rails.logger.info("Done saving TSV file #{filename}")
     end
-
-    # Creates a tab delimited string for a set of EcoDetails rows
-    def self.to_tsv(rows)
-        Rails.logger.info("Begin generating TSV for #{rows.count} rows")
-        lines = []
-        rows.each_with_index do |row, i|
-            line = []
-            line << "#{i+1}\t#{row.josiah_bib_id}\t#{row.item_record_num}\t#{row.title}"
-            line << "#{row.publish_year}\t#{row.publisher}\t#{row.location_code}"
-            line << "#{row.format}\t#{row.is_online}"
-            line << "#{row.checkout_total}\t#{row.checkout_2015_plus}"
-            line << "#{row.date_display(row.bib_create_date)}"
-            line << "#{row.date_display(row.bib_catalog_date)}"
-            line << "#{row.date_display(row.item_create_date)}"
-            line << "#{row.callnumber_raw}\t#{row.callnumber_norm}"
-            line << "#{row.subjects}"
-            lines << line.join("\t")
-            if (i % 5000) == 0
-                Rails.logger.info("== processed #{i} rows...")
-            end
-        end
-        Rails.logger.info("== processed #{rows.count} rows...")
-
-        str = "#\tbib\titem\ttitle" +
-            "\tpub_year\tpublisher\tloc_code" +
-            "\tformat\tonline"
-            "\tcheckouts\tcheckouts2015" +
-            "\tbib_create" +
-            "\tbib_catalog" +
-            "\titem_create" +
-            "\tcall_no\tcall_no_norm" +
-            "\tsubjects\r\n"
-        str += lines.join("\r\n")
-
-        Rails.logger.info("Generating TSV string for #{rows.count} rows")
-        str
-    end
 end
