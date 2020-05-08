@@ -430,11 +430,17 @@ class EcoSummary < ActiveRecord::Base
         self.refreshed_at = Time.now
         save!
 
+        EcoDetails.to_tsv_file(filename_tsv(), self.id)
+
         Rails.cache.delete("ecosystem_#{self.id}_locations")
         Rails.cache.delete("ecosystem_#{self.id}_checkouts")
         Rails.cache.delete("ecosystem_#{self.id}_checkouts_2015")
         Rails.cache.delete("ecosystem_#{self.id}_acquisitions_bib")
         Rails.cache.delete("ecosystem_#{self.id}_acquisitions_item")
+    end
+
+    def filename_tsv
+        ENV["ECOSYSTEM_DOWNLOADS"] + "/dashboard_#{self.id}.tsv"
     end
 
     # Recalculate the EcoDetails for a given EcoRange

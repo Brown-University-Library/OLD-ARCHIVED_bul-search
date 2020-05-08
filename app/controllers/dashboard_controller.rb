@@ -96,6 +96,14 @@ class DashboardController < ApplicationController
       return
     end
 
+    if params["format"] == "tsv"
+      # Return data for this collection as TSV (notice that we use the
+      # pre-generated file with all the data, regardless of current filter)
+      Rails.logger.info("Exporting TSV: #{summary.list_name} for user #{current_user}")
+      send_data(File.read(summary.filename_tsv()), :filename => "dashboard_#{summary.id}.tsv", :type => "text/tsv")
+      return
+    end
+
     @page_title = summary.list_name
     @presenter = nil
 
@@ -133,12 +141,6 @@ class DashboardController < ApplicationController
       @presenter.download_url = dashboard_details_url(id: id, all: 'yes', format: 'tsv')
       @presenter.show_all_url = dashboard_details_url(id: id, all: 'yes')
       Rails.logger.info("Show details (all) for dashboard #{id} for user #{current_user}.")
-    end
-
-    if params["format"] == "tsv"
-      Rails.logger.info("Exporting TSV: #{@presenter.summary.list_name} - #{@presenter.name}, #{@presenter.count} records for user #{current_user}")
-      send_data(EcoDetails.to_tsv(@presenter.rows), :filename => "dashboard_#{summary.id}.tsv", :type => "text/tsv")
-      return
     end
 
     @presenter.edit_user = EcoSummary.edit_user?(current_user)

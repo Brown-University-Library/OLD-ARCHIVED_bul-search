@@ -150,6 +150,61 @@ class EcoDetails < ActiveRecord::Base
         return code
     end
 
+    def self.to_tsv_file(filename, id)
+        Rails.logger.info("Begin saving TSV file #{filename}")
+        rows = EcoDetails.where(eco_summary_id: id)
+        File.open(filename, "w") do |file|
+
+            tokens = []
+            tokens << "#"
+            tokens << "bib"
+            tokens << "item"
+            tokens << "title"
+            tokens << "pub_year"
+            tokens << "publisher"
+            tokens << "loc_code"
+            tokens << "format"
+            tokens << "online"
+            tokens << "checkouts"
+            tokens << "checkouts2015"
+            tokens << "bib_create"
+            tokens << "bib_catalog"
+            tokens << "item_create"
+            tokens << "call_no"
+            tokens << "call_no_norm"
+            tokens << "subjects"
+            line = tokens.join("\t") + "\r\n"
+            file.write(line)
+
+            rows.each_with_index do |row, i|
+                tokens = []
+                tokens << "#{i+1}"
+                tokens << "#{row.josiah_bib_id}"
+                tokens << "#{row.item_record_num}"
+                tokens << "#{row.title}"
+                tokens << "#{row.publish_year}"
+                tokens << "#{row.publisher}"
+                tokens << "#{row.location_code}"
+                tokens << "#{row.format}"
+                tokens << "#{row.is_online}"
+                tokens << "#{row.checkout_total}"
+                tokens << "#{row.checkout_2015_plus}"
+                tokens << "#{row.date_display(row.bib_create_date)}"
+                tokens << "#{row.date_display(row.bib_catalog_date)}"
+                tokens << "#{row.date_display(row.item_create_date)}"
+                tokens << "#{row.callnumber_raw}"
+                tokens << "#{row.callnumber_norm}"
+                tokens << "#{row.subjects}"
+                line = tokens.join("\t") + "\r\n"
+                file.write(line)
+                if ((i + 1) % 5000) == 0
+                    Rails.logger.info("== processed #{i + 1} rows...")
+                end
+            end # rows
+        end # file
+        Rails.logger.info("Done saving TSV file #{filename}")
+    end
+
     # Creates a tab delimited string for a set of EcoDetails rows
     def self.to_tsv(rows)
         Rails.logger.info("Begin generating TSV for #{rows.count} rows")
