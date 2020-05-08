@@ -53,4 +53,10 @@ class StringUtils
     end
     safe_value
   end
+
+  # Drop the N-SIZE prefix from a call number that is specific to Brown.
+  def self.drop_n_size(text)
+    return nil if text == nil
+    text = text.strip.gsub(/\d-SIZE\s/,"")
+  end
 end

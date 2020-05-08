@@ -6,6 +6,7 @@ class CallnumberNormalizer
   # Normalizes a single call number
   def self.normalize_one(callnumber)
     return nil if callnumber == nil
+    callnumber = StringUtils.drop_n_size(callnumber)
     Lcsort.normalize(callnumber)
   end
 

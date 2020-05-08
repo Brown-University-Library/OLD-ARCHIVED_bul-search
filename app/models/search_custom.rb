@@ -99,15 +99,6 @@ class SearchCustom
   end
 
   private
-    # Drop the N-SIZE prefix since we don't index it.
-    def drop_nsize(text)
-      # In a user entered call number it will be in the form "1-SIZE "
-      text = text.strip.gsub(/\d-SIZE\s/,"")
-      # In a tokenized call number it will be in the form "1|SIZE|"
-      text = text.strip.gsub(/\d\|SIZE\|/,"")
-      text
-    end
-
     # Surrounds a text in quotes (if needed)
     def quotes(text)
       return nil if text == nil
@@ -155,7 +146,7 @@ class SearchCustom
 
     # Returns the text in a format suitable for call number search.
     def callnumber_searchable(text)
-      text = drop_nsize(text)
+      text = StringUtils.drop_n_size(text)
       if wildcard_search?(text)
         # Make it a Solr RegEx value
         text = "/" + StringUtils.solr_safe_regex(text.gsub("*", "")) + ".*/"
