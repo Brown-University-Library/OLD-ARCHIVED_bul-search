@@ -31,4 +31,14 @@ namespace :josiah do
       puts "Collections are still pending."
     end
   end
+
+  desc "Regenerates the TSV file for a given collection ID"
+  task "ecosystem_tsv", [:id] => :environment do |_cmd, args|
+    id = (args[:id] || "").to_i
+    summary = EcoSummary.find(id)
+    filename = summary.filename_tsv()
+    puts "Regenerating TSV file #{filename} for EcoSummary #{id}..."
+    EcoDetails.to_tsv_file(filename, summary.id)
+    puts "Done"
+  end
 end
