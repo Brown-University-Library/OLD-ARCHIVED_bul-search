@@ -152,9 +152,9 @@ class EcoDetails < ActiveRecord::Base
 
     def self.to_tsv_file(filename, id)
         Rails.logger.info("Begin saving TSV file #{filename}")
-        rows = EcoDetails.where(eco_summary_id: id)
         File.open(filename, "w") do |file|
 
+            # Header row
             tokens = []
             tokens << "#"
             tokens << "bib"
@@ -176,9 +176,12 @@ class EcoDetails < ActiveRecord::Base
             line = tokens.join("\t") + "\r\n"
             file.write(line)
 
-            rows.each_with_index do |row, i|
+            # Data rows
+            i = 0
+            EcoDetails.where(eco_summary_id: id).find_each do |row|
+                i += 1
                 tokens = []
-                tokens << "#{i+1}"
+                tokens << "#{i}"
                 tokens << "#{row.josiah_bib_id}"
                 tokens << "#{row.item_record_num}"
                 tokens << "#{row.title}"
@@ -197,10 +200,10 @@ class EcoDetails < ActiveRecord::Base
                 tokens << "#{row.subjects}"
                 line = tokens.join("\t") + "\r\n"
                 file.write(line)
-                if ((i + 1) % 5000) == 0
-                    Rails.logger.info("== processed #{i + 1} rows...")
+                if (i % 500) == 0
+                    Rails.logger.info("== processed #{i} rows...")
                 end
-            end # rows
+            end # where.find_each
         end # file
         Rails.logger.info("Done saving TSV file #{filename}")
     end
