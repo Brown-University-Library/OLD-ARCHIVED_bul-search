@@ -5,6 +5,7 @@ require "./app/presenters/dashboard_details_presenter.rb"
 
 class DashboardController < ApplicationController
   def index
+    @new_header = use_new_header()
     @page_title = "Dashboard"
     @editors = EcoSummary.editors(current_user)
 
@@ -27,6 +28,7 @@ class DashboardController < ApplicationController
   end
 
   def show
+    @new_header = use_new_header()
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
     if summary.can_view?(current_user)
@@ -47,6 +49,7 @@ class DashboardController < ApplicationController
   end
 
   def edit
+    @new_header = use_new_header()
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
     if summary.can_edit?(current_user)
@@ -66,6 +69,7 @@ class DashboardController < ApplicationController
   end
 
   def delete
+    @new_header = use_new_header()
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
     if summary.can_delete?(current_user)
@@ -84,6 +88,7 @@ class DashboardController < ApplicationController
   end
 
   def details
+    @new_header = use_new_header()
     id = (params["id"] || 0).to_i
     all = (params["all"] == "yes")
     max = all ? -1 : 1000
@@ -151,6 +156,7 @@ class DashboardController < ApplicationController
   end
 
   def new
+    @new_header = use_new_header()
     if EcoSummary.can_new?(current_user)
       summary = EcoSummary.new_for_user(current_user)
       Rails.logger.info("Created dashboard #{summary.id} for user #{current_user}.")
@@ -162,6 +168,7 @@ class DashboardController < ApplicationController
   end
 
   def copy
+    @new_header = use_new_header()
     if EcoSummary.edit_user?(current_user)
       id = (params["id"] || 0).to_i
       summary = EcoSummary.copy(id, current_user)
@@ -174,6 +181,7 @@ class DashboardController < ApplicationController
   end
 
   def save
+    @new_header = use_new_header()
     id = (params["id"] || 0).to_i
     summary = EcoSummary.find(id)
     if summary.can_edit?(current_user)

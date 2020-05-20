@@ -27,4 +27,8 @@ class ApplicationController < ActionController::Base
     end
     value.to_i
   end
+
+  def use_new_header()
+    return (ENV["NEW_HEADER"] == "true") || (params["nh"] == "y")
+  end
 end
