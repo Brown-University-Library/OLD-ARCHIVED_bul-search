@@ -61,6 +61,27 @@
 
     <% if @new_header %>
       <link rel="stylesheet" href="https://library.brown.edu/common/css/bul_patterns.css" />
+      <style>
+        /* Customizations of top of the BUL pattern styles */
+        body {
+          font-size: 14px;
+        }
+
+        .bul_pl_subheader_links_trigger {
+          text-decoration: none;
+          color: var(--brown_brown);
+        }
+
+        .bul_pl_subheader_single_link a {
+          text-decoration: none;
+          color: var(--brown_brown);
+        }
+
+        .bul_pl_subheader_sublinks a {
+          text-decoration: none;
+          color: var(--brown_brown);
+        }
+      </style>
     <% end %>
   </head>
   <body class="<%= render_body_class %>">

@@ -1,0 +1,53 @@
+<% if @skip_menu_to_id != nil %>
+<a class="sr-only" href="#<%= @skip_menu_to_id %>">Skip to search tools</a>
+<% end %>
+
+<div id="topmost-nav-links">
+<ul>
+    <li><a href="http://library.brown.edu/borrowing/">Find &amp; Borrow</a></li>
+    <li><a href="http://library.brown.edu/info/ajdb">Articles, Journals, &amp; Databases</a></li>
+    <li><a href="http://library.brown.edu/about/specialists.php">Research Help</a></li>
+    <li><a href="http://library.brown.edu/libweb/hours.php">Hours, Locations, &amp; Events</a></li>
+    <li><a href="http://library.brown.edu/libweb/askalib.php">Ask a Question Now</a></li>
+    <li><a href="http://library.brown.edu/libweb/proxy.php">Off-Campus Access</a></li>
+    <% if current_user == nil %>
+    <li><a href="<%= my_library_account_url() %>">My Library Account</a>
+    <% else %>
+    <li><i><a href="<%= my_library_account_url() %>">My Library Account</a></i>
+    <% end %>
+</ul>
+</div>
+
+<div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
+<div class="container">
+    <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#user-util-collapse">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="//library.brown.edu"><span>Brown University Library</span></a>
+
+    <% if @solr7 == true %>
+    <span style="background-color: #f9e964; color: #2374f2; font-size: 40px;">Solr 7</span>
+    <% end %>
+
+    </div>
+</div>
+
+<div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+    <% if @hide_search_bar || controller_name == 'advanced' %>
+        <!-- don't render the bar, but keep the skeleton (i.e. search-navbar)
+        to preserve the spacing in the header -->
+    <% else %>
+        <%= render_search_bar  %>
+    <% end %>
+    </div>
+</div>
+
+    <div class="collapse navbar-collapse" id="user-util-collapse">
+    <%= render :partial=>'/user_util_links' %>
+    </div>
+</div>
