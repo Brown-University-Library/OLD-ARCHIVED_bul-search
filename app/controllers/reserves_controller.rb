@@ -2,6 +2,7 @@
 #
 class ReservesController < ApplicationController
   def search
+    @new_header = use_new_header()
     begin
       @course_num = params["course_num"]
       @instructor = params["instructor"]
@@ -23,6 +24,7 @@ class ReservesController < ApplicationController
   end
 
   def show
+    @new_header = use_new_header()
     begin
       @classid = params[:classid]
       @classnumber = params[:classnumber]
