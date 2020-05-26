@@ -36,7 +36,12 @@
                             <form method="get" action="<%= search_action_url() %>" name="searchForm" id="searchForm" class="search">
                                 <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
                                 <div id="bul_pl_searchForm_lookfor_container">
-                                    <input id="bul_pl_searchForm_lookfor" type="text" name="q" placeholder="Search the Library" onfocus="if (value =='Search the Library'){value =''}" aria-label="Search the Library"> <button id="bul_pl_search_button"><span>Search &rarr;</span> </button>
+                                    <input id="bul_pl_searchForm_lookfor"
+                                        type="text" name="q"
+                                        placeholder="Search the Library"
+                                        value="<%= clean_search_term(params[:q]) %>"
+                                        onfocus="if (value =='Search the Library'){value =''}"
+                                        aria-label="Search the Library"> <button id="bul_pl_search_button"><span>Search &rarr;</span> </button>
                                 </div>
                             </form>
                         </div>
@@ -67,25 +72,23 @@
 
                 // When the user scrolls down 42px from the top of the document, resize the header's font size
 
-                window.onscroll = function() {bul_pl_header_scrollFunction()};
+                window.onscroll = function() {
+                    if (document.body.scrollTop > 42 || document.documentElement.scrollTop > 42) {
+                        document.getElementById("bul_pl_universal_header").style.height = "48px";
+                        document.getElementById("bul_pl_universal_header").style.padding = "0px 0px 12px 25px";
+                        document.getElementById("bul_pl_brown_shield_header_svg").style.height = "45px";
+                        document.getElementById("bul_pl_header_links").style.margin = "2ex 40px 0 0";
+                        document.getElementById("bul_pl_logo_text").style.margin = "20px 0px 0px 0px";
+                        document.getElementById("bul_pl_logo_text").style.font = "1rem CircularStd";
 
-                function bul_pl_header_scrollFunction() {
-                if (document.body.scrollTop > 42 || document.documentElement.scrollTop > 42) {
-                    document.getElementById("bul_pl_universal_header").style.height = "48px";
-                    document.getElementById("bul_pl_universal_header").style.padding = "0px 0px 12px 25px";
-                    document.getElementById("bul_pl_brown_shield_header_svg").style.height = "45px";
-                    document.getElementById("bul_pl_header_links").style.margin = "2ex 40px 0 0";
-                    document.getElementById("bul_pl_logo_text").style.margin = "20px 0px 0px 0px";
-                    document.getElementById("bul_pl_logo_text").style.font = "1rem CircularStd";
-
-                } else {
-                    document.getElementById("bul_pl_universal_header").style.height = "85px";
-                    document.getElementById("bul_pl_universal_header").style.padding = "12px 0px 12px 25px";
-                    document.getElementById("bul_pl_brown_shield_header_svg").style.height = "75px";
-                    document.getElementById("bul_pl_header_links").style.margin = "4ex 40px 0 0";
-                    document.getElementById("bul_pl_logo_text").style.margin = "33px 0px 0px 43px";
-                    document.getElementById("bul_pl_logo_text").style.font = "1.5rem CircularStd";
-                }
+                    } else {
+                        document.getElementById("bul_pl_universal_header").style.height = "85px";
+                        document.getElementById("bul_pl_universal_header").style.padding = "12px 0px 12px 25px";
+                        document.getElementById("bul_pl_brown_shield_header_svg").style.height = "75px";
+                        document.getElementById("bul_pl_header_links").style.margin = "4ex 40px 0 0";
+                        document.getElementById("bul_pl_logo_text").style.margin = "33px 0px 0px 43px";
+                        document.getElementById("bul_pl_logo_text").style.font = "1.5rem CircularStd";
+                    }
                 }
 
                 // show/hide the modal/search and side/menu panes
@@ -136,14 +139,14 @@
         <ul class='bul_pl_subheader_trigram_menu_contents'>
             <li class='bul_pl_subheader_single_link'><a href='<%= catalog_index_path(q: @query) %>'>Catalog</a></li>
             <li class='bul_pl_subheader_single_link'><a href='<%= reserves_search_path() %>' title='In-Library Reserves'>Reserves</a></li>
-            <li class='bul_pl_subheader_single_link'><a href='<%= google_form_url() %>'>Feedback</a></li>
-            <li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/bookmarks'>Bookmarks</a></li>
-            <li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/saved_searches'>Saved Searches</a></li>
+            <li class='bul_pl_subheader_single_link'><a href='<%= google_form_url() %>' target='_blank'>Feedback</a></li>
+            <li class='bul_pl_subheader_single_link'><a href='<%= bookmarks_path() %>'>Bookmarks</a></li>
+            <li class='bul_pl_subheader_single_link'><a href='<%= saved_searches_path() %>'>Saved Searches</a></li>
             <li class='bul_pl_subheader_single_link'><a href='<%= search_history_path() %>'>My History</a></li>
             <li class='bul_pl_subheader_single_link'><a href='<%= classic_josiah_link(@classic_bib) %>' target='_blank'>Classic Josiah</a></li>
             <li class='bul_pl_subheader_single_link'><a href='http://library.brown.edu/libweb/askalib.php'>Help</a></li>
             <li class='bul_pl_subheader_links_trigger'>
-            <a href='javascript:;' onclick='javascript:void(0)'>Advanced Search&nbsp;&nbsp;&dtrif;</a>
+            <a href='#' onclick='javascript:void(0)'>Advanced Search&nbsp;&nbsp;&dtrif;</a>
             <div class='bul_pl_subheader_sublinks_container'>
                 <ul class='bul_pl_subheader_sublinks'>
                 <li><a href='<%= advanced_search_path(params) %>'>Library Catalog</a></li>
@@ -156,14 +159,14 @@
         <ul id='bul_pl_subheader_links'>
         <li class='bul_pl_subheader_single_link'><a href='<%= catalog_index_path(q: @query) %>'>Catalog</a></li>
         <li class='bul_pl_subheader_single_link'><a href='<%= reserves_search_path() %>' title='In-Library Reserves'>Reserves</a></li>
-        <li class='bul_pl_subheader_single_link'><a href='<%= google_form_url() %>'>Feedback</a></li>
-        <li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/bookmarks'>Bookmarks</a></li>
-        <li class='bul_pl_subheader_single_link'><a href='https://search.library.brown.edu/saved_searches'>Saved Searches</a></li>
+        <li class='bul_pl_subheader_single_link'><a href='<%= google_form_url() %>' target='_blank'>Feedback</a></li>
+        <li class='bul_pl_subheader_single_link'><a href='<%= bookmarks_path() %>'>Bookmarks</a></li>
+        <li class='bul_pl_subheader_single_link'><a href='<%= saved_searches_path() %>'>Saved Searches</a></li>
         <li class='bul_pl_subheader_single_link'><a href='<%= search_history_path() %>'>My History</a></li>
         <li class='bul_pl_subheader_single_link'><a href='<%= classic_josiah_link(@classic_bib) %>' target='_blank'>Classic Josiah</a></li>
         <li class='bul_pl_subheader_single_link'><a href='http://library.brown.edu/libweb/askalib.php'>Help</a></li>
         <li class='bul_pl_subheader_links_trigger'>
-            <a href='javascript:;' onclick='javascript:void(0)'>Advanced Search&nbsp;&nbsp;&dtrif;</a>
+            <a href='#' onclick='javascript:void(0)'>Advanced Search&nbsp;&nbsp;&dtrif;</a>
             <div class='bul_pl_subheader_sublinks_container'>
             <ul class='bul_pl_subheader_sublinks'>
                 <li><a href='<%= advanced_search_path(params) %>'>Library Catalog</a></li>
