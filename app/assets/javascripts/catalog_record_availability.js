@@ -230,14 +230,20 @@ $(document).ready(function() {
   scope.showHathiEmergencyLinks = function(oclcNums) {
     var i, oclcNumString, url;
 
-    if (oclcNums.length == 0) {
-      scope.debugMessage("Skipped call to Hathi (no OCLC numbers available)");
-      return;
-    }
-
     oclcNumString = "";
     for(i = 0; i < oclcNums.length; i++) {
+      if (bibData.id == "b6496967") {
+        if ((oclcNums[i] == "ocm00000004") || (oclcNums[i] == "00000004")) {
+          scope.debugMessage("Ignore known OCLC mismatch");
+          continue;
+        }
+      }
       oclcNumString += "oclc:" + oclcNums[i] + ";"
+    }
+
+    if (oclcNumString == "") {
+      scope.debugMessage("Skipped call to Hathi (no OCLC numbers available)");
+      return;
     }
 
     // Call the Hathi API with one or many OCLC numbers
