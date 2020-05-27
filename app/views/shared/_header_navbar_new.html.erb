@@ -37,11 +37,13 @@
                                 <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
                                 <div id="bul_pl_searchForm_lookfor_container">
                                     <input id="bul_pl_searchForm_lookfor"
-                                        type="text" name="q"
+                                        type="text"
+                                        name="q"
                                         placeholder="Search the Library"
                                         value="<%= clean_search_term(params[:q]) %>"
                                         onfocus="if (value =='Search the Library'){value =''}"
-                                        aria-label="Search the Library"> <button id="bul_pl_search_button"><span>Search &rarr;</span> </button>
+                                        aria-label="Search the Library">
+                                    <button id="bul_pl_search_button"><span>Search &rarr;</span> </button>
                                 </div>
                             </form>
                         </div>
@@ -101,9 +103,24 @@
                 var bul_pl_header_menu_trigger = document.querySelector(".bul_pl_header_menu_trigger");
                 var bul_pl_header_menu_closeButton = document.querySelector(".bul_pl_header_menu_close-button");
 
-                function bul_pl_header_toggleModal() {
-                    bul_pl_header_modal.classList.toggle("bul_pl_header_modal_show");
-                    document.getElementById("bul_pl_searchForm_lookfor").focus();
+                function bul_pl_header_toggleModal(e) {
+                    if (bul_pl_header_modal.classList.contains("bul_pl_header_modal_show")) {
+                        bul_pl_header_modal.classList.remove("bul_pl_header_modal_show");
+                    } else {
+                        bul_pl_header_modal.classList.add("bul_pl_header_modal_show");
+                        setTimeout(function(){
+                            // focus() only works for visible items. We queue the call
+                            // to focus() via setTimeout() to allow the DOM element to
+                            // become focusable. Source: https://stackoverflow.com/a/1096938/446681
+                            var input = document.getElementById("bul_pl_searchForm_lookfor");
+                            input.focus();
+                            // Force cursor to be at the end of the text.
+                            // Source: https://stackoverflow.com/a/2345915/446681
+                            var val = input.value;
+                            input.value = "";
+                            input.value = val;
+                        }, 100);
+                    }
                 }
 
                 function bul_pl_header_toggleMenu() {
