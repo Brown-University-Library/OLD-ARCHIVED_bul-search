@@ -1,11 +1,3 @@
-<% if @solr7 == true %>
-<style>
-  .documents-list {
-    background-color: #fdf7d6;
-  }
-</style>
-<% end %>
-
 <h2 class="sr-only top-content-title"><%= t('blacklight.search.search_results_header') %></h2>
 
 <% @page_title = t('blacklight.search.title', :application_name => application_name) %>
@@ -38,7 +30,6 @@
 
 <script type="text/javascript">
 window.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
-window.isSolr7 = <%= @solr7 == true %>;   // == SOLR-7-MIGRATION
 
 // Notice that we use the author_display instead of statement_of_responsibility
 // because we do not have the MARC data for search results.

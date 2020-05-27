@@ -10,7 +10,6 @@ $(document).ready(function() {
   var bibsData = window.bibsData;                       // defined in _search_results.html.erb
   var availabilityService = window.availabilityService; // defined in app/views/catalog/index.html.erb
   var availabilityEZB = window.availabilityEZB;
-  var isSolr7 = window.isSolr7;                         // defined in _search_results.html.erb
 
   scope.Init = function() {
     var bibs = [];
@@ -19,50 +18,6 @@ $(document).ready(function() {
       bibs.push(bibsData[i].id);
     }
     scope.getAvailability(bibs);
-
-    // == SOLR-7-MIGRATION
-    if (isSolr7) {
-      links = $("h5>a");
-      for(i = 0; i < links.length; i++) {
-        if (links[i].hasAttribute("data-context-href")) {
-          // It's a show page link.
-          // Make it a normal link (i.e. override the Blacklight POST mechanism)
-          // and append the "s7" parameter;
-          links[i].removeAttribute("data-context-href");
-          newUrl = links[i].getAttribute("href") + "?s7";
-          links[i].setAttribute("href", newUrl);
-        }
-      }
-
-      links = $(".facet-label>a");
-      for(i = 0; i < links.length; i++) {
-        url = links[i].getAttribute("href");
-        if (url.indexOf("/catalog?") > -1) {
-          // It's a search URL.
-          // Append the "s7" parameter
-          newUrl = links[i].getAttribute("href") + "&s7";
-          links[i].setAttribute("href", newUrl);
-        }
-      }
-
-      links = $("a.remove");
-      for(i = 0; i < links.length; i++) {
-        url = links[i].getAttribute("href");
-        if (url.indexOf("/catalog?") > -1) {
-          // It's a search URL.
-          // Append the "s7" parameter
-          newUrl = links[i].getAttribute("href") + "&s7";
-          links[i].setAttribute("href", newUrl);
-        }
-      }
-
-      // Append "s7" to prev/next URLs
-      links = $("div.page_links>a");
-      for(i = 0; i < links.length; i++) {
-        newUrl = links[i].getAttribute("href") + "&s7";
-        links[i].setAttribute("href", newUrl);
-      }
-    }
   };
 
 

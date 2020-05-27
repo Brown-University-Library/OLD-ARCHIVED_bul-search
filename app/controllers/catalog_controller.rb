@@ -323,8 +323,6 @@ class CatalogController < ApplicationController
     @new_header = use_new_header()
     @is_covid = (ENV["COVID"] == "true")
 
-    # == SOLR-7-MIGRATION
-    @solr7 = set_solr_url()
     @trusted_ip = trusted_ip?(request.remote_ip)
 
     if params["search_field"] == nil
@@ -420,9 +418,6 @@ class CatalogController < ApplicationController
   def show
     @new_header = use_new_header()
     @is_covid = (ENV["COVID"] == "true")
-
-    # == SOLR-7-MIGRATION
-    @solr7 = set_solr_url()
 
     id = params[:id] || ""
     if id.length == 9 && !id.start_with?("bdr:") && !id.start_with?("MP_HAF_")
@@ -597,25 +592,6 @@ class CatalogController < ApplicationController
 
     def restore_max_per_page
       blacklight_config.max_per_page = 100
-    end
-
-    # == SOLR-7-MIGRATION
-    def set_solr_url()
-      if params.keys.include?("s7") && ENV["SOLR7_URL"]
-        # Use Solr 7
-        blacklight_config.connection_config[:url] = ENV["SOLR7_URL"]
-        return true
-      end
-
-      # Use our default Solr
-      if blacklight_config.connection_config[:url]
-        return nil
-      end
-
-      # We should never get here, but rather safe than sorry
-      Rails.logger.warn("Blacklight URL was nil")
-      blacklight_config.connection_config[:url] = ENV["SOLR_URL"]
-      return nil
     end
 
     def spam_attempt?
