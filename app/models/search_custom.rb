@@ -80,6 +80,7 @@ class SearchCustom
       q = "*:*"
       params = {}
       params["rows"] = 0
+      params["defType"] = "edismax"
       response, docs = solr_query.search(q, params)
 
       # values is an array in the form ["format1", count1, "format2", count2, ...]
