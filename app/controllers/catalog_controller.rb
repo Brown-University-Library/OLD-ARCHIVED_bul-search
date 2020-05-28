@@ -320,6 +320,7 @@ class CatalogController < ApplicationController
   end
 
   def index
+    @show_search_fields = true
     @new_header = use_new_header()
     @is_covid = (ENV["COVID"] == "true")
 
