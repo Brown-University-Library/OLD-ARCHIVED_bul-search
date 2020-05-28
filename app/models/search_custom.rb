@@ -75,7 +75,7 @@ class SearchCustom
   end
 
   def stats_by_format()
-    Rails.cache.fetch("format_stats", expires_in: 2.minute) do
+    Rails.cache.fetch("format_stats", expires_in: 60.minute) do
       solr_query = SolrQuery.new(@blacklight_config)
       q = "*:*"
       params = {}
