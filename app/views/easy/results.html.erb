@@ -1,4 +1,8 @@
-<h1 style="margin-top: 0px; text-align: center;">Josiah</h1>
+<% if @new_header %>
+  <!-- nothing -->
+<% else %>
+  <h1 style="margin-top: 0px; text-align: center;">Josiah</h1>
+<% end %>
     <div id="easy-find" class="col-md-12">
         <div id="facets" class="col-md-3">
             <div id="format-filter">
@@ -18,6 +22,24 @@
             </div>
         </div>
         <div id="bentos" class="col-md-9">
+            <% if @new_header %>
+              <div class="well well-lg" style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 5px;">
+                <%= form_tag search_action_url, method: :get, class: 'search-query-form form-inline clearfix navbar-form', style: 'margin-bottom: 3.5px' do %>
+                  <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
+                  <div class="input-group col-md-9">
+                    <%= text_field_tag :q, clean_search_term(params[:q]), :placeholder => "", :class => "search_q q form-control", :id => "q2", :autofocus => true %>
+                    <span class="dropdown input-group-btn">
+                      <button id="searchButton" class="btn btn-primary search-btn" type="submit">
+                        <span id="submitText" class="submit-search-text">Search</span>
+                        <span class="glyphicon glyphicon-search"></span>
+                      </button>
+                      <span class="glyphicon glyphicon-search"></span>
+                    </span>
+                  </div>
+                <% end %> <!-- form -->
+              </div>
+            <% end %>
+
             <% if @best_bet != nil %>
               <div class="row">
                 <div id="best-bet">
