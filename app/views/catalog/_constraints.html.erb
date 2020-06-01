@@ -1,6 +1,6 @@
 <% if query_has_constraints? %>
   <% if @new_header %>
-    <div class="row">
+    <div class="row" id="catalog_search_terms_row">
       <%= form_tag search_action_url, method: :get, class: 'search-query-form form-inline clearfix navbar-form', style: 'margin-bottom: 3.5px' do %>
         <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
         <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), :title => "Search field") %>

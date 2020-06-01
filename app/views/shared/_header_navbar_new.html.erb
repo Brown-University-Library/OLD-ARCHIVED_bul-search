@@ -156,6 +156,12 @@
                 var bul_pl_header_menu_closeButton = document.querySelector(".bul_pl_header_menu_close-button");
 
                 function bul_pl_header_toggleModal(e) {
+                    // Toggle the search terms on the page if it is rendered.
+                    var searchTermsRow = document.getElementById("catalog_search_terms_row");
+                    if (searchTermsRow) {
+                        searchTermsRow.classList.toggle("hidden");
+                    }
+                    // Toggle the search toolbar.
                     if (bul_pl_header_modal.classList.contains("bul_pl_header_modal_show")) {
                         bul_pl_header_modal.classList.remove("bul_pl_header_modal_show");
                     } else {
