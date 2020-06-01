@@ -4,14 +4,12 @@
      * drop down list with CSS (i.e. without Javascript)
      * Source: https://stackoverflow.com/a/24671889/446681
      */
-    .custom-select {
+    .header-select-field {
         --baseFg: dimgray;
         --baseBg: white;
         --accentFg: #c00404;        /* Brown red */
         --accentBg: #ffffff;        /* white */
-    }
 
-    select {
         font: 400 12px/1.3 sans-serif;
         -webkit-appearance: none;
         appearance: none;
@@ -31,14 +29,14 @@
         height: 58px;
     }
 
-    select:hover {
+    .header-select-field:hover {
         background-image: linear-gradient(var(--accentFg), var(--accentFg)),
             linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
             linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
             linear-gradient(var(--accentFg) 72%, var(--accentBg) 72%);
     }
 
-    select:active {
+    .header-select-field:active {
         background-image: linear-gradient(var(--accentFg), var(--accentFg)),
             linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
             linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
@@ -87,7 +85,7 @@
                             <form method="get" action="<%= search_action_url() %>" name="searchForm" id="searchForm" class="search">
                                 <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
                                 <% if @show_search_fields %>
-                                    <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), :title => "Search field", :class=>"custom-select") %>
+                                    <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), :title => "Search field", :class=>"header-select-field") %>
                                 <% end %>
                                 <div id="bul_pl_searchForm_lookfor_container">
                                     <input id="bul_pl_searchForm_lookfor"
