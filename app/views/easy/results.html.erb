@@ -23,7 +23,7 @@
         </div>
         <div id="bentos" class="col-md-9">
             <% if @new_header %>
-              <div class="well well-lg" style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 5px;">
+              <div class="well well-lg" id="catalog_search_terms_row" style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 5px;">
                 <%= form_tag search_action_url, method: :get, class: 'search-query-form form-inline clearfix navbar-form', style: 'margin-bottom: 3.5px' do %>
                   <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
                   <div class="input-group col-md-9">
