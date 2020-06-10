@@ -244,6 +244,12 @@ $(document).ready(function() {
           continue;
         }
       }
+      if (bibData.id == "b1710098") {
+        if ((oclcNums[i] == "ocm00000660") || (oclcNums[i] == "00000660")) {
+          scope.debugMessage("Ignore known OCLC mismatch");
+          continue;
+        }
+      }
       oclcNumString += "oclc:" + oclcNums[i] + ";"
     }
 
