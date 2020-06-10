@@ -137,16 +137,10 @@ $(document).ready(function() {
 
 
   scope.addBookServicesLink = function() {
-    if (isCovid) {
-      var li = '<li id="book_services_link" class="hidden">';
-      var a = '<a href="#" title="This service has been temporarily suspended" data-toggle="modal" data-target="#covidModal">Request This</a>';
-      var html = li + a;
-      $("div.panel-body>ul.nav").append(html);
-      return;
-    }
     // hidden by default
     var li = '<li id="book_services_link" class="hidden">';
-    var helpInfo = "Request this item to be paged (Faculty and Grad/Med students only)";
+    // var helpInfo = "Request this item to be paged (Faculty and Grad/Med students only)";
+    var helpInfo = "Request this item for curbside pickup (ROCK materials only)";
     var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Request This</a>';
     var html = li + a;
     $("div.panel-body>ul.nav").append(html);
@@ -168,8 +162,20 @@ $(document).ready(function() {
     }
 
     if (availabilityResponse.requestable) {
-      $("#book_services_link").removeClass("hidden");
-    };
+      var reopening = josiahObject.getUrlParameter("reopening");
+      if (reopening == "true") {
+        // Enable the "Request This" link only if the item is at the ROCK
+        var i, location;
+        for(i = 0; i < availabilityResponse.items.length; i++) {
+          location = availabilityResponse.items[i].location || "";
+          if (location.startsWith("ROCK")) {
+            $("#book_services_link").removeClass("hidden");
+            scope.debugMessage("Requestable and at the ROCK");
+            break;
+          }
+        }
+      } // reopening
+    } // requestable
 
     scope.showEasyBorrowBib(availabilityResponse.items);
     scope.showHoldingsSummary(availabilityResponse.summary);
