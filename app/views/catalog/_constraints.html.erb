@@ -1,23 +1,25 @@
-<% if query_has_constraints? %>
-  <% if @new_header %>
-    <div class="row" id="catalog_search_terms_row">
-      <%= form_tag search_action_url, method: :get, class: 'search-query-form form-inline clearfix navbar-form', style: 'margin-bottom: 3.5px' do %>
-        <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
-        <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), :title => "Search field") %>
-        <div class="input-group col-md-9">
-          <%= text_field_tag :q, clean_search_term(params[:q]), :placeholder => "", :class => "search_q q form-control", :id => "q2", :autofocus => true %>
-          <span class="dropdown input-group-btn">
-            <button id="searchButton" class="btn btn-primary search-btn" type="submit">
-              <span id="submitText" class="submit-search-text">Search</span>
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
+<% if @new_header %>
+  <!-- Always display the search form since the search box is not
+       visible by default on the new header -->
+  <div class="row" id="catalog_search_terms_row">
+    <%= form_tag search_action_url, method: :get, class: 'search-query-form form-inline clearfix navbar-form', style: 'margin-bottom: 3.5px' do %>
+      <%= render_hash_as_hidden_fields(params_for_search().except(:q, :search_field, :qt, :page, :utf8)) %>
+      <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), :title => "Search field") %>
+      <div class="input-group col-md-9">
+        <%= text_field_tag :q, clean_search_term(params[:q]), :placeholder => "", :class => "search_q q form-control", :id => "q2", :autofocus => true %>
+        <span class="dropdown input-group-btn">
+          <button id="searchButton" class="btn btn-primary search-btn" type="submit">
+            <span id="submitText" class="submit-search-text">Search</span>
             <span class="glyphicon glyphicon-search"></span>
-          </span>
-        </div>
-      <% end %> <!-- form -->
-    </div>
-  <% end %>
+          </button>
+          <span class="glyphicon glyphicon-search"></span>
+        </span>
+      </div>
+    <% end %> <!-- form -->
+  </div>
+<% end %>
 
+<% if query_has_constraints? %>
       <div id="appliedParams" class="clearfix constraints-container">
         <div class="pull-right">
           <%= link_to t('blacklight.search.restart_label'), easy_search_link, :class=>'btn', :id=>"startOverLink" %>
