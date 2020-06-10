@@ -323,8 +323,18 @@ class CatalogController < ApplicationController
     @show_search_fields = true
     @new_header = use_new_header()
     @is_covid = (ENV["COVID"] == "true")
+    @is_pod = (params["pod"] == "true")
 
     @trusted_ip = trusted_ip?(request.remote_ip)
+
+    if @is_pod && false
+      pod = SearchPod.new(ENV["SOLR_URL"])
+      results = pod.search_web(params)
+      @response = Blacklight::Solr::Response.new(results.solr_response, nil)
+      @document_list = @response.documents
+      Rails.logger.info("=================> Using POD logic")
+      return
+    end
 
     if params["search_field"] == nil
       # == SOLR-7-MIGRATION
