@@ -51,26 +51,52 @@ class BestBet
     # long and exacerbates server side issues when Solr is slow. Here we
     # shorten it so that we fail-fast rather than compound the problem.
     timeout_seconds = 2
-    solr = RSolr.connect(:url => solr_url, :read_timeout => timeout_seconds, :open_timeout => timeout_seconds)
-    qp = {
-      :wt=>"json",
-      "q"=>"\"#{query}\"",
-      "qt" => 'search',
-    }
 
-    response = solr.get('search', :params => qp)
-    if response["response"]["docs"].count == 1
-      Rails.logger.warn "BestBet: more than one match found for (#{query})"
-    end
-
-    #Always take the first doc.
-    response["response"]["docs"].each do |doc|
-      return {
-        :name => doc["name_display"],
-        :url => doc["url_display"][0],
-        :description => doc.fetch("description_display", [nil])[0]
+    is_solr7 = solr_url.include?("bestbets7")
+    if is_solr7
+      qp = {
+        :wt => "json",
+        "q" => "term:\"#{query}\"",
+        "defType" => "edismax"
       }
+
+      solr = RSolr.connect(:url => solr_url, :read_timeout => timeout_seconds, :open_timeout => timeout_seconds)
+      response = solr.get('select', :params => qp)
+      if response["response"]["docs"].count > 1
+        Rails.logger.warn "BestBet: more than one match found for (#{query})"
+      end
+
+      #Always take the first doc.
+      response["response"]["docs"].each do |doc|
+        return {
+          :name => doc["name_display"],
+          :url => doc["url_display"],
+          :description => doc["description_display"]
+        }
+      end
+    else
+      qp = {
+        :wt => "json",
+        "q" => "\"#{query}\"",
+        "qt" => 'search'
+      }
+
+      solr = RSolr.connect(:url => solr_url, :read_timeout => timeout_seconds, :open_timeout => timeout_seconds)
+      response = solr.get('search', :params => qp)
+      if response["response"]["docs"].count > 1
+        Rails.logger.warn "BestBet: more than one match found for (#{query})"
+      end
+
+      #Always take the first doc.
+      response["response"]["docs"].each do |doc|
+        return {
+          :name => doc["name_display"],
+          :url => doc["url_display"][0],
+          :description => doc.fetch("description_display", [nil])[0]
+        }
+      end
     end
+
     nil
   end
 
