@@ -3,7 +3,13 @@
 $(document).ready(function() {
   var scope = {};
 
+  // Controls the "The library is currently closed. Contact us for help with this item."
+  // banner at the top of the page.
   var isCovid = (window.isCovid === true);
+
+  // Locations from where we allow requesting during the re-opening phase.
+  // (defined via ENV variable)
+  var reopeningLocations = (window.reopeningLocations || []);
 
   // Get the data from the global variables into local variables.
   // Ideally these should be scope.x but for convenience they are just x.
@@ -139,8 +145,7 @@ $(document).ready(function() {
   scope.addBookServicesLink = function() {
     // hidden by default
     var li = '<li id="book_services_link" class="hidden">';
-    // var helpInfo = "Request this item to be paged (Faculty and Grad/Med students only)";
-    var helpInfo = "Request this item for curbside pickup (ROCK materials only)";
+    var helpInfo = "Request this item to be paged (Faculty and Grad/Med students only)";
     var a = '<a href="' + bibData.bookServicesUrl + '" title="' + helpInfo + '" target="_blank">Request This</a>';
     var html = li + a;
     $("div.panel-body>ul.nav").append(html);
@@ -165,14 +170,21 @@ $(document).ready(function() {
       var reopening = josiahObject.getUrlParameter("reopening");
       if (reopening == "true") {
         // Enable the "Request This" link only if the item is at the ROCK
-        var i, location;
+        var i;
+        var location = "N/A";
+        var requestOK = false;
         for(i = 0; i < availabilityResponse.items.length; i++) {
-          location = availabilityResponse.items[i].location || "";
-          if (location.startsWith("ROCK")) {
-            $("#book_services_link").removeClass("hidden");
-            scope.debugMessage("Requestable and at the ROCK");
+          location = (availabilityResponse.items[i].location || "").toUpperCase();
+          if (reopeningLocations.includes(location)) {
+            requestOK = true;
             break;
           }
+        }
+        if (requestOK) {
+          $("#book_services_link").removeClass("hidden");
+          scope.debugMessage("Requestable, location: " + location);
+        } else {
+          scope.debugMessage("Not requestable, location: " + location);
         }
       } // reopening
     } // requestable
