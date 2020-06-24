@@ -169,15 +169,19 @@ $(document).ready(function() {
     if (availabilityResponse.requestable) {
       var reopening = josiahObject.getUrlParameter("reopening");
       if (reopening == "true") {
-        // Enable the "Request This" link only if the item is at the ROCK
-        var i;
+        var i, status;
         var location = "N/A";
         var requestOK = false;
         for(i = 0; i < availabilityResponse.items.length; i++) {
           location = (availabilityResponse.items[i].location || "").toUpperCase();
+          status = (availabilityResponse.items[i].status || "");
           if (reopeningLocations.includes(location)) {
-            requestOK = true;
-            break;
+            if (status.includes("HOLD")) {
+              // skip it
+            } else {
+              requestOK = true;
+              break;
+            }
           }
         }
         if (requestOK) {
@@ -366,6 +370,9 @@ $(document).ready(function() {
     var hasAvailableItems = false;
     var hasEasyBorrowItems = false;
     var allowEasyBorrow = (bibData.itemsMultiType == "copy" || bibData.itemsMultiType == "single");
+
+    // During COVID-19 we don't offer EasyBorrow.
+    return;
 
     if (!availabilityEZB) {
       // console.log("ezb bib: disabled");
