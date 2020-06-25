@@ -111,6 +111,7 @@
 
 <script type="text/javascript">
   window.isCovid = <%= @is_covid == true %>;
+  window.isReopening = <%= @is_reopening == true %>;
   window.reopeningLocations = <%= js_safe_strings((ENV["REOPENING_LOCATIONS"] || "").split("|")) %>;
 
   /* Push the data that we need to a few global variables */

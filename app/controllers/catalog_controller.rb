@@ -329,7 +329,7 @@ class CatalogController < ApplicationController
 
     if @is_pod && false
       pod = SearchPod.new(ENV["SOLR_URL"])
-      results = pod.search_web(params)
+      results = pod.search_web(params, true)
       @response = Blacklight::Solr::Response.new(results.solr_response, nil)
       @document_list = @response.documents
       Rails.logger.info("=================> Using POD logic")
@@ -429,6 +429,7 @@ class CatalogController < ApplicationController
   def show
     @new_header = use_new_header()
     @is_covid = (ENV["COVID"] == "true")
+    @is_reopening = Date.today.to_s >= (ENV["REOPENING_DATE"] || "9999-01-01")
 
     id = params[:id] || ""
     if id.length == 9 && !id.start_with?("bdr:") && !id.start_with?("MP_HAF_")

@@ -3,14 +3,6 @@
 $(document).ready(function() {
   var scope = {};
 
-  // Controls the "The library is currently closed. Contact us for help with this item."
-  // banner at the top of the page.
-  var isCovid = (window.isCovid === true);
-
-  // Locations from where we allow requesting during the re-opening phase.
-  // (defined via ENV variable)
-  var reopeningLocations = (window.reopeningLocations || []);
-
   // Get the data from the global variables into local variables.
   // Ideally these should be scope.x but for convenience they are just x.
   var bibData = window.bibData;                         // defined in _show_default.html.erb
@@ -19,6 +11,16 @@ $(document).ready(function() {
   var availabilityEZB = window.availabilityEZB;         // defined in _show_default.html.erb
   var josiahRootUrl = window.josiahRootUrl;             // defined in app/views/shared/_header_navbar.html.erb
   var josiahObject = window.josiahObject;               // defined in app/assets/javascripts/application.js
+
+  // Controls the "The library is currently closed..." banner at the top of the page.
+  var isCovid = (window.isCovid === true);
+
+  // Locations from where we allow requesting during the re-opening phase.
+  // (defined via ENV variable)
+  var reopeningLocations = (window.reopeningLocations || []);
+
+  // Controls whether we show request options for certain locations.
+  var isReopening = (window.isReopening === true) || (josiahObject.getUrlParameter("reopening") == "true");
 
   scope.Init = function() {
     var req, apiUrl, limit;
@@ -167,8 +169,7 @@ $(document).ready(function() {
     }
 
     if (availabilityResponse.requestable) {
-      var reopening = josiahObject.getUrlParameter("reopening");
-      if (reopening == "true") {
+      if (isReopening) {
         var i, status;
         var location = "N/A";
         var requestOK = false;
