@@ -15,6 +15,10 @@ $(document).ready(function() {
   // Controls the "The library is currently closed..." banner at the top of the page.
   var isCovid = (window.isCovid === true);
 
+  // Controls whether we show the Hathi Emergency Temporary Access links
+  // or the normal Hathi links.
+  var isHathiETA = (window.isHathiETA === true);
+
   // Locations from where we allow requesting during the re-opening phase.
   // (defined via ENV variable)
   var reopeningLocations = (window.reopeningLocations || []);
@@ -55,7 +59,7 @@ $(document).ready(function() {
       scope.loadNearbyItems(false);
     }
 
-    if (isCovid) {
+    if (isHathiETA) {
       scope.showHathiEmergencyLinks(bibData.oclcNums);
     } else {
       scope.showHathiLink(bibData.oclcNum);

@@ -430,6 +430,7 @@ class CatalogController < ApplicationController
     @new_header = use_new_header()
     @is_covid = (ENV["COVID"] == "true")
     @is_reopening = Date.today.to_s >= (ENV["REOPENING_DATE"] || "9999-01-01")
+    @is_hathi_eta = Date.today.to_s < (ENV["HATHI_ETA_END_DATE"] || "9990-01-01")
 
     id = params[:id] || ""
     if id.length == 9 && !id.start_with?("bdr:") && !id.start_with?("MP_HAF_")
