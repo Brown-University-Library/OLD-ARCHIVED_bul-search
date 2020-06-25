@@ -15,16 +15,15 @@ $(document).ready(function() {
   // Controls the "The library is currently closed..." banner at the top of the page.
   var isCovid = (window.isCovid === true);
 
-  // Controls whether we show the Hathi Emergency Temporary Access links
-  // or the normal Hathi links.
-  var isHathiETA = (window.isHathiETA === true);
-
   // Locations from where we allow requesting during the re-opening phase.
   // (defined via ENV variable)
   var reopeningLocations = (window.reopeningLocations || []);
 
   // Controls whether we show request options for certain locations.
   var isReopening = (window.isReopening === true) || (josiahObject.getUrlParameter("reopening") == "true");
+
+  // Don't show the Hathi Emergency Temporary Access once we start the reopening phase.
+  var isHathiETA = !isReopening;
 
   scope.Init = function() {
     var req, apiUrl, limit;
