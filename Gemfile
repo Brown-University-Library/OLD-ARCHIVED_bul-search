@@ -59,7 +59,7 @@ gem "bulmarc", :git => 'https://bitbucket.org/bul/bulmarc.git', :branch => 'mast
 
 gem "http_logger", :group => [:development]
 
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+# gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 gem 'openurl', '~> 1.0.0'
 
@@ -72,7 +72,7 @@ gem "ebsco-eds", :git => 'https://github.com/Brown-University-Library/edsapi-rub
 # Use this when troubleshooting raw (HTTP) queries to Solr.
 # gem 'net-http-spy'
 
-gem "solr_lite", '0.0.17'
+gem "solr_lite", '0.0.18'
 # gem "solr_lite", path: '/Users/hectorcorrea/dev/solr_lite'
 
 gem "lcsort", '0.9.1'
