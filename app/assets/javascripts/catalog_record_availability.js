@@ -477,10 +477,15 @@ $(document).ready(function() {
       var isRequestAccess = scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
       if (isRequestAccess) {
         // "Request Access" link displayed, nothing else to do
+        scope.debugMessage("Request Link: item has Request Access link");
       } else {
         // Attempt to display "Scan Item" and/or "Request Item" links.
         requestItem = requestBib && reopeningLocations.includes(location) && !status.includes("HOLD");
-        scope.updateRequestItemLink(itemRow, avItem, barcode, requestItem);
+        if (!scope.updateRequestItemLink(itemRow, avItem, barcode, requestItem)) {
+          scope.debugMessage("Request Link: none (" +
+          "Sierra Request Bib: " + requestBib + ", " +
+          "Reopening Location: " + reopeningLocations.includes(location) + ")");
+        }
       }
     } else {
       // Original workflow
@@ -556,14 +561,20 @@ $(document).ready(function() {
     var html, link;
     if (scope.updateItemScanStatus(row, avItem, barcode)) {
       // Scan|item link already displayed
-    } else {
-      // See if we can display the "Request Item" link
-      if (isItemRequest) {
-        link = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">Request Item</a>';
-        html = link;
-        row.find(".scan").html(html);
-      }
+      scope.debugMessage("Request Link: item has Request scan | item links");
+      return true;
     }
+
+    // See if we can display the "Request Item" link
+    if (isItemRequest) {
+      link = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">Request Item</a>';
+      html = link;
+      row.find(".scan").html(html);
+      scope.debugMessage("Request Link: item has Request Item link");
+      return true;
+    }
+
+    return false;
   };
 
 
