@@ -548,7 +548,7 @@ $(document).ready(function() {
     var scanLink, itemLink, html;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
-      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
+      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">item</a>';
       html = "Request " + scanLink + " | " + itemLink;
       row.find(".scan").html(html);
       return true;
