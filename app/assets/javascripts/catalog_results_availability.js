@@ -9,6 +9,13 @@ $(document).ready(function() {
   var availabilityService = window.availabilityService; // defined in app/views/catalog/index.html.erb
   var availabilityEZB = window.availabilityEZB;
 
+  // Locations from where we allow requesting during the re-opening phase.
+  // (defined via ENV variable)
+  var reopeningLocations = (window.reopeningLocations || []);
+
+  // Controls whether we show the new "Request Item" link instead of the "Request This (bib)" link.
+  var isRequestItemLink = (window.isRequestItemLink === true) || (josiahObject.getUrlParameter("req") == "item");
+
   scope.Init = function() {
     var bibs = [];
     var i, links, newUrl;
@@ -51,12 +58,15 @@ $(document).ready(function() {
 
   scope.showAvailability = function(data) { // could this interfere with `catalog_record_availability.js` -> `scope.showAvailability = function(all) {}`?
     $.each(data, function(bib, context){
+      var requestableBib;
       if (context) {
         context['results'] = true;
 
         if (context['has_more'] == true) {
           context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
         };
+
+        requestableBib = (context['requestable'] === true);
 
         // Used for showing "available via easyBorrow"
         var bibData = scope.getItemData(bib);
@@ -66,35 +76,45 @@ $(document).ready(function() {
 
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
+          var location = item['location'];
+          var status = item['status'];
+          var requestableItem = requestableBib && reopeningLocations.includes(location) && !status.includes("HOLD");
+          var showRequestItemLink = requestableItem;
+
           item['map'] = item['map'] + '&title=' + itemData.title;
+          item['scan'] = null;
+          item['item_request_url'] = null;
 
           // add scan|item links
           if (canScanItem(item['location'], itemData.format, item['status'])) {
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-          } else {
-            item['scan'] = null;
-            item['item_request_url'] = null;
+            showRequestItemLink = false;
           }
 
           // add jcb link if necessary
           if (item['location'].slice(0, 3) == "JCB") {
             item['jcb_url'] = jcbRequestFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber']);
+            showRequestItemLink = false;
           }
 
           // add hay aeon link if necessary
           if (item['location'].slice(0, 3) == "HAY") {
             if (isValidHayAeonLocation(item['location']) == true) {
               item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+              showRequestItemLink = false;
             }
           }
 
           // add Annex-Hay `easyrequest_hay` link if necessary
           if ( (item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE") && (item['callnumber'].toUpperCase().includes("RESTRICTED") == false) ) {
-            console.log( 'itemData.format, `' + itemData.format + '`' );
             item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+            showRequestItemLink = false;
           }
 
+          if (showRequestItemLink) {
+            item['request_item'] = itemRequestFullLink(item['barcode'], bib);
+          }
         });
 
         var elem = $('[data-availability="' + bib + '"]');
