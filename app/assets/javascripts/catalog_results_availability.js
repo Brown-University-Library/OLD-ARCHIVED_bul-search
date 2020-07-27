@@ -77,20 +77,6 @@ $(document).ready(function() {
             item['item_request_url'] = null;
           }
 
-          // // add scan|item links
-          // if (canScanItem(item['location'], itemData.format, item['status'])) {
-          //   // Birkin: you can use bibData.format here
-          //   item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
-          //   item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-          //   if (isCovid) {
-          //     item['scan'] = null;
-          //     item['item_request_url'] = null;
-          //   }
-          // } else {
-          //   item['scan'] = null;
-          //   item['item_request_url'] = null;
-          // }
-
           // add jcb link if necessary
           if (item['location'].slice(0, 3) == "JCB") {
             item['jcb_url'] = jcbRequestFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber']);
@@ -98,22 +84,14 @@ $(document).ready(function() {
 
           // add hay aeon link if necessary
           if (item['location'].slice(0, 3) == "HAY") {
-            // console.log( 'location-slice, `' + item['location'].slice(0, 3) + '`' );
-            // console.log( 'isValidHayAeonLocation, `' + isValidHayAeonLocation(item['location']) + '`' );
             if (isValidHayAeonLocation(item['location']) == true) {
-              // console.log( 'item->hay_aeon_url initially, `' + item['hay_aeon_url'] + '`' );
               item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
-              // console.log( 'item->hay_aeon_url NOW, `' + item['hay_aeon_url'] + '`' );
             }
           }
 
           // add Annex-Hay `easyrequest_hay` link if necessary
           if ( (item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE") && (item['callnumber'].toUpperCase().includes("RESTRICTED") == false) ) {
             console.log( 'itemData.format, `' + itemData.format + '`' );
-            /* 2019-July: restrictions on "Archives/Manuscripts" items eased */
-            // if ( itemData.format != "Archives/Manuscripts" ) {
-            //   item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
-            // }
             item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
           }
 
