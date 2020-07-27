@@ -91,6 +91,10 @@ $(document).ready(function() {
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
             showRequestItemLink = false;
+          } else {
+            // Must null these values to prevent the "scan|(gray)item" scenario when rendering.
+            item['scan'] = null;
+            item['item_request_url'] = null;
           }
 
           // add jcb link if necessary
