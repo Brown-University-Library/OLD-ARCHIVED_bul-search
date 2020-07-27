@@ -435,8 +435,8 @@ $(document).ready(function() {
 
   // Updates item information (already on the page) with the
   // extra information that we got from the Availability service.
-  scope.updateItemInfo = function(avItem, requestBib) {
-    var barcode, callnumber, location, status, item, itemRow, requestItem;
+  scope.updateItemInfo = function(avItem, requestableBib) {
+    var barcode, callnumber, location, status, item, itemRow, itemRequestData, requestableItem;
 
     barcode = avItem['barcode'] || "";
     callnumber = avItem['callnumber'] || "";
@@ -480,11 +480,15 @@ $(document).ready(function() {
         scope.debugMessage("Request Link: item has Request Access link");
       } else {
         // Attempt to display "Scan Item" and/or "Request Item" links.
-        requestItem = requestBib && reopeningLocations.includes(location) && !status.includes("HOLD");
-        if (!scope.updateRequestItemLink(itemRow, avItem, barcode, requestItem)) {
-          scope.debugMessage("Request Link: none (" +
-          "Sierra Request Bib: " + requestBib + ", " +
-          "Reopening Location: " + reopeningLocations.includes(location) + ")");
+        itemRequestData = {
+          requestableBib: requestableBib,
+          reopeningLocations: reopeningLocations,
+          location: location,
+          status: status,
+        }
+        requestableItem = canRequestItem(itemRequestData)
+        if (!scope.updateRequestItemLink(itemRow, avItem, barcode, requestableItem)) {
+          scope.debugMessage("Request Link: none (Sierra Request Bib: " + requestableBib + ")");
         }
       }
     } else {

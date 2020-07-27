@@ -76,10 +76,13 @@ $(document).ready(function() {
 
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
-          var location = item['location'];
-          var status = item['status'];
-          var requestableItem = requestableBib && reopeningLocations.includes(location) && !status.includes("HOLD");
-          var showRequestItemLink = requestableItem;
+          var itemRequestData = {
+            requestableBib: requestableBib,
+            reopeningLocations: reopeningLocations,
+            location: item['location'],
+            status: item['status'],
+          }
+          var showRequestItemLink = isRequestItemLink && canRequestItem(itemRequestData);
 
           item['map'] = item['map'] + '&title=' + itemData.title;
           item['scan'] = null;

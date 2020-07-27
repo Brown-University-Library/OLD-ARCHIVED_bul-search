@@ -102,6 +102,20 @@ function itemRequestFullLink(barCode, bib) {
 }
 
 
+// Returns true if the "item is requestable".
+//
+// Parameter itemData has following properties:
+//    requestableBib:     Value from Sierra whether the BIB record is marked as requestable (boolean)
+//    reopeningLocations: Locations where requesting is allowed (array of strings)
+//    location:           Location of the item to validate (string)
+//    status:             Status of the item to validate (string)
+function canRequestItem(itemData) {
+  if (itemData.requestableBib === true) {
+    return itemData.reopeningLocations.includes(itemData.location) && !itemData.status.includes("HOLD");
+  }
+  return false;
+}
+
 /*
 ============================================================
 JCB Aeon link code
