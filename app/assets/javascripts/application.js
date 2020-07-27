@@ -110,8 +110,13 @@ function itemRequestFullLink(barCode, bib) {
 //    location:           Location of the item to validate (string)
 //    status:             Status of the item to validate (string)
 function canRequestItem(itemData) {
+  var status;
   if (itemData.requestableBib === true) {
-    return itemData.reopeningLocations.includes(itemData.location) && !itemData.status.includes("HOLD");
+    status = itemData.status;
+    if (status.includes("HOLD") || status.includes("MISSING") || status.includes("DUE ")) {
+      return false;
+    }
+    return itemData.reopeningLocations.includes(itemData.location)
   }
   return false;
 }
