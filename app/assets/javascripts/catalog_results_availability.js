@@ -3,8 +3,6 @@
 $(document).ready(function() {
   var scope = {};
 
-  var isCovid = (window.isCovid === true);
-
   // Get the data from the global variables into local variables.
   // Ideally these should be scope.x but for convenience they are just x.
   var bibsData = window.bibsData;                       // defined in _search_results.html.erb
@@ -68,22 +66,30 @@ $(document).ready(function() {
 
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
-          var isCovid = true;
           item['map'] = item['map'] + '&title=' + itemData.title;
 
           // add scan|item links
           if (canScanItem(item['location'], itemData.format, item['status'])) {
-            // Birkin: you can use bibData.format here
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-            if (isCovid) {
-              item['scan'] = null;
-              item['item_request_url'] = null;
-            }
           } else {
             item['scan'] = null;
             item['item_request_url'] = null;
           }
+
+          // // add scan|item links
+          // if (canScanItem(item['location'], itemData.format, item['status'])) {
+          //   // Birkin: you can use bibData.format here
+          //   item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
+          //   item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
+          //   if (isCovid) {
+          //     item['scan'] = null;
+          //     item['item_request_url'] = null;
+          //   }
+          // } else {
+          //   item['scan'] = null;
+          //   item['item_request_url'] = null;
+          // }
 
           // add jcb link if necessary
           if (item['location'].slice(0, 3) == "JCB") {

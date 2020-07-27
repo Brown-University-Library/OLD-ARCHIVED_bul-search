@@ -41,6 +41,7 @@
       <th>Location</th>
       <th>Call number</th>
       <th>Status</th>
+      <th>Request Options</th>
     </tr>
     <tbody>
       {{#each items}}
@@ -55,14 +56,15 @@
             {{/if}}
           </td>
           <td>{{ callnumber }}</td>
+          <td>{{ status }}</td>
           <!-- triple-stash for annexhay_easyrequest_url to prevent double encoding since Rails already encoded the value -->
-          <td>{{ status }}
-            {{#if scan}} <a href="{{scan}}" title="Request a scan of a section of this item." class="scan">scan</a> |
-              {{#if item_request_url }} <a href="{{item_request_url}}">item</a> {{else}} <span style="color:gray" title="Circulation of physical items is currently suspended. Please request a scan.">item</span> {{/if}}
+          <td>
+            {{#if scan}}Request&nbsp;<a href="{{scan}}" title="Request a scan of a section of this item." class="scan">scan</a>
+              {{#if item_request_url }}|&nbsp;<a href="{{item_request_url}}" title="Request this item for pick up.">item</a> {{else}} <span style="color:gray" title="Circulation of physical items is currently suspended. Please request a scan.">item</span> {{/if}}
             {{/if}}
-            {{#if jcb_url}} <a href="{{jcb_url}}" class="scan">request-access</a> {{/if}}
-            {{#if annexhay_easyrequest_url}} <a href="{{{annexhay_easyrequest_url}}}" class="scan">request-access</a>{{/if}}
-            {{#if hay_aeon_url}} <a href="{{{hay_aeon_url}}}" class="scan">request-access</a>{{/if}}
+            {{#if jcb_url}} <a href="{{jcb_url}}" class="scan" title="Request on-site access to this item.">Request&nbsp;Access</a> {{/if}}
+            {{#if annexhay_easyrequest_url}} <a href="{{{annexhay_easyrequest_url}}}" class="scan" title="Request on-site access to this item.">Request&nbsp;Access</a>{{/if}}
+            {{#if hay_aeon_url}} <a href="{{{hay_aeon_url}}}" class="scan" title="Request on-site access to this item.">Request&nbsp;Access</a>{{/if}}
           </td>
         </tr>
       {{/each}}
