@@ -85,8 +85,6 @@ $(document).ready(function() {
           var showRequestItemLink = isRequestItemLink && canRequestItem(itemRequestData);
 
           item['map'] = item['map'] + '&title=' + itemData.title;
-          item['scan'] = null;
-          item['item_request_url'] = null;
 
           // add scan|item links
           if (canScanItem(item['location'], itemData.format, item['status'])) {
