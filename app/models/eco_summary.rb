@@ -231,6 +231,31 @@ class EcoSummary < ActiveRecord::Base
         end
     end
 
+    def buildings()
+        # Calculate counts by building name
+        counts = {}
+        locations().each do |loc|
+            name = Building.name(loc.code)
+            if name == nil
+                name = "Unknown"
+            end
+            if counts[name] == nil
+                counts[name] = 0
+            end
+            counts[name] += loc.count
+        end
+
+        # Calculate the percents
+        buildings = []
+        counts.keys.each do |key|
+            count = counts[key]
+            percent = (total_items == 0) ? 0 : ((count * 100) / total_items)
+            buildings << OpenStruct.new(name: key, code: key, count: count, percent: percent)
+        end
+
+        buildings.sort_by {|x| x.count }.reverse
+    end
+
     def checkouts()
         Rails.cache.fetch("ecosystem_#{self.id}_checkouts", expires_in: 25.minute) do
             begin
