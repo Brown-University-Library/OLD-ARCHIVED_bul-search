@@ -36,6 +36,7 @@
     <div class="col-sm-12">
         <table>
             <tr>
+                <th>Type</th>
                 <th>Owner</th>
                 <th>Name</th>
                 <th>Status</th>
@@ -43,6 +44,7 @@
             <% @summaries.each do |summary| %>
                 <tr>
                     <td><%= summary.public == 1 ? "Public" : "Private" %></td>
+                    <td><%= summary.owner_display %></td>
                     <td><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
                     <td>
                         <span title="<%= summary.status_tooltip %>" class="<%= summary.status_icon %>"></span>

@@ -21,6 +21,14 @@ class EcoSummary < ActiveRecord::Base
         EcoSummary.edit_user?(user) && created_by == EcoSummary.safe_user_id(user)
     end
 
+    def owner_display
+        tokens = (created_by || "").split("@")
+        if tokens.count == 0
+            return "N/A"
+        end
+        tokens[0].gsub("_", " ")
+    end
+
     def self.can_new?(user)
         EcoSummary.edit_user?(user)
     end
