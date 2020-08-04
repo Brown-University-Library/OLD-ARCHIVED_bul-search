@@ -19,6 +19,12 @@
     h3 {
         font-size: 20px;
     }
+
+    .number_cell_fixed {
+        text-align: right;
+        vertical-align: bottom;
+        width: 100px;
+    }
 </style>
 
 <div class="row">
@@ -36,16 +42,24 @@
     <div class="col-sm-12">
         <table>
             <tr>
+                <th>Type</th>
                 <th>Owner</th>
                 <th>Name</th>
                 <th>Status</th>
+                <th class="number_cell_fixed">Bib Records</th>
             </tr>
             <% @summaries.each do |summary| %>
                 <tr>
                     <td><%= summary.public == 1 ? "Public" : "Private" %></td>
+                    <td><%= summary.owner_display %></td>
                     <td><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
                     <td>
                         <span title="<%= summary.status_tooltip %>" class="<%= summary.status_icon %>"></span>
+                    </td>
+                    <td class="number_cell_fixed">
+                        <% if summary.status == "OK" %>
+                            <%= number_with_delimiter(summary.bib_count) %>
+                        <% end %>
                     </td>
                 </tr>
             <% end %>
