@@ -1,5 +1,6 @@
 class Building
     def self.name(code)
+        return nil if code == nil
         code = code.strip.downcase
         name = self.all[code]
         if name == nil
