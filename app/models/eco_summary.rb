@@ -326,7 +326,7 @@ class EcoSummary < ActiveRecord::Base
                 percent_online = (row.online * 100) / row.total
             end
             data << OpenStruct.new(year: row.year, total: row.total, online: row.online, online_percent: percent_online)
-            break if data.count == 5
+            break if data.count == 6
         end
         data
     end
