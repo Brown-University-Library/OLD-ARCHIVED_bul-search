@@ -203,9 +203,9 @@ class EcoSummary < ActiveRecord::Base
         self.bib_count || 0
     end
 
-    def total_bibs_last_5_years()
+    def total_bibs_last_years(years = 5)
         total = 0
-        acquisitions_bib().take(5).each do |row|
+        acquisitions_bib().take(years).each do |row|
             total += row.total
         end
         total
