@@ -30,6 +30,8 @@
 
 <script type="text/javascript">
 window.availabilityEZB = <%= ENV["AVAILABILITY_EZB"] == "true" %>;
+window.isRequestItemLink = <%= ENV["REQUEST_ITEM_LINK"] == "true" %>;
+window.reopeningLocations = <%= js_safe_strings((ENV["REOPENING_LOCATIONS"] || "").split("|")) %>;
 
 // Notice that we use the author_display instead of statement_of_responsibility
 // because we do not have the MARC data for search results.

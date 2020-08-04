@@ -3,13 +3,18 @@
 $(document).ready(function() {
   var scope = {};
 
-  var isCovid = (window.isCovid === true);
-
   // Get the data from the global variables into local variables.
   // Ideally these should be scope.x but for convenience they are just x.
   var bibsData = window.bibsData;                       // defined in _search_results.html.erb
   var availabilityService = window.availabilityService; // defined in app/views/catalog/index.html.erb
   var availabilityEZB = window.availabilityEZB;
+
+  // Locations from where we allow requesting during the re-opening phase.
+  // (defined via ENV variable)
+  var reopeningLocations = (window.reopeningLocations || []);
+
+  // Controls whether we show the new "Request Item" link instead of the "Request This (bib)" link.
+  var isRequestItemLink = (window.isRequestItemLink === true) || (josiahObject.getUrlParameter("req") == "item");
 
   scope.Init = function() {
     var bibs = [];
@@ -53,12 +58,15 @@ $(document).ready(function() {
 
   scope.showAvailability = function(data) { // could this interfere with `catalog_record_availability.js` -> `scope.showAvailability = function(all) {}`?
     $.each(data, function(bib, context){
+      var requestableBib;
       if (context) {
         context['results'] = true;
 
         if (context['has_more'] == true) {
           context['more_link'] = window.location.pathname + '/' + bib + '?limit=false';
         };
+
+        requestableBib = (context['requestable'] === true);
 
         // Used for showing "available via easyBorrow"
         var bibData = scope.getItemData(bib);
@@ -68,19 +76,23 @@ $(document).ready(function() {
 
         _.each(context['items'], function(item) {
           var itemData = scope.getItemData(bib);
-          var isCovid = true;
+          var itemRequestData = {
+            requestableBib: requestableBib,
+            reopeningLocations: reopeningLocations,
+            location: item['location'],
+            status: item['status'],
+          }
+          var showRequestItemLink = isRequestItemLink && canRequestItem(itemRequestData);
+
           item['map'] = item['map'] + '&title=' + itemData.title;
 
           // add scan|item links
           if (canScanItem(item['location'], itemData.format, item['status'])) {
-            // Birkin: you can use bibData.format here
             item['scan'] = easyScanFullLink(item['scan'], bib, itemData.title);
             item['item_request_url'] = itemRequestFullLink(item['barcode'], bib);
-            if (isCovid) {
-              item['scan'] = null;
-              item['item_request_url'] = null;
-            }
+            showRequestItemLink = false;
           } else {
+            // Must null these values to prevent the "scan|(gray)item" scenario when rendering.
             item['scan'] = null;
             item['item_request_url'] = null;
           }
@@ -88,29 +100,26 @@ $(document).ready(function() {
           // add jcb link if necessary
           if (item['location'].slice(0, 3) == "JCB") {
             item['jcb_url'] = jcbRequestFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber']);
+            showRequestItemLink = false;
           }
 
           // add hay aeon link if necessary
           if (item['location'].slice(0, 3) == "HAY") {
-            // console.log( 'location-slice, `' + item['location'].slice(0, 3) + '`' );
-            // console.log( 'isValidHayAeonLocation, `' + isValidHayAeonLocation(item['location']) + '`' );
             if (isValidHayAeonLocation(item['location']) == true) {
-              // console.log( 'item->hay_aeon_url initially, `' + item['hay_aeon_url'] + '`' );
               item['hay_aeon_url'] = hayAeonFullLink(bib, itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
-              // console.log( 'item->hay_aeon_url NOW, `' + item['hay_aeon_url'] + '`' );
+              showRequestItemLink = false;
             }
           }
 
           // add Annex-Hay `easyrequest_hay` link if necessary
           if ( (item['location'] == "ANNEX HAY") && (item['status'] == "AVAILABLE") && (item['callnumber'].toUpperCase().includes("RESTRICTED") == false) ) {
-            console.log( 'itemData.format, `' + itemData.format + '`' );
-            /* 2019-July: restrictions on "Archives/Manuscripts" items eased */
-            // if ( itemData.format != "Archives/Manuscripts" ) {
-            //   item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
-            // }
             item['annexhay_easyrequest_url'] = easyrequestHayFullLink(bib, item['barcode'], itemData.title, itemData.found_author, "publisher-unavailable", item['callnumber'], item['location']);
+            showRequestItemLink = false;
           }
 
+          if (showRequestItemLink) {
+            item['request_item'] = itemRequestFullLink(item['barcode'], bib);
+          }
         });
 
         var elem = $('[data-availability="' + bib + '"]');

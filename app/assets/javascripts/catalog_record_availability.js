@@ -12,9 +12,6 @@ $(document).ready(function() {
   var josiahRootUrl = window.josiahRootUrl;             // defined in app/views/shared/_header_navbar.html.erb
   var josiahObject = window.josiahObject;               // defined in app/assets/javascripts/application.js
 
-  // Controls the "The library is currently closed..." banner at the top of the page.
-  var isCovid = (window.isCovid === true);
-
   // Locations from where we allow requesting during the re-opening phase.
   // (defined via ENV variable)
   var reopeningLocations = (window.reopeningLocations || []);
@@ -22,8 +19,11 @@ $(document).ready(function() {
   // Controls whether we show request options for certain locations.
   var isReopening = (window.isReopening === true) || (josiahObject.getUrlParameter("reopening") == "true");
 
-  // Don't show the Hathi Emergency Temporary Access once we start the reopening phase.
-  var isHathiETA = !isReopening;
+  // Controls whether we show the Hathi Emergency Temporary Access links.
+  var isHathiETA = false;
+
+  // Controls whether we show the new "Request Item" link instead of the "Request This (bib)" link.
+  var isRequestItemLink = (window.isRequestItemLink === true) || (josiahObject.getUrlParameter("req") == "item");
 
   scope.Init = function() {
     var req, apiUrl, limit;
@@ -161,7 +161,7 @@ $(document).ready(function() {
     // Realtime status of items (and other item specific information)
     console.log( 'starting addAvailability()' )
     _.each(availabilityResponse.items, function(avItem) {
-      scope.updateItemInfo(avItem);
+      scope.updateItemInfo(avItem, availabilityResponse.requestable);
     });
 
     if (availabilityResponse.has_more == true) {
@@ -171,7 +171,7 @@ $(document).ready(function() {
       scope.showAvailability(true);
     }
 
-    if (availabilityResponse.requestable) {
+    if (availabilityResponse.requestable && !isRequestItemLink) {
       if (isReopening) {
         var i, status;
         var location = "N/A";
@@ -435,12 +435,13 @@ $(document).ready(function() {
 
   // Updates item information (already on the page) with the
   // extra information that we got from the Availability service.
-  scope.updateItemInfo = function(avItem) {
-    console.log( 'starting updateItemInfo()' )
-    var item, barcode, callnumber, itemRow;
+  scope.updateItemInfo = function(avItem, requestableBib) {
+    var barcode, callnumber, location, status, item, itemRow, itemRequestData, requestableItem;
 
     barcode = avItem['barcode'] || "";
     callnumber = avItem['callnumber'] || "";
+    location = (avItem.location || "").toUpperCase();
+    status = (avItem.status || "");
 
     if (barcode != "") {
       item = scope.getItemByBarcode(barcode);
@@ -470,8 +471,32 @@ $(document).ready(function() {
 
     scope.updateItemLocation(itemRow, avItem);
     scope.updateItemStatus(itemRow, avItem, item.volume);
-    scope.updateItemScanStatus(itemRow, avItem, barcode);
-    scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
+
+    if (isRequestItemLink) {
+      // New workflow for "Request Item" link
+      var isRequestAccess = scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
+      if (isRequestAccess) {
+        // "Request Access" link displayed, nothing else to do
+        scope.debugMessage("Request Link: item has Request Access link");
+      } else {
+        // Attempt to display "Scan Item" and/or "Request Item" links.
+        itemRequestData = {
+          requestableBib: requestableBib,
+          reopeningLocations: reopeningLocations,
+          location: location,
+          status: status,
+        }
+        requestableItem = canRequestItem(itemRequestData)
+        if (!scope.updateRequestItemLink(itemRow, avItem, barcode, requestableItem)) {
+          scope.debugMessage("Request Link: none (Sierra Request Bib: " + requestableBib + ")");
+        }
+      }
+    } else {
+      // Original workflow
+      scope.updateItemScanStatus(itemRow, avItem, barcode);
+      scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
+    }
+
   };
 
 
@@ -501,22 +526,24 @@ $(document).ready(function() {
     var status, location, offerEZB, url, text, tooltip, html;
     status = avItem["status"];
     if (status) {
+      // Set the item status
       row.find(".status").html(status);
-      location = avItem["location"];
-      offerEZB = availabilityEZB && bibData.itemsMultiType == "volume" &&
-        !scope.isAvailableStatus(status) && scope.isTakeHomeLocation(location);
-      offerEZB = false; // TODO: enable once easyBorrow honors the volume parameter
-      if (offerEZB) {
-        // Allow the user to request this volume via easyBorrow.
-        url = bibData.easyBorrowUrl;
-        if (volume != "") {
-            url += "&volume=" + volume;
-        }
-        text = "Request this volume via EasyBorrow";
-        tooltip = "Our copy is not available at the moment, but we can try get it for you from other libraries";
-        html = '<br/><a href="' + url + '" title="' + tooltip + '" target="_blank">' + text + '</a>';
-        row.find(".ezb_volume_url").html(html);
-      }
+
+      // TODO: enable once easyBorrow honors the volume parameter
+      // location = avItem["location"];
+      // offerEZB = availabilityEZB && bibData.itemsMultiType == "volume" &&
+      //   !scope.isAvailableStatus(status) && scope.isTakeHomeLocation(location);
+      // if (offerEZB) {
+      //   // Allow the user to request this volume via easyBorrow.
+      //   url = bibData.easyBorrowUrl;
+      //   if (volume != "") {
+      //       url += "&volume=" + volume;
+      //   }
+      //   text = "Request this volume via EasyBorrow";
+      //   tooltip = "Our copy is not available at the moment, but we can try get it for you from other libraries";
+      //   html = '<br/><a href="' + url + '" title="' + tooltip + '" target="_blank">' + text + '</a>';
+      //   row.find(".ezb_volume_url").html(html);
+      // }
     }
   };
 
@@ -525,27 +552,48 @@ $(document).ready(function() {
     var scanLink, itemLink, html;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
-      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item.">item</a>';
-      html = scanLink + " | " + itemLink;
+      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">item</a>';
+      html = "Request&nbsp;" + scanLink + "&nbsp;|&nbsp;" + itemLink;
       row.find(".scan").html(html);
+      return true;
     }
+    return false;
+  };
+
+
+  scope.updateRequestItemLink = function(row, avItem, barcode, isItemRequest) {
+    var html, link;
+    if (scope.updateItemScanStatus(row, avItem, barcode)) {
+      // Scan|item link already displayed
+      scope.debugMessage("Request Link: item has Request scan | item links");
+      return true;
+    }
+
+    // See if we can display the "Request Item" link
+    if (isItemRequest) {
+      link = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">Request Item</a>';
+      html = link;
+      row.find(".scan").html(html);
+      scope.debugMessage("Request Link: item has Request Item link");
+      return true;
+    }
+
+    return false;
   };
 
 
   scope.updateItemAeonLinks = function(row, item, barcode, status) {
-    console.log( 'starting updateItemAeonLinks()' );
+    var isRequestAccess = false;
     var url, html;
     var location = item.location_name;
-    console.log( 'location, `' + location + '`' );  // not relevant to _annex_-hay-aeon
     var location_prefix = (location || "").slice(0, 3).toUpperCase();
-    console.log( 'location_prefix, `' + location_prefix + '`' );  // not relevant to _annex_-hay-aeon
 
     /* JCB Aeon link */
     if (location_prefix == "JCB") {
       url = jcbRequestFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number);
-      html = '<a href="' + url + '">request-access</a>';
-      // console.log( 'html, ```' + html + '```' );
+      html = '<a href="' + url + '" title="Request on-site access to this item.">Request Access</a>';
       row.find(".jcb_url").html(html);
+      isRequestAccess = true;
     }
 
     /* Hay Aeon link (i.e. "request access")
@@ -555,31 +603,22 @@ $(document).ready(function() {
        */
     // TODO: _possible_ change from hay google-doc: use item.location-codes `arcms` or `hms`
     if ( location_prefix == "HAY" || location == "HMCF" || location == "HJH" ) {
-      console.log( 'HAY-ish prefix found.' )
       if ( isValidHayAeonLocation(location) == true ) {
-        console.log( 'valid hay-aeon location found' )
         url = hayAeonFullLink(bibData.id, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
-        html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
+        html = '<a href="' + url + '" title="Request on-site access to this item.">Request Access</a>';
         row.find(".hay_aeon_url").html(html);
+        isRequestAccess = true;
       }
     }
 
-    /* Annex Hay Aeon Link (i.e. "request access") */
-
-    // qhs = annex hay
-    // if ((item.location_code == "qhs") && (status == "AVAILABLE")) {
-    //   if ( scope.getFormat() != "Archives/Manuscripts" ) {
-    //     url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
-    //     html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
-    //     row.find(".annexhay_easyrequest_url").html(html);
-    //   }
-    // }
-
     if ( (item.location_code == "qhs") && (status == "AVAILABLE") && (item.call_number.toUpperCase().includes("RESTRICTED") == false) ) {
       url = easyrequestHayFullLink(bibData.id, barcode, bibData.title, bibData.author, bibData.publisher, item.call_number, location);
-      html = '&nbsp &nbsp <a href="' + url + '">request-access</a>';
+      html = '<a href="' + url + '" title="Request on-site access to this item.">Request Access</a>';
       row.find(".annexhay_easyrequest_url").html(html);
+      isRequestAccess = true;
     }
+
+    return isRequestAccess;
   };
 
 
