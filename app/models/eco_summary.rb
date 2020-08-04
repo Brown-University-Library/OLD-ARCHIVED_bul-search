@@ -203,6 +203,14 @@ class EcoSummary < ActiveRecord::Base
         self.bib_count || 0
     end
 
+    def total_bibs_last_5_years()
+        total = 0
+        acquisitions_bib().take(5).each do |row|
+            total += row.total
+        end
+        total
+    end
+
     def total_items()
         self.item_count || 0
     end
@@ -232,7 +240,7 @@ class EcoSummary < ActiveRecord::Base
     end
 
     def buildings()
-        # Calculate counts by building name
+        # Summarize the location codes into buildings
         counts = {}
         locations().each do |loc|
             name = Building.name(loc.code)
@@ -306,6 +314,23 @@ class EcoSummary < ActiveRecord::Base
         EcoAcquisitions.where(eco_summary_id: self.id, acq_type: "bib").order(year: :desc)
     end
 
+    def acquisitions_bib()
+        EcoAcquisitions.where(eco_summary_id: self.id, acq_type: "bib").order(year: :desc)
+    end
+
+    def format_acquisitions_bib()
+        data = []
+        acquisitions_bib().each do |row|
+            percent_online = 0
+            if row.total > 0
+                percent_online = (row.online * 100) / row.total
+            end
+            data << OpenStruct.new(year: row.year, total: row.total, online: row.online, online_percent: percent_online)
+            break if data.count == 5
+        end
+        data
+    end
+
     def acquisitions_item()
         Rails.cache.fetch("ecosystem_#{self.id}_acquisitions_item", expires_in: 25.minute) do
             begin
@@ -325,6 +350,71 @@ class EcoSummary < ActiveRecord::Base
             rescue Exception => e
                 Rails.logger.error "Error in acquisitions_item() for #{self.id}: #{e.to_s}"
                 []
+            end
+        end
+    end
+
+    def format_access_points()
+        Rails.cache.fetch("ecosystem_#{self.id}_access_points", expires_in: 25.minute) do
+            begin
+                # Notice that we get different counts if we use
+                # `distinct id` or `distinct item_record_num`
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select format, is_online, count(distinct bib_record_num) as count
+                    from eco_details
+                    where eco_summary_id = #{id} and format in("Book", "Periodical Title")
+                    group by format, is_online
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+
+                # Calculate the total count (instead of using bib_count) because
+                # we are only interested in Books and Periodicals
+                total = rows.reduce(0) {|sum, row| sum + (row[2] || 0)}
+
+                # Populate our data object with the data that we got from the DB.
+                data = {
+                    book_print_count: 0,
+                    book_print_percent: 0,
+                    book_online_count: 0,
+                    book_online_percent: 0,
+                    journal_print_count: 0,
+                    journal_print_count: 0,
+                    journal_print_count: 0,
+                    journal_online_percent: 0
+                }
+
+                rows.each do |r|
+                    format = r[0]
+                    online = r[1] == 1
+                    count = r[2]
+                    case
+                    when format == "Book" && !online
+                        data[:book_print_count] = count
+                    when format == "Book" && online
+                        data[:book_online_count] = count
+                    when format == "Periodical Title" && !online
+                        data[:journal_print_count] = count
+                    when format == "Periodical Title" && online
+                        data[:journal_online_count] = count
+                    end
+                end
+
+                book_total = data[:book_online_count] + data[:book_print_count]
+                if book_total > 0
+                    data[:book_print_percent] = (data[:book_print_count] * 100) / book_total
+                    data[:book_online_percent] = (data[:book_online_count] * 100) / book_total
+                end
+
+                journal_total = data[:journal_online_count] + data[:journal_print_count]
+                if journal_total > 0
+                    data[:journal_print_percent] = (data[:journal_print_count] * 100)/ journal_total
+                    data[:journal_online_percent] = (data[:journal_online_count] * 100)/ journal_total
+                end
+
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in acquisitions_item() for #{self.id}: #{e.to_s}"
+                nil
             end
         end
     end

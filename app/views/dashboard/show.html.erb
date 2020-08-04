@@ -117,7 +117,8 @@
 
   <!-- Nav tabs -->
   <ul id="navTabs" class="nav nav-tabs" role="tablist">
-    <li class="active"><a href="#callNumbersTab" role="tab" data-toggle="tab">Call Numbers</a></li>
+    <li class="active"><a href="#summaryTab" role="tab" data-toggle="tab">Summary</a></li>
+    <li><a href="#callNumbersTab" role="tab" data-toggle="tab">Call Numbers</a></li>
     <li><a href="#locationsTab" role="tab" data-toggle="tab">Locations</a></li>
     <li><a href="#acquisitionsBibTab" role="tab" data-toggle="tab">Acquisitions (bib)</a></li>
     <li><a href="#acquisitionsItemTab" role="tab" data-toggle="tab">Acquisitions (item)</a></li>
@@ -127,7 +128,88 @@
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div class="tab-pane active" id="callNumbersTab">
+    <div class="tab-pane active" id="summaryTab">
+        <h3>Locations</h3>
+        <table id="buildingsTable">
+            <tr>
+                <th>Building</th>
+                <th class="number_cell">Items</th>
+                <th class="number_cell">%</th>
+                <th>&nbsp;</th>
+            </tr>
+            <% @presenter.summary.buildings.each_with_index do |loc, ix| %>
+                <tr>
+                    <td data-sort-by-text="<%= loc.name %>"><%= loc.name %></td>
+                    <td class="number_cell" data-sort-by-number="<%= loc.count %>">
+                         <%= number_with_delimiter(loc.count) %>
+                    </td>
+                    <td class="number_cell">
+                        <% if loc.percent > 0 %>
+                            <%= loc.percent %>&nbsp;%
+                        <% else %>
+                            &nbsp;
+                        <% end %>
+                    </td>
+                    <td>
+                        <div class="bar">
+                            <div class="progress" style="width: <%= loc.percent %>%;"></div>
+                        </div>
+                    </td>
+                </tr>
+            <% end %>
+        </table>
+
+        <h3>Format and Access Point</h3>
+        <table id="formatAccessTable">
+            <tr>
+                <th>Format</th>
+                <th class="number_cell_fixed">Online</th>
+                <th class="number_cell_fixed">% Online</th>
+                <th class="number_cell_fixed">Print</th>
+                <th class="number_cell_fixed">% Print</th>
+            </tr>
+            <tr>
+                <td>Book</td>
+                <td class="number_cell_fixed"><%= number_with_delimiter(@presenter.summary.format_access_points[:book_online_count]) %></td>
+                <td class="number_cell_fixed"><%= @presenter.summary.format_access_points[:book_online_percent] %>&nbsp;%</td>
+                <td class="number_cell_fixed"><%= number_with_delimiter(@presenter.summary.format_access_points[:book_print_count]) %></td>
+                <td class="number_cell_fixed"><%= @presenter.summary.format_access_points[:book_print_percent] %>&nbsp;%</td>
+            </tr>
+            <tr>
+                <td>Journal</td>
+                <td class="number_cell_fixed"><%= number_with_delimiter(@presenter.summary.format_access_points[:journal_online_count]) %></td>
+                <td class="number_cell_fixed"><%= @presenter.summary.format_access_points[:journal_online_percent] %>&nbsp;%</td>
+                <td class="number_cell_fixed"><%= number_with_delimiter(@presenter.summary.format_access_points[:journal_print_count]) %></td>
+                <td class="number_cell_fixed"><%= @presenter.summary.format_access_points[:journal_print_percent] %>&nbsp;%</td>
+            </tr>
+        </table>
+
+        <h3>Recent Acquisitions and Access Point</h3>
+        <table id="acquisitionAccessTable">
+            <tr>
+                <th class="number_cell_fixed">Year</th>
+                <th class="number_cell_fixed">Total</th>
+                <th class="number_cell_fixed">Online</th>
+                <th class="number_cell_fixed">% Online</th>
+            </tr>
+            <% @presenter.summary.format_acquisitions_bib.each do |row| %>
+                <tr>
+                    <td class="number_cell_fixed"><%= row.year %></td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.total) %></td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.online) %></td>
+                    <td class="number_cell_fixed"><%= row.online_percent %></td>
+                </tr>
+            <% end %>
+        </table>
+        <% if @presenter.summary.total_bibs > 0 %>
+            <p><%= number_with_delimiter(@presenter.summary.total_bibs_last_5_years) %>
+            records acquired in the last 5 years represent
+            <%= @presenter.summary.total_bibs_last_5_years * 100 / @presenter.summary.total_bibs %>%
+            of the collection.</p>
+        <% end %>
+    </div>
+
+    <div class="tab-pane" id="callNumbersTab">
         <h3>Call number ranges</h3>
         <table id="callNumbersTable">
             <tr>
@@ -173,39 +255,7 @@
 
     <div class="tab-pane" id="locationsTab">
         <h3>Locations</h3>
-        <p>
-        <a href="#" id="viewLocDetails" title="View breakdown by location code">View details</a>
-        <a href="#" id="viewLocSummary" title="View summary by building" class="hidden">View summary</a>
-        </p>
-         <table id="buildingsTable">
-            <tr>
-                <th>Location</th>
-                <th class="number_cell">Items</th>
-                <th class="number_cell">%</th>
-                <th>&nbsp;</th>
-            </tr>
-            <% @presenter.summary.buildings.each_with_index do |loc, ix| %>
-                <tr>
-                    <td data-sort-by-text="<%= loc.name %>"><%= loc.name %></td>
-                    <td class="number_cell" data-sort-by-number="<%= loc.count %>">
-                         <%= number_with_delimiter(loc.count) %>
-                    </td>
-                    <td class="number_cell">
-                        <% if loc.percent > 0 %>
-                            <%= loc.percent %>&nbsp;%
-                        <% else %>
-                            &nbsp;
-                        <% end %>
-                    </td>
-                    <td>
-                        <div class="bar">
-                            <div class="progress" style="width: <%= loc.percent %>%;"></div>
-                        </div>
-                    </td>
-                </tr>
-            <% end %>
-        </table>
-        <table id="locationsTable" class="hidden">
+        <table id="locationsTable">
             <tr>
                 <th>Location</th>
                 <th class="number_cell">Items</th>
@@ -407,22 +457,6 @@ $(document).ready(function(){
 
     setupSortColumn("usage2015Table", 0, "desc", false);
     setupSortColumn("usage2015Table", 1, "asc", true);
-
-    // Wire up the "view details" and "view summary" links
-    // for locations
-    $("#viewLocDetails").on("click", function(e) {
-        $("#buildingsTable").addClass("hidden");
-        $("#locationsTable").removeClass("hidden");
-        $("#viewLocDetails").addClass("hidden");
-        $("#viewLocSummary").removeClass("hidden");
-    });
-
-    $("#viewLocSummary").on("click", function(e) {
-        $("#buildingsTable").removeClass("hidden");
-        $("#locationsTable").addClass("hidden");
-        $("#viewLocDetails").removeClass("hidden");
-        $("#viewLocSummary").addClass("hidden");
-    });
 });
 
 function setupSortColumn(tableId, colNumber, direction, defaultSort) {
