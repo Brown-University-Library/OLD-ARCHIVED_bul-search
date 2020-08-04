@@ -378,8 +378,8 @@ class EcoSummary < ActiveRecord::Base
                     book_online_count: 0,
                     book_online_percent: 0,
                     journal_print_count: 0,
-                    journal_print_count: 0,
-                    journal_print_count: 0,
+                    journal_print_percent: 0,
+                    journal_online_count: 0,
                     journal_online_percent: 0
                 }
 
