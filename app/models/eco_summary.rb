@@ -310,6 +310,50 @@ class EcoSummary < ActiveRecord::Base
         end
     end
 
+    def checkouts_2015_details()
+        Rails.cache.fetch("ecosystem_#{self.id}_checkouts_details", expires_in: 25.minute) do
+            begin
+                sql = <<-END_SQL.gsub(/\n/, '')
+                    select year(bib_create_date),
+                        count(distinct id) as count_all,
+                        sum(case when is_online = 1 then 1 else 0 end) as count_online,
+                        sum(case when is_online = 1 then 0 else 1 end) as count_physical,
+                        sum(case when checkout_2015_plus >= 1 then 1 else 0 end) as ck1_count,
+                        sum(case when checkout_2015_plus >= 2 then 1 else 0 end) as ck2_count,
+                        sum(case when checkout_2015_plus >= 3 then 1 else 0 end) as ck3_count,
+                        sum(case when checkout_2015_plus >= 5 then 1 else 0 end) as ck5_count
+                    from eco_details
+                    where eco_summary_id = #{id} and year(bib_create_date) >= 2015
+                    group by year(bib_create_date)
+                    order by 1 desc;
+                END_SQL
+                rows = ActiveRecord::Base.connection.exec_query(sql).rows
+                data = rows.map do |r|
+                    count_all = r[1]
+                    count_online = r[2]
+                    count_physical = r[3]
+                    percent_online = (count_all == 0) ? 0 : ((count_online * 100) / count_all)
+                    percent_physical = (count_all == 0) ? 0 : ((count_physical * 100) / count_all)
+                    OpenStruct.new(
+                        year: r[0],
+                        count_all: count_all,
+                        count_online: count_online,
+                        percent_online: percent_online,
+                        count_physical: count_physical,
+                        percent_physical: percent_physical,
+                        ck1_count: r[4],
+                        ck2_count: r[5],
+                        ck3_count: r[6]
+                    )
+                end
+                data
+            rescue Exception => e
+                Rails.logger.error "Error in checkouts_2015_details() for #{self.id}: #{e.to_s}"
+                []
+            end
+        end
+    end
+
     def acquisitions_bib()
         EcoAcquisitions.where(eco_summary_id: self.id, acq_type: "bib").order(year: :desc)
     end

@@ -197,7 +197,7 @@
                     <td class="number_cell_fixed"><%= row.year %></td>
                     <td class="number_cell_fixed"><%= number_with_delimiter(row.total) %></td>
                     <td class="number_cell_fixed"><%= number_with_delimiter(row.online) %></td>
-                    <td class="number_cell_fixed"><%= row.online_percent %></td>
+                    <td class="number_cell_fixed"><%= row.online_percent %>&nbsp;%</td>
                 </tr>
             <% end %>
         </table>
@@ -207,6 +207,35 @@
             <%= @presenter.summary.total_bibs_last_years(6) * 100 / @presenter.summary.total_bibs %>%
             of the collection.</p>
         <% end %>
+
+        <h3>Usage (since 2015)</h3>
+        <table>
+            <tr>
+                <th class="number_cell_fixed">Year</th>
+                <th class="number_cell_fixed">Acquired</th>
+                <th class="number_cell_fixed">Online</th>
+                <th class="number_cell_fixed">%&nbsp;Online</th>
+                <th class="number_cell_fixed">Physical</th>
+                <th class="number_cell_fixed">%&nbsp;Physical</th>
+                <th class="number_cell_fixed">Checkout &gt;= 1</th>
+                <th class="number_cell_fixed">Checkout &gt;= 2</th>
+                <th class="number_cell_fixed">Checkout &gt;= 3</th>
+            </tr>
+            <% @presenter.summary.checkouts_2015_details.each do |row| %>
+                <tr>
+                    <td class="number_cell_fixed"><%= row.year %></td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.count_all) %></td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.count_online) %></td>
+                    <td class="number_cell_fixed"><%= row.percent_online %>&nbsp;%</td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.count_physical) %></td>
+                    <td class="number_cell_fixed"><%= row.percent_physical %>&nbsp;%</td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.ck1_count) %></td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.ck2_count) %></td>
+                    <td class="number_cell_fixed"><%= number_with_delimiter(row.ck3_count) %></td>
+                </tr>
+            <% end %>
+        </table>
+        <p>Note: Checkout counts <i>only</i> include physical items.</p>
     </div>
 
     <div class="tab-pane" id="callNumbersTab">
