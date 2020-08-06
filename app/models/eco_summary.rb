@@ -203,10 +203,12 @@ class EcoSummary < ActiveRecord::Base
         self.bib_count || 0
     end
 
-    def total_bibs_last_years(years = 5)
+    def total_bibs_2015_plus()
         total = 0
-        acquisitions_bib().take(years).each do |row|
-            total += row.total
+        acquisitions_bib().each do |row|
+            if row.year >= 2015
+                total += row.total
+            end
         end
         total
     end
@@ -310,6 +312,90 @@ class EcoSummary < ActiveRecord::Base
         end
     end
 
+    def usage_subject_2015()
+        Rails.cache.fetch("ecosystem_#{self.id}_usage_subject_details", expires_in: 25.minute) do
+
+            # Get subjects (physical records only) since 2015
+            subjects_counts = {}
+            sql = <<-END_SQL.gsub(/\n/, '')
+                select subjects
+                from eco_details
+                where eco_summary_id = #{id} and
+                    year(bib_create_date) >= 2015 and
+                    is_online = 0;
+            END_SQL
+
+            rows = ActiveRecord::Base.connection.exec_query(sql).rows
+            rows.each do |row|
+                subjects = (row[0] || "(NONE)").split("|")
+                subjects.each do |subject|
+                    if subjects_counts[subject] == nil
+                        subjects_counts[subject] = 1
+                    else
+                        subjects_counts[subject] = subjects_counts[subject] + 1
+                    end
+                end
+            end
+
+            # Top 10 most bought subjects since 2015
+            most_bought_subjects = subjects_counts.map do |x|
+                {
+                    key: x[0],
+                    value: x[1]
+                }
+            end.sort_by { |y| y[:value] }.reverse.take(10)
+
+            # Get most checked out subjects (physical records only) since 2015
+            subjects_counts = {}
+            sql = <<-END_SQL.gsub(/\n/, '')
+                select subjects
+                from eco_details
+                where eco_summary_id = #{id} and
+                    year(bib_create_date) >= 2015 and
+                    is_online = 0 and
+                    checkout_2015_plus >= 1;
+            END_SQL
+            rows = ActiveRecord::Base.connection.exec_query(sql).rows
+            rows.each do |row|
+                subjects = (row[0] || "(NONE)").split("|")
+                subjects.each do |subject|
+                    if subjects_counts[subject] == nil
+                        subjects_counts[subject] = 1
+                    else
+                        subjects_counts[subject] = subjects_counts[subject] + 1
+                    end
+                end
+            end
+
+            # Top 10 most checked out subjects since 2015
+            most_checkedout_subjects = subjects_counts.map do |x|
+                {
+                    key: x[0],
+                    value: x[1]
+                }
+            end.sort_by { |y| y[:value] }.reverse.take(10)
+
+            # Collate bought subjects with checked out subjects
+            data = []
+            most_bought_subjects.each do |x|
+                row = OpenStruct.new(subject: x[:key], acq_count: x[:value], checkout_count: 0)
+                data << row
+            end
+
+            most_checkedout_subjects.each do |x|
+                row = data.find {|c| c.subject == x[:key]}
+                if row
+                    row.checkout_count = x[:value]
+                else
+                    row = OpenStruct.new(subject: x[:key], acq_count: 0, checkout_count: x[:value])
+                    data << row
+                end
+            end
+
+            data
+        end
+    end
+
     def checkouts_2015_details()
         Rails.cache.fetch("ecosystem_#{self.id}_checkouts_details", expires_in: 25.minute) do
             begin
@@ -346,6 +432,7 @@ class EcoSummary < ActiveRecord::Base
                         ck3_count: r[6]
                     )
                 end
+
                 data
             rescue Exception => e
                 Rails.logger.error "Error in checkouts_2015_details() for #{self.id}: #{e.to_s}"
@@ -365,12 +452,13 @@ class EcoSummary < ActiveRecord::Base
     def format_acquisitions_bib()
         data = []
         acquisitions_bib().each do |row|
-            percent_online = 0
-            if row.total > 0
-                percent_online = (row.online * 100) / row.total
+            if row.year >= 2015
+                percent_online = 0
+                if row.total > 0
+                    percent_online = (row.online * 100) / row.total
+                end
+                data << OpenStruct.new(year: row.year, total: row.total, online: row.online, online_percent: percent_online)
             end
-            data << OpenStruct.new(year: row.year, total: row.total, online: row.online, online_percent: percent_online)
-            break if data.count == 6
         end
         data
     end
