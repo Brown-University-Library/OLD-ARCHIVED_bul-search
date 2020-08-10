@@ -138,7 +138,7 @@ $(document).ready(function() {
     });
 
     if (bibsToPatch.length > 0) {
-      console.log("Attempting patch for " + bibsToPatch.toString() + " bibs");
+      console.log("Attempting to patch request link for bibs: " + bibsToPatch.toString());
       scope.patchRequestItemLinks(bibsToPatch);
     } else {
       console.log("No patching needed");
@@ -189,13 +189,14 @@ $(document).ready(function() {
   // Returns the bib number in the URL if the URL needs to have its itemnum
   // patched, otherwise it returns null.
   scope.urlNeedItemNumPatch = function(url) {
-    var itemId, needPatch;
-    var urlTokens = url.split("?");
     var bib = null;
+    var barcode, itemId, needPatch;
+    var urlTokens = url.split("?");
     if (urlTokens.length > 1) {
-      bib = getUrlParameterFromString(urlTokens[1], "bibnum");
-      itemId = getUrlParameterFromString(urlTokens[1], "itemnum");
-      needPatch = (bib != null) && (itemId == "");
+      bib = getUrlParameterFromString(urlTokens[1], "bibnum") || "";
+      barcode = getUrlParameterFromString(urlTokens[1], "barcode") || "";
+      itemId = getUrlParameterFromString(urlTokens[1], "itemnum") || "";
+      needPatch = (bib !== "") && (barcode === "") && (itemId === "");
       if (needPatch) {
         return bib;
       }
