@@ -159,15 +159,23 @@ $(document).ready(function() {
           var url = $(this).attr("href");
           var bib = scope.urlNeedItemNumPatch(url);
           if (bib != null) {
-            // ...patch it with the info that we got in the AJAX call
+            // ...if the link is for a bib that needs to be patched...
             for(i = 0; i < itemInfo.length; i++) {
               if (itemInfo[i].bib == bib) {
                 if (itemInfo[i].items.length == 1) {
+                  // ...if we have just one item then we can safely patch it
+                  // (append the itemnum to the URL)
                   newUrl = url.replace("&itemnum=", "&itemnum=" + itemInfo[i].items[0]);
                   $(this).attr("href", newUrl);
-                  console.log("PATCHED " + newUrl);
                 } else if (itemInfo[i].items.length > 1) {
-                  console.log("CANNOT PATCH (>1) " + newUrl);
+                  // ...but it if has more than one item we cannot safely
+                  // patch it, instead we replace the URL to send the user
+                  // to the details page (from where we can  retrieve item
+                  // numbers without ambiguity)
+                  newUrl = "https://search.library.brown.edu/catalog/" + bib;
+                  $(this).attr("href", newUrl);
+                  $(this).attr("title", "Click to confirm availability");
+                  $(this).text("View details");
                 }
                 break;
               }
