@@ -16,6 +16,32 @@ class ApiController < ApplicationController
     }
   end
 
+  # Returns the items IDs for a list of BIBs
+  def items_ids()
+    if params["bibs"].length > 2000
+      Rails.logger.info("ApiController.items_ids: Request too long")
+      render json: {}, status: 500
+      return
+    end
+
+    solr_url = ENV["SOLR_URL"]
+    bibs = params["bibs"].split(",")
+    solr_response = SearchGet.many(solr_url, bibs)
+
+    # Extract the items Ids from the results
+    results = []
+    solr_response.solr_docs.each do |doc|
+      marc = MarcRecord.new(doc["marc_display"])
+      result = {
+        bib: doc["id"],
+        items: marc.items.map { |item| "i#{item.id}" }
+      }
+      results << result
+    end
+
+    render json: results
+  end
+
   def items_by_location
     code = params[:code] || ""
     if code.empty?

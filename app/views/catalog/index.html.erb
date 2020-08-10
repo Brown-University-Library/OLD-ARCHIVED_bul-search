@@ -11,10 +11,9 @@
 </div>
 
 <script type="text/javascript">
-// For calling the availability api.
-var availabilityService = '<%= availability_service_url %>';
-
-window.isCovid = <%= @is_covid == true %>;
+// Global vars needed in catalog_results_availability.js
+window.availabilityService = '<%= availability_service_url %>';
+window.itemService = '<%= api_items_ids_url() %>';
 
 <% if @altered_search_terms %>
   // Note that we found a slighly modified version of the call number

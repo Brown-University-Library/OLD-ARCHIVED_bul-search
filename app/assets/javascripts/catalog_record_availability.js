@@ -22,9 +22,6 @@ $(document).ready(function() {
   // Controls whether we show the Hathi Emergency Temporary Access links.
   var isHathiETA = false;
 
-  // Controls whether we show the new "Request Item" link instead of the "Request This (bib)" link.
-  var isRequestItemLink = (window.isRequestItemLink === true) || (josiahObject.getUrlParameter("req") == "item");
-
   scope.Init = function() {
     var req, apiUrl, limit;
 
@@ -171,31 +168,32 @@ $(document).ready(function() {
       scope.showAvailability(true);
     }
 
-    if (availabilityResponse.requestable && !isRequestItemLink) {
-      if (isReopening) {
-        var i, status;
-        var location = "N/A";
-        var requestOK = false;
-        for(i = 0; i < availabilityResponse.items.length; i++) {
-          location = (availabilityResponse.items[i].location || "").toUpperCase();
-          status = (availabilityResponse.items[i].status || "");
-          if (reopeningLocations.includes(location)) {
-            if (status.includes("HOLD")) {
-              // skip it
-            } else {
-              requestOK = true;
-              break;
-            }
-          }
-        }
-        if (requestOK) {
-          $("#book_services_link").removeClass("hidden");
-          scope.debugMessage("Requestable, location: " + location);
-        } else {
-          scope.debugMessage("Not requestable, location: " + location);
-        }
-      } // reopening
-    } // requestable
+    // Old "Request This" link on the right-side panel.
+    // if (availabilityResponse.requestable) {
+    //   if (isReopening) {
+    //     var i, status;
+    //     var location = "N/A";
+    //     var requestOK = false;
+    //     for(i = 0; i < availabilityResponse.items.length; i++) {
+    //       location = (availabilityResponse.items[i].location || "").toUpperCase();
+    //       status = (availabilityResponse.items[i].status || "");
+    //       if (reopeningLocations.includes(location)) {
+    //         if (status.includes("HOLD")) {
+    //           // skip it
+    //         } else {
+    //           requestOK = true;
+    //           break;
+    //         }
+    //       }
+    //     }
+    //     if (requestOK) {
+    //       $("#book_services_link").removeClass("hidden");
+    //       scope.debugMessage("Requestable, location: " + location);
+    //     } else {
+    //       scope.debugMessage("Not requestable, location: " + location);
+    //     }
+    //   } // reopening
+    // } // requestable
 
     scope.showEasyBorrowBib(availabilityResponse.items);
     scope.showHoldingsSummary(availabilityResponse.summary);
@@ -472,29 +470,23 @@ $(document).ready(function() {
     scope.updateItemLocation(itemRow, avItem);
     scope.updateItemStatus(itemRow, avItem, item.volume);
 
-    if (isRequestItemLink) {
-      // New workflow for "Request Item" link
-      var isRequestAccess = scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
-      if (isRequestAccess) {
-        // "Request Access" link displayed, nothing else to do
-        scope.debugMessage("Request Link: item has Request Access link");
-      } else {
-        // Attempt to display "Scan Item" and/or "Request Item" links.
-        itemRequestData = {
-          requestableBib: requestableBib,
-          reopeningLocations: reopeningLocations,
-          location: location,
-          status: status,
-        }
-        requestableItem = canRequestItem(itemRequestData)
-        if (!scope.updateRequestItemLink(itemRow, avItem, barcode, requestableItem)) {
-          scope.debugMessage("Request Link: none (Sierra Request Bib: " + requestableBib + ")");
-        }
-      }
+    // Display the "Request Item" link
+    var isRequestAccess = scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
+    if (isRequestAccess) {
+      // "Request Access" link displayed, nothing else to do
+      scope.debugMessage("Request Link: item has Request Access link");
     } else {
-      // Original workflow
-      scope.updateItemScanStatus(itemRow, avItem, barcode);
-      scope.updateItemAeonLinks(itemRow, item, barcode, avItem.status);
+      // Attempt to display "Scan Item" and/or "Request Item" links.
+      itemRequestData = {
+        requestableBib: requestableBib,
+        reopeningLocations: reopeningLocations,
+        location: location,
+        status: status,
+      }
+      requestableItem = canRequestItem(itemRequestData);
+      if (!scope.updateRequestItemLink(itemRow, avItem, barcode, requestableItem, "i" + item.id)) {
+        scope.debugMessage("Request Link: none (Sierra Request Bib: " + requestableBib + ")");
+      }
     }
 
   };
@@ -548,11 +540,11 @@ $(document).ready(function() {
   };
 
 
-  scope.updateItemScanStatus = function(row, avItem, barcode) {
+  scope.updateItemScanStatus = function(row, avItem, barcode, itemId) {
     var scanLink, itemLink, html;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
-      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">item</a>';
+      itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id, itemId) + '" title="Request this item for pick up.">item</a>';
       html = "Request&nbsp;" + scanLink + "&nbsp;|&nbsp;" + itemLink;
       row.find(".scan").html(html);
       return true;
@@ -561,9 +553,9 @@ $(document).ready(function() {
   };
 
 
-  scope.updateRequestItemLink = function(row, avItem, barcode, isItemRequest) {
+  scope.updateRequestItemLink = function(row, avItem, barcode, isItemRequest, itemId) {
     var html, link;
-    if (scope.updateItemScanStatus(row, avItem, barcode)) {
+    if (scope.updateItemScanStatus(row, avItem, barcode, itemId)) {
       // Scan|item link already displayed
       scope.debugMessage("Request Link: item has Request scan | item links");
       return true;
@@ -571,7 +563,7 @@ $(document).ready(function() {
 
     // See if we can display the "Request Item" link
     if (isItemRequest) {
-      link = '<a href="' + itemRequestFullLink(barcode, bibData.id) + '" title="Request this item for pick up.">Request Item</a>';
+      link = '<a href="' + itemRequestFullLink(barcode, bibData.id, itemId) + '" title="Request this item for pick up.">Request Item</a>';
       html = link;
       row.find(".scan").html(html);
       scope.debugMessage("Request Link: item has Request Item link");

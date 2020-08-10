@@ -93,7 +93,6 @@ $(document).ready(function(){
                 var deleteUrl = "<%= dashboard_delete_url(id: @presenter.summary.id) %>";
                 var req = req = $.ajax({url: deleteUrl, method: "POST"});
                 req.success(function() {
-                    debugger;
                     window.location.href = "<%= dashboard_index_url() %>";
                 });
                 req.error(function() {

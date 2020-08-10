@@ -63,6 +63,18 @@ window.josiahObject.getUrlParameter = function(param) {
 }
 
 
+function getUrlParameterFromString(url, param) {
+  var params = url.split('&');
+  var i, tokens;
+  for (var i = 0; i < params.length; i++) {
+    tokens = params[i].split('=');
+    if (tokens[0] == param) {
+      return tokens[1];
+    }
+  }
+  return null;
+}
+
 // ------------------------------
 // Functions used to display the option to Scan an
 // item or request it.
@@ -97,8 +109,9 @@ function easyScanFullLink(scanLink, bib, title) {
 }
 
 
-function itemRequestFullLink(barCode, bib) {
-  return "https://library.brown.edu/easyrequest/login/?bibnum=" + bib + "&barcode=" + barCode;
+function itemRequestFullLink(barCode, bib, itemId) {
+  var baseUrl = "https://library.brown.edu/easyrequest/login/";
+  return baseUrl + "?bibnum=" + bib + "&barcode=" + barCode + "&itemnum=" + itemId;
 }
 
 
@@ -221,7 +234,7 @@ function isValidHayAeonLocation( josiah_location ) {
 
   // original code...
   var non_aeon_locations = hay_aeon_exclusions;  // hay_aeon_exclusions is a global var loaded from app/views/layouts/blacklight.html.erb
-  console.log( '- INITIAL non_aeon_locations, ```' + non_aeon_locations + '```' )
+  // console.log( '- INITIAL non_aeon_locations, ```' + non_aeon_locations + '```' )
 
   /* TEMP CODE
      TODO: before moving to production, restore the code above after...
@@ -253,7 +266,7 @@ function isValidHayAeonLocation( josiah_location ) {
   } else if ( josiah_location == "HMCF" || josiah_location == "HJH" ) {
     hay_found = true;
   }
-  console.log( 'hay_found determination, `' + hay_found + '`' );
+  // console.log( 'hay_found determination, `' + hay_found + '`' );
   return hay_found;
 }
 

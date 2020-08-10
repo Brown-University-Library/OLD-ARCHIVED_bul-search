@@ -42,6 +42,7 @@ BulSearch::Application.routes.draw do
   post 'patron/checkouts' => 'patron#checkouts'
 
   # API controller
+  get 'api/items/ids' => 'api#items_ids', as: :api_items_ids
   get 'api/items/by_location' => 'api#items_by_location'
   get 'api/items/nearby' => 'api#items_nearby'
   get 'api/items/shelf_item/:id' => 'api#shelf_item'
