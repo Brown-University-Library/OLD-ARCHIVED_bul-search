@@ -357,30 +357,48 @@ class SolrDocument
 
   def online_availability
     @online_availability ||= begin
-      links = []
-      if has_marc_data?
-        links = online_availability_from_marc
-        if links.count == 0
-          # This is to handle links in Solr not represented in the MARC data.
-          # (e.g. link to BDR items not represented in the 856|u). We should
-          # eventually store those in MARC too but we are not there yet.
+      links = online_availability_from_solr_json()
+      if links.count > 0
+        # We are done
+      else
+        #
+        # ==================================================
+        # TODO: This branch of the code can be removed once we
+        # reimport the data with the new JSON value in Solr.
+        #
+        # At that point we can also make the OnlineAvailData
+        # class a data-only class and remove all the logic from
+        # it since now we are doing those transformation at index
+        # time.
+        # ==================================================
+        #
+        # Use the original logic to try to get the data from MARC
+        # or from the disjointed Solr fields (url_fulltext_display
+        # and url_suppl_display). We will be able to remove this
+        # logic once all records have been reindexed with the new
+        # url_fulltext_json_s field.
+        if has_marc_data?
+          links = online_availability_from_marc
+          if links.count == 0
+            # This is to handle links in Solr not represented in the MARC data.
+            # (e.g. link to BDR items not represented in the 856|u). We should
+            # eventually store those in MARC too but we are not there yet.
+            links = online_availability_from_solr
+          end
+        else
+          # We don't have MARC data when fetching search results.
+          # We should eventually change that, but for now that's how things work.
           links = online_availability_from_solr
         end
-      else
-        # We don't have MARC data when fetching search results.
-        # We should eventually change that, but for now that's how things work.
-        links = online_availability_from_solr
-      end
-
-      # Manually append the ProQuest link for theses and dissertations.
-      # (in the future we should index this data, but for now this would do)
-      if self["format"] == "Thesis/Dissertation"
-        url = ProQuestData.url_for_bib(self["id"])
-        if url != nil
-          links << OnlineAvailData.new(url, "Available online", "ProQuest")
+        # Manually append the ProQuest link for theses and dissertations.
+        # (in the future we should index this data, but for now this would do)
+        if self["format"] == "Thesis/Dissertation"
+          url = ProQuestData.url_for_bib(self["id"])
+          if url != nil
+            links << OnlineAvailData.new(url, "Available online", "ProQuest")
+          end
         end
       end
-
       links
     rescue StandardError => e
       Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -492,6 +510,14 @@ class SolrDocument
       urls.zip(labels).map do |url, label|
         OnlineAvailData.new(url, label, nil)
       end
+    end
+
+    def online_availability_from_solr_json
+      json = JSON.parse(self['url_fulltext_json_s'] || "[]")
+      values = json.select {|row| row["url"] != nil }.map do |row|
+        OnlineAvailData.new(row["url"], row["text"], nil)
+      end
+      values
     end
 
     def online_availability_from_marc
