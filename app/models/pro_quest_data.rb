@@ -1,7 +1,7 @@
 class ProQuestData
     def self.url_for_bib(bib)
         return nil if bib == nil
-        self.urls[bib.to_sym]
+        self.urls[bib]
     end
 
     def self.urls()
