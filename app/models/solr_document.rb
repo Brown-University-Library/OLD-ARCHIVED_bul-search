@@ -371,6 +371,16 @@ class SolrDocument
         # We should eventually change that, but for now that's how things work.
         links = online_availability_from_solr
       end
+
+      # Manually append the ProQuest link for theses and dissertations.
+      # (in the future we should index this data, but for now this would do)
+      if self["format"] == "Thesis/Dissertation"
+        url = ProQuestData.url_for_bib(self["id"])
+        if url != nil
+          links << OnlineAvailData.new(url, "Available online", "ProQuest")
+        end
+      end
+
       links
     rescue StandardError => e
       Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
