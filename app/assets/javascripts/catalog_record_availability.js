@@ -488,7 +488,6 @@ $(document).ready(function() {
         scope.debugMessage("Request Link: none (Sierra Request Bib: " + requestableBib + ")");
       }
     }
-
   };
 
 
@@ -567,6 +566,15 @@ $(document).ready(function() {
       html = link;
       row.find(".scan").html(html);
       scope.debugMessage("Request Link: item has Request Item link");
+      return true;
+    }
+
+    // See if we can display the "Recall Item" link.
+    if (avItem.status.startsWith("DUE ")) {
+      link = '<a href="' + window.bibData.bookServicesUrl + '" title="Recall this item.">Recall Item</a>';
+      html = link;
+      row.find(".scan").html(html);
+      scope.debugMessage("Request Link: item has Recall Item link");
       return true;
     }
 
