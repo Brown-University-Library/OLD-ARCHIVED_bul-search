@@ -4,13 +4,11 @@ class StatsController < ApplicationController
   def server
     result = {}
     solr_url = ENV["SOLR_URL"]
-    master_token = ENV["SOLR_URL_MASTER_TOKEN"]
-    if solr_url.include?(master_token)
+    if solr_url == ENV["SOLR_URL_WRITE"]
       result[:solr] = "master"
     else
       result[:solr] = "reader"
     end
-    result[:s7] = solr_url.include?("josiah7")
     render :json => result
   end
 
