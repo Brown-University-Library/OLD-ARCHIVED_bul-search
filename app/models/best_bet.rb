@@ -12,7 +12,7 @@ class BestBet
   #
   def self.get(query = "")
     return nil if query.empty?
-    query = query.strip
+    query = query.strip.downcase
 
     if ENV["BEST_BETS_EDIT"] == "true"
       match = self.get_from_sql(query)
