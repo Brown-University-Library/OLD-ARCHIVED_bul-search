@@ -46,26 +46,21 @@
    <%= render_document_sidebar_partial %>
 </div>
 
-<div id="covidModal" class="modal fade" role="dialog">
+<div id="requestInfoModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Availability during COVID-19</h4>
+        <h4 class="modal-title">Request Options</h4>
       </div>
       <div class="modal-body">
-        <p>Because onsite access to the libraries is not possible,
-        we are not able to retrieve or scan material at this time;
-        however, we can help you locate digital material that is
-        comparable to physical items.</p>
-
-        <p>Contact us at
-        <a target="_blank" href="mailto:rock@brown.edu?subject=Help+finding+Josiah+record+<%= @document.id %>&body=Link+to+record+https://search.library.brown.edu/catalog/<%= @document.id %>">rock@brown.edu</a>.
-        </p>
-
-        <p>For Special Collections <a href="https://brown.libanswers.com/form?queue_id=3794" target="_blank">use this form</a>.
-        </p>
+        <ul>
+        <li><b>Request Scan</b> allows you to request a section of a book to be scanned and
+        the resulting PDF will be emailed to you.
+        <li><b>Request Item</b> allows you to request the physical item for pickup.
+        Click here for more information on <a target="_blank" href="https://blogs.brown.edu/libnews/resume-service/">contactless</a> pickup.
+        </ul>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -74,11 +69,3 @@
 
   </div>
 </div>
-
-<script>
-$(document).ready(function() {
-  if (window.josiahObject.getUrlParameter("covid19") != null) {
-    $("#contact-us").click();
-  }
-});
-</script>

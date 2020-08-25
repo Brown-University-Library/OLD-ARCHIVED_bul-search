@@ -16,11 +16,11 @@ $(document).ready(function() {
   // (defined via ENV variable)
   var reopeningLocations = (window.reopeningLocations || []);
 
-  // Controls whether we show request options for certain locations.
-  var isReopening = (window.isReopening === true) || (josiahObject.getUrlParameter("reopening") == "true");
-
   // Controls whether we show the Hathi Emergency Temporary Access links.
   var isHathiETA = false;
+
+  // Controls whether we allow users to recall checked out items.
+  var allowRecall = false;
 
   scope.Init = function() {
     var req, apiUrl, limit;
@@ -542,6 +542,11 @@ $(document).ready(function() {
   scope.updateItemScanStatus = function(row, avItem, barcode, itemId) {
     var scanLink, itemLink, html;
     if (canScanItem(avItem['location'], bibData.format, avItem["status"])) {
+      // Prototyping two links and popup info window
+      // scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">Request&nbsp;Scan</a>';
+      // scanLink += '&nbsp;&nbsp;&nbsp;<a href="#" id="request-scan-info" data-toggle="modal" data-target="#requestInfoModal"><i class="fa fa-info-circle"></i></a>';
+      // itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id, itemId) + '" title="Request this item for pick up.">Request&nbsp;Item</a>';
+      // html = scanLink + "<br/>" + itemLink;
       scanLink = '<a href="' + easyScanFullLink(avItem['scan'], bibData.id, bibData.title) + '" title="Request a scan of a section of this item.">scan</a>';
       itemLink = '<a href="' + itemRequestFullLink(barcode, bibData.id, itemId) + '" title="Request this item for pick up.">item</a>';
       html = "Request&nbsp;" + scanLink + "&nbsp;|&nbsp;" + itemLink;
@@ -570,7 +575,7 @@ $(document).ready(function() {
     }
 
     // See if we can display the "Recall Item" link.
-    if (avItem.status.startsWith("DUE ")) {
+    if (allowRecall && avItem.status.startsWith("DUE ")) {
       link = '<a href="' + window.bibData.bookServicesUrl + '" title="Recall this item.">Recall Item</a>';
       html = link;
       row.find(".scan").html(html);
