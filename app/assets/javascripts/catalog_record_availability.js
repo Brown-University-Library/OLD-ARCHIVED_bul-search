@@ -22,6 +22,9 @@ $(document).ready(function() {
   // Controls whether we allow users to recall checked out items.
   var allowRecall = false;
 
+  // Testing CDL integration
+  var isCdlBib = (josiahObject.getUrlParameter("cdl") == "true");
+
   scope.Init = function() {
     var req, apiUrl, limit;
 
@@ -519,22 +522,6 @@ $(document).ready(function() {
     if (status) {
       // Set the item status
       row.find(".status").html(status);
-
-      // TODO: enable once easyBorrow honors the volume parameter
-      // location = avItem["location"];
-      // offerEZB = availabilityEZB && bibData.itemsMultiType == "volume" &&
-      //   !scope.isAvailableStatus(status) && scope.isTakeHomeLocation(location);
-      // if (offerEZB) {
-      //   // Allow the user to request this volume via easyBorrow.
-      //   url = bibData.easyBorrowUrl;
-      //   if (volume != "") {
-      //       url += "&volume=" + volume;
-      //   }
-      //   text = "Request this volume via EasyBorrow";
-      //   tooltip = "Our copy is not available at the moment, but we can try get it for you from other libraries";
-      //   html = '<br/><a href="' + url + '" title="' + tooltip + '" target="_blank">' + text + '</a>';
-      //   row.find(".ezb_volume_url").html(html);
-      // }
     }
   };
 
@@ -559,6 +546,14 @@ $(document).ready(function() {
 
   scope.updateRequestItemLink = function(row, avItem, barcode, isItemRequest, itemId) {
     var html, link;
+    if (isCdlBib) {
+      html = '<a href="https://github.com/Brown-University-Library/cdl?' + bibData.id + '" target="_blank" title="Request online access to this item.">Request Online</a>';
+      html += '&nbsp;&nbsp;&nbsp;<a href="#" id="cdl-info" data-toggle="modal" data-target="#cdlInfoModal"><i class="fa fa-info-circle"></i></a>';
+      row.find(".scan").html(html);
+      scope.debugMessage("Request Link: item has Request Online Item link");
+      return true;
+    }
+
     if (scope.updateItemScanStatus(row, avItem, barcode, itemId)) {
       // Scan|item link already displayed
       scope.debugMessage("Request Link: item has Request scan | item links");
