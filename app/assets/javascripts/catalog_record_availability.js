@@ -22,7 +22,7 @@ $(document).ready(function() {
   // Controls whether we allow users to recall checked out items.
   var allowRecall = false;
 
-  // Testing CDL integration
+  // Testing CDL integration.
   var isCdlBib = (josiahObject.getUrlParameter("cdl") == "true");
 
   scope.Init = function() {
