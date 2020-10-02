@@ -7,7 +7,7 @@
       <%= link_to "Catalog", catalog_index_path(q: @query) %>
     </li>
     <li>
-      <%= link_to "Reserves", reserves_search_path, title: 'In-Library Reserves', rel: 'tooltip' %>
+      <%= link_to "Reserves", "https://library.brown.edu/reserves/", title: 'Online Course Reserves', rel: 'tooltip', target: "_blank" %>
     </li>
     <li>
       <%= link_to t('blacklight.feedback.label'), google_form_url(), title: 'Report an error, make suggestions, or let us know what you think ', rel: 'tooltip', target: "_blank"  %>
