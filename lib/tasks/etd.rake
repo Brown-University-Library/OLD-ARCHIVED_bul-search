@@ -41,4 +41,33 @@ namespace :josiah do
     deleted = solr.delete_by_query("record_source_s:BDR")
     puts "Deleted all records that came from the BDR: #{deleted.ok?}"
   end
+
+  desc "Gets the check digit for the BIBs indicated in the proquest.tsv file"
+  task "etd_check_digit" => :environment do |_cmd, args|
+    solr = SolrLite::Solr.new(ENV['SOLR_URL'])
+    proquest_file = "/Users/hectorcorrea/dev/bul-traject/data/proquest.tsv"
+    puts "bib\tbib_full\tproquest_id\ttitle"
+    File.readlines(proquest_file).each do |line|
+      tokens = line.split("\t")
+      bib = tokens[0]
+      proquest_id = tokens[1]
+      title = tokens[2]
+
+      if bib == "NOT FOUN"
+        puts "#{bib}\tNOT FOUND\t#{proquest_id}\t#{title}"
+        next
+      end
+
+      doc = solr.get(bib)
+      if doc == nil
+        puts "#{bib}\tERROR\t#{proquest_id}\t#{title}"
+        next
+      end
+
+      record = MarcRecord.new(doc["marc_display"])
+      bib_cd = record.subfield_values("907", "a").first[1..-1]
+
+      puts "#{bib}\t#{bib_cd}\t#{proquest_id}\t#{title}"
+    end
+  end
 end
