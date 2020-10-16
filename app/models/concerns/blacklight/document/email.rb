@@ -24,8 +24,13 @@ module Blacklight::Document::Email
     info.author = semantics[:author].join(" ")
     info.format = semantics[:format].join(" ")
     info.language = semantics[:language].join(" ")
-    info.online_url = self[:url_fulltext_display].first if self[:url_fulltext_display]
-    info.online_url_label = self[:url_suppl_display].first if self[:url_suppl_display]
+
+    if self[:url_fulltext_json_s]
+      full_text_links = JSON.parse(self[:url_fulltext_json_s])
+      info.online_url = full_text_links.first["url"]
+      info.online_url_label = full_text_links.first["text"]
+    end
+
     info.locations = self.location_names
     info.callnumbers = self[:callnumber_t] || []
     availability = Availability.new

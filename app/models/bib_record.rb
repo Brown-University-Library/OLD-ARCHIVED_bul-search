@@ -22,7 +22,7 @@ class BibRecord
     :format, :language_facet, :location_code_t, :subject_t,
     :online_b, :access_facet,
     :marc_display, :abstract_display,
-    :url_fulltext_display, :url_suppl_display,
+    :url_fulltext_json_s,
     :topic_facet,
     :record_source_s,
     :bdr_notes_display

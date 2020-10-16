@@ -103,14 +103,12 @@ class EtdImport
       # picks stuff from the marc_display page, for example the abstract.
       bib.marc_display = nil
 
-      # TODO: handle empty ENV variable
       item_url = ENV["BDR_ITEM_URL"] + bib.id
-      bib.url_fulltext_display = [item_url]
-      access_text = "Available online at the Brown Digital Repository"
+      full_text = [{url: item_url, text: "Available online at the Brown Digital Repository"}]
       if etd["_display_public_bsi"] == false
-        access_text += " (access might be restricted to Brown University users)"
+        full_text[0][:text] += " (access might be restricted to Brown University users)"
       end
-      bib.url_suppl_display = [access_text]
+      bib.url_fulltext_json_s = full_text.to_json
 
       # new fields
       bib.abstract_display = etd["abstract"]

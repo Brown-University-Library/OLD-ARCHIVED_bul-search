@@ -60,9 +60,8 @@ class Haffenreffer
         bib.marc_display = nil
 
         item_url = "https://de1.zetcom-group.de/MpWeb-mpBristolHaffenreffer/v?autologon=1#!m/Object/#{item[:id]}/form/ObjCatalogView"
-        bib.url_fulltext_display = [item_url]
-        access_text = "More information at the Haffenreffer Museum of Anthropology"
-        bib.url_suppl_display = [access_text]
+        full_text = [{url: item_url, text: "More information at the Haffenreffer Museum of Anthropology"}]
+        bib.url_fulltext_json_s = full_text.to_json
 
         # new fields
         bib.abstract_display = item[:description]
