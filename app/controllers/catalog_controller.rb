@@ -210,6 +210,16 @@ class CatalogController < ApplicationController
       }
     end
 
+    config.add_search_field('series') do |field|
+      field.solr_parameters = { :'spellcheck.dictionary' => 'title_series_t' }
+      field.qt = 'search'
+      field.solr_local_parameters = {
+        :type => 'dismax',
+        :qf => 'title_series_t',
+        :pf => 'title_series_t'
+      }
+    end
+
     # "sort results by" select (pulldown)
     # Make sure to white-list in clean_sort_value() any field added here
     config.add_sort_field 'score desc, pub_date_sort desc, title_sort asc', :label => 'relevance'

@@ -234,9 +234,8 @@
   <% end %>
 
   <% if document.series != nil %>
-    <!-- TODO: make it a hyperlink once we index this field -->
     <dt class="blacklight-series">Series:</dt>
-    <dd><%= document.series %></dd>
+    <dd><a href="<%= catalog_index_path(q: document.series, search_field: 'series') %>"><%= document.series %></a></dd>
   <% end %>
 
   <%# Calls method with notes config will display nothing
