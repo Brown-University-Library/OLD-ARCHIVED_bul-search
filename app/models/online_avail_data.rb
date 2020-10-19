@@ -4,10 +4,7 @@ class OnlineAvailData
   CLASSIC_JOSIAH_URL = "http://josiah.brown.edu/record="
   NEW_JOSIAH_URL = "http://search.library.brown.edu/catalog/"
 
-  # url is 856 u
-  # note is 856 z
-  # materials is 856 z
-  def initialize(url, note, materials)
+  def initialize(url, text)
     if url.start_with?(CLASSIC_JOSIAH_URL)
       @url = url.gsub(CLASSIC_JOSIAH_URL, NEW_JOSIAH_URL)
     else
@@ -16,14 +13,10 @@ class OnlineAvailData
         @url = "http://#{@url}"
       end
     end
-    if note == nil && materials == nil
+    if text == nil
       @label = "Available online"
-    elsif note == nil && materials != nil
-      @label = materials
-    elsif note != nil && materials == nil
-      @label = note
     else
-      @label = "#{note} (#{materials})"
+      @label = text
     end
   end
 end

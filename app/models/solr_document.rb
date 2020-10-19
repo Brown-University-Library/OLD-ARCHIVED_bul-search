@@ -358,47 +358,6 @@ class SolrDocument
   def online_availability
     @online_availability ||= begin
       links = online_availability_from_solr_json()
-      if links.count > 0
-        # We are done
-      else
-        #
-        # ==================================================
-        # TODO: This branch of the code can be removed once we
-        # reimport the data with the new JSON value in Solr.
-        #
-        # At that point we can also make the OnlineAvailData
-        # class a data-only class and remove all the logic from
-        # it since now we are doing those transformation at index
-        # time.
-        # ==================================================
-        #
-        # Use the original logic to try to get the data from MARC
-        # or from the disjointed Solr fields (url_fulltext_display
-        # and url_suppl_display). We will be able to remove this
-        # logic once all records have been reindexed with the new
-        # url_fulltext_json_s field.
-        if has_marc_data?
-          links = online_availability_from_marc
-          if links.count == 0
-            # This is to handle links in Solr not represented in the MARC data.
-            # (e.g. link to BDR items not represented in the 856|u). We should
-            # eventually store those in MARC too but we are not there yet.
-            links = online_availability_from_solr
-          end
-        else
-          # We don't have MARC data when fetching search results.
-          # We should eventually change that, but for now that's how things work.
-          links = online_availability_from_solr
-        end
-        # Manually append the ProQuest link for theses and dissertations.
-        # (in the future we should index this data, but for now this would do)
-        if self["format"] == "Thesis/Dissertation"
-          url = ProQuestData.url_for_bib(self["id"])
-          if url != nil
-            links << OnlineAvailData.new(url, "Available online", "ProQuest")
-          end
-        end
-      end
       links
     rescue StandardError => e
       Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -492,48 +451,10 @@ class SolrDocument
       @marc_record ||= MarcRecord.new(self["marc_display"])
     end
 
-    def online_availability_from_solr
-      urls = self['url_fulltext_display'] || []
-      labels = self['url_suppl_display'] || []
-      if urls.count != labels.count
-        # Set all the labels to "avail online" since
-        # we cannot guarantee which ones go with the URLs.
-        #
-        # In reality we cannot guarantee this even when
-        # the counts match and we will need to handle this
-        # at some point.
-        labels = []
-        urls.count.times do |url|
-          labels << "Available online"
-        end
-      end
-      urls.zip(labels).map do |url, label|
-        OnlineAvailData.new(url, label, nil)
-      end
-    end
-
     def online_availability_from_solr_json
       json = JSON.parse(self['url_fulltext_json_s'] || "[]")
       values = json.select {|row| row["url"] != nil }.map do |row|
-        OnlineAvailData.new(row["url"], row["text"], nil)
-      end
-      values
-    end
-
-    def online_availability_from_marc
-      values = []
-
-      # Online availability info is on fields 856.
-      marc.fields.each do |marc_field|
-        next if marc_field.keys.first != "856"
-
-        f_856 = marc_field["856"]
-        url = marc.subfield_value(f_856, "u")
-        note = marc.subfield_value(f_856, "z")
-        materials = marc.subfield_value(f_856, "3")
-
-        online_avail = OnlineAvailData.new(url, note, materials)
-        values << online_avail
+        OnlineAvailData.new(row["url"], row["text"])
       end
       values
     end
