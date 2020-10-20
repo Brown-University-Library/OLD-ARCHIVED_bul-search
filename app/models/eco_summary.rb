@@ -21,6 +21,10 @@ class EcoSummary < ActiveRecord::Base
         EcoSummary.edit_user?(user) && created_by == EcoSummary.safe_user_id(user)
     end
 
+    def filename_tsv
+        ENV["ECOSYSTEM_DOWNLOADS"] + "/dashboard_#{self.id}.tsv"
+    end
+
     def owner_display
         tokens = (created_by || "").split("@")
         if tokens.count == 0
@@ -193,6 +197,46 @@ class EcoSummary < ActiveRecord::Base
             return list_name
         end
         "#{list_name} (Sierra List #{sierra_list})"
+    end
+
+    def languages()
+        @languages ||= EcoLanguages.where(eco_summary_id: id).sort_by {|x| x.total }.reverse
+    end
+
+    def languages_top_10()
+        misc_print = 0
+        misc_online = 0
+        misc_total = 0
+        misc_count = 0
+        top10 = []
+        languages().each_with_index do |row, ix|
+            if ix <= 8
+                data = OpenStruct.new(
+                    name: row.name,
+                    print: row.print,
+                    online: row.online,
+                    total: row.total,
+                    percent: (total_bibs == 0) ? 0 : ((row.total * 100) / total_bibs)
+                )
+                top10 << data
+            else
+                misc_count += 1
+                misc_print += row.print
+                misc_online += row.print
+                misc_total += row.total
+            end
+        end
+        if misc_count > 0
+            misc = OpenStruct.new(
+                name: "All others (#{misc_count})",
+                print: misc_print,
+                online: misc_online,
+                total: misc_total,
+                percent: (total_bibs == 0) ? 0 : ((misc_total * 100) / total_bibs)
+            )
+            top10 << misc
+        end
+        top10
     end
 
     def ranges()
@@ -581,6 +625,7 @@ class EcoSummary < ActiveRecord::Base
         save!
 
         # Refresh each of the ranges...
+        @lang_counts = {}
         ranges().each do |range|
             Rails.logger.info("EcoSummary.refresh for #{self.id} - processing range #{range.id}")
             refresh_range(range.id)
@@ -600,16 +645,17 @@ class EcoSummary < ActiveRecord::Base
           Rails.logger.info("EcoSummary.refresh for #{self.id} - deleted #{orphan_count} orphans")
         end
 
-        Rails.logger.info("EcoSummary.refresh for #{self.id} - calculating acquisitions")
+        # Refresh children tables...
+        refresh_languages()
         refresh_acquisitions()
-
-        Rails.logger.info("EcoSummary.refresh for #{self.id} - calculating counts")
         refresh_counts()
 
         Rails.logger.info("EcoSummary.refresh for #{self.id} completed")
     end
 
     def refresh_acquisitions()
+        Rails.logger.info("EcoSummary.refresh for #{self.id} - calculating acquisitions")
+
         # Delete previous data
         sql = <<-END_SQL
             DELETE FROM eco_acquisitions
@@ -672,6 +718,8 @@ class EcoSummary < ActiveRecord::Base
 
     # Updates the counts in the EcoSummary by aggregating the totals from the EcoRanges
     def refresh_counts()
+        Rails.logger.info("EcoSummary.refresh for #{self.id} - calculating counts")
+
         bibs_count = 0
         items_count = 0
         ranges().each do |range|
@@ -694,8 +742,20 @@ class EcoSummary < ActiveRecord::Base
         Rails.cache.delete("ecosystem_#{self.id}_acquisitions_item")
     end
 
-    def filename_tsv
-        ENV["ECOSYSTEM_DOWNLOADS"] + "/dashboard_#{self.id}.tsv"
+    def refresh_languages()
+        Rails.logger.info("EcoSummary.refresh for #{self.id} - updating language counts")
+        EcoLanguages.delete_all(eco_summary_id: self.id)
+
+        @lang_counts.keys.each do |key|
+            lang = EcoLanguages.new
+            lang.eco_summary_id = self.id
+            data = @lang_counts[key]
+            lang.name = key
+            lang.online = data[:online]
+            lang.print = data[:print]
+            lang.total = data[:online] + data[:print]
+            lang.save!
+        end
     end
 
     # Recalculate the EcoDetails for a given EcoRange
@@ -712,20 +772,24 @@ class EcoSummary < ActiveRecord::Base
             bibs_count = 0
             is_range, range_from, range_to = CallnumberNormalizer.normalize_range(range.from, range.to)
             if is_range
-              Callnumber.process_by_range(range.from, range.to) do |docs|
-                begin
-                    EcoDetails.transaction do
-                        docs.each do |doc|
-                            items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to)
+                Callnumber.process_by_range(range.from, range.to) do |docs|
+                    begin
+                        EcoDetails.transaction do
+                            docs.each do |doc|
+                                items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to)
+                                # Update our language counts
+                                EcoDetails.langs_from_solr_doc(doc).each do |lang|
+                                    add_lang_count(lang)
+                                end
+                            end
+                            bibs_count += docs.count
                         end
-                        bibs_count += docs.count
+                    rescue => ex
+                        Rails.logger.error("refresh_range: Error processing range (#{range.from}, #{range.to}). Exception #{ex.to_s}")
                     end
-                rescue => ex
-                  Rails.logger.error("refresh_range: Error processing range (#{range.from}, #{range.to}). Exception #{ex.to_s}")
                 end
-              end
             else
-              Rails.logger.warn("refresh_range: Not a valid range (#{range.from}, #{range.to}). Range ID: #{range_id}")
+                Rails.logger.warn("refresh_range: Not a valid range (#{range.from}, #{range.to}). Range ID: #{range_id}")
             end
             range.item_count = items_count
             range.bib_count = bibs_count
@@ -847,6 +911,35 @@ class EcoSummary < ActiveRecord::Base
     end
 
     private
+        # Adds or updates the data to the @lang_counts instance variable:
+        #
+        #   @lang_counts = {
+        #       "english": {print: 10, online: 3},
+        #       "spanish": {print: 3, online: 0}
+        #   }
+        #
+        # The data argument is a hash with the print and online counts for a given
+        # language, for example:
+        #
+        #   data = {"english": {print: 2, online: 0}}
+        #
+        def add_lang_count(data)
+            code = data.keys.first
+            if @lang_counts[code] == nil
+                # First time we see this language
+                @lang_counts[code] = {
+                    print: data[code][:print],
+                    online: data[code][:online]
+                }
+            else
+                # Update the counts for this language
+                @lang_counts[code] = {
+                    print: @lang_counts[code][:print] + data[code][:print],
+                    online: @lang_counts[code][:online] + data[code][:online]
+                }
+            end
+        end
+
         # Given a pair of from/to values returns a "safe" value
         # to use as a "from" value. At least one of the values
         # must not be empty.

@@ -78,9 +78,7 @@ class EcoDetails < ActiveRecord::Base
             record.eco_range_id = eco_range_id
             record.bib_record_num = id[1..-1].to_i # the numeric part of the bib
             record.title = StringUtils.truncate(doc["title_display"], 100)
-            if (doc["language_facet"] || []).count > 0
-                record.language_code = doc["language_facet"].first[0..2]
-            end
+            # record.language_code = safe_language_code(doc["language_facet"])
             record.publish_year = doc["pub_date_sort"]
             record.author = StringUtils.truncate(doc["author_display"], 100)
             record.bib_create_date = marc_record.created_date()
@@ -114,9 +112,7 @@ class EcoDetails < ActiveRecord::Base
             # bib info
             record.bib_record_num = id[1..-1].to_i # the numeric part of the bib
             record.title = StringUtils.truncate(doc["title_display"], 100)
-            if (doc["language_facet"] || []).count > 0
-                record.language_code = doc["language_facet"].first[0..2]
-            end
+            # record.language_code = safe_language_code(doc["language_facet"])
             record.publish_year = doc["pub_date_sort"]
             record.author = StringUtils.truncate(doc["author_display"], 100)
             record.bib_create_date = marc_record.created_date()
@@ -141,6 +137,23 @@ class EcoDetails < ActiveRecord::Base
 
         return items.count
     end
+
+    # Returns an array with the languages in the document
+    # and counts for online vs print. Notice that it works
+    # at the BIB level (hence the count of 1) and not at
+    # the item level.
+    def self.langs_from_solr_doc(doc)
+        langs = []
+        (doc["language_facet"] || []).uniq.each do |lang|
+            if doc["online_b"] || false
+                langs << {lang => {print: 0, online: 1}}
+            else
+                langs << {lang => {print: 1, online: 0}}
+            end
+        end
+        langs
+    end
+
 
     def self.safe_location_code(code, bib)
         if (code || "").length > 5

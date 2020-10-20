@@ -159,6 +159,46 @@
             <% end %>
         </table>
 
+        <% if @presenter.summary.languages().count > 0 %>
+            <h3>Languages (top 10)</h3>
+            <table id="languagesTable">
+                <tr>
+                    <th>Language</th>
+                    <th class="number_cell">Print</th>
+                    <th class="number_cell">Online</th>
+                    <th class="number_cell">Total</th>
+                    <th class="number_cell">%</th>
+                    <th>&nbsp;</th>
+                </tr>
+                <% @presenter.summary.languages_top_10.each do |lang| %>
+                    <tr>
+                        <td data-sort-by-text="<%= lang.name %>"><%= lang.name %></td>
+                        <td class="number_cell" data-sort-by-number="<%= lang.print %>">
+                            <%= number_with_delimiter(lang.print) %>
+                        </td>
+                        <td class="number_cell" data-sort-by-number="<%= lang.online %>">
+                            <%= number_with_delimiter(lang.online) %>
+                        </td>
+                        <td class="number_cell" data-sort-by-number="<%= lang.total %>">
+                            <%= number_with_delimiter(lang.total) %>
+                        </td>
+                        <td class="number_cell">
+                            <% if lang.percent > 0 %>
+                                <%= lang.percent %>&nbsp;%
+                            <% else %>
+                                &nbsp;
+                            <% end %>
+                        </td>
+                        <td>
+                            <div class="bar">
+                                <div class="progress" style="width: <%= lang.percent %>%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                <% end %>
+            </table>
+        <% end %>
+
         <h3>Format and Access Point</h3>
         <table id="formatAccessTable">
             <tr>
@@ -215,8 +255,8 @@
                 <th class="number_cell_fixed">Acquired</th>
                 <th class="number_cell_fixed">Online</th>
                 <th class="number_cell_fixed">%&nbsp;Online</th>
-                <th class="number_cell_fixed">Physical</th>
-                <th class="number_cell_fixed">%&nbsp;Physical</th>
+                <th class="number_cell_fixed">Print</th>
+                <th class="number_cell_fixed">%&nbsp;Print</th>
                 <th class="number_cell_fixed">Checkout &gt;= 1</th>
                 <th class="number_cell_fixed">Checkout &gt;= 2</th>
                 <th class="number_cell_fixed">Checkout &gt;= 3</th>
@@ -235,7 +275,7 @@
                 </tr>
             <% end %>
         </table>
-        <p>Note: Checkout counts in this table <i>only</i> include physical items.</p>
+        <p>Note: Checkout counts in this table <i>only</i> include print items.</p>
 
         <h3>Usage by subject (since 2015)</h3>
         <table>
@@ -252,7 +292,7 @@
                 </tr>
             <% end %>
         </table>
-        <p>Note: Acquired and checkout counts in this table <i>only</i> include physical items.</p>
+        <p>Note: Acquired and checkout counts in this table <i>only</i> include print items.</p>
     </div>
 
     <div class="tab-pane" id="callNumbersTab">
