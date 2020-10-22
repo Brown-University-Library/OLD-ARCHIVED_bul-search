@@ -25,6 +25,11 @@ class EcoSummary < ActiveRecord::Base
         ENV["ECOSYSTEM_DOWNLOADS"] + "/dashboard_#{self.id}.tsv"
     end
 
+    def owner_id
+        id = (created_by || "")
+        id.gsub("@", "_").gsub(".", "_")
+    end
+
     def owner_display
         tokens = (created_by || "").split("@")
         if tokens.count == 0

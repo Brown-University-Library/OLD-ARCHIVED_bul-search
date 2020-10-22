@@ -40,6 +40,20 @@
     </h2>
 
     <div class="col-sm-12">
+        <div id="filters">
+            <span>
+                Owner:
+                <select name="filterUser" id="filterUser">
+                    <% @owners.each do |owner| %>
+                        <option value="<%= owner[:id] %>"><%= owner[:text] %></option>
+                    <% end %>
+                </select>
+            </span>
+            <span>
+                Name: <input type="text" name="filterName" id="filterName" placeholder="search by name"></input>
+            </span>
+        </div>
+
         <table>
             <tr>
                 <th>Type</th>
@@ -49,7 +63,7 @@
                 <th class="number_cell_fixed">Bib Records</th>
             </tr>
             <% @summaries.each do |summary| %>
-                <tr>
+                <tr class="data-row row-owner-<%= summary.owner_id %>">
                     <td><%= summary.public == 1 ? "Public" : "Private" %></td>
                     <td><%= summary.owner_display %></td>
                     <td><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
@@ -90,3 +104,25 @@
         </div>
     <% end %>
 </div>
+
+<script>
+$(document).ready(function(){
+
+    $("#filterUser").change(function() {
+        var filter = $("#filterUser").val().trim();
+        filterRows(filter);
+    });
+
+    var filterRows = function(filter) {
+        if (filter === "_all_") {
+            $(".data-row").removeClass("hidden");
+        } else {
+            $(".data-row").addClass("hidden");
+            $(".row-owner-" + filter).removeClass("hidden");
+        }
+    }
+
+    var filter = $("#filterUser").val().trim();
+    filterRows(filter);
+});
+</script>
