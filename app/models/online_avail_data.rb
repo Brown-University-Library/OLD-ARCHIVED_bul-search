@@ -4,7 +4,7 @@ class OnlineAvailData
   CLASSIC_JOSIAH_URL = "http://josiah.brown.edu/record="
   NEW_JOSIAH_URL = "http://search.library.brown.edu/catalog/"
 
-  def initialize(url, text)
+  def initialize(url, note, materials = nil)
     if url.start_with?(CLASSIC_JOSIAH_URL)
       @url = url.gsub(CLASSIC_JOSIAH_URL, NEW_JOSIAH_URL)
     else
@@ -13,10 +13,19 @@ class OnlineAvailData
         @url = "http://#{@url}"
       end
     end
-    if text == nil
-      @label = "Available online"
+    @label = safe_concat(note, materials)
+  end
+
+  def safe_concat(note, materials)
+    case
+    when note == nil && materials == nil
+      "Available online"
+    when note == nil && materials != nil
+      materials
+    when note != nil && materials == nil
+      note
     else
-      @label = text
+      "#{note} (#{materials})"
     end
   end
 end

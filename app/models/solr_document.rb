@@ -358,6 +358,13 @@ class SolrDocument
   def online_availability
     @online_availability ||= begin
       links = online_availability_from_solr_json()
+      if links.count == 10 && has_marc_data?
+        # We only store the first 10 links in the JSON field in Solr.
+        # If we detect 10 links we fetch the data from the MARC record to
+        # be sure we get the entire list of links (because there could be
+        # more than 10).
+        links = online_availability_from_marc()
+      end
       links
     rescue StandardError => e
       Rails.logger.error "Error parsing online_availability for ID: #{self.fetch('id', nil)}, #{e.message}"
@@ -451,10 +458,28 @@ class SolrDocument
       @marc_record ||= MarcRecord.new(self["marc_display"])
     end
 
+    # Returns the online availability links for the record
+    # based on the url_fulltext_json_s field in Solr.
     def online_availability_from_solr_json
       json = JSON.parse(self['url_fulltext_json_s'] || "[]")
       values = json.select {|row| row["url"] != nil }.map do |row|
         OnlineAvailData.new(row["url"], row["text"])
+      end
+      values
+    end
+
+    # Returns the online availability links of the record
+    # based on field MARC 856.
+    def online_availability_from_marc
+      values = []
+      marc.fields.each do |marc_field|
+        next if marc_field.keys.first != "856"
+        f_856 = marc_field["856"]
+        url = marc.subfield_value(f_856, "u")
+        note = marc.subfield_value(f_856, "z")
+        materials = marc.subfield_value(f_856, "3")
+        online_avail = OnlineAvailData.new(url, note, materials)
+        values << online_avail
       end
       values
     end
