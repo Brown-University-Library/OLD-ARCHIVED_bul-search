@@ -107,22 +107,76 @@
 
 <script>
 $(document).ready(function(){
+    var filterRows = function() {
+        // Get the values to filter by
+        var filterOwner = $("#filterUser").val().trim().toLowerCase();
+        var filterName = $("#filterName").val().trim().toLowerCase();
 
-    $("#filterUser").change(function() {
-        var filter = $("#filterUser").val().trim();
-        filterRows(filter);
-    });
-
-    var filterRows = function(filter) {
-        if (filter === "_all_") {
+        // No filter, make all rows visible.
+        if ((filterOwner == "_all_") && (filterName == "")) {
             $(".data-row").removeClass("hidden");
-        } else {
-            $(".data-row").addClass("hidden");
-            $(".row-owner-" + filter).removeClass("hidden");
+            return;
         }
+
+        var isFilterByOwner = (filterOwner != "_all_") && (filterName == "");
+        var isFilterByName = (filterOwner == "_all_") && (filterName != "");
+        var isFilterByBoth = (filterOwner != "_all_") && (filterName != "");
+
+        // Process all rows and filters them
+        $(".data-row").each(function(i, tr) {
+
+            // Get the values of this row (owner and collection name)
+            var i;
+            var cssClasses = $(tr).attr("class").split(/\s+/);
+            var rowOwner = "";
+            for(i = 0; i < cssClasses.length; i++) {
+                if (cssClasses[i].startsWith("row-owner-")) {
+                    rowOwner = cssClasses[i].replace("row-owner-", "").toLowerCase();
+                    break;
+                }
+            }
+            var rowName = $(tr).children().first().next().next().text().toLowerCase();
+
+            if (isFilterByOwner) {
+                if (filterOwner == rowOwner) {
+                    $(tr).removeClass("hidden");
+                } else {
+                    $(tr).addClass("hidden");
+                }
+                return;
+            }
+
+            if (isFilterByName) {
+                if (rowName.includes(filterName)) {
+                    $(tr).removeClass("hidden");
+                } else {
+                    $(tr).addClass("hidden");
+                }
+                return;
+            }
+
+            if (isFilterByBoth) {
+                if ((filterOwner == rowOwner) && (rowName.includes(filterName))) {
+                    $(tr).removeClass("hidden");
+                } else {
+                    $(tr).addClass("hidden");
+                }
+                return;
+            }
+        });
     }
 
-    var filter = $("#filterUser").val().trim();
-    filterRows(filter);
+    // Filter on owner change
+    $("#filterUser").change(function() {
+        filterRows();
+    });
+
+    // Filter on collection name change
+    $("#filterName").on("input",function(e) {
+        filterRows();
+    });
+
+    // Apply filter with values on screen on load
+    filterRows();
 });
 </script>
