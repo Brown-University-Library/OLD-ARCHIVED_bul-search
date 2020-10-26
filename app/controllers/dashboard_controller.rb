@@ -9,12 +9,16 @@ class DashboardController < ApplicationController
     @page_title = "Dashboard"
     @editors = EcoSummary.editors(current_user)
 
+    @owners = [{id: "_all_", text: ""}]
     @summaries = []
     EcoSummary.all.each do |summary|
       if summary.can_view?(current_user)
+        @owners << {id: summary.owner_id, text: summary.owner_display}
         @summaries << summary
       end
     end
+
+    @owners = @owners.sort_by{|x| x[:text]}.uniq
 
     @new_dashboard_url = ""
     if EcoSummary.edit_user?(current_user)
