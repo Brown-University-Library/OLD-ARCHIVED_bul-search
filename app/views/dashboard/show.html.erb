@@ -97,15 +97,19 @@
             <p>As of: <%= @presenter.summary.refreshed_at.localtime %></p>
         <% end %>
 
-        <p>Total bibs: <%= number_with_delimiter(@presenter.summary.total_bibs()) %></p>
-        <p>Total items: <%= number_with_delimiter(@presenter.summary.total_items()) %>
-        |
+        <p>Total bibs: <%= number_with_delimiter(@presenter.summary.total_bibs()) %>
+        | Total items: <%= number_with_delimiter(@presenter.summary.total_items()) %>
+
         <% if @presenter.summary.status == "OK" && @presenter.summary.total_items() < 1000 %>
-            <a href="<%= dashboard_details_url(id: @presenter.summary.id, all: 'yes') %>">View all</a>
+            | <a href="<%= dashboard_details_url(id: @presenter.summary.id, all: 'yes') %>">View all</a>
         <% else %>
-            <a href="<%= dashboard_details_url(id: @presenter.summary.id) %>">View first 1,000</a>
+            | <a href="<%= dashboard_details_url(id: @presenter.summary.id) %>">View first 1,000</a>
         <% end %>
         </p>
+
+        <% if @presenter.summary.buildings_excluded.count > 0 %>
+            <p>The following locations were excluded: <%= @presenter.summary.buildings_excluded.join(", ") %></p>
+        <% end %>
 
         <p>Owner: <%= @presenter.summary.created_by%>
         (<%= @presenter.summary.public == 1 ? "public" : "private" %>)

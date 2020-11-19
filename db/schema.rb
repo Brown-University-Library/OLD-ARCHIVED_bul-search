@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201020154000) do
+ActiveRecord::Schema.define(version: 20201117152400) do
 
   create_table "best_bet_entries", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -166,24 +166,25 @@ ActiveRecord::Schema.define(version: 20201020154000) do
   add_index "eco_ranges", ["eco_summary_id"], name: "index_eco_ranges_on_eco_summary_id", using: :btree
 
   create_table "eco_summaries", force: :cascade do |t|
-    t.integer  "sierra_list",      limit: 4
-    t.string   "list_name",        limit: 255
-    t.integer  "bib_count",        limit: 4
-    t.integer  "item_count",       limit: 4
-    t.text     "locations_str",    limit: 65535
-    t.text     "callnumbers_str",  limit: 65535
-    t.text     "checkouts_str",    limit: 65535
-    t.text     "fundcodes_str",    limit: 65535
-    t.text     "subjects_str",     limit: 65535
+    t.integer  "sierra_list",       limit: 4
+    t.string   "list_name",         limit: 255
+    t.integer  "bib_count",         limit: 4
+    t.integer  "item_count",        limit: 4
+    t.text     "locations_str",     limit: 65535
+    t.text     "callnumbers_str",   limit: 65535
+    t.text     "checkouts_str",     limit: 65535
+    t.text     "fundcodes_str",     limit: 65535
+    t.text     "subjects_str",      limit: 65535
     t.datetime "updated_date_gmt"
-    t.text     "description",      limit: 65535
-    t.string   "status",           limit: 255
+    t.text     "description",       limit: 65535
+    t.string   "status",            limit: 255
     t.datetime "refreshed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "created_by",       limit: 255
-    t.string   "updated_by",       limit: 255
-    t.integer  "public",           limit: 4
+    t.string   "created_by",        limit: 255
+    t.string   "updated_by",        limit: 255
+    t.integer  "public",            limit: 4
+    t.text     "buildings_allowed", limit: 65535
   end
 
   add_index "eco_summaries", ["sierra_list"], name: "index_eco_summaries_on_sierra_list", using: :btree

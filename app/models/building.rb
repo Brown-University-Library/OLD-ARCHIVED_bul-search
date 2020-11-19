@@ -12,6 +12,18 @@ class Building
         name
     end
 
+    def self.all_names
+        names = []
+        self.all.keys.each do |key|
+            name = self.all[key]
+            if !names.include?(name)
+                names << name
+            end
+        end
+        names << "Online"
+        names
+    end
+
     def self.all
         @all ||= begin
             data = {}

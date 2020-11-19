@@ -25,6 +25,13 @@ class EcoSummary < ActiveRecord::Base
         ENV["ECOSYSTEM_DOWNLOADS"] + "/dashboard_#{self.id}.tsv"
     end
 
+    def buildings_excluded
+        if self.buildings_allowed == nil
+            return []
+        end
+        Building.all_names - self.buildings_allowed.split("|")
+    end
+
     def owner_id
         id = (created_by || "")
         id.gsub("@", "_").gsub(".", "_")
@@ -71,6 +78,7 @@ class EcoSummary < ActiveRecord::Base
         summary.status = "UPDATED"
         summary.created_at = Time.now
         summary.created_by = user_name
+        summary.buildings_allowed = self.default_buildings_string()
         summary.public = 1
         summary.save
         summary
@@ -95,6 +103,7 @@ class EcoSummary < ActiveRecord::Base
         summary.status = "UPDATED"
         summary.created_at = Time.now
         summary.created_by = EcoSummary.safe_user_id(user)
+        summary.buildings_allowed = original.buildings_allowed
         summary.public = 1
         summary.save!
 
@@ -772,6 +781,8 @@ class EcoSummary < ActiveRecord::Base
         if range == nil
             # Range has been deleted, nothing to do.
         else
+            buildings_filter = (self.buildings_allowed || "").split("|")
+            buildings_filter << "Unknown"
             # Fetch items for the call number range and save them in the details table.
             items_count = 0
             bibs_count = 0
@@ -781,7 +792,7 @@ class EcoSummary < ActiveRecord::Base
                     begin
                         EcoDetails.transaction do
                             docs.each do |doc|
-                                items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to)
+                                items_count += EcoDetails.new_from_solr_doc(id, range.id, doc, range_from, range_to, buildings_filter)
                                 # Update our language counts
                                 EcoDetails.langs_from_solr_doc(doc).each do |lang|
                                     add_lang_count(lang)
@@ -898,6 +909,7 @@ class EcoSummary < ActiveRecord::Base
         s.status = "UPDATED"
         s.created_at = Time.now
         s.created_by = 'hector_correa@brown.edu'
+        s.buildings_allowed = self.default_buildings_string()
         s.public = 1
         s.save!
 
@@ -913,6 +925,14 @@ class EcoSummary < ActiveRecord::Base
         # Notice that we don't populate them right away since it
         # takes a long time. Instead we let the cronjob populate
         # them on schedule.
+    end
+
+    def self.default_buildings()
+        Building.all_names - ["John Carter Brown", "Hay"]
+    end
+
+    def self.default_buildings_string()
+        default_buildings().join("|")
     end
 
     private

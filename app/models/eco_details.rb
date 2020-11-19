@@ -65,7 +65,7 @@ class EcoDetails < ActiveRecord::Base
     end
 
     # Creates a new detail record for a given Solr document
-    def self.new_from_solr_doc(eco_summary_id, eco_range_id, doc, range_from, range_to)
+    def self.new_from_solr_doc(eco_summary_id, eco_range_id, doc, range_from, range_to, buildings = [])
         id = doc["id"]
         marc_record = MarcRecord.new(doc["marc_display"])
         subjects = marc_record.subjects()
@@ -73,6 +73,12 @@ class EcoDetails < ActiveRecord::Base
         # If we don't have items, create a single detail record for the BIB.
         items = marc_record.items()
         if items.count == 0
+
+            loc_code = safe_location_code(marc_record.subfield_values("998", "a").first || "NONE", id)
+            if !allowed_building(loc_code, buildings)
+                return 0
+            end
+
             record = EcoDetails.new()
             record.eco_summary_id = eco_summary_id
             record.eco_range_id = eco_range_id
@@ -91,8 +97,7 @@ class EcoDetails < ActiveRecord::Base
             end
             record.callnumber_raw = best[:raw]
             record.callnumber_norm = best[:norm]
-
-            record.location_code = safe_location_code(marc_record.subfield_values("998", "a").first || "NONE", id)
+            record.location_code = loc_code
             if subjects.count > 0
                 record.subjects = subjects.join("|")
             end
@@ -104,7 +109,14 @@ class EcoDetails < ActiveRecord::Base
         end
 
         # Create one detail record for each item in the BIB.
+        items_added = 0
         items.each do |item|
+
+            loc_code = safe_location_code(item.location_code || "NONE", id)
+            if !allowed_building(loc_code, buildings)
+                next
+            end
+
             record = EcoDetails.new()
             record.eco_summary_id = eco_summary_id
             record.eco_range_id = eco_range_id
@@ -122,7 +134,7 @@ class EcoDetails < ActiveRecord::Base
             record.item_record_num = item.id
             record.callnumber_raw = item.call_number
             record.callnumber_norm = CallnumberNormalizer.normalize_one(item.call_number)
-            record.location_code = safe_location_code(item.location_code || "NONE", id)
+            record.location_code = loc_code
             record.checkout_total = item.checkout_total
             record.checkout_2015_plus = item.checkout_2015_plus
             record.item_create_date = item.created_date
@@ -133,9 +145,10 @@ class EcoDetails < ActiveRecord::Base
             record.is_online = doc["online_b"] || false
             record.format = doc["format"] || "UNKNOWN"
             record.save!
+            items_added += 1
         end
 
-        return items.count
+        return items_added
     end
 
     # Returns an array with the languages in the document
@@ -161,6 +174,12 @@ class EcoDetails < ActiveRecord::Base
             return code[0..4]
         end
         return code
+    end
+
+    def self.allowed_building(code, buildings)
+        name = (Building.name(code) || "").downcase
+        return false if name == ""
+        buildings.select {|b| b.downcase == name }.count > 0
     end
 
     def self.to_tsv_file(filename, id)

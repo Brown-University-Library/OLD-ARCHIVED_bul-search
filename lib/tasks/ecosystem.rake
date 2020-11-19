@@ -41,4 +41,25 @@ namespace :josiah do
     EcoDetails.to_tsv_file(filename, summary.id)
     puts "Done"
   end
+
+  desc "Initializes buildings_allowed for all summaries that don't have a value"
+  task "ecosystem_buildings_init" => :environment do |_cmd, args|
+    EcoSummary.all.each do |summary|
+      if summary.buildings_allowed == nil
+        # Use all_names to preserve compatibility with the data already saved
+        # for this summary.
+        summary.buildings_allowed = Building.all_names.join("|")
+        summary.save!
+      end
+    end
+  end
+
+  desc "Initializes buildings_allowed with our new default (to exclude Hay and JCB) for the given summary"
+  task "ecosystem_building_set", [:id] => :environment do |_cmd, args|
+    id = (args[:id] || "").to_i
+    summary = EcoSummary.find(id)
+    summary.buildings_allowed = EcoSummary.default_buildings_string()
+    summary.status = "UPDATED"
+    summary.save!
+  end
 end
