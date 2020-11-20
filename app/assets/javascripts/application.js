@@ -62,6 +62,104 @@ window.josiahObject.getUrlParameter = function(param) {
   return null;
 }
 
+// Source: https://www.w3schools.com/howto/howto_js_sort_table.asp
+window.josiahObject.sortHtmlTable = function(tableId, colNumber) {
+  var table = document.getElementById(tableId);
+  var rows = table.rows;
+  var th = rows[0].getElementsByTagName("TH")[colNumber];
+  var descending = (th.dataset.sortDirection == "desc");
+  var i, xElement, yElement, x, y, shouldSwitch;
+  var switching = true;
+
+  while (switching) {
+
+    switching = false;
+    rows = table.rows;
+
+    // Loop through all the table rows
+    // (except the first, which contains the headers)
+    for (i = 1; i < (rows.length - 1); i++) {
+
+      shouldSwitch = false;
+
+      // Get the two elements to compare (current row and next row)
+      xElement = rows[i].getElementsByTagName("TD")[colNumber];
+      yElement = rows[i + 1].getElementsByTagName("TD")[colNumber];
+      if (xElement.dataset.hasOwnProperty("sortByNumber")) {
+          x = parseInt(xElement.dataset.sortByNumber, 10);
+          y = parseInt(yElement.dataset.sortByNumber, 10);
+      } else {
+          x = xElement.dataset.sortByText.toLowerCase();
+          y = yElement.dataset.sortByText.toLowerCase();
+      }
+
+      // console.log(i.toString() + " " + x.toString() + " " + y.toString());
+
+      // Check if the two rows should switch place, and
+      // if so, mark as a switch and break the loop
+      if (descending) {
+        if (x < y) {
+            shouldSwitch = true;
+            break;
+        }
+      } else {
+        if (x > y) {
+            shouldSwitch = true;
+            break;
+        }
+      }
+    } // for
+
+    if (shouldSwitch) {
+      // If a switch has been marked, make the switch
+      // and loop again
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  } // while
+
+  // Reverse the sorting direction for the next round.
+  if (descending) {
+      th.dataset.sortDirection = "asc";
+  } else {
+      th.dataset.sortDirection = "desc";
+  }
+}
+
+window.josiahObject.setupSortColumn = function (tableId, colNumber, direction, defaultSort) {
+  var header = document.getElementById(tableId).rows[0];
+  var column = header.getElementsByTagName("TH")[colNumber];
+  var columnId = tableId + "_col_" + colNumber.toString();
+  var sortLink = "<a href='#' id='" + columnId + "' title='Click to sort'>" + column.innerHTML + "</a>";
+  var sortIcon;
+
+  if (defaultSort) {
+      sortIcon = "<span style='font-size: 12px;' class='glyphicon glyphicon-sort'></span>";
+  } else {
+      sortIcon = "<span style='font-size: 12px;' class='hidden glyphicon glyphicon-sort'></span>";
+  }
+
+  // Sets the default sort direction for the column,
+  // adds a link to the header to allow user to click to sort,
+  // and wire the link to call the sortTable() function.
+  column.setAttribute("data-sort-direction", direction);
+  column.innerHTML = sortLink + "&nbsp;" + sortIcon;
+  $("#" + columnId).on("click", function(e) {
+      var i, th;
+      e.preventDefault();
+      // Sort the data...
+      window.josiahObject.sortHtmlTable(tableId, colNumber);
+      // ...and make sure this column is marked as the one we are sorting on
+      for(i = 0; i < header.getElementsByTagName("TH").length; i++) {
+          th = header.getElementsByTagName("TH")[i]
+          if (i == colNumber) {
+              $(th).find("span").removeClass("hidden");
+          } else {
+              $(th).find("span").addClass("hidden");
+          }
+      }
+  });
+}
 
 function getUrlParameterFromString(url, param) {
   var params = url.split('&');

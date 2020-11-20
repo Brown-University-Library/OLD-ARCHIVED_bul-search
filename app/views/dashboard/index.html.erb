@@ -54,7 +54,7 @@
             </span>
         </div>
 
-        <table>
+        <table id="collectionsTable">
             <tr>
                 <th>Type</th>
                 <th>Owner</th>
@@ -66,17 +66,17 @@
             <% @summaries.each do |summary| %>
                 <tr class="data-row row-owner-<%= summary.owner_id %>">
                     <td><%= summary.public == 1 ? "Public" : "Private" %></td>
-                    <td><%= summary.owner_display %></td>
-                    <td><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
+                    <td data-sort-by-text="<%= summary.owner_display %>"><%= summary.owner_display %></td>
+                    <td data-sort-by-text="<%= summary.list_full_name %>"><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
                     <td>
                         <span title="<%= summary.status_tooltip %>" class="<%= summary.status_icon %>"></span>
                     </td>
-                    <td class="number_cell_fixed">
+                    <td class="number_cell_fixed" data-sort-by-number="<%= summary.status == 'OK' ? summary.bib_count : 0 %>">
                         <% if summary.status == "OK" %>
                             <%= number_with_delimiter(summary.bib_count) %>
                         <% end %>
                     </td>
-                    <td>
+                    <td data-sort-by-text="<%= summary.refreshed_at || '' %>">
                     <% if summary.refreshed_at != nil %>
                         <span title="<%= summary.refreshed_at.localtime %>"><%= time_ago_in_words(summary.refreshed_at) %> ago</span>
                     <% end %>
@@ -115,6 +115,12 @@
 
 <script>
 $(document).ready(function(){
+
+    window.josiahObject.setupSortColumn("collectionsTable", 1, "asc", false); // owner
+    window.josiahObject.setupSortColumn("collectionsTable", 2, "asc", false); // list name
+    window.josiahObject.setupSortColumn("collectionsTable", 4, "asc", false); // bib count
+    window.josiahObject.setupSortColumn("collectionsTable", 5, "asc", false); // updated
+
     var filterRows = function() {
         // Get the values to filter by
         var filterOwner = $("#filterUser").val().trim().toLowerCase();
