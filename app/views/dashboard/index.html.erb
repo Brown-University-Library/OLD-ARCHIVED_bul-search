@@ -61,6 +61,7 @@
                 <th>Name</th>
                 <th>Status</th>
                 <th class="number_cell_fixed">Bib Records</th>
+                <th>Updated</th>
             </tr>
             <% @summaries.each do |summary| %>
                 <tr class="data-row row-owner-<%= summary.owner_id %>">
@@ -75,6 +76,11 @@
                             <%= number_with_delimiter(summary.bib_count) %>
                         <% end %>
                     </td>
+                    <td>
+                    <% if summary.refreshed_at != nil %>
+                        <span title="<%= summary.refreshed_at.localtime %>"><%= time_ago_in_words(summary.refreshed_at) %> ago</span>
+                    <% end %>
+                    </td>
                 </tr>
             <% end %>
         </table>
@@ -83,7 +89,9 @@
 
 
 <div class="row">
-    <% if @editors.count > 0 %>
+    <% if @editors.count == 0 %>
+        <p>&nbsp;</p>
+    <% else %>
         <h3>Users with edit access</h3>
         <p>Public collections can be viewed by any patron,
         but only the following users can edit them.</p>
