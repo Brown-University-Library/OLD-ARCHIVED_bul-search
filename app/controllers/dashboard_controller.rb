@@ -200,4 +200,15 @@ class DashboardController < ApplicationController
     Rails.logger.error("Summary not found (#{id})")
     redirect_to dashboard_index_url()
   end
+
+  def download_acquired_vs_checkedout()
+    id = (params["id"] || 0).to_i
+    data = EcoSubjects.acquired_vs_checkedout_2015(id, false)
+    tsv = "SUBJECT\tACQ_COUNT\tCHECKED_OUT_COUNT\r\n"
+    data.each do |row|
+        tsv += "#{row.subject}\t#{row.acq_count}\t#{row.checkout_count}\r\n"
+    end
+    Rails.logger.info("Exporting subjects TSV: #{id} for user #{current_user}")
+    send_data(tsv, :filename => "dashboard_#{id}_subjects.tsv", :type => "text/tsv")
+  end
 end

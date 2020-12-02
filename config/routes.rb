@@ -63,6 +63,7 @@ BulSearch::Application.routes.draw do
   post 'dashboard/:id/edit' => 'dashboard#save', as: :dashboard_save
   post 'dashboard/:id/delete' => 'dashboard#delete', as: :dashboard_delete
 
+  get 'dashboard/:id/download/acq_vs_chk' => 'dashboard#download_acquired_vs_checkedout', as: :dashboard_download_acq_vs_chk
   get 'dashboard/:id/details' => 'dashboard#details', as: :dashboard_details
   get 'dashboard/:id' => 'dashboard#show', as: :dashboard_show
   get 'dashboard/' => 'dashboard#index', as: :dashboard_index

@@ -282,6 +282,7 @@
         <p>Note: Checkout counts in this table <i>only</i> include print items.</p>
 
         <h3>Usage by subject (since 2015)</h3>
+        <p>Top 10 acquired subjects combined with top 10 most checked out subjects.</p>
         <table>
             <tr>
                 <th>Subject</th>
@@ -296,7 +297,10 @@
                 </tr>
             <% end %>
         </table>
-        <p>Note: Acquired and checkout counts in this table <i>only</i> include print items.</p>
+        <p>Note: Acquired and checkout counts in this table <i>only</i> include print items.
+        (<a href="<%= dashboard_download_acq_vs_chk_path(@presenter.summary.id) %>"
+        title="Download acquired and checked out subject data as a tab-delimited file"
+        download>download all subject counts</a>)</p>
     </div>
 
     <div class="tab-pane" id="callNumbersTab">
