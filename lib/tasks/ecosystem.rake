@@ -13,6 +13,18 @@ namespace :josiah do
     puts "Done"
   end
 
+  desc "Creates the default tags"
+  task "ecosystem_tags_init" => :environment do |_cmd, args|
+    if EcoTags.all.count != 0
+      abort "Tags table is not empty. Nothing to do."
+    end
+    EcoTags.create(name: "ART")
+    EcoTags.create(name: "HISTORY")
+    EcoTags.create(name: "RELIGION")
+    EcoTags.create(name: "EAST ASIA")
+    puts "Added default tags"
+  end
+
   desc "Repopulates information for a given collection ID"
   task "ecosystem_refresh", [:id] => :environment do |_cmd, args|
     id = (args[:id] || "").to_i

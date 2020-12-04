@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201117152400) do
+ActiveRecord::Schema.define(version: 20201204093000) do
 
   create_table "best_bet_entries", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -185,9 +185,16 @@ ActiveRecord::Schema.define(version: 20201117152400) do
     t.string   "updated_by",        limit: 255
     t.integer  "public",            limit: 4
     t.text     "buildings_allowed", limit: 65535
+    t.text     "tags",              limit: 65535
   end
 
   add_index "eco_summaries", ["sierra_list"], name: "index_eco_summaries_on_sierra_list", using: :btree
+
+  create_table "eco_tags", force: :cascade do |t|
+    t.string "name", limit: 255
+  end
+
+  add_index "eco_tags", ["name"], name: "index_eco_tags_on_name", using: :btree
 
   create_table "libguides_caches", force: :cascade do |t|
     t.string "name",       limit: 50

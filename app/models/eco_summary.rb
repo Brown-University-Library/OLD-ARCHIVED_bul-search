@@ -45,6 +45,14 @@ class EcoSummary < ActiveRecord::Base
         tokens[0].gsub("_", " ")
     end
 
+    def tags_string
+        (self.tags || "")
+    end
+
+    def tags_list
+        (self.tags || "").split("|")
+    end
+
     def self.can_new?(user)
         EcoSummary.edit_user?(user)
     end
@@ -119,15 +127,18 @@ class EcoSummary < ActiveRecord::Base
         summary
     end
 
-    # Update an EcoSummary with the data tha comes in a web request
+    # Update an EcoSummary with the data that comes in a web request
     def save_from_request(params, user)
         self.list_name = params["name"]
         self.description = params["description"]
-        self.status = "UPDATED"
+        # self.status = "UPDATED"
         self.updated_at = Time.now
         self.updated_by = EcoSummary.safe_user_id(user)
+        self.tags = params["tags_active"]
         self.public = 1 # (params["public"] == "yes") ? 1 : 0
         save
+
+        needs_recalculate = false
 
         ranges = params.keys.select {|k| k.start_with?("cn_range_") && k.end_with?("_from")}
         ranges.each do |key|
@@ -141,13 +152,19 @@ class EcoSummary < ActiveRecord::Base
             # Empty range, delete it.
             if cn_from == "" && cn_to == ""
                 r.delete
+                needs_recalculate = true
                 next
             end
 
-            r.from = safe_range_from_value(cn_from, cn_to)
-            r.to = safe_range_to_value(cn_from, cn_to)
-            r.name = cn_name
-            r.save
+            cn_from = safe_range_from_value(cn_from, cn_to)
+            cn_to = safe_range_to_value(cn_from, cn_to)
+            if r.from != cn_from || r.to != cn_to || r.name != cn_name
+                r.from = cn_from
+                r.to = cn_to
+                r.name = cn_name
+                r.save
+                needs_recalculate = true
+            end
         end
 
         new_ranges = params.keys.select {|k| k.start_with?("cn_new_") && k.end_with?("_from")}
@@ -167,6 +184,12 @@ class EcoSummary < ActiveRecord::Base
             r.to = safe_range_to_value(cn_from, cn_to)
             r.name = cn_name
             r.save
+            needs_recalculate = true
+        end
+
+        if needs_recalculate
+            self.status = "UPDATED"
+            save
         end
     end
 

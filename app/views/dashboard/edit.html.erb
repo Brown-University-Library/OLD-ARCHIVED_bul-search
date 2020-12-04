@@ -8,16 +8,26 @@ Collection EcoSystem Dashboard - <%= @presenter.summary.list_name %>
             <input type="text" class="form-control" placeholder="Name" aria-describedby="name_label"
                 id="name" name="name" value="<%= @presenter.summary.list_name %>">
 
-            <!-- <label class="" id="public_label">Public list?</label>
-            <label class="radio-inline"><input type="radio" id="public1" name="public" value="yes" checked>Yes</label>
-            <label class="radio-inline"><input type="radio" id="public2" name="public" value="no">No</label>
-            <label class="radio-inline"><input type="radio" id="public1" name="public" value="yes">Yes</label>
-            <label class="radio-inline"><input type="radio" id="public2" name="public" value="no" checked>No</label>
-            <br/> -->
-
             <label class="" id="desc_label">Description</label>
-            <textarea class="form-control" rows="8" placeholder="Description" aria-describedby="desc_label"
+            <textarea class="form-control" rows="4" placeholder="Description" aria-describedby="desc_label"
                 id="description" name="description" ><%= @presenter.summary.description %></textarea>
+
+            <div>
+                <!-- Tags added via JavaScript below -->
+                <label id="tags_label">Tags:&nbsp;</label>
+            </div>
+
+            <div>
+                <!--  -->
+                <select type="select" id="tags_ddl" name="tags_ddl"></select>
+                <button type="button"
+                id="add_tag" class="btn btn-default"
+                title="Add this tag to the collection">Add</button>
+            </div>
+
+            <!-- We use this (hidden) text field to send the server the entire list of
+            tags the user has selected -->
+            <input type="text" class="hidden" id="tags_active" name="tags_active" value="<%= @presenter.summary.tags_string %>">
 
             <div id="cn_ranges">
                 <label>Call number ranges:</label>
@@ -85,6 +95,83 @@ function confirmYesNo(options) {
 $(document).ready(function(){
     var nextId = 0;
 
+    // All the possible tags available to use
+    var tagsAll = [];
+    <% EcoTags.names_sorted.each do |tag| %>
+        tagsAll.push("<%= tag %>");
+    <% end %>
+
+    // Returns an array with the tags that are assigned to this EcoSummary
+    var tagsActive = function() {
+        return ($("#tags_active").val() || "").split("|");
+    };
+
+    // Updates the display of the drop downlist of possible tags to use
+    // and the ones already assigned to this EcoSummary
+    var refreshTagsDisplay = function() {
+        var active = tagsActive();
+        var i, tag, tagHtml;
+        var canAdd = false;
+
+        // Empty the drop downlist of tags that can be added
+        // and remove the active tags from the display.
+        $("#tags_ddl option").remove();
+        $(".tag-info").remove();
+
+        for(i = 0; i < tagsAll.length; i++) {
+            tag = tagsAll[i];
+            if (active.includes(tag)) {
+                // Display it as an active tag (already assigened)
+                tagHtml = "<span class=tag-info id=tag_{{ID}}>" + tag + "&nbsp;";
+                tagHtml += '<span id=tag_text_{{ID}} class=hidden>' + tag + '</span>';
+                tagHtml += '<a href="#" id=tag_link_{{ID}} title="Remove this tag"><i class="fa fa-times"></i></a> | ';
+                tagHtml += "</span>";
+                tagHtml = tagHtml.replaceAll("{{ID}}", String(i));
+                $(tagHtml).insertAfter("#tags_label");
+            } else {
+                // Add it to the list of available tags in the drop down list
+                $("#tags_ddl").append($('<option>').val(tag).text(tag));
+                canAdd = true;
+            }
+        }
+
+        // Wire the links to remove tags
+        $(".tag-info > a").on("click", function(el) {
+            var tag_text_id = el.currentTarget.id.replace("tag_link_", "tag_text_");
+            removeTag(tag_text_id);
+        });
+
+        if (canAdd) {
+            $("#tags_ddl").removeClass("hidden");
+            $("#add_tag").removeClass("hidden");
+        } else {
+            $("#tags_ddl").addClass("hidden");
+            $("#add_tag").addClass("hidden");
+        }
+    };
+
+    var addTag = function(tag) {
+        var value = $("#tags_active").val();
+        var newTags = value + tag + "|";
+        $("#tags_active").val(newTags);
+        refreshTagsDisplay();
+    }
+
+    var removeTag = function(tag_text_id) {
+        var currentTags = $("#tags_active").val();
+        var tagText = $("#" + tag_text_id).text() + "|";
+        var newTags = currentTags.replace(tagText, "");
+        $("#tags_active").val(newTags);
+        refreshTagsDisplay();
+    }
+
+    $("#add_tag").on("click", function(e) {
+        var tag = $("#tags_ddl").val();
+        if (tag != null) {
+            addTag(tag);
+        }
+    });
+
     $("#delete_record").on("click", function(e) {
         e.preventDefault();
         var options = {
@@ -135,5 +222,8 @@ $(document).ready(function(){
 
     // Add an empty one by default
     $("#add_range").click();
+
+    // Initialize the display of tags (assigned + available)
+    refreshTagsDisplay();
 });
 </script>

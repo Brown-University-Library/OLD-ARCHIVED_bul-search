@@ -50,6 +50,16 @@
                 </select>
             </span>
             <span>
+                Tag:
+                <select name="filterTag" id="filterTag">
+                    <option value="_all_">&nbsp;</option>
+                    <% EcoTags.names_sorted.each do |tag| %>
+                        <option value="<%= tag %>"><%= tag %></option>
+                    <% end %>
+                </select>
+            </span>
+
+            <span>
                 Name: <input type="text" name="filterName" id="filterName" placeholder="search by name"></input>
             </span>
         </div>
@@ -58,6 +68,7 @@
             <tr>
                 <th>Type</th>
                 <th>Owner</th>
+                <th>Tags</th>
                 <th>Name</th>
                 <th>Status</th>
                 <th class="number_cell_fixed">Bib Records</th>
@@ -67,6 +78,7 @@
                 <tr class="data-row row-owner-<%= summary.owner_id %>">
                     <td><%= summary.public == 1 ? "Public" : "Private" %></td>
                     <td data-sort-by-text="<%= summary.owner_display %>"><%= summary.owner_display %></td>
+                    <td><%= summary.tags_list.join(", ") %>
                     <td data-sort-by-text="<%= summary.list_full_name %>"><a href="<%= dashboard_show_url(summary.id) %>"><%= summary.list_full_name %></a></td>
                     <td>
                         <span title="<%= summary.status_tooltip %>" class="<%= summary.status_icon %>"></span>
@@ -117,7 +129,7 @@
 $(document).ready(function(){
 
     window.josiahObject.setupSortColumn("collectionsTable", 1, "asc", false); // owner
-    window.josiahObject.setupSortColumn("collectionsTable", 2, "asc", false); // list name
+    window.josiahObject.setupSortColumn("collectionsTable", 3, "asc", false); // list name
     window.josiahObject.setupSortColumn("collectionsTable", 4, "asc", false); // bib count
     window.josiahObject.setupSortColumn("collectionsTable", 5, "asc", false); // updated
 
@@ -125,63 +137,65 @@ $(document).ready(function(){
         // Get the values to filter by
         var filterOwner = $("#filterUser").val().trim().toLowerCase();
         var filterName = $("#filterName").val().trim().toLowerCase();
+        var filterTag = $("#filterTag").val();
+        var isFilterByOwner = (filterOwner != "_all_");
+        var isFilterByName = (filterName != "");
+        var isFilterByTag = (filterTag != "_all_");
 
-        // No filter, make all rows visible.
-        if ((filterOwner == "_all_") && (filterName == "")) {
-            $(".data-row").removeClass("hidden");
-            return;
+        // Make all rows visible.
+        $(".data-row").removeClass("hidden");
+
+        if (isFilterByOwner) {
+            // Hide those where the owner does not match
+            $(".data-row").each(function(i, tr) {
+                var i;
+                var cssClasses = $(tr).attr("class").split(/\s+/);
+                var rowOwner = "";
+                for(i = 0; i < cssClasses.length; i++) {
+                    if (cssClasses[i].startsWith("row-owner-")) {
+                        rowOwner = cssClasses[i].replace("row-owner-", "").toLowerCase();
+                        break;
+                    }
+                }
+                if (rowOwner != filterOwner) {
+                    $(tr).addClass("hidden");
+                }
+            });
         }
 
-        var isFilterByOwner = (filterOwner != "_all_") && (filterName == "");
-        var isFilterByName = (filterOwner == "_all_") && (filterName != "");
-        var isFilterByBoth = (filterOwner != "_all_") && (filterName != "");
-
-        // Process all rows and filters them
-        $(".data-row").each(function(i, tr) {
-
-            // Get the values of this row (owner and collection name)
-            var i;
-            var cssClasses = $(tr).attr("class").split(/\s+/);
-            var rowOwner = "";
-            for(i = 0; i < cssClasses.length; i++) {
-                if (cssClasses[i].startsWith("row-owner-")) {
-                    rowOwner = cssClasses[i].replace("row-owner-", "").toLowerCase();
-                    break;
+        if (isFilterByTag) {
+            // Hide those where the tag does not match
+            $(".data-row").each(function(i, tr) {
+                var cssClasses = $(tr).attr("class").split(/\s+/);
+                if (!cssClasses.includes("hidden")) {
+                    var tags = $(tr).children().first().next().next().text().trim().split(", ");
+                    if (!tags.includes(filterTag)) {
+                        $(tr).addClass("hidden");
+                    }
                 }
-            }
-            var rowName = $(tr).children().first().next().next().text().toLowerCase();
+            });
+        }
 
-            if (isFilterByOwner) {
-                if (filterOwner == rowOwner) {
-                    $(tr).removeClass("hidden");
-                } else {
-                    $(tr).addClass("hidden");
+        if (isFilterByName) {
+            // Hide those where the name does not match
+            $(".data-row").each(function(i, tr) {
+                var cssClasses = $(tr).attr("class").split(/\s+/);
+                if (!cssClasses.includes("hidden")) {
+                    var rowName = $(tr).children().first().next().next().next().text().toLowerCase();
+                    if (!rowName.includes(filterName)) {
+                        $(tr).addClass("hidden");
+                    }
                 }
-                return;
-            }
-
-            if (isFilterByName) {
-                if (rowName.includes(filterName)) {
-                    $(tr).removeClass("hidden");
-                } else {
-                    $(tr).addClass("hidden");
-                }
-                return;
-            }
-
-            if (isFilterByBoth) {
-                if ((filterOwner == rowOwner) && (rowName.includes(filterName))) {
-                    $(tr).removeClass("hidden");
-                } else {
-                    $(tr).addClass("hidden");
-                }
-                return;
-            }
-        });
+            });
+        }
     }
 
     // Filter on owner change
     $("#filterUser").change(function() {
+        filterRows();
+    });
+
+    $("#filterTag").change(function() {
         filterRows();
     });
 

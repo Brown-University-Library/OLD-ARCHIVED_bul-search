@@ -111,6 +111,10 @@
             <p>The following locations were excluded: <%= @presenter.summary.buildings_excluded.join(", ") %></p>
         <% end %>
 
+        <% if @presenter.summary.tags_list.count > 0 %>
+            <p>Tags: <%= @presenter.summary.tags_list.join(", ") %></p>
+        <% end %>
+
         <p>Owner: <%= @presenter.summary.created_by%>
         (<%= @presenter.summary.public == 1 ? "public" : "private" %>)
         </p>
